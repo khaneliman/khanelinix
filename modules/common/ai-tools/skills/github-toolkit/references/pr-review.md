@@ -148,10 +148,10 @@ Do not flag style, subjective quality, pre-existing problems, speculative edge
 cases, duplicates, or normal linter findings unless repo instructions require.
 Validate each issue against diff and relevant local instructions.
 
-Do not re-run green CI checks merely to restate them. Green CI is supporting
-evidence, not the purpose of review. Judge whether checks cover changed
-behavior; missing coverage can be a finding when repository policy or risk
-requires it.
+Apply the test-value and execution boundary from `premise-review`, including in
+delegated packets. Assess whether assertions and fixtures detect realistic
+defects and cover the changed behavior, not whether checks currently pass.
+Missing coverage can be a finding when repository policy or risk requires it.
 
 ## Review Writing
 
