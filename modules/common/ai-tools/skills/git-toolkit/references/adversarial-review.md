@@ -105,8 +105,11 @@ Also sanity-check one specific hazard: <BIGGEST DOUBT>.
 
 Write each finding as a conventional comment, `<label> (blocking|non-blocking):
 <subject>`, with file:line and a concrete failure scenario (inputs/state →
-wrong outcome). Verify empirically where possible by running code and grepping
-callers rather than reasoning from the diff alone. State explicitly if you find
+wrong outcome). Follow the test-value and execution boundary from
+premise-review: assess what tests detect, not their current pass status. Do not
+rerun routine CI checks or report passing checks as review progress or findings.
+Trace callers; execute only to resolve a stated review hypothesis that existing
+evidence cannot answer. State explicitly if you find
 no blockers. End with a clear ready / not-ready verdict.
 ```
 
@@ -120,7 +123,8 @@ no blockers. End with a clear ready / not-ready verdict.
    redesign or closure recommendation when the gate fails.
 4. Translate each claimed premise into a check that could disprove it. Verify
    against the actual codebase with caller searches, history, tests, generated
-   outputs, or focused execution where useful.
+   outputs, or hypothesis-driven execution under the `premise-review` test-value
+   and execution boundary. Include that boundary in every worker packet.
 5. Verify hard constraints outside the diff. Trace affected APIs, ordering,
    serialization, escaping, typing, boundaries, portability, performance, and
    downstream consumers as relevant.
