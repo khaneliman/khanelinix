@@ -7,7 +7,10 @@ Fable and Astra have equal preference. The caller chooses between them from task
 context and current quota evidence.
 
 Build every seat packet per the `premise-review` method in
-`engineering-principles`. At least one seat is blind to the chosen solution.
+`engineering-principles`, including its test-value and execution boundary, not
+just the premise-gate template. Carry it into named-model and fallback packets:
+assess check usefulness, do not repeat CI validation or report green checks as
+review progress. At least one seat is blind to the chosen solution.
 
 Request verdict `approved`, `changes_requested`, or `blocked`, then findings as
 conventional comments, `<label> (blocking|non-blocking): <subject>`, with exact
