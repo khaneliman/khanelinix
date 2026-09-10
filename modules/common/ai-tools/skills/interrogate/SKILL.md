@@ -43,7 +43,9 @@ Each reviewer receives:
 3. Review rubric from [rubric.md](references/rubric.md).
 4. Code-quality lens from
    [code-quality-review.md](references/code-quality-review.md).
-5. Prompt template from [reviewer-prompt.md](references/reviewer-prompt.md).
+5. Prompt template from [reviewer-prompt.md](references/reviewer-prompt.md),
+   including the `premise-review` test-value and execution boundary. Pass it
+   to every seat, including named-model and fallback workers.
 
 ### 4. Synthesize Findings
 

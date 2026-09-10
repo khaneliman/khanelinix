@@ -77,7 +77,8 @@ worse than duplication.
 
 ## Verification
 
-Can you tell that this code works from reading it?
+Assess how much confidence the checks justify, not their current pass status.
+Apply the test-value and execution boundary from `premise-review`.
 
 - Are there tests? Do they test behavior or implementation details?
 - Are there assertions/invariants that would catch regressions?

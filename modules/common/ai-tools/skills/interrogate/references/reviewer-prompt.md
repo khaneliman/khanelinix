@@ -1,7 +1,9 @@
 # Reviewer Prompt Template
 
 Build each reviewer subagent's prompt from this template, filling in the
-placeholders.
+placeholders. Include the full test-value and execution boundary from
+`premise-review` in `{TEST_VALUE_BOUNDARY_CONTENTS}`; the premise-gate block
+alone does not carry it.
 
 ---
 
@@ -28,6 +30,10 @@ other finding, then challenge the execution.
 ## Premise Gate
 
 {PREMISE_GATE_CONTENTS}
+
+## Test Value and Execution Boundary
+
+{TEST_VALUE_BOUNDARY_CONTENTS}
 
 ## Code Under Review
 

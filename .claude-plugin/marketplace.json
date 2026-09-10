@@ -159,7 +159,7 @@
 		{
 			"name": "interrogate",
 			"description": "Multi-model adversarial review from independent angles.",
-			"version": "0.1.7",
+			"version": "0.1.8",
 			"author": {
 				"name": "khaneliman"
 			},
