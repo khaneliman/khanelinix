@@ -32,7 +32,8 @@ Select semantic roles before concrete models:
 - Plan or code review: read-only `reviewer`. Build review packets per the
   `premise-review` method in `engineering-principles`: at least one reviewer is
   blind to the chosen solution, and reviewers that share one unchallenged
-  premise count as one.
+  premise count as one. Include its test-value and execution boundary in each
+  review packet, including named-model and fallback dispatch.
 
 Do not select a named-model agent from diff size, latency, or write access.
 

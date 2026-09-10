@@ -35,7 +35,9 @@ Fresh independent review means a reviewer that did not write the change. Every
 required review opens with the premise gate from the `premise-review` method in
 `engineering-principles`, then proceeds to implementation review. Green checks
 are supporting evidence; a reviewer may recommend redesign or closure of a fully
-green change.
+green change. Apply the method's test-value and execution boundary to reviewers
+and review summaries. The Verification Gate belongs to implementation and
+correction, not a second mechanical validation pass by the reviewer.
 
 - Trivial: optional.
 - Normal: required.
