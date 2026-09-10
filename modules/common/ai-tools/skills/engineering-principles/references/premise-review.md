@@ -27,6 +27,24 @@ Green checks belong to stages 5 and 6. They are supporting evidence, not the
 purpose of review. A reviewer must be able to recommend closing or redesigning
 a fully green change.
 
+## Test Value and Execution Boundary
+
+Assess the usefulness of tests and checks, not their current pass status. Read
+their assertions, fixtures, mocks, and CI wiring. Judge which realistic defects
+they catch, whether they would fail for the reported bug or a plausible broken
+implementation, and which integration or compatibility boundaries they miss.
+Identify vacuous assertions, implementation-mirroring tests, and redundant
+coverage when they create false confidence or maintenance cost. Tie each
+coverage finding to a concrete behavior and the check that should detect it.
+
+Do not rerun existing tests, builds, linters, or other mechanical checks to
+confirm the current PR state; CI owns that signal. Do not present passing
+checks as review findings or review progress. Run a targeted experiment only
+to resolve a specific review hypothesis that existing CI evidence cannot
+answer. State the hypothesis first and report what the experiment establishes,
+not merely its exit status. Routine validation belongs to the implementation
+or CI-check lane, not the reviewer.
+
 ## Premise Gate
 
 Record this block first in every review report, before findings and before the
@@ -85,9 +103,16 @@ When the parent delegates review, build each packet from these fields:
 - Constraints: <contracts outside the diff>
 - Write policy: read-only
 - Lane: <skills and tools>
+- Review boundary: assess test value; no routine CI reruns or passing-check reports;
+  execute only to resolve a stated hypothesis unanswered by existing evidence
 - Required evidence: premise gate, findings as conventional comments, verdict
 - Exit criteria: <what ends the review>
 ```
+
+Include the test-value and execution boundary in every dispatched review packet,
+including named-model and fallback workers. Do not pass only the premise-gate
+report template: it omits this boundary. Apply it to review progress and final
+synthesis as well as worker findings.
 
 At least one reviewer receives a `blind` packet: the problem statement,
 repository context, and target, without the author's claims, the chosen
