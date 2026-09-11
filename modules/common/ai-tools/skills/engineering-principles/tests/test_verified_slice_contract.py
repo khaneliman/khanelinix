@@ -5,6 +5,7 @@ from pathlib import Path
 
 SKILL = Path(__file__).resolve().parents[1] / "SKILL.md"
 REFERENCE = SKILL.parent / "references" / "verified-slice.md"
+RECEIPT = REFERENCE.parent / "slice-receipt.md"
 
 
 def normalized(path: Path) -> str:
@@ -33,8 +34,8 @@ class VerifiedSliceContractTests(unittest.TestCase):
             "another ref mutation",
         ):
             self.assertIn(forbidden, text)
-        self.assertIn("do not stack several uncommitted slices", text)
-        self.assertIn("do not create a knowingly broken commit", text)
+        self.assertIn("do not call a pile of unrecorded shared-tree edits", text)
+        self.assertIn("do not commit knowingly broken code", text)
 
     def test_loop_orders_review_receipt_commit_and_confirmation(self) -> None:
         text = normalized(REFERENCE)
@@ -47,7 +48,7 @@ class VerifiedSliceContractTests(unittest.TestCase):
             "**correct.**",
             "**prepare candidate.**",
             "**bind evidence.**",
-            "**commit or hand off.**",
+            "**commit or preserve.**",
             "**confirm occurrence.**",
             "**advance.**",
         )
@@ -55,12 +56,12 @@ class VerifiedSliceContractTests(unittest.TestCase):
         positions = [text.index(marker) for marker in ordered]
         self.assertEqual(positions, sorted(positions))
         self.assertIn("the lifecycle owner validates reviewer findings", text)
-        self.assertIn("one correction and one re-review", text)
+        self.assertNotIn("one correction and one re-review", text)
         self.assertIn("if slice changes cannot be separated", text)
-        self.assertIn("stop before another shared-tree slice", text)
+        self.assertIn("verified, preserved candidate", text)
 
     def test_receipt_matches_committed_content(self) -> None:
-        text = normalized(REFERENCE)
+        text = normalized(RECEIPT)
 
         for field in (
             "base_commit",
@@ -74,7 +75,7 @@ class VerifiedSliceContractTests(unittest.TestCase):
         ):
             self.assertIn(field, text)
         self.assertIn(
-            "the committed content digest must equal the receipt content digest",
+            "if `committed_content_digest` differs from `receipt_content_digest`",
             text,
         )
         self.assertIn("mark the occurrence `not_verified`", text)
@@ -96,14 +97,14 @@ class VerifiedSliceContractTests(unittest.TestCase):
         self.assertTrue(tool.is_file())
 
     def test_workspace_only_candidates_have_a_digest_mode(self) -> None:
-        text = normalized(REFERENCE)
+        text = normalized(RECEIPT)
 
         self.assertIn("`candidate_form` `patch` selects `--worktree`", text)
         self.assertIn("reads the worktree without staging or committing", text)
         self.assertIn("every mode fails when its selected diff contains zero", text)
 
     def test_committed_digest_takes_one_commit(self) -> None:
-        text = normalized(REFERENCE)
+        text = normalized(RECEIPT)
 
         self.assertNotIn("parent_sha..commit_sha", text)
         self.assertIn("derives the first parent and digests that diff", text)

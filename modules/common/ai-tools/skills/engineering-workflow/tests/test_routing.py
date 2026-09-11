@@ -174,10 +174,10 @@ class PlaybookContract(unittest.TestCase):
         self.assertRegex(
             lowered,
             r"with `local-commit`, prepare and commit the candidate, "
-            r"then confirm occurrence\. otherwise, hand off the exact patch and stop\.",
+            r"then confirm occurrence\. without commit authority, preserve the exact patch",
         )
         self.assertIn("do not batch edits before verification", lowered)
-        self.assertIn("confirmed occurrence and durable rollback boundary", lowered)
+        self.assertIn("verified evidence and a durable rollback boundary", lowered)
 
     def test_architecture_only_has_one_non_mutating_route(self) -> None:
         self.assertIn("Architecture-only work: `software-engineering`.", self.body)
@@ -211,7 +211,7 @@ class PlaybookContract(unittest.TestCase):
         authority = self.body.split("## Authority", maxsplit=1)[1].split(
             "## Phases", maxsplit=1
         )[0]
-        self.assertIn("explicit `local-commit` authority", authority)
+        self.assertIn("local-commit authority from the current request or standing user policy", authority)
         self.assertIn("implies no authority", authority)
         for capability in ("push", "merge", "publish", "deploy", "pull request"):
             self.assertIn(capability, authority)
@@ -264,9 +264,9 @@ class GatesContract(unittest.TestCase):
         self.assertRegex(self.text, r"normal:\s*required")
         self.assertRegex(self.text, r"high:\s*required")
 
-    def test_correction_and_review_are_bounded(self) -> None:
-        self.assertIn("one correction", self.text)
-        self.assertIn("one re-review", self.text)
+    def test_correction_is_not_limited_to_one_pass(self) -> None:
+        self.assertNotIn("one correction", self.text)
+        self.assertNotIn("one re-review", self.text)
 
     def test_risk_levels_are_disjoint_for_one_file(self) -> None:
         self.assertIn("normal**: multiple files within one module", self.text)

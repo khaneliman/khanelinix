@@ -64,8 +64,9 @@ State the hypothesis and predicate. Then run each planned unit through the
 `verified-slice` method in `engineering-principles`. It handles baseline,
 implementation, proportional verification, review, correction, and exact
 candidate preparation. With `local-commit`, commit the candidate, then confirm
-occurrence. Otherwise, hand off the exact patch and stop. Start the next unit
-only after a confirmed occurrence and durable rollback boundary.
+occurrence. Without commit authority, preserve an exact patch or isolated
+worktree. Advance after verified evidence and a durable rollback boundary.
+Honor standing local-commit authority without asking again.
 
 Inspect the real artifact, never a self-report. Pair delegated work with a judge
 and audit its artifact. Use VERIFIED, NOT_VERIFIED, or INCONCLUSIVE. An
@@ -74,9 +75,9 @@ inconclusive result does not pass.
 ## Phase D: Keep the audit trail
 
 Log the run through `show-me-your-work`: one canonical TSV with a row per
-decision and per unit, evidence as links. Commit the trail when the reviewer
-needs it to trust the result, which is usual for work this size. Prefer
-evidence produced by committed scripts so a reviewer can re-run it.
+decision and per unit, evidence as links. Include the trail when needed to
+review the result: commit it with local-commit authority, otherwise preserve it
+with the workspace-only artifact. Prefer reproducible evidence.
 
 ## Phase E: Verify and hand back
 

@@ -47,11 +47,14 @@ correction, not a second mechanical validation pass by the reviewer.
 
 - The parent classifies findings by evidence and risk. Accepted
   completion-blocking findings block handoff. Suggestions never expand scope.
-- Allow one correction pass on accepted findings.
-- Allow one re-review after that correction.
-- If accepted completion-blocking findings remain after re-review, stop and hand
-  them to the user. Report rejected and nonblocking findings with reasons. Do
-  not loop.
+- Correct accepted blockers within scope, then revalidate invalidated evidence.
+- Request re-review for the corrected concerns; do not restart cleared review
+  work without new evidence.
+- Continue while evidence improves or accepted blockers shrink. If the same
+  failure repeats without progress, re-ground the cause or escalate the method.
+- Stop only for a concrete blocker, exhausted explicit budget, missing authority,
+  or a material decision that requires the user. Report remaining blockers and
+  rejected or nonblocking findings with reasons.
 
 ## Evidence Gate
 

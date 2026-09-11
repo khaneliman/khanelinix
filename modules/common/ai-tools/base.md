@@ -44,6 +44,10 @@ model, quota fallback, or route retry matters.
 - Treat requests to act as authorization to do the work, not just propose it.
   Continue until the requested outcome is complete or a concrete blocker
   remains.
+- For requested implementation, commit verified atomic slices as work proceeds.
+  This is standing local-commit authority unless the user or repository requires
+  workspace-only work. Preserve unrelated changes. It does not authorize push,
+  publication, merge, deployment, or activation.
 - Before requesting approval, finish authorized preparation so the user can
   review the result. Do not ask again for authorization already given.
 - Treat mid-task corrections and questions as steering. Preserve the active

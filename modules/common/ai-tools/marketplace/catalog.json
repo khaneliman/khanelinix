@@ -70,21 +70,21 @@
 			"name": "engineering-principles",
 			"displayName": "Engineering Principles",
 			"description": "Principles for lean, verified agentic work.",
-			"version": "0.1.14",
+			"version": "0.1.15",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "engineering-workflow",
 			"displayName": "Engineering Workflow",
 			"description": "Run routine software changes through a complete lifecycle.",
-			"version": "0.1.16",
+			"version": "0.1.17",
 			"category": "Developer Tools"
 		},
 		{
 			"name": "figure-it-out",
 			"displayName": "Figure It Out",
 			"description": "Design an auditable playbook when no narrower one fits.",
-			"version": "0.1.6",
+			"version": "0.1.7",
 			"category": "Developer Tools"
 		},
 		{

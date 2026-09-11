@@ -57,10 +57,10 @@ class FigureItOutContract(unittest.TestCase):
             text,
             re.compile(
                 r"with `local-commit`, commit the candidate, then confirm "
-                r"occurrence\. otherwise, hand off the exact patch and stop\."
+                r"occurrence\. without commit authority, preserve an exact patch"
             ),
         )
-        self.assertIn("confirmed occurrence and durable rollback boundary", text)
+        self.assertIn("verified evidence and a durable rollback boundary", text)
 
     def test_audit_trail_uses_show_me_your_work(self) -> None:
         text = section("## Phase D", "## Phase E")

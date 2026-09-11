@@ -26,7 +26,9 @@ Investigation inside a mutation is a phase here, not a separate entry.
 Parent owns architecture acceptance, integration, final judgment, and authority.
 Workers never own them.
 
-Create a local commit only with explicit `local-commit` authority. This grant
+Honor local-commit authority from the current request or standing user policy.
+Commit each verified atomic slice when authorized; do not wait for a reminder.
+Without that authority, preserve an exact patch before continuing. This grant
 implies no authority to push, merge, publish, deploy, open a pull request, or
 make another external write. Stop and ask when a required capability is missing.
 
@@ -59,7 +61,8 @@ Run these phases in order. Skip a phase only when a gate rule allows it.
 5. **Review.** Get a fresh independent review when risk requires it. Use
    `interrogate` for a contested or high-stakes change.
 6. **Correct.** Fix accepted findings, then revalidate the touched surface.
-   Allow one correction and one re-review at most.
+   Continue on accepted blockers while making progress within scope. Re-ground
+   repeated unchanged failures instead of repeating the same correction.
 7. **Hand off.** Report outcome, changed files, intentional omissions,
    verification gaps, and residual risk.
 8. **Reflect.** Optional when installed. Use `reflect` after a correction or
@@ -74,9 +77,9 @@ Ground and Shape can cover the full stack. When the work needs review evidence,
 commit boundaries, or authority checks, run one planned unit at a time through
 the `verified-slice` method in `engineering-principles`. Each unit runs
 Implement through Correct. With `local-commit`, prepare and commit the candidate,
-then confirm occurrence. Otherwise, hand off the exact patch and stop. Do not
-batch edits before verification. Start the next unit only after a confirmed
-occurrence and durable rollback boundary.
+then confirm occurrence. Without commit authority, preserve the exact patch or
+an isolated worktree. Do not batch edits before verification. Advance after
+verified evidence and a durable rollback boundary, not a mandatory commit.
 
 ## Gates
 
