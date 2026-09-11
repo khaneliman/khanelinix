@@ -106,20 +106,11 @@ diff --git a/apps/server/src/orchestration/Layers/ProviderCommandReactor.ts b/ap
 index 6df08bfadb9c77d3fef31bbd371b51ac54de76a7..5ac53795cd89a610c3e94609c89a42ebbef736d8 100644
 --- a/apps/server/src/orchestration/Layers/ProviderCommandReactor.ts
 +++ b/apps/server/src/orchestration/Layers/ProviderCommandReactor.ts
-@@ -18,10 +18,13 @@ import * as Cache from "effect/Cache";
- import * as Cause from "effect/Cause";
- import * as Crypto from "effect/Crypto";
- import * as DateTime from "effect/DateTime";
-+import * as Deferred from "effect/Deferred";
- import * as Duration from "effect/Duration";
- import * as Effect from "effect/Effect";
- import * as Equal from "effect/Equal";
+@@ -25,2 +25,4 @@ import * as Equal from "effect/Equal";
  import * as FileSystem from "effect/FileSystem";
 +import * as Fiber from "effect/Fiber";
 +import * as FiberSet from "effect/FiberSet";
  import * as Layer from "effect/Layer";
- import * as Option from "effect/Option";
- import * as Schedule from "effect/Schedule";
 @@ -1772,7 +1775,33 @@ const make = Effect.gen(function* () {
        }),
      );

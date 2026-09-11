@@ -1,4 +1,4 @@
-# Rebased onto pingdotgg/t3code 12391bd0d38e. Order is load-bearing:
+# Rebased onto pingdotgg/t3code e22040dfc190. Order is load-bearing:
 # the sidebar and identity patches extend the timeout-patched Codex runtime.
 [
   # Fork bf5a88adca, including both drawer entry points and vendor chunking.

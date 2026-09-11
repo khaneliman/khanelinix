@@ -10,9 +10,9 @@ index 5f339b0147dce1cea1a591d8c3e89d58a8e2efa6..f95baabc456d72c1779730bd7cbedfd7
  import {
    AlarmClockIcon,
    CheckCircle2Icon,
-@@ -553,6 +552,7 @@ const PreviewPanel = lazy(() =>
+@@ -581,6 +580,7 @@ const DevicePanel = lazy(() =>
+   import("./device/DevicePanel").then((module) => ({ default: module.DevicePanel })),
  );
- const DiffPanel = lazy(() => import("./DiffPanel"));
  const FilePreviewPanel = lazy(() => import("./files/FilePreviewPanel"));
 +const ThreadTerminalDrawer = lazy(() => import("./ThreadTerminalDrawer"));
  const EMPTY_PENDING_FILE_SURFACE_IDS: ReadonlySet<string> = new Set();
