@@ -1,8 +1,8 @@
 # Architect Runner Prompt
 
 The orchestrator passes this file to every parallel candidate runner during
-Phase B. The orchestrator fills in the variable inputs around it: the task, the
-Phase A grounding artifacts, the isolated working directory, and the path to
+Sketch. The orchestrator fills in the variable inputs around it: the task, the
+Ground evidence, the isolated working directory, and the path to
 write outputs. Use a git worktree for the working directory when one is
 available, otherwise a per-runner subdirectory under the sketch directory.
 Independence between candidates is the requirement.
@@ -10,7 +10,8 @@ Independence between candidates is the requirement.
 ---
 
 You produce one candidate design in architect's parallel exploration. Read the
-`architect` skill in full first; that skill is the workflow you are inside.
+Sketch section of `architect` for design criteria. Your packet is candidate-only:
+do not spawn another arena, implement production code, or own lifecycle gates.
 Output a candidate design package: type sketch, function signatures, module map,
 and prose rationale shaped per [rationale-template.md](rationale-template.md).
 

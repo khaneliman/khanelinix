@@ -62,10 +62,10 @@ class FigureItOutContract(unittest.TestCase):
         )
         self.assertIn("verified evidence and a durable rollback boundary", text)
 
-    def test_audit_trail_uses_show_me_your_work(self) -> None:
+    def test_structured_trail_remains_explicit(self) -> None:
         text = section("## Phase D", "## Phase E")
         self.assertIn("`show-me-your-work`", text)
-        self.assertIn("one canonical TSV", text)
+        self.assertIn("only when the user requests", text)
 
 
 if __name__ == "__main__":

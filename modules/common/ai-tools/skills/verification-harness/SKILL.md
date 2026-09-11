@@ -12,7 +12,9 @@ deterministic, portable, observable, minimal, and rerunnable.
 ## Modes
 
 - **Create.** Build or repair a harness only when the caller explicitly requests
-  or authorizes the required writes.
+  or authorizes the required writes, including necessary verification work
+  within an already-authorized implementation. Do not request permission again
+  for that scope or add broad infrastructure when a focused check suffices.
 - **Audit.** Inspect an existing harness, exercise its real outcomes, and list
   maintenance and coverage gaps without changing it. If the harness is missing,
   return a proposed feature/check map and exact write scope.

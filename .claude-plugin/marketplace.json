@@ -19,7 +19,7 @@
 		{
 			"name": "architect",
 			"description": "Sketch types and module structure before implementation.",
-			"version": "0.1.6",
+			"version": "0.1.7",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -99,7 +99,7 @@
 		{
 			"name": "engineering-workflow",
 			"description": "Run routine software changes through a complete lifecycle.",
-			"version": "0.1.17",
+			"version": "0.1.18",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -109,7 +109,7 @@
 		{
 			"name": "figure-it-out",
 			"description": "Design an auditable playbook when no narrower one fits.",
-			"version": "0.1.7",
+			"version": "0.1.8",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -149,7 +149,7 @@
 		{
 			"name": "how",
 			"description": "Explain how a subsystem works from codebase exploration.",
-			"version": "0.1.6",
+			"version": "0.1.7",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -409,7 +409,7 @@
 		{
 			"name": "verification-harness",
 			"description": "Create or audit deterministic verification surfaces.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"author": {
 				"name": "khaneliman"
 			},

@@ -30,29 +30,30 @@ Do not start the run until you can state:
   artifacts, not "try harder".
 
 Present the framing and tradeoffs before committing to a long run. Reversible
-work proceeds without asking; a multi-hour run earns one checkpoint.
+work proceeds within existing authority. Duration alone adds no approval gate;
+honor requested checkpoints and surface material unresolved choices.
 
 ## Phase B: Design the workflow
 
 Decompose the task into atomic, independently landable units. Before writes,
 use `git-toolkit` to plan the stack and its rollback boundaries. Sequence the
-riskiest unknown first. Build scaffold and verification before features.
+riskiest unknown first. Reuse the acceptance summary from
+`engineering-workflow`'s phase-handoff method when it helps transfer work.
 
-- Build the verification harness before the work. Capture the baseline from the
-  pre-change state so each check reads as old value against new value.
-- For one-way-door design decisions, run `architect`, which runs `arena`, with
-  diverse, isolated, opinionated candidates and a read-only judge on a different
-  model family. Skip it for mechanical work whose shape is already concrete (the
-  laziness-protocol principle in `engineering-principles`).
+- Choose existing checks or the narrowest missing verification surface. TDD is
+  opt-in, not a requirement to scaffold a harness before every change.
+- Use `architect` as a design method when the shape has material uncertainty.
+  It selects one sketch or competing candidates according to the decision risk.
+  Skip design artifacts for mechanical work whose shape is already concrete.
 - Parallelize only across genuine seams. Give each parallel worker its own
   worktree or branch so no two workers share mutable state.
-- Write the designed phase list down. The human reviews that list. When the run
+- Keep the designed phase list visible for review. When the run
   spans sessions or risks compaction, persist it and the findings through
   `planning-with-files`.
 
 Then add the design's steps to the todolist as concrete items, after the Phase C
-entry and before Phase D. Run each step under the Phase C loop and log one Phase
-D row as each step lands.
+entry and before Phase D. Run each step under the Phase C loop and update the
+Phase D trail as each step lands.
 
 ## Phase C: Run the loop
 
@@ -68,15 +69,15 @@ occurrence. Without commit authority, preserve an exact patch or isolated
 worktree. Advance after verified evidence and a durable rollback boundary.
 Honor standing local-commit authority without asking again.
 
-Inspect the real artifact, never a self-report. Pair delegated work with a judge
-and audit its artifact. Use VERIFIED, NOT_VERIFIED, or INCONCLUSIVE. An
-inconclusive result does not pass.
+Inspect the real artifact, never a self-report. Apply the slice's proportional
+review gate; do not add a judge for every worker on top of slice review. Use
+VERIFIED, NOT_VERIFIED, or INCONCLUSIVE. An inconclusive result does not pass.
 
 ## Phase D: Keep the audit trail
 
-Log the run through `show-me-your-work`: one canonical TSV with a row per
-decision and per unit, evidence as links. Include the trail when needed to
-review the result: commit it with local-commit authority, otherwise preserve it
+Keep decisions, slice results, and evidence links in existing task notes. Use
+`show-me-your-work` only when the user requests its structured trail. Include
+the trail when needed to review the result: commit it with local-commit authority, otherwise preserve it
 with the workspace-only artifact. Prefer reproducible evidence.
 
 ## Phase E: Verify and hand back

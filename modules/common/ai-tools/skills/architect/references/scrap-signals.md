@@ -10,8 +10,8 @@ instance. Tells:
 - The "we need a lock" reflex appears when the sketch said the state was not
   shared.
 - Callers must learn the abstraction's internal rules to use it.
-- Two or more independent Phase D deviations share the same shape. Surfacing
-  deviations is Phase D's job; a repeated pattern of them is Phase E's trigger.
+- Two or more independent implementation deviations share the same shape.
+  Surface each deviation; a repeated pattern triggers design revision.
 
 Use judgment. A few edge cases do not condemn an architecture. Some problems are
 legitimately complex; complexity in the data is not complexity in the design.

@@ -5,95 +5,46 @@ description: "Explain a subsystem through direct codebase exploration. Use for h
 
 # How
 
-Explore the codebase to answer "how does X work?" questions. Produce
-architectural explanations at the level of a senior engineer onboarding onto a
-subsystem. Give the reader enough to build a working mental model, not annotated
-source code.
+Explain actual behavior from code and caller evidence. Give the reader a working
+mental model, not annotated source. When called inside another lifecycle, return
+the traced evidence to that owner without starting another workflow.
 
-Two modes:
+## Scope and Explore
 
-1. **Explain** (default). Explore the codebase and produce a clear explanation.
-2. **Critique**. Explain first, then spawn independent reviewers to identify
-   architectural issues.
+Identify the subsystem, feature flow, runtime trace, or placement question.
+Resolve facts from code and tools. State a reasonable scope assumption when the
+request permits it; ask only when a material choice cannot be resolved safely.
+Reuse current evidence rather than repeating an exploration already completed.
 
-## Explain Mode
+- **Simple:** trace and explain directly in the parent. Delegation is optional
+  when one bounded lookup would materially reduce context or latency.
+- **Complex:** split independent facts into bounded read-only explorer packets.
+  Keep tightly coupled reasoning and synthesis in the parent. Do not create
+  overlapping searches or a separate synthesis worker merely to satisfy phases.
 
-### 1. Understand the Question and Assess Complexity
+Use [explorer-prompt.md](references/explorer-prompt.md) for delegated discovery.
+Each packet names its paths, question, constraints, required evidence, and exit
+criteria. Give only the relevant facts, not the conversation history.
 
-Identify the scope: a subsystem, a feature flow, an architectural overview, or a
-runtime trace. If the question is ambiguous, state your best-guess
-interpretation before exploring. Do not ask. Let the user redirect you if the
-guess is wrong.
+## Synthesize
 
-Assess complexity to choose the approach:
+Inspect returned paths and verify claims that determine the explanation.
+Reconcile contradictions and distinguish observed behavior from inference.
+The parent owns the conclusion and may substantially correct or rewrite worker
+output. Never forward an unverified worker explanation as the final product.
 
-- **Simple** (a single module, a small utility, a narrow question such as "how
-  does function X work"): skip explorers. The explainer explores and explains in
-  a single pass. Go to step 2b.
-- **Complex** (a subsystem spanning multiple files or services, a cross-cutting
-  feature, a full architectural overview): spawn parallel explorers first, then
-  hand off to the explainer. Go to step 2a.
+Use [explainer-prompt.md](references/explainer-prompt.md) for explanation shape.
+Scale the output to the question; a small helper does not need a subsystem report.
 
-When in doubt, lean simple. You can still spawn explorers if the explainer hits
-a wall.
+## Critique When Requested
 
-### 2a. Explore (complex questions only)
+For architectural issues or improvement requests, establish the current model
+before critique. Reuse the explanation above or existing verified grounding.
+Use [critique-rubric.md](references/critique-rubric.md) to frame one fresh reviewer;
+[critic-prompt.md](references/critic-prompt.md) supplies its evidence contract.
+Escalate to `interrogate` for contested, high-risk, or explicit multi-angle review,
+not every architectural question.
 
-Decompose the question into 2-4 parallel exploration angles, one distinct slice
-of the subsystem per explorer, so explorers do not duplicate work. For "how does
-the rate limiter work?": data model and state, request path and enforcement,
-configuration and metrics. Narrow questions need 2 explorers; broad subsystems
-up to 4.
-
-Spawn all explorers in a single message as parallel read-only subagents. Give
-each explorer the base prompt from
-[explorer-prompt.md](references/explorer-prompt.md) plus a specific angle that
-names its slice. The template owns the exploration method and the structured
-findings format. Overlap between explorers is acceptable; the explainer
-reconciles it.
-
-Then go to step 3.
-
-### 2b. Direct Explain (simple questions)
-
-Spawn a single read-only subagent that explores and explains in one pass. The
-subagent runs its own exploration with Glob, Grep, and Read, then writes the
-explanation directly. Read [explainer-prompt.md](references/explainer-prompt.md)
-for the communication style and output format. Use the same structure, without
-explorer findings as input.
-
-Then go to step 4.
-
-### 3. Synthesize (complex questions only)
-
-After all explorers return, spawn a single read-only subagent to synthesize
-their findings into one coherent explanation. Give the explainer every
-explorer's findings. Read [explainer-prompt.md](references/explainer-prompt.md)
-for the full prompt template and output format. The explainer reconciles
-overlapping findings, resolves contradictions, and weaves the slices into a
-unified picture.
-
-### 4. Present
-
-Present the explainer's output to the user. Light edits for clarity and context
-from the conversation are fine. Do not rewrite it substantially. The explainer's
-communication is the product.
-
-## Critique Mode
-
-Use critique mode when the user asks for architectural issues, problems, or
-improvements instead of understanding alone.
-
-1. **Explain first.** Run the full explain flow above. You must understand the
-   architecture before you critique it.
-2. **Spawn critics** in a single message, one per distinct model family or
-   subagent. Build each prompt from
-   [critic-prompt.md](references/critic-prompt.md); every critic receives the
-   explanation, the relevant file paths, and the rubric from
-   [critique-rubric.md](references/critique-rubric.md).
-3. **Lead judgment.** Apply the same framework as the `interrogate` skill: act
-   as a pragmatic lead, not an aggregator. Categorize findings as act on,
-   consider, noted, or dismissed.
-
-Present the explanation first, then the critique verdict below it. The
-explanation must stand on its own.
+The parent classifies findings as act on, consider, noted, or dismissed, with
+reasons. Present the explanation and any requested critique verdict. Return to
+the caller when this skill is only a grounding method.

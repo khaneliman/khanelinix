@@ -2,7 +2,7 @@
 	"name": "architect",
 	"displayName": "Architect",
 	"description": "Sketch types and module structure before implementation.",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"author": {
 		"name": "khaneliman"
 	},

@@ -25,7 +25,8 @@ that would fail if the change were wrong.
 
 Run the real command, build, or test. Do not infer a pass from reading code. Use
 `verification-harness` to audit or propose when the required real surface is
-missing, slow, or unreliable. Create or repair it only with explicit authority.
+missing, slow, or unreliable. Limit creation or repair to the caller's authorized
+scope; reuse existing checks before adding infrastructure.
 When installed, use `performance-forensics` when completion depends on a
 measured performance claim.
 

@@ -36,7 +36,9 @@ make another external write. Stop and ask when a required capability is missing.
 
 Run these phases in order. Skip a phase only when a gate rule allows it.
 
-1. **Ground.** Separate known requirements from assumptions. Read the real code
+1. **Ground.** Keep a compact acceptance summary using
+   [phase-handoff.md](references/phase-handoff.md). Separate requirements from
+   assumptions. Read the real code
    and constraints. Resolve empirical forks with a cheap probe. Ask only for a
    product choice or missing authority. Use `research` for external
    primary-source facts. Use `requirements-interview` only when a material
@@ -44,7 +46,7 @@ Run these phases in order. Skip a phase only when a gate rule allows it.
    `why` for motivation or regression history. For a hard general bug, use
    `diagnosing-bugs` to establish the exact symptom and supported cause.
 2. **Shape.** Choose change shape and sequence. Use `architect` for a
-   non-trivial feature or a change crossing module boundaries. Use
+   material uncertainty about interfaces, state, or module boundaries. Use
    `engineering-principles` for diff sizing and work order. Before writes, use
    `git-toolkit` to plan independently valid commit units when work needs
    multiple slices or local commits. Read [task-shapes.md](references/task-shapes.md).
@@ -54,7 +56,8 @@ Run these phases in order. Skip a phase only when a gate rule allows it.
    use workers.
 4. **Verify.** Run focused verification against the matching real surface. Use
    `verification-harness` to audit or propose when that surface is missing or
-   unreliable. Create or repair a harness only with explicit authority. When
+   unreliable. Create or repair only the surface needed within the caller's
+   authorized scope; do not require another grant for already-authorized work. When
    installed, use `performance-forensics` for measured performance claims. Use
    `blast-radius` when reach past the diff is unclear. Read
    [gates.md](references/gates.md).

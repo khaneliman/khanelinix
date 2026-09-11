@@ -1,100 +1,81 @@
 ---
 name: architect
-description: "Sketch types, signatures, and module structure before code, then implement against the agreed sketch. Use for /architect, 'architect this', 'design this', or non-trivial features where jumping to code locks in the wrong shape."
+description: "Sketch interfaces, state, and module structure before code. Use for explicit design-led implementation or as a caller-owned design method when material uncertainty makes the change shape non-obvious."
 ---
 
 # Architect
 
-Design before implementing. Sketch types, signatures, and module boundaries with
-`not implemented` bodies and pseudocode, synthesize across multiple model
-perspectives, then fill in code against the chosen sketch. If implementation
-proves the sketch wrong, discard the sketch and redesign.
+Choose the smallest design artifact that resolves a material uncertainty.
+Ground it in actual callers and constraints before implementing.
 
-Open a todolist with one entry per phase (Ground, Sketch, Agree, Implement,
-Scrap) before starting. Autonomous runs without checkpoints need the list to
-show phase position and to keep phases from disappearing silently.
+## Invocation Boundary
 
-## Phase A: Ground the Problem
+- **Caller-owned method:** when another lifecycle invokes this skill during
+  Shape, return the design, acceptance evidence, and open choices. Do not begin
+  implementation or take over the caller's lifecycle.
+- **Direct design-led implementation:** when the user requests design and
+  implementation, own that sequence through verification and handoff. Preserve
+  explicit plan-only or checkpoint requests. Use the existing lifecycle's
+  verification and review methods rather than inventing another gate policy.
 
-Build a real mental model of every system the new code touches. Run the `how`
-skill over the relevant subsystems. Use critique mode when existing structure is
-the constraint, or when the design must push back on that structure.
+Reuse completed grounding, requirements, and checks. Do not rerun a phase merely
+because its evidence came from another skill or worker.
 
-Naming a file is not grounding; produce the traced model that `how` prescribes.
-If the design redefines ownership or layering, also run the `why` skill so the
-recorded rationale becomes a constraint instead of a guess.
+## Ground
 
-Skip Phase A only for greenfield work with no surrounding system to integrate.
+Trace the affected callers, state, interfaces, and constraints. Use `how` when
+structure is unfamiliar and `why` when recorded ownership or historical intent
+could change the design. A caller's current traced evidence can satisfy this
+phase. Greenfield work still needs requirements and integration constraints.
 
-## Phase B: Sketch
+Separate verified requirements from assumptions. Ask only for a material
+product choice that cannot be resolved from available evidence.
 
-Run the `arena` skill with the design-sketch task and the Phase A grounding
-artifacts. Pass [runner-prompt.md](references/runner-prompt.md) as each runner's
-prompt. Arena owns runner selection; fan out across distinct model families or
-subagents so candidates diverge. Each candidate produces a design package shaped
-per [rationale-template.md](references/rationale-template.md), the caller's
-usage written first.
+## Sketch
 
-Design it twice: require at least two structurally distinct candidates before
-synthesis, even when the first looks sufficient. Compare whole shapes, not point
-fixes inside one shape.
+Write the caller's usage first, then derive the interface or state model.
+Select an artifact for the unresolved question:
 
-Screen every candidate against
-[design-red-flags.md](references/design-red-flags.md) before synthesis. Reject
-or revise flagged shapes, and compare viable candidates on interface depth as
-that reference defines it.
+- Types, signatures, and pseudocode for algorithms or API contracts.
+- A module or state diagram for ownership, transitions, and failure behavior.
+- A runnable throwaway mockup for interaction or state/logic choices.
+- Images or visual variants when appearance itself is the decision.
 
-Arena returns one synthesized design package. The synthesis decision populates
-the rationale's "Synthesis decision" section.
+Use existing domain or visual tools when needed. Mark throwaway artifacts and
+record the question they answered; do not add production infrastructure or
+unnecessary tests to a disposable exploration.
 
-## Phase C: Agree (Opt-In)
+Start with one sketch. Use `arena` for explicitly requested competing designs,
+one-way-door decisions, or consequential uncertainty between viable shapes.
+Then require at least two structurally distinct candidates, an independent judge,
+and a synthesized decision. Use `multi-provider-sdlc` when distinct model-family
+perspectives are needed; subscription diversity alone is not enough.
 
-Default: proceed directly to implementation with no human checkpoint. Opt in
-only when the invoker asks explicitly ("/architect with checkpoint", "stop and
-show me before implementing"); then surface the synthesized design and pause for
-sign-off. For adversarial pressure on the design before implementation, run the
-`interrogate` skill on the synthesized sketch.
+For competing candidates, pass [runner-prompt.md](references/runner-prompt.md)
+and use [rationale-template.md](references/rationale-template.md). For one sketch,
+record only the problem, caller usage, shape, material tradeoffs, acceptance
+checks, and unresolved choices. Do not manufacture alternatives or synthesis.
+Consult [design-red-flags.md](references/design-red-flags.md) when boundaries or
+interface complexity remain uncertain.
 
-The synthesis can ship as its own commit either way. Scaffold first, so later
-commits fill in bodies against a stable contract. Planned and scoped breakage
-during fill-in is acceptable.
+## Return or Implement
 
-If the human pushes back on the shape, in a checkpoint or after the fact, treat
-that pushback as Phase A evidence. Re-ground and re-run Phase B before writing
-more code.
+Return the sketch to a lifecycle caller. For direct design-led implementation,
+proceed when scope and authority are settled. Pause only for a requested
+checkpoint or unresolved blocking choice. Adversarial pressure on a consequential
+design can use `interrogate`; routine designs do not require a council.
 
-## Phase D: Implement Against the Sketch
+Implement against the chosen contract, preserving opt-in TDD. Use the
+`verified-slice` method in `engineering-principles` for proportional verification,
+review, correction, and atomic commits under current or standing authority.
+A scaffold is independently committable only when it remains green and useful.
 
-Replace `not implemented` bodies with code, and pseudocode with logic. The
-synthesized sketch is the contract.
+## Revise When Evidence Changes
 
-Deviations from the sketch are signal worth surfacing, not friction to absorb
-silently. If a function needs a parameter the sketch did not anticipate, ask
-whether the sketch was wrong, the requirement was missed, or the implementation
-overreaches. Surface the deviation. Do not bolt it on.
+Surface material deviations from the sketch. If implementation reveals a missed
+constraint, update the design and affected acceptance evidence before continuing.
+Do not restart all research for one edge case.
 
-## Phase E: Scrap When the Architecture Is Wrong
-
-If implementation keeps producing friction the sketch cannot absorb, discard the
-sketch instead of bolting on fixes, per the fix-root-causes principle in
-`engineering-principles`.
-
-The signal is a pattern, not a single instance. Judge against the tells in
-[scrap-signals.md](references/scrap-signals.md) before condemning a sketch. A
-few edge cases do not condemn an architecture.
-
-When you scrap:
-
-1. Re-run the `how` skill over what exists. Implementation lessons enter the new
-   design as inputs, not impressions.
-2. Redesign as if the new constraints had been day-one assumptions. Per the
-   subtract-before-you-add principle, the new sketch should be smaller than the
-   old one before it grows.
-3. Return to Phase B and re-run arena.
-
-## Outputs
-
-Write the caller's usage first and derive the type sketch from that usage.
-Deliver one file with new types and signatures for small changes, or a module
-map plus type definitions for larger work. Ship the rationale alongside the
-sketch, shaped per [rationale-template.md](references/rationale-template.md).
+When friction forms a pattern, consult [scrap-signals.md](references/scrap-signals.md).
+Re-ground only the invalidated assumptions, simplify the design, and return to
+Sketch. Repeat candidate fan-out only when the uncertainty still warrants it.

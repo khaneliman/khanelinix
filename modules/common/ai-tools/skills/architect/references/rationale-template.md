@@ -8,7 +8,7 @@ content.
 
 _One paragraph. State what the work must do, and what about the existing system
 or constraints makes the shape non-obvious. If
-[Phase A](../SKILL.md#phase-a-ground-the-problem) surfaced constraints the
+[Ground](../SKILL.md#ground) surfaced constraints the
 design must honor, name them here. Examples: existing types to interoperate
 with, callers you cannot break, invariants that crossed the boundary. The reader
 must see the same constraints you saw._
@@ -34,8 +34,8 @@ decision, for example "per boundary discipline". Do not restate the principle._
 
 ## Synthesis Decision
 
-_Filled in by the `arena` skill. Record which candidate became the base and why,
-what you adapted from each of the others, and what you rejected and why._
+_Include only for competing candidates, filled in by the orchestrator. Record
+which candidate became the base and why, what you adapted from each of the others, and what you rejected and why._
 
 ## Tradeoffs Accepted
 
@@ -64,5 +64,5 @@ question, so the human's answer becomes the resolution instead of a comment._
 ## Next Implementation Step
 
 _The first thing to build against the sketch. One sentence. State what you would
-start writing immediately after synthesis, or after Phase C sign-off when a
-checkpoint was opted into._
+start writing immediately after synthesis, or after the requested checkpoint
+when one was opted into._

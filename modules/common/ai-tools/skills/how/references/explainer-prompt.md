@@ -1,7 +1,7 @@
 # Explainer Prompt Template
 
-Build the explainer subagent's prompt from this template, filling in the
-placeholders.
+Use this shape in the parent, or fill the placeholders for a bounded synthesis
+worker when delegation is useful. It does not require a separate worker.
 
 ---
 
