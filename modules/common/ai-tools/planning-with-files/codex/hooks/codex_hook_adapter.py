@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -38,20 +39,38 @@ def session_id_from_payload(payload: dict[str, Any]) -> str | None:
 
 
 def is_session_attached(root: Path, session_id: str | None) -> bool:
-    """Return True if this session should receive plan context.
-
-    Legacy mode: if .planning/sessions/ does not exist, always return True so
-    existing single-session users are not broken on upgrade.
-    Isolation mode: return True only when the session has an attached sentinel.
-    """
+    """Return True only when this session has a valid plan attachment."""
     if os.environ.get("PLANNING_DISABLED", "") == "1":
         return False  # issue #195: explicit per-invocation opt-out (one-shot exec/CI)
-    sessions_dir = root / ".planning" / "sessions"
-    if not sessions_dir.exists():
-        return True  # legacy — no sessions dir means single-session setup
-    if not session_id:
-        return False  # sessions dir exists but caller has no ID — stay silent
-    return (sessions_dir / f"{session_id}.attached").exists()
+    return attached_plan_dir(root, session_id) is not None
+
+
+def attached_plan_dir(root: Path, session_id: str | None) -> Path | None:
+    """Resolve the plan pinned to a session, never the repository pointer."""
+    if not session_id or not valid_identifier(session_id):
+        return None
+    sentinel = root / ".planning" / "sessions" / f"{session_id}.attached"
+    try:
+        plan_id = sentinel.read_text(encoding="utf-8").strip()
+    except (OSError, UnicodeError):
+        return None
+    if plan_id == ".":
+        candidate = root
+    elif valid_identifier(plan_id):
+        candidate = root / ".planning" / plan_id
+    else:
+        return None
+    try:
+        candidate = candidate.resolve(strict=True)
+        root = root.resolve(strict=True)
+        candidate.relative_to(root)
+    except (OSError, RuntimeError, ValueError):
+        return None
+    return candidate if (candidate / "task_plan.md").is_file() else None
+
+
+def valid_identifier(value: str) -> bool:
+    return re.fullmatch(r"[A-Za-z0-9_][A-Za-z0-9._-]*", value) is not None
 
 
 def emit_json(payload: dict[str, Any]) -> None:

@@ -17,6 +17,7 @@ set -u
 
 PLAN_ROOT="${1:-${PWD}/.planning}"
 ACTIVE_FILE="${PLAN_ROOT}/.active_plan"
+SESSIONS_DIR="${PLAN_ROOT}/sessions"
 
 # Plan-id safe-identifier check. Rejects whitespace, path separators, leading
 # dots, and empty strings; accepts the YYYY-MM-DD-<slug> shape from
@@ -132,6 +133,31 @@ mtime_of() {
     fi
     printf "0\n"
 }
+
+resolve_from_session() {
+    session_id="${PWF_SESSION_ID:-}"
+    slug_is_valid "${session_id}" || return 1
+    attachment="${SESSIONS_DIR}/${session_id}.attached"
+    [ -f "${attachment}" ] || return 1
+    plan_id="$(tr -d '\r\n' <"${attachment}")"
+    if [ "${plan_id}" = "." ]; then
+        [ -f "${PWD}/task_plan.md" ] || return 1
+        printf "%s\n" "${PWD}"
+        return 0
+    fi
+    slug_is_valid "${plan_id}" || return 1
+    candidate="${PLAN_ROOT}/${plan_id}"
+    if [ -d "${candidate}" ] && [ -f "${candidate}/task_plan.md" ] && is_within_root "${candidate}"; then
+        printf "%s\n" "${candidate}"
+        return 0
+    fi
+    return 1
+}
+
+if [ -n "${PWF_SESSION_ID:-}" ]; then
+    resolve_from_session || true
+    exit 0
+fi
 
 resolve_from_env() {
     plan_id="${PLAN_ID:-}"

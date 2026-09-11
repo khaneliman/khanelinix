@@ -4,6 +4,9 @@ set -u
 
 [ "${PLANNING_DISABLED:-}" = "1" ] && exit 0
 
+HOOK_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd)"
+PLAN_DIR="$(sh "${HOOK_DIR}/resolve-plan-dir.sh" 2>/dev/null)"
+[ -n "$PLAN_DIR" ] || exit 0
 CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME:-}/.config}"
 SKILL_DIR="${PWF_SKILL_DIR:-${CONFIG_HOME}/codex/skills/planning-with-files}"
 TARGET="${SKILL_DIR}/scripts/check-complete.sh"

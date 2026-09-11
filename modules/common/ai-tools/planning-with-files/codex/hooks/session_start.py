@@ -15,11 +15,9 @@ def main() -> None:
     if not adapter.is_session_attached(root, session_id):
         return
 
-    stdout, _ = adapter.run_shell_script("session-start.sh", root, session_id)
-    source = payload.get("source")
-    if source in {"clear", "compact"}:
-        nudge, _ = adapter.run_shell_script("user-prompt-submit.sh", root, session_id)
-        stdout = "\n".join(part for part in (stdout, nudge) if part)
+    if payload.get("source") not in {"clear", "compact"}:
+        return
+    stdout, _ = adapter.run_shell_script("user-prompt-submit.sh", root, session_id)
     if stdout:
         adapter.emit_json(
             {

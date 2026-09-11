@@ -7,16 +7,14 @@
 
 HOOK_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd)"
 PLAN_DIR="$(sh "${HOOK_DIR}/resolve-plan-dir.sh" 2>/dev/null)"
+[ -n "${PLAN_DIR}" ] || exit 0
 PLAN_FILE="${PLAN_DIR:+${PLAN_DIR}/}task_plan.md"
 
-# Session isolation: if .planning/sessions/ exists, only attached sessions see
-# plan context. Absence of the sessions dir means legacy single-session mode —
-# all sessions in the cwd receive context to preserve backward compatibility.
-if [ -d ".planning/sessions" ]; then
-    SESSION_ID="${PWF_SESSION_ID:-}"
-    if [ -z "$SESSION_ID" ] || [ ! -f ".planning/sessions/${SESSION_ID}.attached" ]; then
-        exit 0
-    fi
+# Keep the legacy root-plan display and attestation filename when the root was
+# explicitly attached. Named plans retain their resolved path.
+if [ "${PLAN_DIR}" = "${PWD}" ]; then
+    PLAN_DIR=""
+    PLAN_FILE="task_plan.md"
 fi
 
 if [ -f "$PLAN_FILE" ]; then

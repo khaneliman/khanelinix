@@ -60,9 +60,12 @@ else
     if [ -n "${RESOLVED_DIR}" ] && [ -f "${RESOLVED_DIR}/task_plan.md" ]; then
         PLAN_FILE="${RESOLVED_DIR}/task_plan.md"
         PLAN_DIR="${RESOLVED_DIR}"
-    else
+    elif [ -z "${PWF_SESSION_ID:-}" ]; then
         PLAN_FILE="task_plan.md"
         PLAN_DIR="."
+    else
+        echo "[planning-with-files] No plan attached to this session; no active planning session."
+        exit 0
     fi
 fi
 

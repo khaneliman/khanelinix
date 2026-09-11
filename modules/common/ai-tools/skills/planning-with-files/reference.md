@@ -14,16 +14,21 @@ templates and scripts only.
 
 ## Resolution and Recovery
 
-Active-plan resolution order:
+Codex hooks resolve only the plan recorded by `scripts/attach-session.sh` for
+the current session. A missing or invalid attachment produces no context or
+Stop gate. A repository default-pointer change does not move that binding.
+
+For explicit CLI use outside session-bound hooks, resolution order is:
 
 1. Valid `$PLAN_ID` under `.planning/`.
 2. `.planning/.active_plan`.
 3. Newest `.planning/<id>/` containing `task_plan.md`.
 4. Root `task_plan.md` legacy fallback.
 
-On resume, read all three files. Run `scripts/session-catchup.py` only when a
-gap may have left tool activity unrecorded; reconcile its report with the real
-diff before updating state.
+On resume, read all three files and recover missing evidence from the relevant
+task session. `scripts/session-catchup.py` scans project-wide history, so reserve
+it for intentional historical investigation and verify session relevance before
+using its output. Codex hooks do not run it automatically.
 
 Use `scripts/init-session.sh <name>` for isolated parallel plans and
 `scripts/set-active-plan.sh <id>` to switch the default pointer.

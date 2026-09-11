@@ -13,6 +13,7 @@ done
 
 SCRIPT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 PLAN_DIR="$(sh "${SCRIPT_DIR}/resolve-plan-dir.sh" 2>/dev/null)"
+[ -z "${PWF_SESSION_ID:-}" ] || [ -n "$PLAN_DIR" ] || exit 0
 PLAN_FILE="${PLAN_DIR:+${PLAN_DIR}/}task_plan.md"
 
 [ -f "$PLAN_FILE" ] || exit 0

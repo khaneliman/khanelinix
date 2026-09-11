@@ -16,7 +16,12 @@ def main() -> None:
     if not adapter.is_session_attached(root, adapter.session_id_from_payload(payload)):
         return
 
-    stdout, _ = adapter.run_shell_script("stop.sh", root, stdin=json.dumps(payload))
+    stdout, _ = adapter.run_shell_script(
+        "stop.sh",
+        root,
+        adapter.session_id_from_payload(payload),
+        stdin=json.dumps(payload),
+    )
     result = adapter.parse_json(stdout)
 
     if result.get("decision") != "block":

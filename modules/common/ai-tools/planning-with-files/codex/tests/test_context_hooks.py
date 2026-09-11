@@ -10,10 +10,10 @@ from pathlib import Path
 
 CODEX_DIR = Path(__file__).resolve().parent.parent
 HOOK_DIR = CODEX_DIR / "hooks"
-SKILL_DIR = CODEX_DIR / "skills" / "planning-with-files"
 REQUIREMENTS = CODEX_DIR / "requirements.nix"
 HOOKS_JSON = CODEX_DIR / "hooks.json"
 REPO_ROOT = Path(__file__).resolve().parents[6]
+SKILL_DIR = REPO_ROOT / "modules" / "common" / "ai-tools" / "skills" / "planning-with-files"
 CLAUDE_HOOK = (
     REPO_ROOT
     / "modules/home/programs/terminal/tools/claude-code/hooks/planning-with-files.nix"
@@ -59,6 +59,13 @@ class ContextHookTests(unittest.TestCase):
         )
         (root / "progress.md").write_text("# Progress\n\n- started\n", encoding="utf-8")
 
+    def attach(self, root: Path, session_id: str, plan_id: str = ".") -> None:
+        sessions = root / ".planning" / "sessions"
+        sessions.mkdir(parents=True, exist_ok=True)
+        (sessions / f"{session_id}.attached").write_text(
+            f"{plan_id}\n", encoding="utf-8"
+        )
+
     def assert_prompt_nudge(self, result: subprocess.CompletedProcess[str]) -> None:
         self.assertEqual(result.returncode, 0, result.stderr)
         output = json.loads(result.stdout)
@@ -73,6 +80,7 @@ class ContextHookTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             self.create_plan(root)
+            self.attach(root, "test-session")
 
             result = self.run_hook(
                 "user_prompt_submit.py", root, "UserPromptSubmit"
@@ -84,41 +92,61 @@ class ContextHookTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             self.create_plan(root)
+            self.attach(root, "test-session")
 
             result = self.run_hook("session_start.py", root, "SessionStart")
 
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(result.stdout, "")
 
-    def test_session_start_shell_uses_installed_codex_skill_path(self) -> None:
+    def test_recovery_does_not_run_project_wide_catchup(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
-            skill_scripts = (
-                root / "config" / "codex" / "skills" / "planning-with-files" / "scripts"
+            self.create_plan(root)
+            self.attach(root, "test-session")
+            transcript = root / "unrelated-session.jsonl"
+            transcript.write_text("UNRELATED_SESSION_CONTENT", encoding="utf-8")
+            scripts = root / "fake-skill" / "scripts"
+            scripts.mkdir(parents=True)
+            (scripts / "session-catchup.py").write_text(
+                f"from pathlib import Path\nprint(Path({str(transcript)!r}).read_text())\n",
+                encoding="utf-8",
             )
-            skill_scripts.mkdir(parents=True)
-            catchup = skill_scripts / "session-catchup.py"
-            catchup.write_text("print('catchup-ran')\n", encoding="utf-8")
             env = os.environ.copy()
-            env.pop("PWF_SKILL_DIR", None)
-            env["XDG_CONFIG_HOME"] = str(root / "config")
+            env["PWF_SKILL_DIR"] = str(scripts.parent)
+            env["PWF_SESSION_ID"] = "test-session"
+            for script in ("session-start.sh", "session_start.py"):
+                with self.subTest(script=script):
+                    command = "sh" if script.endswith(".sh") else "python3"
+                    result = subprocess.run(
+                        [command, str(HOOK_DIR / script)], cwd=root, env=env,
+                        input=json.dumps({"cwd": str(root), "session_id": "test-session", "source": "compact"}),
+                        text=True, capture_output=True, check=False,
+                    )
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertNotIn("UNRELATED_SESSION_CONTENT", result.stdout)
 
-            result = subprocess.run(
-                ["sh", str(HOOK_DIR / "session-start.sh")],
-                cwd=root,
-                env=env,
-                text=True,
-                capture_output=True,
-                check=False,
-            )
-
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertIn("catchup-ran", result.stdout)
+    def test_shared_injection_does_not_fall_back_from_missing_attachment(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self.create_plan(root)
+            self.attach(root, "invalid", "../outside")
+            for session_id in ("missing", "invalid"):
+                with self.subTest(session_id=session_id):
+                    env = os.environ.copy()
+                    env["PWF_SESSION_ID"] = session_id
+                    result = subprocess.run(
+                        ["sh", str(SKILL_DIR / "scripts" / "inject-plan.sh")],
+                        cwd=root, env=env, text=True, capture_output=True, check=False,
+                    )
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertEqual(result.stdout, "")
 
     def test_compact_session_start_restores_concise_nudge(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             self.create_plan(root)
+            self.attach(root, "test-session")
 
             result = self.run_hook(
                 "session_start.py", root, "SessionStart", source="compact"
@@ -153,7 +181,7 @@ class ContextHookTests(unittest.TestCase):
             )
             self.assertEqual(unattached.stdout, "")
 
-            (sessions / "attached.attached").touch()
+            (sessions / "attached.attached").write_text(".\n", encoding="utf-8")
             attached = self.run_hook(
                 "user_prompt_submit.py", root, "UserPromptSubmit", "attached"
             )
@@ -163,6 +191,7 @@ class ContextHookTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             self.create_plan(root)
+            self.attach(root, "test-session")
             (root / ".plan-attestation").write_text("0" * 64, encoding="utf-8")
 
             result = self.run_hook(
@@ -179,6 +208,7 @@ class ContextHookTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             self.create_plan(root)
+            self.attach(root, "test-session")
             (root / ".mode").write_text("autonomous gate\n", encoding="utf-8")
 
             result = self.run_hook(
@@ -194,6 +224,7 @@ class ContextHookTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             self.create_plan(root)
+            self.attach(root, "test-session")
             (root / ".mode").write_text("autonomous gate\n", encoding="utf-8")
 
             result = self.run_hook(
@@ -202,6 +233,105 @@ class ContextHookTests(unittest.TestCase):
 
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(result.stdout, "")
+
+    def test_root_plan_requires_explicit_attachment(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self.create_plan(root)
+
+            unattached = self.run_hook(
+                "user_prompt_submit.py", root, "UserPromptSubmit", "root-session"
+            )
+            self.assertEqual(unattached.stdout, "")
+
+            self.attach(root, "root-session")
+            attached = self.run_hook(
+                "user_prompt_submit.py", root, "UserPromptSubmit", "root-session"
+            )
+            self.assert_prompt_nudge(attached)
+
+    def test_raw_prompt_hook_fails_closed_without_attachment(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self.create_plan(root)
+            env = os.environ.copy()
+            env.pop("PWF_SESSION_ID", None)
+            result = subprocess.run(
+                ["sh", str(HOOK_DIR / "user-prompt-submit.sh")],
+                cwd=root,
+                env=env,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(result.stdout, "")
+
+    def test_raw_stop_hook_fails_closed_without_attachment(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self.create_plan(root)
+            (root / ".mode").write_text("autonomous gate\n", encoding="utf-8")
+            env = os.environ.copy()
+            env.pop("PWF_SESSION_ID", None)
+            result = subprocess.run(
+                ["sh", str(HOOK_DIR / "stop.sh")],
+                cwd=root,
+                env=env,
+                input='{"stop_hook_active": false}\n',
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(result.stdout, "")
+
+    def test_named_sessions_keep_bound_targets_when_active_pointer_changes(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            for plan_id in ("plan-a", "plan-b"):
+                plan = root / ".planning" / plan_id
+                plan.mkdir(parents=True)
+                (plan / "task_plan.md").write_text(
+                    f"# {plan_id}\n\n### Phase 1\n**Status:** in_progress\n",
+                    encoding="utf-8",
+                )
+                (plan / "progress.md").write_text("# Progress\n", encoding="utf-8")
+            self.attach(root, "session-a", "plan-a")
+            self.attach(root, "session-b", "plan-b")
+            (root / ".planning" / ".active_plan").write_text(
+                "plan-b\n", encoding="utf-8"
+            )
+
+            first = self.run_hook(
+                "user_prompt_submit.py", root, "UserPromptSubmit", "session-a"
+            )
+            second = self.run_hook(
+                "user_prompt_submit.py", root, "UserPromptSubmit", "session-b"
+            )
+            self.assertIn("/.planning/plan-a/task_plan.md", json.loads(first.stdout)["hookSpecificOutput"]["additionalContext"])
+            self.assertIn("/.planning/plan-b/task_plan.md", json.loads(second.stdout)["hookSpecificOutput"]["additionalContext"])
+
+    def test_attachment_rejects_traversal_and_gate_is_session_scoped(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            plan = root / ".planning" / "named"
+            plan.mkdir(parents=True)
+            (plan / "task_plan.md").write_text(
+                "# Plan\n\n### Phase 1\n**Status:** in_progress\n", encoding="utf-8"
+            )
+            (plan / ".mode").write_text("autonomous gate\n", encoding="utf-8")
+            self.attach(root, "bound", "named")
+            self.attach(root, "invalid", "../outside")
+
+            bound = self.run_hook(
+                "stop.py", root, "Stop", "bound", stop_hook_active=False
+            )
+            invalid = self.run_hook(
+                "stop.py", root, "Stop", "invalid", stop_hook_active=False
+            )
+            self.assertEqual(json.loads(bound.stdout)["decision"], "block")
+            self.assertEqual(invalid.stdout, "")
 
     def test_managed_hooks_use_recovery_sources_without_precompact(self) -> None:
         requirements = REQUIREMENTS.read_text(encoding="utf-8")

@@ -7,6 +7,18 @@ metadata:
 
 # Planning with Files
 
+## Codex session attachment
+
+Codex hooks require an explicit attachment before relying on planning context
+or Stop gating:
+
+```sh
+scripts/attach-session.sh <session-id> <plan-id>
+```
+
+Use `.` to intentionally attach the repository-root legacy `task_plan.md`.
+Unattached sessions receive no planning context or planning Stop gate.
+
 Use persistent markdown files as working memory when a task intentionally opts
 into cross-session or compaction recovery. Hook behavior is provider-specific;
 this canonical package is the provider-neutral routing layer. Harness adapters
@@ -20,8 +32,9 @@ When the current task has intentionally adopted planning state, read:
 - `findings.md`
 - `progress.md`
 
-Then run `scripts/session-catchup.py` when resuming after a gap or when prior
-tool activity may not be reflected in the files.
+Recover missing execution evidence from the relevant task session. The bundled
+`scripts/session-catchup.py` searches project-wide history; use it only for an
+intentional historical investigation, not automatic session recovery.
 
 ## Start or Continue
 

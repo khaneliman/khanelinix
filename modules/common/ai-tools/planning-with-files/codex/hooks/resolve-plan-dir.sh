@@ -1,11 +1,9 @@
 #!/usr/bin/env sh
 # planning-with-files: resolve active plan directory.
 #
-# Resolution order:
-#   1. $PLAN_ID env var → ./.planning/$PLAN_ID/ if exists
-#   2. ./.planning/.active_plan content → matching dir if exists
-#   3. Newest ./.planning/<dir>/ by mtime
-#   4. Otherwise empty stdout (caller falls back to legacy ./task_plan.md)
+# Resolve only the plan explicitly attached to $PWF_SESSION_ID.
+# The repository active pointer and newest-plan fallback are intentionally not
+# consulted by Codex hooks: they are mutable shared state.
 #
 # Always exits 0. Never errors out the agent loop.
 #
@@ -16,61 +14,36 @@
 set -u
 
 PLAN_ROOT="${1:-${PWD}/.planning}"
-ACTIVE_FILE="${PLAN_ROOT}/.active_plan"
+SESSIONS_DIR="${PLAN_ROOT}/sessions"
 
-resolve_from_env() {
-    plan_id="${PLAN_ID:-}"
-    [ -z "${plan_id}" ] && return 1
-    candidate="${PLAN_ROOT}/${plan_id}"
-    if [ -d "${candidate}" ]; then
-        printf "%s\n" "${candidate}"
-        return 0
-    fi
-    return 1
+slug_is_valid() {
+    case "$1" in
+    '' | . | .[!.]*) return 1 ;;
+    esac
+    printf "%s" "$1" | grep -Eq '^[A-Za-z0-9_][A-Za-z0-9._-]*$'
 }
 
-resolve_from_active_file() {
-    [ -f "${ACTIVE_FILE}" ] || return 1
-    plan_id="$(tr -d '\r\n' <"${ACTIVE_FILE}")"
-    [ -z "${plan_id}" ] && return 1
-    candidate="${PLAN_ROOT}/${plan_id}"
-    if [ -d "${candidate}" ]; then
-        printf "%s\n" "${candidate}"
-        return 0
-    fi
-    return 1
-}
+if [ -z "${PWF_SESSION_ID:-}" ] || ! slug_is_valid "${PWF_SESSION_ID}"; then
+    exit 0
+fi
 
-resolve_latest_dir() {
-    [ -d "${PLAN_ROOT}" ] || return 1
-    # Portable newest-mtime selector. Avoid `ls -t` BSD/GNU drift.
-    # Only consider dirs that contain task_plan.md — skips system dirs like sessions/.
-    latest=""
-    latest_mtime=0
-    for entry in "${PLAN_ROOT}"/*/; do
-        [ -d "${entry}" ] || continue
-        # Strip trailing slash
-        clean="${entry%/}"
-        # Skip hidden dirs
-        case "$(basename "${clean}")" in
-        .*) continue ;;
-        esac
-        # Skip dirs that are not plan dirs
-        [ -f "${clean}/task_plan.md" ] || continue
-        mtime="$(date -r "${clean}" +%s 2>/dev/null || stat -c '%Y' "${clean}" 2>/dev/null || echo 0)"
-        if [ "${mtime}" -gt "${latest_mtime}" ] 2>/dev/null; then
-            latest_mtime="${mtime}"
-            latest="${clean}"
-        fi
-    done
-    if [ -n "${latest}" ]; then
-        printf "%s\n" "${latest}"
-        return 0
-    fi
-    return 1
-}
+ATTACHMENT="${SESSIONS_DIR}/${PWF_SESSION_ID}.attached"
+[ -f "${ATTACHMENT}" ] || exit 0
+PLAN_ID="$(tr -d '\r\n' <"${ATTACHMENT}")"
 
-if resolve_from_env; then exit 0; fi
-if resolve_from_active_file; then exit 0; fi
-if resolve_latest_dir; then exit 0; fi
+if [ "${PLAN_ID}" = "." ]; then
+    [ -f "${PWD}/task_plan.md" ] || exit 0
+    printf "%s\n" "${PWD}"
+    exit 0
+fi
+
+slug_is_valid "${PLAN_ID}" || exit 0
+candidate="${PLAN_ROOT}/${PLAN_ID}"
+[ -d "${candidate}" ] && [ -f "${candidate}/task_plan.md" ] || exit 0
+
+root_real="$(realpath "${PWD}" 2>/dev/null || pwd)"
+candidate_real="$(realpath "${candidate}" 2>/dev/null || true)"
+case "${candidate_real}" in
+"${root_real}"/*) printf "%s\n" "${candidate}" ;;
+esac
 exit 0
