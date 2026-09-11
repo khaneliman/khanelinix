@@ -123,6 +123,7 @@ def validate_registry(registry: dict[str, Any]) -> None:
 
     required_model_strings = (
         "subscription",
+        "model_family",
         "quota_pool",
         "upstream_provider",
         "upstream_model",
@@ -268,6 +269,15 @@ def validate_registry(registry: dict[str, Any]) -> None:
         if models[deliberation[seat]]["subscription"] != subscription_id:
             raise RoutingError(f"deliberation seat has wrong provider: {seat}")
 
+    primary_families = {
+        models[deliberation[seat]]["model_family"]
+        for seat in ("anthropic", "google", "openai")
+    }
+    if len(primary_families) != 3:
+        raise RoutingError(
+            "deliberation primary seats must use distinct model families"
+        )
+
     expected_defaults = {
         "claude": ("anthropic", "claude"),
         "codex": ("openai", "codex"),
@@ -394,10 +404,20 @@ def render_routes(registry: dict[str, Any]) -> str:
         ["Need", "Preferred", "Fallback", "Semantic role", "Write policy"], rows
     )
     deliberation = registry["deliberation"]
+    primary_families = {
+        registry["models"][deliberation[seat]]["model_family"]
+        for seat in ("anthropic", "openai")
+    }
+    fallback_family = registry["models"][deliberation["google_fallback"]][
+        "model_family"
+    ]
+    fallback_note = (
+        " (degraded family diversity)" if fallback_family in primary_families else ""
+    )
     sentence = (
         "For explicit three-provider deliberation, use Anthropic "
         f"`{deliberation['anthropic']}`, Google `{deliberation['google']}` with "
-        f"`{deliberation['google_fallback']}` fallback, and OpenAI "
+        f"`{deliberation['google_fallback']}` fallback{fallback_note}, and OpenAI "
         f"`{deliberation['openai']}`."
     )
     return f"{table}\n\n{textwrap.fill(sentence, width=80)}"

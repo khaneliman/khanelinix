@@ -16,10 +16,13 @@ canned or sterile language remains. User does not need to name that method.
 
 ## Model and Effort Routing
 
-Choose the lowest effort that meets task risk and quality. Use `low` for prose
-and metadata, and `medium` for mechanical edits and focused checks. Use `high`
-for discovery and routine implementation, and `xhigh` for cross-file work and
-broad validation. Use `max` for architecture or high-stakes review.
+Choose the smallest capable worker and lowest effort that meets the task's risk
+and evidence needs. Canonical semantic-role profiles own worker defaults; do not
+raise them because the parent uses a higher effort. Parent reasoning is separate
+and should match unresolved uncertainty, not file count alone. Escalate a
+bounded worker only for missing capability, repeated evidenced failure, or a
+risk its default cannot cover. Record the reason and result; use supported
+effort levels rather than assuming every provider accepts the same set.
 
 Delegate bounded fact finding and checks to the smallest capable worker. Keep
 planning, integration, and final judgment in the parent. Give every worker one

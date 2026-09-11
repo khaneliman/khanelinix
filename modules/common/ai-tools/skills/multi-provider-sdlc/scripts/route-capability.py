@@ -773,6 +773,7 @@ def plan_route(
         candidate = {
             "model": model_id,
             "subscription": model["subscription"],
+            "modelFamily": model["model_family"],
             "pool": model["quota_pool"],
             "probe": route_needs_probe(state, model_id, model),
         }

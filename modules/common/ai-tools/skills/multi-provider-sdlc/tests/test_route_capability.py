@@ -229,6 +229,7 @@ class RouteCapabilityTests(unittest.TestCase):
             [candidate["model"] for candidate in plan["preferredCandidates"]],
             ["fable-5-1", "gpt-6-astra"],
         )
+        self.assertEqual(plan["candidates"][0]["modelFamily"], "anthropic-claude")
         self.assertEqual(
             [candidate["model"] for candidate in plan["candidates"]],
             ["fable-5-1", "gpt-6-astra", "gpt-5-6-sol", "opus-5", "google-opus-4-6"],

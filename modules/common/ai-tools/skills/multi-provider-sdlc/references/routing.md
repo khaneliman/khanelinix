@@ -41,46 +41,28 @@ current authentication.
 | plan or code review                        | `fable-5-1`, `gpt-6-astra`         | `gpt-5-6-sol`, `opus-5`, `google-opus-4-6`  | `reviewer`     | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5`, Google
-`google-opus-4-6` with `gemini-3-8-flash` fallback, and OpenAI `gpt-6-astra`.
+`gemini-3-8-flash` with `google-opus-4-6` fallback (degraded family diversity),
+and OpenAI `gpt-6-astra`.
 
 <!-- END GENERATED ROUTES -->
 
 ## Effort policy
 
-Choose effort for the task, not only for the model. Use the shared policy in the
-always-loaded AI context:
+Use canonical `semantic_roles` profiles for ordinary workers. Keep the parent's
+reasoning effort separate; task size alone does not override a worker profile.
+Escalate for a documented capability gap, repeated evidenced failure, or risk
+that the default cannot cover. Return the actual model, subscription, family,
+effort, outcome, and fallback reason when observable. Mark unavailable fields
+unknown; do not infer runtime dispatch from the configured route.
 
-- `low`: prose, metadata, summaries, and simple lookups.
-- `medium`: mechanical edits and focused checks.
-- `high`: discovery, reproduction, routine implementation, and test analysis.
-- `xhigh`: cross-file implementation, broad validation, and difficult debugging.
-- `max`: architecture, council work, hard failures, and high-stakes review.
+`model_family` identifies a shared model lineage, not the subscription paying
+for it. Distinct families provide different perspectives, not proof of
+statistical independence. Council primaries use distinct families; report a
+fallback that duplicates another seat's family as degraded diversity.
 
-The following user-supplied DeepSWE snapshot reports `pass@1` and average cost
-for mini-swe-agent coding tasks. Each cell uses `pass@1 / USD`.
-
-| Model            | Low         | Medium      | High        | Xhigh        | Max          |
-| ---------------- | ----------- | ----------- | ----------- | ------------ | ------------ |
-| GPT-5.6 Luna     | 2% / $0.01  | 11% / $0.04 | 44% / $0.16 | 57% / $0.31  | 67% / $0.61  |
-| GPT-5.6 Sol      | 45% / $1.07 | 61% / $1.86 | 69% / $3.47 | 71% / $4.70  | 73% / $8.39  |
-| GPT-6 Astra      | unmeasured  | unmeasured  | unmeasured  | unmeasured   | unmeasured   |
-| Claude Opus 5    | 58% / $1.66 | 69% / $3.29 | 73% / $6.08 | 73% / $9.07  | 74% / $11.84 |
-| Claude Fable 5.1 | 60% / $3.76 | 65% / $6.09 | 69% / $9.18 | 70% / $13.41 | 70% / $21.63 |
-| Gemini 3.8 Flash | 54% / $1.83 | 65% / $2.03 | 65% / $2.18 | not shown    | not shown    |
-| Claude Sonnet 5  | 31% / $2.19 | 40% / $4.08 | 48% / $7.43 | 50% / $11.89 | 54% / $26.40 |
-
-Use the matrix as relative evidence. Luna gains sharply from high through max,
-so use xhigh for meaningful default work and max for high-stakes work. Sol and
-Opus reach strong results at high, so reserve xhigh or max for harder tasks.
-Fable gains little beyond xhigh. Gemini Flash shows no measured gain from medium
-to high. Sonnet is not a cost-efficient default in this snapshot.
-
-Astra has no benchmark measurement in the snapshot. The routing policy reserves
-it for higher-cost, higher-latency review and orchestration work until direct
-measurements are available. Keep Astra in the existing OpenAI `general` quota
-pool conservatively until live pool telemetry verifies a separate allocation.
-Spark, Terra, and GPT-OSS do not appear in the snapshot. Keep their existing
-latency-first or explicit-only roles until comparable measurements exist.
+The dated DeepSWE benchmark is retained as historical relative evidence in
+[the benchmark snapshot](deepswe-benchmark-snapshot.md). It does not promote a
+model or replace canonical semantic-role defaults and live task evidence.
 
 ## Quota circuits
 

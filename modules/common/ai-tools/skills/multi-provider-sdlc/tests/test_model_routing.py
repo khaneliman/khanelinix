@@ -44,6 +44,38 @@ class ModelRoutingTests(unittest.TestCase):
         self.assertEqual(len(members), len(set(members)))
         self.assertEqual(set(members), set(self.registry["models"]))
 
+    def test_models_declare_family_distinct_from_subscription(self) -> None:
+        families = {model["model_family"] for model in self.registry["models"].values()}
+        self.assertGreater(len(families), len(self.registry["subscriptions"]) - 1)
+        self.assertEqual(
+            self.registry["models"][self.registry["deliberation"]["google"]][
+                "model_family"
+            ],
+            "google-gemini",
+        )
+
+    def test_deliberation_primary_seats_use_distinct_families(self) -> None:
+        seats = self.registry["deliberation"]
+        self.assertEqual(
+            len(
+                {
+                    self.registry["models"][seats[seat]]["model_family"]
+                    for seat in ("anthropic", "google", "openai")
+                }
+            ),
+            3,
+        )
+        self.assertEqual(
+            self.registry["models"][seats["google_fallback"]]["model_family"],
+            "anthropic-claude",
+        )
+
+    def test_duplicate_primary_family_is_rejected(self) -> None:
+        invalid = copy.deepcopy(self.registry)
+        invalid["deliberation"]["google"] = "google-opus-4-6"
+        with self.assertRaisesRegex(routes.RoutingError, "distinct model families"):
+            routes.validate_registry(invalid)
+
     def test_every_route_reference_resolves(self) -> None:
         models = self.registry["models"]
         roles = self.registry["semantic_roles"]

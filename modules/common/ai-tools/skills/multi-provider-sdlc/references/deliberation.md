@@ -7,12 +7,14 @@ For explicit three-provider council output, begin with:
 
 ```text
 Council status: <complete|degraded|unavailable>
-Seats: Anthropic opus-5=<status>; Google google-opus-4-6=<status>; OpenAI gpt-6-astra=<status>
+Seats: <subscription>/<actual model>/<family>=<status>; ...
 ```
 
-Use `complete` for three usable provider packets, `degraded` for two, and
-`unavailable` for fewer than two. Disclose fallback routes and failures. Mark
-quota-suppressed seats `skipped_quota:<pool>`; they consume no dispatch.
+Resolve seats from the canonical deliberation routes. Use `complete` for three
+usable packets with distinct subscriptions and model families, `degraded` for
+two usable packets or duplicated families, and `unavailable` for fewer than two.
+Disclose actual fallback routes and failures. Mark quota-suppressed seats
+`skipped_quota:<pool>`; they consume no dispatch.
 
 1. Build one compact packet: objective, success criteria, verified facts,
    relevant paths, scope, constraints, risk, requested perspective, and exit
