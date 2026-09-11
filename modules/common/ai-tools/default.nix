@@ -50,7 +50,42 @@ let
       hooks = planningWithFilesDir + "/codex/hooks";
       requirements = import (planningWithFilesDir + "/codex/requirements.nix");
     };
-    piCodingAgent.package = planningWithFilesDir + "/pi/skills/planning-with-files";
+    piCodingAgent.package =
+      let
+        nativePackage = planningWithFilesDir + "/pi/skills/planning-with-files";
+        inherit (planningWithFiles) canonicalSkill;
+        skill = pkgs.writeText "pi-planning-with-files.md" (
+          lib.replaceStrings [ "name: planning-with-files\n" ] [ "name: pi-planning-with-files\n" ] (
+            builtins.readFile (canonicalSkill + "/SKILL.md")
+          )
+          + "\n"
+          + builtins.readFile (planningWithFilesDir + "/pi/addendum.md")
+        );
+        manifest = builtins.fromJSON (builtins.readFile (nativePackage + "/package.json"));
+        packageJson = pkgs.writeText "pi-planning-package.json" (
+          builtins.toJSON (
+            manifest
+            // {
+              files = [ "shared/" ] ++ builtins.filter (path: path != "SKILL.md") manifest.files;
+              pi = manifest.pi // {
+                skills = [ "shared/SKILL.md" ];
+              };
+            }
+          )
+        );
+      in
+      if pkgs == null then
+        throw "Pi planning package requires pkgs"
+      else
+        pkgs.runCommand "pi-planning-with-files" { } ''
+          cp -R ${nativePackage} $out
+          chmod u+w $out
+          cp -R ${canonicalSkill} $out/shared
+          chmod u+w $out/shared
+          rm $out/SKILL.md
+          cp --remove-destination ${skill} $out/shared/SKILL.md
+          cp --remove-destination ${packageJson} $out/package.json
+        '';
   };
 
   okfMemoryDir = ./okf-memory;
