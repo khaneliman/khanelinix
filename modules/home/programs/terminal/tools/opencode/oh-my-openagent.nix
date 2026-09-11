@@ -65,14 +65,21 @@ in
           };
 
           "$schema" =
-            "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/oh-my-opencode.schema.json";
+            "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/v4.19.4/assets/oh-my-opencode.schema.json";
 
           agents = {
             sisyphus = {
               model = aiTools.agents.reviewer.model.opencode;
               reasoningEffort = "low";
               fallback_models = deliberateFallbackModels;
-              prompt_append = "Follow the repository engineering rules already provided through the shared OpenCode context. Prefer the shared commands and skills before inventing new workflows.";
+              prompt_append = ''
+                Shared context and the selected local skill own lifecycle, requirements,
+                design, verification, review, and commit authority. Use OmO for runtime
+                delegation and tools within that workflow. Do not add another lifecycle,
+                approval checkpoint, or autonomous loop. Preserve explicit plan-only
+                requests. TDD stays opt-in; use proportionate checks. Return worker
+                evidence to the local owner for integration and final judgment.
+              '';
             };
             oracle = {
               model = debuggerModel;

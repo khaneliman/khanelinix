@@ -105,7 +105,7 @@ in
           # Support background shell commands
           "opencode-pty@latest"
           # Enhanced agent orchestration and plugin workflow
-          "oh-my-openagent@latest"
+          "oh-my-openagent@4.19.4"
         ];
       };
 
