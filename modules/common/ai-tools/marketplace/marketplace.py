@@ -91,6 +91,34 @@ def load_catalog(path: Path) -> dict[str, Any]:
         require_string(plugin, "displayName", owner_label)
         require_string(plugin, "description", owner_label)
         require_string(plugin, "category", owner_label)
+        dependencies = plugin.get("dependencies")
+        if not isinstance(dependencies, dict):
+            raise MarketplaceError(f"{owner_label}.dependencies must be an object")
+        if set(dependencies) != {"required", "optional"}:
+            raise MarketplaceError(
+                f"{owner_label}.dependencies must contain required and optional"
+            )
+        for dependency_kind in ("required", "optional"):
+            values = dependencies[dependency_kind]
+            if not isinstance(values, list):
+                raise MarketplaceError(
+                    f"{owner_label}.dependencies.{dependency_kind} must be an array"
+                )
+            if any(
+                not isinstance(value, str) or NAME_RE.fullmatch(value) is None
+                for value in values
+            ):
+                raise MarketplaceError(
+                    f"{owner_label}.dependencies.{dependency_kind} has an invalid skill name"
+                )
+            if values != sorted(set(values)):
+                raise MarketplaceError(
+                    f"{owner_label}.dependencies.{dependency_kind} must be a unique sorted array"
+                )
+        if set(dependencies["required"]) & set(dependencies["optional"]):
+            raise MarketplaceError(
+                f"{owner_label}.dependencies cannot list a skill as required and optional"
+            )
 
     excluded = catalog.get("excluded")
     if not isinstance(excluded, dict):
@@ -131,6 +159,25 @@ def load_catalog(path: Path) -> dict[str, Any]:
                     f"bundle {bundle_name} references unpublished skill: {member}"
                 )
 
+    known = seen | set(excluded)
+    for plugin in plugins:
+        name = plugin["name"]
+        dependencies = plugin["dependencies"]
+        unpublished_required = sorted(set(dependencies["required"]) - seen)
+        if unpublished_required:
+            raise MarketplaceError(
+                f"{name} has required dependency that is not published: "
+                + ", ".join(unpublished_required)
+            )
+        for dependency_kind in ("required", "optional"):
+            unknown = sorted(set(dependencies[dependency_kind]) - known)
+            if name in dependencies[dependency_kind]:
+                raise MarketplaceError(f"skill cannot depend on itself: {name}")
+            if unknown:
+                raise MarketplaceError(
+                    f"{name} has unknown {dependency_kind} dependency: "
+                    + ", ".join(unknown)
+                )
     return catalog
 
 
@@ -483,6 +530,50 @@ def validate_repository(root: Path, catalog_path: Path | None = None) -> dict[st
     }
 
 
+def discover_installed_skills(installed_root: Path) -> set[str]:
+    """Discover active skill roots, intentionally ignoring nested archives."""
+    if not installed_root.is_dir():
+        raise MarketplaceError(f"installed skill root does not exist: {installed_root}")
+    return {
+        child.name
+        for child in installed_root.iterdir()
+        if child.is_dir() and (child / "SKILL.md").is_file()
+    }
+
+
+def validate_selected(
+    selected: list[str],
+    catalog: dict[str, Any],
+    installed: set[str] | None = None,
+) -> dict[str, Any]:
+    """Validate required dependency closure for a selective installation."""
+    published = set(catalog_plugin_names(catalog))
+    unknown = sorted(set(selected) - published)
+    if unknown:
+        raise MarketplaceError("selected unknown skill: " + ", ".join(unknown))
+
+    dependencies = {
+        plugin["name"]: set(plugin["dependencies"]["required"])
+        for plugin in catalog["plugins"]
+    }
+    closure: set[str] = set()
+    pending = list(selected)
+    while pending:
+        name = pending.pop()
+        if name in closure:
+            continue
+        closure.add(name)
+        pending.extend(dependencies[name] - closure)
+
+    installed = set(selected) if installed is None else installed
+    missing = sorted(closure - installed)
+    if missing:
+        raise MarketplaceError(
+            "selected skill dependencies are missing: " + ", ".join(missing)
+        )
+    return {"selected": sorted(selected), "required": sorted(closure)}
+
+
 def default_root() -> Path:
     return Path(__file__).resolve().parents[4]
 
@@ -493,11 +584,34 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--root", type=Path, default=default_root())
     parser.add_argument("--catalog", type=Path)
+    parser.add_argument(
+        "--selected", nargs="+", metavar="SKILL", help="validate a selective install"
+    )
+    parser.add_argument(
+        "--installed-root",
+        type=Path,
+        help="active skill roots, as direct child directories containing SKILL.md",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
+    if args.selected or args.installed_root:
+        catalog_path = args.catalog or (
+            args.root / "modules/common/ai-tools/marketplace/catalog.json"
+        )
+        catalog = load_catalog(catalog_path)
+        installed = (
+            discover_installed_skills(args.installed_root)
+            if args.installed_root
+            else None
+        )
+        selected = args.selected or sorted(
+            set(catalog_plugin_names(catalog)) & (installed or set())
+        )
+        print(json.dumps(validate_selected(selected, catalog, installed), indent=2))
+        return
     result = validate_repository(args.root, args.catalog)
     print(json.dumps(result, indent=2))
 

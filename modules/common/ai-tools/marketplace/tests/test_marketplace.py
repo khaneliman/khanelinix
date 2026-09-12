@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -107,6 +108,7 @@ class MarketplaceTest(unittest.TestCase):
         published: list[str],
         excluded: dict[str, str] | None = None,
         bundles: dict[str, Any] | None = None,
+        dependencies: dict[str, dict[str, list[str]]] | None = None,
     ) -> None:
         for name in published:
             self.write_native_manifests(name)
@@ -120,6 +122,9 @@ class MarketplaceTest(unittest.TestCase):
         plugins = [
             {
                 "name": name,
+                "dependencies": (dependencies or {}).get(
+                    name, {"required": [], "optional": []}
+                ),
                 "displayName": f"{name} Display",
                 "description": f"Use {name} for tests.",
                 "version": "0.1.0",
@@ -417,6 +422,172 @@ class MarketplaceTest(unittest.TestCase):
             marketplace.MarketplaceError, "command out of sync: core"
         ):
             marketplace.validate_repository(self.root)
+
+    def test_selected_reports_incomplete_dependency(self) -> None:
+        self.write_skill("workflow")
+        self.write_skill("principles")
+        self.write_repository(
+            ["workflow", "principles"],
+            dependencies={"workflow": {"required": ["principles"], "optional": []}},
+        )
+
+        with self.assertRaisesRegex(
+            marketplace.MarketplaceError, "missing: principles"
+        ):
+            marketplace.validate_selected(
+                ["workflow"], marketplace.load_catalog(self.catalog_path)
+            )
+
+    def test_selected_reports_transitive_missing_dependency(self) -> None:
+        for name in ("alpha-skill", "beta-skill", "gamma-skill"):
+            self.write_skill(name)
+        self.write_repository(
+            ["alpha-skill", "beta-skill", "gamma-skill"],
+            dependencies={
+                "alpha-skill": {"required": ["beta-skill"], "optional": []},
+                "beta-skill": {"required": ["gamma-skill"], "optional": []},
+            },
+        )
+
+        with self.assertRaisesRegex(
+            marketplace.MarketplaceError, "missing: gamma-skill"
+        ):
+            marketplace.validate_selected(
+                ["alpha-skill"],
+                marketplace.load_catalog(self.catalog_path),
+                {"alpha-skill", "beta-skill"},
+            )
+
+    def test_selected_accepts_complete_selection(self) -> None:
+        self.write_skill("alpha-skill")
+        self.write_skill("beta-skill")
+        self.write_repository(
+            ["alpha-skill", "beta-skill"],
+            dependencies={"alpha-skill": {"required": ["beta-skill"], "optional": []}},
+        )
+
+        result = marketplace.validate_selected(
+            ["alpha-skill"],
+            marketplace.load_catalog(self.catalog_path),
+            {"alpha-skill", "beta-skill"},
+        )
+
+        self.assertEqual(result["required"], ["alpha-skill", "beta-skill"])
+
+    def test_unknown_optional_dependency_is_rejected(self) -> None:
+        self.write_skill("alpha-skill")
+        self.write_repository(
+            ["alpha-skill"],
+            dependencies={
+                "alpha-skill": {"required": [], "optional": ["missing-skill"]}
+            },
+        )
+
+        with self.assertRaisesRegex(
+            marketplace.MarketplaceError, "unknown optional dependency"
+        ):
+            marketplace.load_catalog(self.catalog_path)
+
+    def test_installed_inventory_ignores_nested_archive(self) -> None:
+        installed_root = self.root / "installed"
+        installed_root.mkdir()
+        (installed_root / "alpha-skill").mkdir()
+        (installed_root / "alpha-skill/SKILL.md").write_text("---\n---\n")
+        archive = installed_root / "archive/old-skill"
+        archive.mkdir(parents=True)
+        (archive / "SKILL.md").write_text("---\n---\n")
+
+        self.assertEqual(
+            marketplace.discover_installed_skills(installed_root), {"alpha-skill"}
+        )
+
+    def test_mutual_required_dependencies_are_cycle_safe(self) -> None:
+        for name in ("alpha-skill", "beta-skill"):
+            self.write_skill(name)
+        self.write_repository(
+            ["alpha-skill", "beta-skill"],
+            dependencies={
+                "alpha-skill": {"required": ["beta-skill"], "optional": []},
+                "beta-skill": {"required": ["alpha-skill"], "optional": []},
+            },
+        )
+
+        result = marketplace.validate_selected(
+            ["alpha-skill"],
+            marketplace.load_catalog(self.catalog_path),
+            {"alpha-skill", "beta-skill"},
+        )
+
+        self.assertEqual(result["required"], ["alpha-skill", "beta-skill"])
+
+    def test_workflow_requires_declared_review_route(self) -> None:
+        catalog = marketplace.load_catalog(MARKETPLACE_DIR / "catalog.json")
+        installed = set(marketplace.catalog_plugin_names(catalog)) - {"interrogate"}
+        with self.assertRaisesRegex(
+            marketplace.MarketplaceError, "missing: interrogate"
+        ):
+            marketplace.validate_selected(["engineering-workflow"], catalog, installed)
+
+    def test_github_selection_reports_missing_workflow_routes(self) -> None:
+        catalog = marketplace.load_catalog(MARKETPLACE_DIR / "catalog.json")
+        for missing in ("engineering-workflow", "figure-it-out", "git-toolkit"):
+            with self.subTest(missing=missing):
+                installed = set(marketplace.catalog_plugin_names(catalog)) - {missing}
+                with self.assertRaisesRegex(
+                    marketplace.MarketplaceError, "missing: " + missing
+                ):
+                    marketplace.validate_selected(
+                        ["github-toolkit"], catalog, installed
+                    )
+
+    def test_malformed_dependency_elements_are_reported(self) -> None:
+        self.write_skill("alpha-skill")
+        self.write_repository(["alpha-skill"])
+        catalog = self.load_json(self.catalog_path)
+        catalog["plugins"][0]["dependencies"]["required"] = [{}]
+        self.write_json(self.catalog_path, catalog)
+
+        with self.assertRaisesRegex(
+            marketplace.MarketplaceError, "has an invalid skill name"
+        ):
+            marketplace.load_catalog(self.catalog_path)
+
+    def test_real_engineering_workflow_selection_is_complete(self) -> None:
+        catalog = marketplace.load_catalog(MARKETPLACE_DIR / "catalog.json")
+        result = marketplace.validate_selected(
+            ["engineering-workflow"],
+            catalog,
+            set(marketplace.catalog_plugin_names(catalog)),
+        )
+        self.assertIn("engineering-principles", result["required"])
+
+    def test_root_only_cli_audits_recognized_inventory(self) -> None:
+        self.write_skill("alpha-skill")
+        self.write_repository(["alpha-skill"])
+        installed_root = self.root / "installed"
+        installed_root.mkdir()
+        (installed_root / "alpha-skill").mkdir()
+        (installed_root / "alpha-skill/SKILL.md").write_text("---\n---\n")
+        (installed_root / "third-party").mkdir()
+        (installed_root / "third-party/SKILL.md").write_text("---\n---\n")
+
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(MARKETPLACE_DIR / "marketplace.py"),
+                "--root",
+                str(self.root),
+                "--catalog",
+                str(self.catalog_path),
+                "--installed-root",
+                str(installed_root),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(json.loads(result.stdout)["selected"], ["alpha-skill"])
 
 
 if __name__ == "__main__":

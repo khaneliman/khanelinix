@@ -340,6 +340,40 @@ python3 modules/common/ai-tools/marketplace/marketplace.py --root .
 The validator checks native source paths, metadata, publication coverage, and
 explicit-only controls. It rejects a leftover copied plugin-content tree.
 
+## Check a selective install
+
+Each published plugin declares a small dependency contract in `catalog.json`:
+`required` entries are installed sibling routes needed by that skill, while
+`optional` entries name integrations that improve coverage but are not required
+for installation. The contract is explicit and does not claim to extract every
+skill-name mention from prose. Bundles remain install preferences; selecting a
+bundle does not add its members' dependency closure automatically.
+
+Check a selection and its transitive required dependencies:
+
+```sh
+python3 modules/common/ai-tools/marketplace/marketplace.py \
+  --selected engineering-workflow engineering-principles
+```
+
+To check an existing installation, pass a skill root whose direct children are
+active skill directories containing `SKILL.md`:
+
+```sh
+python3 modules/common/ai-tools/marketplace/marketplace.py \
+  --selected engineering-workflow \
+  --installed-root ~/.agents/skills
+```
+
+The inventory scan checks direct children only. Nested archive, backup, and
+cache directories are ignored. The command is read-only, never installs missing
+skills, and exits nonzero with the missing names.
+
+The supplied flat directory must represent the active inventory. The checker
+cannot infer provider enablement or disabled skills. Domain skills selected for
+a task and external host tools still need runtime coverage. Dependency checks
+validate declared catalog edges, not every route mentioned in skill prose.
+
 Native plugin configuration is documented in the
 [OpenAI plugin reference](https://developers.openai.com/plugins/build/plugins)
 and
