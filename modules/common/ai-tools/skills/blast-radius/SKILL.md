@@ -11,6 +11,19 @@ Find what a change breaks somewhere else, before it ships. Companion to `how`
 Listing the callers is not the job. Grep does that in a second. The job is the
 breakage grep won't show you, and the proof that the change is safe anyway.
 
+## Authority and probes
+
+Review-only work returns findings and isolated probe evidence. Do not edit
+source, persistent tests, or external state without authorization for those
+changes. Inside an implementation workflow, the caller retains lifecycle and
+write authority; this method does not expand either.
+
+Reuse an existing safe check when it proves the fact. Put throwaway scripts and
+fixtures in an isolated directory under the repository's ignored build scratch
+or the user cache, never in tracked source. Run mutation-capable probes against
+disposable copies with isolated state. If safe isolation is unavailable, report
+the evidence limit instead of running the probe. Remove only your own scratch.
+
 ## How sure are you
 
 A writeup that sounds right reads as convincing whether or not it's true. So
@@ -47,10 +60,12 @@ and calls the exact function you're worried about. A fact you can't get to step
    does. Keep the risks you confirmed; list the ones you checked and cleared
    separately. Cite a real `file:line`, treat a search that finds nothing as an
    answer, and never make up a caller or an API.
-5. Prove the one fact. Write a script or test that runs the real code, run it,
-   and paste what happened.
-6. For a big or wide change, run it as an `arena`. Different models catch
-   different real bugs.
+5. Prove the one fact with an existing safe check or an isolated script that
+   runs the real code. Report the result and any remaining evidence limit.
+6. For a big or wide change, return the scope and findings to the caller.
+   The caller may use `interrogate` for independent review when warranted and
+   available. Keep review separate from correction; do not invoke `arena` or
+   take over the caller's lifecycle.
 
 ## What to hand back
 
