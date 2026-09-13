@@ -35,6 +35,11 @@ make another external write. Stop and ask when a required capability is missing.
 ## Phases
 
 Run these phases in order. Skip a phase only when a gate rule allows it.
+For obvious, low-risk work, a direct read, edit, and focused check can cover
+Ground through Verify. Keep acceptance and change shape brief in the working
+context; no separate planning artifact, specialist invocation, or delegation is
+required unless it resolves a concrete uncertainty or meets a required check.
+Honor explicit skill requests and the risk-based review gate.
 
 1. **Ground.** Keep a compact acceptance summary using
    [phase-handoff.md](references/phase-handoff.md). Separate requirements from

@@ -5,9 +5,10 @@ proxy that cannot fail.
 
 ## Risk Levels
 
-- **Trivial**: one file, reversible, no contract change, no shared state.
-- **Normal**: multiple files within one module, or a caller-visible behavior
-  change.
+- **Trivial**: obvious, reversible edits with no substantive behavior or
+  contract change and no shared-state risk. File count alone does not raise risk.
+- **Normal**: substantive implementation or caller-visible behavior changes
+  within a known boundary.
 - **High**: cross-module reach, data or migration risk, security or permissions,
   public contract, or unclear reach.
 

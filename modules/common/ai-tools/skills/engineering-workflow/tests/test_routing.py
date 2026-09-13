@@ -268,9 +268,6 @@ class GatesContract(unittest.TestCase):
         self.assertNotIn("one correction", self.text)
         self.assertNotIn("one re-review", self.text)
 
-    def test_risk_levels_are_disjoint_for_one_file(self) -> None:
-        self.assertIn("normal**: multiple files within one module", self.text)
-
     def test_evidence_gate_rejects_unearned_claims(self) -> None:
         section = self.text.split("## evidence gate", maxsplit=1)[1]
         for phrase in ("actually ran", "actually happened", "verification gaps"):
