@@ -1,6 +1,6 @@
 ---
 name: nix-toolkit
-description: Nix authoring and operations for expressions, NixOS/Home Manager modules, overlays, packages, and flakes. Use for merge semantics, binding locality, build failures, package diffs, closures, dependencies, and evaluation performance.
+description: Nix authoring and operations for expressions, NixOS/Home Manager modules, overlays, packages, and flakes. Use for style reviews, merge semantics, binding locality, build failures, package diffs, closures, dependencies, and evaluation performance.
 ---
 
 # Nix Toolkit Playbook
@@ -23,6 +23,7 @@ lifecycle ownership; a diagnosis alone does not authorize code changes.
 | Requested result                                                                                                | Read                                                             |
 | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | Create or refactor expressions, NixOS, nix-darwin or Home Manager modules, overlays, packages, or flake outputs | [Authoring](references/authoring.md)                             |
+| Review style choices, module composition, or optimization proposals                                             | [Review scenarios](references/review-scenarios.md)               |
 | Compare package versions or outputs                                                                             | [Package diffing](references/package-diffing.md)                 |
 | Diagnose a failed build                                                                                         | [Build debugging](references/build-debugging.md)                 |
 | Explain or reduce closure contents                                                                              | [Closure analysis](references/closure-analysis.md)               |

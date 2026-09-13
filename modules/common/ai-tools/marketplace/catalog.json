@@ -263,7 +263,7 @@
 			},
 			"displayName": "Nix Toolkit",
 			"description": "Author Nix code and diagnose builds, flakes, and evaluation.",
-			"version": "0.1.4",
+			"version": "0.2.0",
 			"category": "Developer Tools"
 		},
 		{

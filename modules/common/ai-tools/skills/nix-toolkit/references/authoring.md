@@ -20,6 +20,10 @@ Read only the references needed for the authoring decisions in this task:
   `genericClosure`, path coercion versus `lib.fileset`, string handling,
   attribute-path lookups, and import cost.
 
+For reviews or competing style/optimization choices, read
+[Review scenarios](review-scenarios.md). Defaults guide new or touched code;
+they do not justify unrelated normalization or override readable local idioms.
+
 ## Apply the Defaults
 
 - Prefer explicit `lib.` usage, justified local `inherit (...)`, or

@@ -1,6 +1,8 @@
 # Bindings And Locality
 
-Keep bindings as close to their usage as possible.
+Keep bindings at the narrowest useful scope. Use these defaults for new or
+touched code; a single-use name can still explain a domain concept. For review
+thresholds and sharing tradeoffs, read [Review scenarios](review-scenarios.md).
 
 Binding decision rule:
 
@@ -23,19 +25,19 @@ Treat `inherit (...)` like any other binding.
   `inherit (lib) generators;` just to make a short expression slightly shorter.
 
 ```nix
-# BAD
+# Redundant alias
 let
   package = pkgs.ripgrep;
 in {
   home.packages = [ package ];
 }
 
-# GOOD
+# Inline form
 {
   home.packages = [ pkgs.ripgrep ];
 }
 
-# ALSO GOOD
+# Local multiline value
 {
   systemd.services.example =
     let
@@ -56,5 +58,5 @@ in {
 }
 ```
 
-Before adding a binding: if it is not shared AND inline form is readable, do not
-bind it.
+Before adding a binding: if it is not shared and its name adds no meaning,
+prefer the readable inline form.

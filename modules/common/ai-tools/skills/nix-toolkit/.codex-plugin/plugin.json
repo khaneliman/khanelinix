@@ -1,6 +1,6 @@
 {
 	"name": "nix-toolkit",
-	"version": "0.1.4",
+	"version": "0.2.0",
 	"description": "Author Nix code and diagnose builds, flakes, and evaluation.",
 	"author": {
 		"name": "khaneliman"

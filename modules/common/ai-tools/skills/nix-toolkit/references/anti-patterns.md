@@ -1,5 +1,9 @@
 # Anti-Patterns
 
+These are authoring defaults, not automatic review findings. Apply repository
+canon first. Use [Review scenarios](review-scenarios.md) to distinguish useful
+local cleanup from equivalent styles worth leaving alone.
+
 ## `with`
 
 Avoid top-level, block-level, and wide-scope `with`. Those forms hide scope,
@@ -9,35 +13,37 @@ Expression-local `with` is fine when it applies to one value and makes a dense
 expression clearer than repeated prefixes. This is common for option types.
 
 ```nix
-# BAD
+# Consider simplifying
 meta = with lib; { license = licenses.mit; };
 
-# GOOD
+# Preferred authoring form
 meta = { license = lib.licenses.mit; };
 
-# GOOD
+# Preferred authoring form
 type = with lib.types; nullOr (either str path);
 ```
 
 Decision rule:
 
-1. Reject `with` when it wraps a module body, config block, attrset with
-   multiple unrelated fields, or broad library such as `lib`/`pkgs`.
+1. Prefer explicit qualification when `with` wraps a module body or config
+   block, or leaves name origins unclear across unrelated fields.
+   Expression-local package lists may follow local canon.
 2. Allow `with` when it is scoped to a single assignment/expression and every
    unqualified name clearly comes from that scope.
 3. Prefer `lib.types.*` or `inherit (lib.types) ...` only when that is clearer
    than expression-local `with`.
 
 ```nix
-# BAD
+# Consider simplifying
 options.foo = with lib; {
   enable = mkEnableOption "foo";
   mode = mkOption { type = types.enum [ "a" "b" ]; };
 };
 
-# GOOD
-options.foo.mode = lib.mkOption {
-  type = with lib.types; nullOr (either str path);
+# Preferred authoring form
+options.foo = {
+  enable = lib.mkEnableOption "foo";
+  mode = lib.mkOption { type = lib.types.enum [ "a" "b" ]; };
 };
 ```
 
@@ -53,13 +59,13 @@ Decision rule:
 3. If `rec` is only saving a small amount of typing, do not use it.
 
 ```nix
-# BAD
+# Consider simplifying
 rec {
   version = "1.0";
   name = "pkg-${version}";
 }
 
-# GOOD
+# Preferred authoring form
 let
   version = "1.0";
 in {
@@ -70,7 +76,7 @@ in {
 
 ## Chained `if/else if/else`
 
-Chained conditionals are an anti-pattern. Use instead:
+For chains that obscure composition, consider:
 
 - `lib.mkIf` for module config fragments
 - `lib.optional*` for list/string/attrset composition
@@ -86,29 +92,32 @@ Decision rule:
 3. If you are selecting from a fixed set of static values, prefer attrset
    lookup.
 
-Use plain `if/else` only as a last resort when those tools are unavailable or
-make the result less readable.
+Keep plain `if/else` when it expresses a value choice clearly. Preserve branch
+exclusivity and fallback behavior when changing conditional structure.
 
 ```nix
-# BAD
+# Consider simplifying
 config = if cfg.enable then {
   services.foo.enable = true;
 } else if cfg.experimental then {
   services.foo.mode = "experimental";
 } else { };
 
-# GOOD
-config = lib.mkIf cfg.enable {
-  services.foo.enable = true;
-};
+# Preferred authoring form
+config = lib.mkMerge [
+  (lib.mkIf cfg.enable { services.foo.enable = true; })
+  (lib.mkIf (!cfg.enable && cfg.experimental) {
+    services.foo.mode = "experimental";
+  })
+];
 
-# GOOD
+# Preferred authoring form
 home.packages = [ pkgs.git ] ++ lib.optionals cfg.extraTools [
   pkgs.fd
   pkgs.ripgrep
 ];
 
-# GOOD
+# Preferred authoring form
 themeFile =
   {
     dark = ./dark.nix;
