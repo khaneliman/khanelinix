@@ -7,14 +7,13 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) enabled mkPackageProfileOption;
+  inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.suites.music;
 in
 {
   options.khanelinix.suites.music = {
     enable = lib.mkEnableOption "common music configuration";
-    packageProfile = mkPackageProfileOption "Package profile override for music applications.";
     productionEnable = lib.mkEnableOption "audio production applications";
     managementEnable = lib.mkEnableOption "audio management applications";
   };
