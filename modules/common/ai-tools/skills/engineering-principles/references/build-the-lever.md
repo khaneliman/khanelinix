@@ -1,7 +1,7 @@
 # Build the Lever
 
-When the work isn't trivial, build the tool that does it instead of doing it by
-hand.
+Build a tool when repetition, error risk, or reproducibility justifies its
+implementation and ongoing maintenance cost.
 
 **Why:** Two payoffs. Throughput: a codemod, generator, or script does the work
 the same way every time and reruns for free. Confidence: the tool is one
@@ -9,8 +9,8 @@ artifact a reviewer can read and rerun to check the work. Hand-done changes can
 only be re-verified by redoing them. A deterministic script turns "trust me"
 into "run this".
 
-**Pattern:** Default to building the lever. Skip it only when the task is
-genuinely trivial, a couple of obvious edits you can see at a glance.
+**Pattern:** Reuse existing commands and checks first. Direct edits and
+inspection are sufficient when new tooling would add more work than it removes.
 
 - Do the first unit by hand to learn the recipe, then build the tool. Prove it
   by rerunning it on that unit and diffing against your hand-done version. Make
@@ -25,14 +25,12 @@ genuinely trivial, a couple of obvious edits you can see at a glance.
   artifact. Every delegate then inherits the same hardened version instead of
   re-explaining it per prompt and watching each one drift. Keep it outside the
   delegates' write scope so they can't quietly edit the contract.
-- Applying this principle produces a file. If you cited it and there is no
-  codemod, script, generator, or delegate skill in the diff, you didn't apply
-  it.
 - Commit the lever when the work outlives the session, so the next run reruns it
   instead of redoing it.
 
-**Balance:** The bar is triviality, not repetition. A one-off still earns a
-lever when the lever is what makes the work checkable. Per
+**Balance:** A one-off can justify a lever when existing checks cannot provide
+adequate evidence economically. Do not create a file merely to demonstrate
+process compliance. Per
 [laziness-protocol.md](laziness-protocol.md), build the smallest script that
 does or proves the job, never a framework.
 

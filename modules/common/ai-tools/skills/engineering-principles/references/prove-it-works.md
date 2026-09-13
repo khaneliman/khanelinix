@@ -30,13 +30,17 @@ inspect the actual output artifact (git diff, file contents, runtime behavior),
 not the delegate's summary. Agents report what they intended, not always what
 happened.
 
-## Script the check when you can
+## Reuse checks before scripting
 
-The strongest proof is a deterministic script that re-runs the same comparison,
-not a one-time eyeball. Write the script, run it, and keep its output as an
-artifact a reviewer can re-run instead of trusting your word. A script comparing
-the old and new compiled output catches what a glance misses.
+Run existing checks against the real surface first. A focused manual probe can
+be sufficient when it directly establishes the required behavior.
 
-Keep the artifact visible for the human. Commit it only for large or complex
-work where the trail has to be auditable later, like a big port or migration
-(see `show-me-your-work`). Most work just needs it visible, not committed.
+Create a deterministic script when repetition, error risk, or reproducibility
+justifies its cost under [build-the-lever.md](build-the-lever.md). Run it and
+keep useful evidence; do not create a script merely because the check could be
+automated. A compiled-output comparison can justify a script when visual
+inspection would miss meaningful differences.
+
+Keep results visible for the human. Commit new verification tooling when it
+will be reused or a large migration needs a durable audit trail (see
+`show-me-your-work`), not solely to leave an artifact in the diff.

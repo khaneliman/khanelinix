@@ -27,7 +27,7 @@ reference in full before applying it. Each reference is short.
 | [premise-review](references/premise-review.md)                                                     | Reviewing a plan, diff, or PR. Decide whether the change should exist before checking whether it works. |
 | [guard-the-context-window](references/guard-the-context-window.md)                                 | Context fills up: large outputs, long files, repeated reads, fan-out planning.           |
 | [encode-lessons-in-structure](references/encode-lessons-in-structure.md)                           | The same instruction gets written a second time, or a correction recurs.                 |
-| [build-the-lever](references/build-the-lever.md)                                                   | Non-trivial edits, migrations, analyses, or checks. Build the rerunnable tool.           |
+| [build-the-lever](references/build-the-lever.md)                                                   | Repetition, error risk, or reproducibility justifies a tool beyond existing commands.           |
 
 Cite a principle only when it changed a concrete choice. A citation with no
 decision behind it means the reference was skipped.
