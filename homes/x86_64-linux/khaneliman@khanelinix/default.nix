@@ -503,6 +503,7 @@ in
   ];
 
   khanelinix.programs.terminal.tools.mcp.blender.enable = true;
+  khanelinix.programs.terminal.tools.mcp.firefox.enable = true;
 
   # Neo G9
   xresources.properties."Xft.dpi" = "108";
