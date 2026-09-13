@@ -21,6 +21,8 @@ in
   options.khanelinix.programs.terminal.tools.mcp = {
     enable = lib.mkEnableOption "MCP (Model Context Protocol) servers";
 
+    firefox.enable = lib.mkEnableOption "Mozilla MCP access to an existing Firefox session";
+
     blender = {
       enable = lib.mkEnableOption "Blender MCP server and add-on";
       host = lib.mkOption {
@@ -97,6 +99,13 @@ in
             BLENDER_MCP_HOST = cfg.blender.host;
             BLENDER_MCP_PORT = toString cfg.blender.port;
           };
+        };
+
+        firefox-devtools = {
+          enabled = cfg.firefox.enable;
+          command = getExe pkgs.firefox-devtools-mcp;
+          # Attach only when Firefox was explicitly started with --marionette.
+          args = [ "--connect-existing" ];
         };
 
         code-review-graph = {
