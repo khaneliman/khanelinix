@@ -85,6 +85,7 @@ in
             ];
           };
           herdr = enabled;
+          mcp.firefox = enabled;
           sesh = enabled;
           ssh = enabled;
           tmux = enabled;
