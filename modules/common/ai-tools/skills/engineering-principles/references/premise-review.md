@@ -47,8 +47,10 @@ or CI-check lane, not the reviewer.
 
 ## Premise Gate
 
-Record this block first in every review report, before findings and before the
-verdict. Write one conventional comment per concern, in the form
+Record this block first in internal review reports, before findings and before
+the verdict. Keep cleared concerns and the full checklist out of public reviews;
+publish only actionable findings in the concise review-authoring format.
+Write one conventional comment per internal concern, in the form
 `<label> [(decoration)]: <concern>: <evidence>`, with the labels and decorations
 from conventionalcomments.org. Answer from repository evidence: issue text,
 callers, existing options, schemas, history, and canon. Cite what was searched,
