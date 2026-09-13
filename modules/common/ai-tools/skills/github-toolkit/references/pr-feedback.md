@@ -16,9 +16,14 @@ Use when inspecting or addressing existing review comments. Use
    Add `--include-bodies` only when full prose is needed. Narrow with `--path`,
    `--author`, `--state`, or `--outdated` before loading more context.
 3. Read root and changed-path instructions plus contributor guidance.
-4. Group actionable, resolved, stale, duplicate, and informational threads.
-5. Present actionable items with file/range, request, evidence, and likely fix.
-6. Edit only feedback user selected or explicitly asked to address. Validate
+4. Read the latest contributor replies and full bodies of relevant threads,
+   including questions or help requests that the unresolved/outdated filters
+   might hide. Apply
+   [Contributor Conversation](pr-review.md#contributor-conversation): answer
+   pending questions before proposing more changes.
+5. Group actionable, resolved, stale, duplicate, and informational threads.
+6. Present actionable items with file/range, request, evidence, and likely fix.
+7. Edit only feedback user selected or explicitly asked to address. Validate
    focused changes and report each thread as fixed, declined, or blocked.
 
 Reply or resolve only when explicitly requested. Both commands dry-run unless

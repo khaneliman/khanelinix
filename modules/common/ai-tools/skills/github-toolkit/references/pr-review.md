@@ -40,7 +40,8 @@ comments.
 8. Return draft findings by default. Inspect, create, update, or delete a review
    only when user explicitly requests it.
 
-Never submit pending review, approve, request changes, push, or edit source.
+Never submit pending review, approve, request changes, push, or edit the
+reviewed checkout. Apply proposed fixes only in isolated validation scratch.
 Leave final publication to user in GitHub UI.
 
 ## Full-history and duplicate gate
@@ -57,10 +58,30 @@ in fresh threads. Incorporate author rebuttals and verify disputed upstream
 behavior against the relevant packaged source. Previous generated configuration
 is not proof of supported or working runtime behavior.
 
-Recheck history before writing. Only materially new evidence belongs in an
-existing thread, and public replies still require user authorization. Keep
-fixed, outstanding, rebutted and genuinely new issues separate in private review
-notes.
+Recheck history before writing. Follow up to answer a question, provide
+requested help, acknowledge a correction, or add materially new evidence. Public
+replies still require user authorization. Keep fixed, outstanding, rebutted and
+genuinely new issues separate in private review notes.
+
+## Contributor Conversation
+
+- Read the contributor's latest reply before drafting more findings. Answer each
+  direct question or request for help first; do not treat it as another review
+  trigger. Ask a short clarifying question only when a needed fact is missing.
+- Explain the disputed behavior plainly and offer the smallest validated code
+  example or fix. Own unclear wording or a mistaken finding, acknowledge the
+  correction, and withdraw concerns that no longer hold.
+- Reply in the existing thread using its context, not the initial-finding
+  template. A clarification need not repeat the code block or test evidence
+  already visible; include new code when that is what the contributor needs.
+- Batch actionable findings in one pass. Do not drip-feed nits, turn optional
+  preferences into blockers, or raise fresh polish while the author addresses
+  the original request. Recheck changed behavior, not the whole PR by default;
+  raise newly demonstrated defects when they materially affect correctness.
+- If the contributor requests help implementing a fix, prepare the concrete
+  patch within authorized scope rather than restating the request. Do not post
+  encouragement or pressure in place of an answer. Stop when concerns are
+  resolved; silence is preferable to another low-value comment.
 
 ## Review Operations
 
@@ -174,23 +195,29 @@ Missing coverage can be a finding when repository policy or risk requires it.
 
 ## Review Writing
 
-- Keep review body to outcome, confidence, and global context. Do not duplicate
-  inline findings.
-- Write one inline comment per unique issue. State the trigger or input, current
-  behavior, expected behavior, and one concrete correction with enough code
-  shape to implement. Give an exact condition, type, or module assignment. State
-  precedence and compatibility behavior when relevant. Request a focused
-  regression test that fails before the correction.
-- Make each comment self-contained and as long as the evidence requires. It must
-  answer what breaks, why, the replacement code shape, and the proof test. Keep
-  one defect per comment.
-- Cite prior art only when it clarifies intent. Prefer repository examples;
-  otherwise use an external repository only when it owns the protocol or
-  behavior being consumed. Link to a pinned commit and exact lines, then explain
-  applicability. If repository behavior does not establish one fix, state the
-  unresolved choice and viable alternatives.
-- Do not restate the diff or leave abstract repair verbs without an exact
-  operation.
+- Keep the public review body to a short outcome. Do not repeat inline findings
+  or publish cleared premise concerns, confidence scores, and investigation
+  logs.
+- Write one inline comment per actionable issue. Default to one or two short
+  sentences explaining the trigger and consequence, followed by the exact fix
+  and one line of validation evidence. Add detail only when needed to apply the
+  fix safely. Keep the full reasoning in internal review notes.
+- Use direct, collegial language: name what breaks and show what works. Avoid
+  rhetorical questions, abstract repair requests, and unsolicited tutorials.
+- Understand callers, relevant contracts, and edge behavior before recommending
+  replacement code. Validate that exact replacement with a focused check in an
+  isolated scratch copy or worktree; leave the reviewed checkout unchanged. Use
+  repository-ignored build scratch or the user cache, not installed skills. This
+  tests the proposed fix, not the unchanged PR's CI status.
+- For a bug fix, reproduce the relevant failure and check the replacement on
+  that case. Reuse an existing check when adequate; do not automatically ask the
+  author to add a new regression test. State the command or probe and observed
+  result briefly. Static inspection alone is not a claim that code was tested.
+- If validation is unavailable, do not publish an optional code suggestion. A
+  confirmed defect may still warrant a short finding: give the evidence and
+  state that a fix has not been validated. Ask only for a concrete missing fact.
+- Cite local instructions for compliance findings. Link prior art only when it
+  is needed to understand the correction, using a pinned commit and exact lines.
 
 ### Suggestion blocks
 
@@ -204,28 +231,37 @@ Missing coverage can be a finding when repository policy or risk requires it.
   replacement. Confirm that every selected line is intentionally replaced and
   that no unchanged context was added; if this comparison fails, narrow the
   range or rewrite the replacement.
-- Keep coordinated edits that cannot be expressed in the same minimal range in
-  prose. Do not expand a suggestion block to carry those edits.
+- For coordinated edits that cannot be expressed in the same minimal range,
+  provide a small fenced diff with file paths, or separate applicable suggestion
+  blocks. Validate the combined change. Do not expand a suggestion block with
+  unrelated lines or leave required companion edits as prose-only homework.
 - Cite local instructions for compliance findings and concrete commit SHAs for
   code links.
 
 Format inline comments as:
 
-```markdown
-<label> [decorations]: <subject>
+````markdown
+issue: <trigger and consequence>. <why this replacement fixes it, if needed>
 
-[necessary evidence, reasoning, and next step]
+```suggestion
+<exact replacement for the selected lines>
 ```
+
+Checked: `<focused command or probe>`; <observed result>.
+````
+
+This is a code-fix template, not a requirement to invent code for policy
+findings, missing facts, or a confirmed defect without a validated fix.
 
 Use `issue`, `suggestion`, `question`, `nitpick`, `note`, `praise`, or `todo`.
 Use `(blocking)` only for high-signal defects; otherwise use `(non-blocking)` or
 omit decoration. Keep one primary label.
 
+A no-issues verdict still requires checking premise, scope, API boundary, and
+diff minimality internally. Do not publish that checklist.
+
 No-issues comment when requested:
 
 ```markdown
-## Code review
-
-No issues found. Checked premise, scope, API boundary, and diff minimality, then
-bugs and repository instruction/contribution compliance.
+No issues found.
 ```

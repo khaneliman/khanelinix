@@ -149,25 +149,7 @@ class PullRequestReviewContract(unittest.TestCase):
             "each changed language or domain",
             "return a blocked review",
             "revalidate each finding against the current pr head",
-            "trigger or input",
-            "current behavior",
-            "expected behavior",
-            "concrete correction",
-            "condition",
-            "type",
-            "module assignment",
-            "precedence",
-            "compatibility",
-            "focused regression test that fails before",
-            "one defect per comment",
-            "what breaks",
-            "replacement code shape",
-            "proof test",
-            "do not restate the diff",
-            "abstract repair verbs without an exact operation",
-            "owns the protocol or behavior being consumed",
             "pinned commit and exact lines",
-            "unresolved choice and viable alternatives",
         ):
             self.assertIn(requirement, self.text)
 
@@ -191,7 +173,8 @@ class PullRequestReviewContract(unittest.TestCase):
             "compare the selected lines with the proposed replacement",
             "every selected line is intentionally replaced",
             "coordinated edits that cannot be expressed in the same minimal range",
-            "in prose. do not expand a suggestion block",
+            "provide a small fenced diff with file paths",
+            "validate the combined change",
         ):
             self.assertIn(requirement, self.text)
 
