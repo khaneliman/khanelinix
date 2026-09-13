@@ -20,16 +20,17 @@ Read only the references needed for the authoring decisions in this task:
   `genericClosure`, path coercion versus `lib.fileset`, string handling,
   attribute-path lookups, and import cost.
 
-For reviews or competing style/optimization choices, read
-[Review scenarios](review-scenarios.md). Defaults guide new or touched code;
-they do not justify unrelated normalization or override readable local idioms.
+Use the matching authoring reference to choose among valid implementations,
+including its exceptions and semantic checks. Use
+[Evaluation performance](eval-performance.md) when the decision depends on
+measured cost. Neither requires a review workflow.
 
 ## Apply the Defaults
 
 - Prefer explicit `lib.` usage, justified local `inherit (...)`, or
   expression-local `with` when it keeps one value clearer.
-- Avoid top-level, block-level, and wide-scope `with`. Do not flag
-  `with lib.types;` in a single `type = ...;` assignment solely for its syntax.
+- Prefer explicit qualification across broad scopes. Expression-local
+  `with lib.types;` is suitable for a single option type.
 - Keep bindings at their narrowest useful scope.
 - Prefer module-system merging to hand-written `if/else` for module config.
 - Keep option surfaces small. Select normal assignments, `mkDefault`, and

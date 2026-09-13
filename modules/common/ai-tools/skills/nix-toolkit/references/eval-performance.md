@@ -1,8 +1,9 @@
 # Evaluation Performance
 
-For review thresholds, semantic checks, and readability tradeoffs, read
-[Review scenarios](review-scenarios.md). Optimization patterns below are
-hypotheses until measured against the caller's performance target.
+Use this reference to measure evaluation cost and decide whether an optimization
+is worthwhile. [Performance-aware patterns](performance-patterns.md) owns
+construct selection and semantic checks; this reference owns experimental
+controls, profiling, and acceptance evidence.
 
 ## 1. Benchmarking and Baselining
 
@@ -91,47 +92,20 @@ Apply in order based on profiling output.
 - `inputs.<name>.follows = "nixpkgs";`: reduces dependency graph; validate
   cache-hit tradeoffs.
 
-### Nix Language Patterns
+### Select A Candidate From The Profile
 
-- Measure sharing repeated, item-independent work outside maps. Keep bindings at
-  their narrowest useful shared scope and preserve lazy error behavior.
-- Choose `let` versus `rec` for scope clarity. Neither syntax alone proves an
-  evaluation improvement.
-- Use strict `builtins.foldl'` / `lib.foldl'` when the accumulator must be
-  evaluated. Preserve intentional laziness and check error behavior.
-- For transitive-closure traversals, use `builtins.genericClosure`: runs in C++,
-  deduplicates in place, bypasses Nix recursion limit.
-- Avoid heavy string manipulation; repeated split/concat degrades toward O(N^2).
-  Use `builtins.fromJSON`/`fromTOML`; tokenize with `builtins.match` and reduce
-  with strict `foldl'`.
-- Avoid accidental broad-directory string coercion (`"${./.}"`). Keep path
-  values or filter with `lib.fileset` when appropriate; preserve intentional
-  store references and required source contents.
-- Profile import-time work. Keep imports independent of final `config`; enable
-  options can gate definitions, not config-dependent import discovery.
-- Avoid `builtins.readDir` over large trees during module import; materialize
-  file lists or narrow the directory.
-- Avoid generating many options with dynamic names: option declaration/merge
-  cost scales with surface area.
-- Measure strict reductions only where the consumer needs them. Forcing unused
-  dataset fields may increase work or expose previously unused errors.
-- Use attribute-path helpers for lists of path components. Preserve missing-key
-  behavior; do not infer performance from string construction alone.
+| Observed work                                       | Authoring reference                                                                                                                                  |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Repeated item-independent computation               | [Sharing work](performance-patterns.md#sharing-work)                                                                                                 |
+| Accumulator thunks or list construction             | [Folds and recursion](performance-patterns.md#folds-and-recursion)                                                                                   |
+| Growing attrset merges                              | [Attribute-set composition](performance-patterns.md#attribute-set-composition)                                                                       |
+| Broad source copying                                | [Local paths](performance-patterns.md#local-paths-in-strings)                                                                                        |
+| String processing or path lookup                    | [String manipulation](performance-patterns.md#string-manipulation) and [attribute names](performance-patterns.md#attribute-names-over-built-strings) |
+| Import discovery or repeated package-set evaluation | [Module import boundaries](performance-patterns.md#module-import-boundaries)                                                                         |
 
-### Attribute-Set Merge Candidates
-
-| Operation                  | Candidate                 | Semantic constraint                                                       |
-| -------------------------- | ------------------------- | ------------------------------------------------------------------------- |
-| Small fixed shallow update | `a // b // c`             | Rightmost value wins; leave readable chains alone.                        |
-| Large shallow update list  | `lib.mergeAttrsList list` | Preserve order and shallow collisions; compare against the existing fold. |
-| Nested updates             | `lib.recursiveUpdate`     | Preserve recursive semantics; shallow merging is not equivalent.          |
-| Module definitions         | `lib.mkMerge`             | Preserve option types, priorities, and conditional definitions.           |
-
-Growing-accumulator merges can repeatedly copy keys. Inspect the pinned
-[Nixpkgs implementation](https://github.com/NixOS/nixpkgs/blob/master/lib/attrsets.nix)
-and profile representative inputs rather than applying a universal complexity
-threshold. `zipAttrsWith` groups values by key; it does not choose the caller's
-merge policy.
+Run the selected pattern's semantic checks before benchmarking it. Force the
+same consumed output in both measurements; unused-expression timings do not
+establish improvement in the caller's workload.
 
 ## 3a. Suspicious Hotspots
 
@@ -168,6 +142,20 @@ Accept changes only after semantic checks pass and measured benefits justify
 complexity against the task target. Report timing mean, variance, and percentage
 change; report memory regressions even when time improves. Fewer thunks alone do
 not prove a user-visible speedup.
+
+## Readability And Feature Tradeoffs
+
+Accept localized complexity when measured benefits meet the task's performance
+target. Explain the readability cost and why the simpler form is insufficient.
+There is no universal percentage threshold. Retain the clearer form when
+measurements are inconclusive.
+
+Keep feature reductions separate from behavior-preserving changes. Disabling
+documentation or removing needed modules and packages sacrifices capabilities;
+present the lost capability, measured benefit, and explicit user decision
+needed. Keep behavior unchanged until that tradeoff is accepted. Shared package
+sets and input `follows` also require checking configuration, overlays, and
+versions.
 
 ## Constitutional Rules
 

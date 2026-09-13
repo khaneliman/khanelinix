@@ -1,8 +1,7 @@
 # Anti-Patterns
 
-These are authoring defaults, not automatic review findings. Apply repository
-canon first. Use [Review scenarios](review-scenarios.md) to distinguish useful
-local cleanup from equivalent styles worth leaving alone.
+Choose explicit expressions that fit repository canon. The alternatives below
+explain syntax and scope choices; valid local idioms need not be normalized.
 
 ## `with`
 
@@ -47,25 +46,31 @@ options.foo = {
 };
 ```
 
+When replacing `with`, resolve each identifier first. Lexical bindings take
+precedence over names introduced by `with`; blindly adding the `with` prefix can
+change the value. See the
+[Nix language reference](https://nix.dev/manual/nix/2.35/language/syntax).
+
 ## `rec`
 
-Avoid `rec` when `let-in` is sufficient.
+Prefer `let` for private intermediate values and `rec` for clear relationships
+within an exported attrset. Both are valid; neither syntax proves a speedup.
 
 Decision rule:
 
-1. If a value only needs to feed another value, prefer `let`.
-2. Use `rec` only when the attrset genuinely needs self-reference or multiple
-   attributes in the same set must refer to each other in place.
-3. If `rec` is only saving a small amount of typing, do not use it.
+1. Use `let` when an intermediate should not be exported.
+2. Keep `rec` when exported attributes refer to each other clearly and local
+   canon permits it. Remove `rec` when no attribute needs that scope.
+3. When changing forms, compare both exported names and values.
 
 ```nix
-# Consider simplifying
+# Clear relationship between exported attributes
 rec {
   version = "1.0";
   name = "pkg-${version}";
 }
 
-# Preferred authoring form
+# Equivalent let form
 let
   version = "1.0";
 in {
@@ -93,24 +98,12 @@ Decision rule:
    lookup.
 
 Keep plain `if/else` when it expresses a value choice clearly. Preserve branch
-exclusivity and fallback behavior when changing conditional structure.
+exclusivity and fallback behavior when changing conditional structure. A value
+selection such as `port = if cfg.tls then 443 else 80;` differs from conditional
+module definitions; see
+[Module conditionals](module-style.md#conditional-definitions).
 
 ```nix
-# Consider simplifying
-config = if cfg.enable then {
-  services.foo.enable = true;
-} else if cfg.experimental then {
-  services.foo.mode = "experimental";
-} else { };
-
-# Preferred authoring form
-config = lib.mkMerge [
-  (lib.mkIf cfg.enable { services.foo.enable = true; })
-  (lib.mkIf (!cfg.enable && cfg.experimental) {
-    services.foo.mode = "experimental";
-  })
-];
-
 # Preferred authoring form
 home.packages = [ pkgs.git ] ++ lib.optionals cfg.extraTools [
   pkgs.fd

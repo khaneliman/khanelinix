@@ -1,17 +1,16 @@
 # Bindings And Locality
 
-Keep bindings at the narrowest useful scope. Use these defaults for new or
-touched code; a single-use name can still explain a domain concept. For review
-thresholds and sharing tradeoffs, read [Review scenarios](review-scenarios.md).
+Keep bindings at the narrowest useful scope. A single-use name can still explain
+a domain concept; choose scope and naming for the reader, not use count alone.
 
 Binding decision rule:
 
-1. Used once and reads fine inline → inline it.
+1. Used once, adds no domain meaning, and reads fine inline: inline it.
 2. Used once but large/multi-line → small local `let` around the smallest
    expression that needs it. Purpose: readability of surrounding structure, not
    name-shortening or avoiding `lib.`/`pkgs.`.
-3. Used multiple times → bind at narrowest shared scope, not hoisted to
-   file/module top.
+3. Used multiple times: bind at the narrowest shared scope. Module scope is
+   appropriate only when the consumers need it.
 
 ## `inherit (...)`
 
@@ -60,3 +59,15 @@ in {
 
 Before adding a binding: if it is not shared and its name adds no meaning,
 prefer the readable inline form.
+
+## Scope Choices
+
+| Need                                                    | Form                                                        | Constraint                                                     |
+| ------------------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------- |
+| One service uses a helper                               | Put the helper inside that service's `let`.                 | Keep its surrounding structure readable.                       |
+| Several siblings use one value                          | Bind at their narrowest shared scope.                       | Keep all consumers in scope.                                   |
+| A single-use value names a domain concept               | Keep the meaningful name even when the expression is short. | Do not confuse semantic naming with a prefix-shortening alias. |
+| A performance target suggests sharing work across a map | See [Sharing work](performance-patterns.md#sharing-work).   | Locality alone does not determine evaluation cost.             |
+
+When moving bindings, evaluate each consumer and compare generated text or
+package identity. Exercise optional consumers in their enabled configurations.

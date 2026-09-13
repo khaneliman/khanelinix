@@ -18,12 +18,16 @@ lifecycle ownership; a diagnosis alone does not authorize code changes.
 3. Run the focused check that proves the result. Report the target, exact
    command, observed result, and any unverified behavior.
 
+Authoring references own Nix construction and semantic choices. Evaluation
+performance owns profiling, measurement, and optimization acceptance. Review
+guidance owns finding thresholds and suggestions; load it only for review work.
+
 ## Execution Routing
 
 | Requested result                                                                                                | Read                                                             |
 | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | Create or refactor expressions, NixOS, nix-darwin or Home Manager modules, overlays, packages, or flake outputs | [Authoring](references/authoring.md)                             |
-| Review style choices, module composition, or optimization proposals                                             | [Review scenarios](references/review-scenarios.md)               |
+| Review Nix changes, decide whether to request changes, or write suggestions                                     | [Review guidance](references/review.md)                          |
 | Compare package versions or outputs                                                                             | [Package diffing](references/package-diffing.md)                 |
 | Diagnose a failed build                                                                                         | [Build debugging](references/build-debugging.md)                 |
 | Explain or reduce closure contents                                                                              | [Closure analysis](references/closure-analysis.md)               |
