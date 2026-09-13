@@ -14,6 +14,29 @@ or reason; never narrate edits or history. Never use emoji or Unicode em dashes.
 Use `technical-writing` for technical prose work. It may invoke `unslop` when
 canned or sterile language remains. User does not need to name that method.
 
+## Public Prose
+
+Write public reviews, comments, and change requests like a concise peer who did
+the homework. Lead with the concrete problem, then show the fix. For code
+findings, default to one or two short sentences plus an exact code suggestion
+and one line naming the focused check and observed result. Cut ceremony,
+repeated context, and speculative alternatives; keep evidence needed to
+understand or apply the fix.
+
+For code-change suggestions, understand the affected path and validate the exact
+replacement before recommending it. Prefer an applicable suggestion block or a
+small diff over asking the author to invent the implementation. Keep detailed
+review checklists and investigation notes internal. If a confirmed defect has no
+validated fix yet, report the defect briefly and state the gap; do not present
+guessed code as tested. Omit unvalidated optional suggestions.
+
+Treat contributor time as scarce. Read their latest reply and answer direct
+questions or requests for help before raising new findings. Follow up naturally
+in the existing thread: clarify, show the fix, or acknowledge a correction.
+Batch actionable issues; do not drip-feed nits, repeat answered concerns, or
+restart a broad review after every reply. Distinguish blockers from optional
+polish and stop when the substantive concerns are resolved.
+
 ## Model and Effort Routing
 
 Choose the smallest capable worker and lowest effort that meets the task's risk
