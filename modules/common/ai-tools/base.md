@@ -24,10 +24,11 @@ bounded worker only for missing capability, repeated evidenced failure, or a
 risk its default cannot cover. Record the reason and result; use supported
 effort levels rather than assuming every provider accepts the same set.
 
-Delegate bounded fact finding and checks to the smallest capable worker. Keep
-planning, integration, and final judgment in the parent. Give every worker one
-bounded packet: task, paths, verified context, constraints, write policy, skill
-or tool lane, required evidence, and exit criteria. Omit conversation history.
+Delegate bounded fact finding and checks when doing so adds useful evidence or
+reduces elapsed work. Use the smallest capable worker. Keep planning,
+integration, and final judgment in the parent. Give every worker one bounded
+packet: task, paths, verified context, constraints, write policy, skill or tool
+lane, required evidence, and exit criteria. Omit conversation history.
 
 Delegate by semantic role (`reviewer`, `implementer`, `explorer`, and so on).
 Let provider adapters or `multi-provider-sdlc` select concrete models,
@@ -40,6 +41,23 @@ Use one reviewer for routine review. Use `interrogate` automatically when the
 request asks for adversarial, contested, high-risk, multi-model, or independent
 multi-angle review. Use `multi-provider-sdlc` when provider diversity, a named
 model, quota fallback, or route retry matters.
+
+## Pragmatism
+
+Optimize for the smallest complete solution with the lowest ongoing maintenance
+cost, not the fewest lines or fastest workaround.
+
+- Reuse existing code, configuration, and platform capabilities before adding
+  custom machinery.
+- Fix the cause at its owning boundary. Avoid patches that duplicate policy or
+  leave obsolete paths behind.
+- Add abstractions, dependencies, options, or tooling only for a concrete
+  current requirement or demonstrated reduction in complexity.
+- Keep unrelated cleanup and hypothetical future requirements out of scope.
+- Once the relevant code and constraints support a direct approach, implement
+  it. Reopen the design only when new evidence challenges it.
+- Preserve correctness and required checks. Stop when the requested behavior is
+  verified; do not add speculative improvements.
 
 ## Operating Loop
 
@@ -65,8 +83,6 @@ model, quota fallback, or route retry matters.
   answers faster than asking. Reserve questions for product or preference calls.
 - Own delegated work. Inspect its artifact and write your own conclusion.
 - When evidence supports disagreement, state reason, alternative, and risk.
-- Prefer boring direct solutions. Add abstractions only when they remove real
-  complexity.
 - Run compilers, package builds, and heavy test suites through `t3code-build` or
   `build-run` when one is on PATH; interactive agent scopes are memory capped
   and throttle into a stall instead of failing. Keep disposable build scratch in
@@ -92,8 +108,10 @@ Every new or materially changed parent task requires a skill decision.
   `SKILL.md`, quote the instruction, and explain its effect. Distinguish an
   explicit requirement from your interpretation.
 - Before task-specific tools or a substantive answer, invoke the closest
-  matching owner skill. Do not skip invocation because the task looks simple or
-  the workflow is familiar.
+  matching owner skill, except for an obvious, low-risk task that needs no
+  specialized guidance. For that exception, work directly and run a focused
+  check; do not create planning artifacts or delegate just to satisfy process.
+  Honor explicit skill requests and required checks.
 - Expect one owner skill for most tasks. Add one method, domain skill, or
   overlay when its trigger matches. Do not load unrelated skills to reach a
   quota.
