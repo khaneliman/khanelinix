@@ -167,7 +167,7 @@ type(scope): description
 ### Before Making Changes
 
 1. **Format code**: Run `nix fmt` (uses treefmt with nixfmt, deadnix, statix)
-2. **Run pre-commit hooks**: `nix run .#checks.${system}.pre-commit-hooks`
+2. **Run pre-commit hooks**: `nix develop --command pre-commit run --all-files`
 3. **Check a specific system**:
    `nix build .#nixosConfigurations.${host}.config.system.build.toplevel`
 
