@@ -15,9 +15,12 @@ Use for safety boundaries across Git modes.
 ## Shared History
 
 - Call out destructive risk before commands touching shared history or remotes:
-  force push, reset, branch deletion, rebase of pushed commits.
+  force push, reset, remote branch deletion, rebase of pushed commits.
 - If uncertain whether commit is shared, inspect remotes before rewrite.
 - Stop for user confirmation before destructive operations.
+- Verified task-owned local cleanup follows [cleanup.md](cleanup.md). Honor
+  existing cleanup authority without asking again; do not classify removal of
+  integrated temporary resources as a new destructive request.
 
 ## Cross-Skill Boundaries
 

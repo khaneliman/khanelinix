@@ -5,6 +5,9 @@ causal analysis, and rewrite decisions in the relevant playbook.
 
 ## Available Scripts
 
+- `<path-to-skill>/scripts/cleanup.py`: preview or apply cleanup of one exact
+  owned branch/worktree after integration. Read [cleanup.md](cleanup.md) for
+  ownership, invocation, evidence, and preservation rules.
 - `<path-to-skill>/scripts/stack_report.py --base <ref> [--head <ref>]`:
   read-only status, ahead/behind, commit-message, and touched-path report. JSON
   is default; `--format text` is available. Output lists and keys have stable
@@ -16,7 +19,7 @@ causal analysis, and rewrite decisions in the relevant playbook.
   cleanup. Main HEAD and status are verified unchanged before success is
   reported.
 
-Both scripts accept `--repo <path>` and bound potentially large evidence by
+The reporting and bisect scripts accept `--repo <path>` and bound evidence by
 default. `stack_report.py` independently bounds commits, worktree entries, paths
 per commit, and commit bodies. `bisect_run.py` bounds tested revisions and the
 first-bad commit body, and streams noisy bisect output into fixed-size tail

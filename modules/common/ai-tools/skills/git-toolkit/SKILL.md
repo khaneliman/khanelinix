@@ -23,11 +23,14 @@ When invoked, route to one mode:
 5. **adversarial-review**: independently review a commit, PR, or diff against
    falsifiable design premises and repository-wide constraints. Read
    [adversarial-review.md](references/adversarial-review.md).
-6. **routine-workflow**: branch creation, naming, cleanup, merge/rebase choice,
-   conflict resolution, or standard Git operations. Git mechanics are
-   model-known; read [operating-rules.md](references/operating-rules.md) when
-   naming a branch or when shared-history risk or GitHub boundaries matter.
-7. **github-toolkit**: issues, pull requests, review feedback, and CI state.
+6. **cleanup**: before creating task branches/worktrees, after integrating
+   parallel work, or after a PR merges. Read
+   [cleanup.md](references/cleanup.md).
+7. **routine-workflow**: branch creation, naming, merge/rebase choice, conflict
+   resolution, or standard Git operations. Git mechanics are model-known; read
+   [operating-rules.md](references/operating-rules.md) when naming a branch or
+   when shared-history risk or GitHub boundaries matter.
+8. **github-toolkit**: issues, pull requests, review feedback, and CI state.
    Invoke `$github-toolkit`; do not depend on a sibling filesystem path.
 
 If intent is unclear, ask for the mode before applying changes.
