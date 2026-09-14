@@ -1,5 +1,6 @@
 {
   config,
+  hostname,
   lib,
   osConfig ? { },
   pkgs,
@@ -9,6 +10,14 @@ let
   inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.terminal.tools.nh;
+
+  # One deploy alias per remote host; the deploy app refuses the local host.
+  remoteHosts = lib.filterAttrs (name: _: name != hostname) (
+    import (lib.getFile "modules/common/programs/terminal/tools/ssh/hosts.nix")
+  );
+  deployAliases = lib.mapAttrs' (
+    name: _: lib.nameValuePair "deploy-${name}" "nix run \"$NH_FLAKE#deploy\" -- ${name}"
+  ) remoteHosts;
 
   userHome = config.home.homeDirectory;
   switchTarget = if pkgs.stdenv.hostPlatform.isLinux then "os" else "darwin";
@@ -66,7 +75,8 @@ in
       shellAliases = {
         nixre = "nh ${switchTarget} switch --show-activation-logs";
         nixre-fast = "nh ${switchTarget} switch --show-activation-logs --option max-jobs auto --option cores 0";
-      };
+      }
+      // deployAliases;
     };
   };
 }
