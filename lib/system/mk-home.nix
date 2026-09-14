@@ -42,13 +42,20 @@ let
   common = import ./common.nix { inputs = patchedInputs; };
   flake = patchedInputs.self or (throw "mkHome requires 'inputs.self' to be passed");
 
-  extendedLib = common.mkExtendedLib flake patchedInputs.nixpkgs-unstable;
+  # Match the nixpkgs base of the platform system builder so standalone and
+  # embedded Home Manager evaluate the same revision.
+  nixpkgsInput =
+    if inputs.nixpkgs.lib.hasSuffix "-linux" system then
+      patchedInputs.nixpkgs
+    else
+      patchedInputs.nixpkgs-unstable;
+  extendedLib = common.mkExtendedLib flake nixpkgsInput;
   inputPackageSets = common.mkInputPackageSets {
     inherit flake system;
   };
 in
 patchedInputs.home-manager.lib.homeManagerConfiguration {
-  pkgs = import patchedInputs.nixpkgs-unstable {
+  pkgs = import nixpkgsInput {
     inherit system;
     inherit ((common.mkNixpkgsConfig flake)) config overlays;
   };
