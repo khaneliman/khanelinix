@@ -18,6 +18,10 @@ in
 
   hardware.amdgpu.overdrive.enable = true;
 
+  # The Deck sits on Wi-Fi with no cable; power save yields 45 ms to 1.2 s
+  # LAN latency and dropped mDNS responses, which breaks remote deploys.
+  networking.networkmanager.wifi.powersave = false;
+
   boot.kernelParams = [
     "amdgpu.sg_display=0"
     "amdgpu.dcdebugmask=0x10"
