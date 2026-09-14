@@ -20,7 +20,6 @@
         lanzaboote.follows = "";
         llm-agents.follows = "";
         mcp-servers-nix.follows = "";
-        nh.follows = "";
         niri.follows = "";
         nix-darwin.follows = "";
         nix-flatpak.follows = "";
