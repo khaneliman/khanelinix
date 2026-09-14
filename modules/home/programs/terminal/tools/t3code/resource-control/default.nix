@@ -58,9 +58,23 @@ let
 
   scopedBinaries = lib.mapAttrs (
     name: binary:
-    pkgs.writeShellScript "t3code-${name}-scoped" ''
-      exec ${lib.getExe providerRun} ${lib.escapeShellArg binary} "$@"
-    ''
+    let
+      wrapper = pkgs.writeShellScript "t3code-${name}-scoped" ''
+        exec ${lib.getExe providerRun} ${lib.escapeShellArg binary} "$@"
+      '';
+    in
+    if name == "antigravity" then
+      let
+        # T3 resolves the wrapper's real path before looking for the ACP helper.
+        package = pkgs.runCommand "t3code-antigravity-scoped" { } ''
+          mkdir -p "$out/bin"
+          cp ${wrapper} "$out/bin/agy_acp_server.par"
+          ln -s ${lib.escapeShellArg "${builtins.dirOf binary}/localharness_external"} "$out/bin/localharness_external"
+        '';
+      in
+      lib.getExe' package "agy_acp_server.par"
+    else
+      wrapper
   ) providerBinaries;
 in
 {
