@@ -72,7 +72,14 @@ nix run .#deploy
 
 # Deploy to remote host
 nix run .#deploy -- <host> [switch|boot|test|build]
+
+# Shell aliases, one per remote host, generated from the host inventory
+deploy-bruddynix
+deploy-khanelimac
 ```
+
+The app resolves the flake from `NH_FLAKE`, so the aliases work from any
+directory.
 
 ## Features
 

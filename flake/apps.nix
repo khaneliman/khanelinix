@@ -226,6 +226,9 @@ _: {
                 ];
                 text = ''
                   host_table='${hostTable}'
+                  # Shell aliases run from arbitrary directories; nh already
+                  # exports the checkout path, so fall back to it.
+                  flake="''${NH_FLAKE:-''${FLAKE:-.}}"
 
                   print_usage() {
                     echo "Usage: deploy <host> [switch|boot|test|build] [extra args...]"
@@ -290,7 +293,7 @@ _: {
                       esac
 
                       nixos-rebuild "$action" \
-                        --flake ".#$target_name" \
+                        --flake "$flake#$target_name" \
                         --target-host "$target_user@$target_hostname" \
                         --sudo \
                         "$@"
@@ -310,7 +313,7 @@ _: {
                       esac
 
                       if [ "$action" = "build" ]; then
-                        nix build ".#darwinConfigurations.''${target_name}.system" "$@"
+                        nix build "$flake#darwinConfigurations.''${target_name}.system" "$@"
                         exit 0
                       fi
 
@@ -322,7 +325,7 @@ _: {
                       # as root. In darwin-rebuild.sh, 'activate' simply calls '$systemConfig/activate'
                       # after verifying root privileges. We directly execute the documented '<result>/activate'
                       # script as root on the target host.
-                      out_path="$(nix build ".#darwinConfigurations.''${target_name}.system" --no-link --print-out-paths "$@")"
+                      out_path="$(nix build "$flake#darwinConfigurations.''${target_name}.system" --no-link --print-out-paths "$@")"
                       nix copy --to "ssh-ng://$target_user@$target_hostname" "$out_path"
 
                       ssh_opts=()
