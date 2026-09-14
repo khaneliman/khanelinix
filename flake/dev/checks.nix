@@ -127,11 +127,23 @@
         };
       };
 
-      checks = lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin (
+      # `nix flake check` evaluates nixosConfigurations itself but ignores
+      # darwinConfigurations and homeConfigurations. Build Darwin systems on
+      # Darwin; elsewhere force only evaluation so Linux CI still catches
+      # module regressions without building foreign closures.
+      checks =
+        let
+          mkEvalCheck =
+            name: drv: pkgs.writeText "${name}-eval" (builtins.unsafeDiscardStringContext drv.drvPath);
+        in
         lib.mapAttrs' (name: cfg: {
           name = "darwin-${name}";
-          value = cfg.system;
+          value =
+            if pkgs.stdenv.hostPlatform.isDarwin then cfg.system else mkEvalCheck "darwin-${name}" cfg.system;
         }) self.darwinConfigurations
-      );
+        // lib.mapAttrs' (name: cfg: {
+          name = "home-${lib.replaceStrings [ "@" ] [ "-" ] name}";
+          value = mkEvalCheck "home-${lib.replaceStrings [ "@" ] [ "-" ] name}" cfg.activationPackage;
+        }) self.homeConfigurations;
     };
 }
