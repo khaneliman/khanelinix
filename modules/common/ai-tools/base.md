@@ -105,6 +105,14 @@ cost, not the fewest lines or fastest workaround.
 - Settle an empirical fork with a cheap experiment or prototype when running it
   answers faster than asking. Reserve questions for product or preference calls.
 - Own delegated work. Inspect its artifact and write your own conclusion.
+- Own task-created branches and worktrees through cleanup, including worker
+  resources. Record their paths, refs, starting commits, and integration target
+  when creating them. Before creation or cleanup, use `git-toolkit` cleanup
+  mode. The parent must integrate and verify the result, stop its workers, and
+  remove integrated task-owned resources before claiming completion. This is
+  standing authority for safe local cleanup, not deletion of unrelated or
+  unintegrated work or remote branches. Report any retained resource with its
+  exact path/ref, reason, and next action; silent leftovers are not completion.
 - When evidence supports disagreement, state reason, alternative, and risk.
 - Run compilers, package builds, heavy test suites, and whole-flake Nix
   evaluation such as `nix flake check` or host `nix eval` through `t3code-build`

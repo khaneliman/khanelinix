@@ -25,3 +25,7 @@ Return a concise evidence packet: result, changed files, checks, assumptions,
 conflicts, residual risks, and remaining work. Keep raw logs out unless exact
 lines are required evidence. Stop when exit criteria are met or authority,
 scope, or evidence is insufficient.
+
+For isolated work, return the worktree path, branch or detached HEAD, exact tip,
+and dirty/untracked state. Leave the artifact intact for parent integration. The
+parent owns removal after acceptance; a worker's final reply is not cleanup.
