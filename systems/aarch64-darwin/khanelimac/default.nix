@@ -51,6 +51,11 @@ in
     };
 
     services = {
+      harmonia = {
+        enable = true;
+        signKeyPath = config.sops.secrets."harmonia-signing-key".path;
+      };
+
       lumen = {
         enable = true;
 
@@ -146,6 +151,8 @@ in
   sops.secrets = {
     # Remote-builder SSH identity referenced by nix.buildMachines.
     "khanelimac_khaneliman_ssh_key".sopsFile = lib.getFile "secrets/khanelimac/khaneliman/default.yaml";
+    # Generated with nix-store --generate-binary-cache-key khanelimac.local-1.
+    "harmonia-signing-key" = { };
     "time-machine-password" = { };
   };
 
