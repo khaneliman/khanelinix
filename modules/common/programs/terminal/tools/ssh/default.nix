@@ -43,6 +43,8 @@ let
             "Host ${aliasName}"
             "  Hostname ${hostname}"
             "  User ${remote-user-name}"
+            # See the Home Manager ssh module: .local AAAA records are unstable.
+            "  AddressFamily inet"
             "  ForwardAgent yes"
             "  ConnectTimeout 10"
             port-expr

@@ -84,6 +84,10 @@ in
             {
               HostName = remote.hostname;
               User = remote.username;
+              # mDNS answers AAAA first with rotating IPv6 temporary addresses
+              # that avahi withdraws every few minutes; ssh then fails with "No
+              # route to host" without retrying IPv4.
+              AddressFamily = "inet";
               ForwardAgent = true;
               RemoteForward = lib.optionals (config.services.gpg-agent.enable && (remote.gpgAgent or false)) [
                 "/run/user/${remoteUserId}/gnupg/S.gpg-agent /run/user/${userId}/gnupg/S.gpg-agent.extra"
