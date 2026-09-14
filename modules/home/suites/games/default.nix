@@ -46,8 +46,7 @@ in
     khanelinix = {
       programs = {
         graphical = {
-          # FIXME: broken runtime; segfaults on startup with GLib/Gdk type registration errors.
-          # apps.prismlauncher.enable = lib.mkDefault (includes "standard");
+          apps.prismlauncher.enable = lib.mkDefault (includes "standard");
           addons.mangohud.enable = lib.mkDefault (includes "standard");
         };
 
