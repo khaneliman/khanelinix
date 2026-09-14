@@ -193,11 +193,7 @@ in
                 "browser.download.start_downloads_in_tmp_dir" = true;
                 # "browser.download.folderList" = 2; # use the last dir
                 "browser.download.useDownloadDir" = true;
-                "browser.download.dir" =
-                  if config.xdg.userDirs.enable then
-                    config.xdg.userDirs.download
-                  else
-                    "${config.home.homeDirectory}/Downloads";
+                "browser.download.dir" = lib.khanelinix.userDir config "download" "Downloads";
 
                 "media.block-autoplay-until-in-foreground" = true;
                 "media.block-play-until-document-interaction" = true;

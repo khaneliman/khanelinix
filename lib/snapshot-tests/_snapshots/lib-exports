@@ -52,7 +52,8 @@
     "profileIncludes",
     "resolvePackageProfile",
     "suitePackageProfile",
-    "suiteProfileIncludes"
+    "suiteProfileIncludes",
+    "userDir"
   ],
   "system": [
     "common",

@@ -32,9 +32,6 @@ let
       desc = description;
     };
 
-  getDir =
-    dir: default: if config.xdg.userDirs.enable then dir else "${config.home.homeDirectory}/${default}";
-
   commonLocations = [
     {
       key = "/";
@@ -59,12 +56,12 @@ let
     }
     {
       key = "d";
-      dirPath = getDir config.xdg.userDirs.documents "Documents";
+      dirPath = lib.khanelinix.userDir config "documents" "Documents";
       desc = "~/Documents";
     }
     {
       key = "D";
-      dirPath = getDir config.xdg.userDirs.download "Downloads";
+      dirPath = lib.khanelinix.userDir config "download" "Downloads";
       desc = "~/Downloads";
     }
     {
@@ -73,12 +70,20 @@ let
     }
     {
       key = "g";
-      dirPath = "${getDir config.xdg.userDirs.documents (lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents")}/github";
+      dirPath = "${
+        lib.khanelinix.userDir config "documents" (
+          lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents"
+        )
+      }/github";
       desc = "~/Documents/github";
     }
     {
       key = "G";
-      dirPath = "${getDir config.xdg.userDirs.documents (lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents")}/gitlab";
+      dirPath = "${
+        lib.khanelinix.userDir config "documents" (
+          lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents"
+        )
+      }/gitlab";
       desc = "~/Documents/gitlab";
     }
     {
@@ -88,7 +93,7 @@ let
     }
     {
       key = "k";
-      dirPath = getDir config.xdg.userDirs.desktop "Desktop";
+      dirPath = lib.khanelinix.userDir config "desktop" "Desktop";
       desc = "~/Desktop";
     }
     {
@@ -98,7 +103,7 @@ let
     }
     {
       key = "p";
-      dirPath = getDir config.xdg.userDirs.pictures "Pictures";
+      dirPath = lib.khanelinix.userDir config "pictures" "Pictures";
       desc = "~/Pictures";
     }
     {
@@ -117,7 +122,7 @@ let
     }
     {
       key = "V";
-      dirPath = getDir config.xdg.userDirs.videos "Videos";
+      dirPath = lib.khanelinix.userDir config "videos" "Videos";
       desc = "~/Videos";
     }
     {

@@ -233,4 +233,23 @@ in
       dark = "dark";
     };
   };
+
+  # module.userDir
+  testUserDirEnabled = {
+    expr = module.userDir {
+      xdg.userDirs = {
+        enable = true;
+        pictures = "/custom/pictures";
+      };
+    } "pictures" "Pictures";
+    expected = "/custom/pictures";
+  };
+
+  testUserDirDisabled = {
+    expr = module.userDir {
+      home.homeDirectory = "/home/testuser";
+      xdg.userDirs.enable = false;
+    } "pictures" "Pictures";
+    expected = "/home/testuser/Pictures";
+  };
 }

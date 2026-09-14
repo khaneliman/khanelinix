@@ -214,11 +214,7 @@
                     _props = {
                       name = "Media";
                       split_direction = "vertical";
-                      cwd =
-                        if config.xdg.userDirs.enable then
-                          config.xdg.userDirs.music
-                        else
-                          "${config.home.homeDirectory}/Music";
+                      cwd = lib.khanelinix.userDir config "music" "Music";
                     };
                     _children = [
                       {

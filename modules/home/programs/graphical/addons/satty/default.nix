@@ -11,11 +11,7 @@ let
 
   cfg = config.khanelinix.programs.graphical.addons.satty;
 
-  picturesDir =
-    if config.xdg.userDirs.enable then
-      config.xdg.userDirs.pictures
-    else
-      "${config.home.homeDirectory}/Pictures";
+  picturesDir = lib.khanelinix.userDir config "pictures" "Pictures";
 in
 {
   options.khanelinix.programs.graphical.addons.satty = {

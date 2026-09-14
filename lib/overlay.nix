@@ -56,6 +56,7 @@ in
     nested-default-attrs
     nested-force-attrs
     decode
+    userDir
     ;
 
   # Add home-manager lib functions

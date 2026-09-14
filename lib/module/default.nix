@@ -258,5 +258,29 @@ rec {
     : 1\. Function argument
   */
   nested-force-attrs = lib.mapAttrs (_key: force-attrs);
+
+  /**
+    Resolve an XDG user directory with a fallback to a folder in $HOME.
+
+    # Inputs
+
+    `config`
+
+    : Home Manager configuration set
+
+    `name`
+
+    : Attribute name in `config.xdg.userDirs` (e.g. `"pictures"`)
+
+    `default`
+
+    : Subdirectory name under `$HOME` to use if XDG userDirs is disabled
+  */
+  userDir =
+    config: name: default:
+    if config.xdg.userDirs.enable or false then
+      config.xdg.userDirs.${name}
+    else
+      "${config.home.homeDirectory}/${default}";
 }
 // base64Lib

@@ -9,11 +9,7 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.topgrade;
 
-  documentsDir =
-    if config.xdg.userDirs.enable then
-      config.xdg.userDirs.documents
-    else
-      "${config.home.homeDirectory}/Documents";
+  documentsDir = lib.khanelinix.userDir config "documents" "Documents";
 in
 {
   options.khanelinix.programs.terminal.tools.topgrade = {

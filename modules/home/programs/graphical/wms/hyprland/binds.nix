@@ -77,11 +77,7 @@ let
     let
       launcherCount = builtins.length enabledLaunchers;
       magick = lib.getExe' pkgs.imagemagick "magick";
-      screenshotPath =
-        if config.xdg.userDirs.enable then
-          "${config.xdg.userDirs.pictures}/screenshots"
-        else
-          "${config.home.homeDirectory}/Pictures/screenshots";
+      screenshotPath = "${lib.khanelinix.userDir config "pictures" "Pictures"}/screenshots";
       getDateTime = lib.getExe (
         pkgs.writeShellScriptBin "getDateTime" /* bash */ ''
           echo $(date +'%Y%m%d_%H%M%S')
