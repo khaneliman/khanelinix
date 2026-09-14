@@ -31,13 +31,7 @@ in
       };
     };
 
-    services.time-machine.destination = {
-      enable = true;
-      host = "timemachine.local";
-      passwordFile = config.sops.secrets."time-machine-password".path;
-      share = "TimeMachine";
-      user = "khaneliman";
-    };
+    services.time-machine.enable = false;
 
     suites = {
       common = enabled;
@@ -90,6 +84,5 @@ in
   sops.secrets = {
     # Remote-builder SSH identity referenced by nix.buildMachines.
     "khanelimac_khaneliman_ssh_key".sopsFile = lib.getFile "secrets/khanelimac/khaneliman/default.yaml";
-    "time-machine-password" = { };
   };
 }
