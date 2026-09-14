@@ -53,11 +53,7 @@ in
       extraConfigFiles = {
         "applications.ron".text =
           let
-            preprocessCommandPrefix =
-              if (osConfig.programs.uwsm.enable or false) then
-                "uwsm app -p TimeoutStopSec=15s --"
-              else
-                "run-as-service";
+            preprocessCommandPrefix = lib.khanelinix.uwsmApp osConfig "";
             preprocessScript = pkgs.writeShellScriptBin "anyrun-preprocess-application-exec" ''
               shift
               echo "${preprocessCommandPrefix} $*"

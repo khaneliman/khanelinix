@@ -57,6 +57,7 @@ in
     nested-force-attrs
     decode
     userDir
+    uwsmApp
     ;
 
   # Add home-manager lib functions

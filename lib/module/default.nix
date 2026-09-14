@@ -282,5 +282,53 @@ rec {
       config.xdg.userDirs.${name}
     else
       "${config.home.homeDirectory}/${default}";
+
+  /**
+    Conditionally wrap an application launch command with uwsm or run-as-service.
+
+    # Inputs
+
+    `osConfig`
+
+    : NixOS host configuration set (or empty set for standalone Home Manager)
+
+    `args`
+
+    : Either a command string (for default options) or an attribute set
+      with optional `slice` and `timeoutStopSec`. If `args` is an attribute
+      set, returns a function taking `cmd`.
+  */
+  uwsmApp =
+    osConfig: args:
+    let
+      withArgs =
+        opts: cmd:
+        let
+          slice = opts.slice or null;
+          timeoutStopSec =
+            opts.timeoutStopSec or {
+              a = "15s";
+              b = "10s";
+              s = "30s";
+            }
+            .${if slice == null then "a" else slice} or "15s";
+          prefix =
+            if (osConfig.programs.uwsm.enable or false) then
+              "uwsm app ${
+                lib.optionalString (slice != null) "-s ${slice} "
+              }-p TimeoutStopSec=${timeoutStopSec} --"
+            else
+              "run-as-service";
+        in
+        if cmd == "" then prefix else "${prefix} ${cmd}";
+
+      withoutArgs = cmd: withArgs { } cmd;
+    in
+    if args == null then
+      withArgs { }
+    else if lib.isAttrs args then
+      withArgs args
+    else
+      withoutArgs args;
 }
 // base64Lib

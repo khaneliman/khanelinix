@@ -252,4 +252,38 @@ in
     } "pictures" "Pictures";
     expected = "/home/testuser/Pictures";
   };
+
+  # module.uwsmApp
+  testUwsmAppDisabled = {
+    expr = module.uwsmApp { } "firefox";
+    expected = "run-as-service firefox";
+  };
+
+  testUwsmAppEnabled = {
+    expr = module.uwsmApp { programs.uwsm.enable = true; } "firefox";
+    expected = "uwsm app -p TimeoutStopSec=15s -- firefox";
+  };
+
+  testUwsmAppSlice = {
+    expr = module.uwsmApp { programs.uwsm.enable = true; } { slice = "b"; } "vesktop";
+    expected = "uwsm app -s b -p TimeoutStopSec=10s -- vesktop";
+  };
+
+  testUwsmAppCustomTimeout = {
+    expr = module.uwsmApp { programs.uwsm.enable = true; } {
+      slice = "b";
+      timeoutStopSec = "20s";
+    } "vesktop";
+    expected = "uwsm app -s b -p TimeoutStopSec=20s -- vesktop";
+  };
+
+  testUwsmAppPrefixOnly = {
+    expr = module.uwsmApp { programs.uwsm.enable = true; } "";
+    expected = "uwsm app -p TimeoutStopSec=15s --";
+  };
+
+  testUwsmAppPrefixOnlyDisabled = {
+    expr = module.uwsmApp { } "";
+    expected = "run-as-service";
+  };
 }

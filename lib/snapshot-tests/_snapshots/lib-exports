@@ -53,7 +53,8 @@
     "resolvePackageProfile",
     "suitePackageProfile",
     "suiteProfileIncludes",
-    "userDir"
+    "userDir",
+    "uwsmApp"
   ],
   "system": [
     "common",

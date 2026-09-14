@@ -204,14 +204,9 @@ in
           excludedPaths = config.home.homeDirectory;
           watcherPaths = "";
         };
-        providers.applications.preferences.launchPrefix =
-          lib.optionalString pkgs.stdenv.hostPlatform.isLinux
-            (
-              if (osConfig.programs.uwsm.enable or false) then
-                "uwsm app -p TimeoutStopSec=15s --"
-              else
-                "run-as-service"
-            );
+        providers.applications.preferences.launchPrefix = lib.optionalString pkgs.stdenv.hostPlatform.isLinux (
+          lib.khanelinix.uwsmApp osConfig ""
+        );
       };
     };
 

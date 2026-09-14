@@ -31,39 +31,7 @@ in
 
     khanelinix.programs.graphical.wms.hyprland.startupCommands =
       let
-        # Helper function to conditionally prefix with uwsm
-        # Usage: mkStartCommand "command" or mkStartCommand { slice = "b"; } "command"
-        mkStartCommand =
-          let
-            # Two-argument version: mkStartCommand { slice = "b"; } "command"
-            withArgs =
-              args: cmd:
-              let
-                slice = args.slice or null;
-                timeoutStopSec =
-                  args.timeoutStopSec or {
-                    a = "15s";
-                    b = "10s";
-                    s = "30s";
-                  }
-                  .${if slice == null then "a" else slice} or "15s";
-              in
-              if (osConfig.programs.uwsm.enable or false) then
-                "uwsm app ${
-                  lib.optionalString (slice != null) "-s ${slice} "
-                }-p TimeoutStopSec=${timeoutStopSec} -- ${cmd}"
-              else
-                "run-as-service ${cmd}";
-
-            # Single-argument version: mkStartCommand "command"
-            withoutArgs =
-              cmd:
-              if (osConfig.programs.uwsm.enable or false) then
-                "uwsm app -p TimeoutStopSec=15s -- ${cmd}"
-              else
-                "run-as-service ${cmd}";
-          in
-          args: if lib.isString args then withoutArgs args else withArgs args;
+        mkStartCommand = lib.khanelinix.uwsmApp osConfig;
         appCommands =
           # Regular applications (app-graphical.slice) - actively used, interactive
           (

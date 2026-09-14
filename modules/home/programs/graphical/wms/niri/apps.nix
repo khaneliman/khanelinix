@@ -14,12 +14,7 @@ let
   socialIncludes = suiteProfileIncludes config config.khanelinix.suites.social;
   businessIncludes = suiteProfileIncludes config config.khanelinix.suites.business;
 
-  mkStartCommand =
-    cmd:
-    if (osConfig.programs.uwsm.enable or false) then
-      "uwsm app -p TimeoutStopSec=15s -- ${cmd}"
-    else
-      "run-as-service ${cmd}";
+  mkStartCommand = lib.khanelinix.uwsmApp osConfig;
 in
 {
   config = mkIf cfg.enable (

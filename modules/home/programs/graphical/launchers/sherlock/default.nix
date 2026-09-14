@@ -29,11 +29,7 @@ in
         };
 
         behavior = {
-          global_prefix =
-            if (osConfig.programs.uwsm.enable or false) then
-              "uwsm app -p TimeoutStopSec=15s --"
-            else
-              "run-as-service";
+          global_prefix = lib.khanelinix.uwsmApp osConfig "";
         };
 
         caching = {

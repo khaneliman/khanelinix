@@ -59,11 +59,7 @@ in
             context_aware = false;
             prioritize_new = false;
             show_generic = true;
-            launch_prefix =
-              if (osConfig.programs.uwsm.enable or false) then
-                "uwsm app -p TimeoutStopSec=15s -- "
-              else
-                "run-as-service ";
+            launch_prefix = "${lib.khanelinix.uwsmApp osConfig ""} ";
             actions = {
               enabled = true;
               hide_category = false;
