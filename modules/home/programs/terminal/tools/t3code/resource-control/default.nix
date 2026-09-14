@@ -8,28 +8,27 @@ let
   cfg = config.khanelinix.programs.terminal.tools.t3code;
   inherit (cfg) resourceControl;
 
+  # OOMPolicy=continue lets the kernel kill only the offending child. The
+  # agent process survives and receives a failed tool result instead of the
+  # whole scope disappearing.
   mkRunner =
     name: scratchOnDisk: scopeArgs: ownerArgs:
     pkgs.writeShellScriptBin name ''
       exec ${lib.getExe' pkgs.systemd "systemd-run"} \
         --user --scope --quiet --collect --expand-environment=no \
         --unit="${name}-$$-$RANDOM.scope" \
-        --property=OOMPolicy=kill \
+        --property=OOMPolicy=continue \
         ${lib.optionalString scratchOnDisk ''--setenv=TMPDIR="''${TMPDIR:-/var/tmp}" ''}${
           lib.escapeShellArgs (scopeArgs ++ ownerArgs)
         } -- "$@"
     '';
 
-  agentArgs = [
-    "--slice=app-agent-workloads.slice"
-    "--property=MemoryHigh=${resourceControl.agent.memoryHigh}"
-    "--property=MemoryMax=${resourceControl.agent.memoryMax}"
-    "--property=MemorySwapMax=${resourceControl.agent.memorySwapMax}"
-  ];
-  buildArgs = [
-    "--slice=app-build.slice"
-    "--property=MemoryHigh=${resourceControl.build.memoryHigh}"
-  ];
+  # No per-scope memory properties. memory.high does not fail a scope, it
+  # parks every allocating process in it, including the agent's own stdio
+  # loop, so an over-budget evaluation looked like a silent hang. The shared
+  # slice hard cap is the only ceiling.
+  agentArgs = [ "--slice=app-agent-workloads.slice" ];
+  buildArgs = [ "--slice=app-build.slice" ];
   backendArgs = [
     "--property=BindsTo=t3code-remote.service"
     "--property=After=t3code-remote.service"
@@ -70,48 +69,14 @@ in
       default = true;
     };
 
-    agent = {
-      memoryHigh = lib.mkOption {
-        type = lib.types.str;
-        default = "6G";
-        description = "Soft memory threshold for each agent scope.";
-      };
-      memoryMax = lib.mkOption {
-        type = lib.types.str;
-        default = "8G";
-        description = "Hard memory limit for each agent scope.";
-      };
-      memorySwapMax = lib.mkOption {
-        type = lib.types.str;
-        default = "2G";
-        description = "Swap limit for each agent scope.";
-      };
-    };
-
-    agentAggregate = {
-      memoryHigh = lib.mkOption {
-        type = lib.types.str;
-        default = "12G";
-        description = "Soft memory threshold for the agent workload slice.";
-      };
-      memoryMax = lib.mkOption {
-        type = lib.types.str;
-        default = "16G";
-        description = "Hard memory limit for the agent workload slice.";
-      };
-      memorySwapMax = lib.mkOption {
-        type = lib.types.str;
-        default = "4G";
-        description = "Swap limit for the agent workload slice.";
-      };
-    };
-
-    build = {
-      memoryHigh = lib.mkOption {
-        type = lib.types.str;
-        default = "16G";
-        description = "Soft memory threshold for each build scope and slice.";
-      };
+    memoryMax = lib.mkOption {
+      type = lib.types.str;
+      default = "75%";
+      description = ''
+        Hard memory limit shared by every agent scope. A percentage is
+        relative to physical memory. Exceeding it kills the largest process
+        in the offending scope; nothing is throttled below it.
+      '';
     };
   };
 
@@ -124,21 +89,16 @@ in
 
     systemd.user.slices.app-agent-workloads = {
       Unit.Description = "Resource-limited agent workloads";
-      Slice = {
-        # Reclaim pressure alone must not terminate interactive agent sessions.
-        MemoryHigh = resourceControl.agentAggregate.memoryHigh;
-        MemoryMax = resourceControl.agentAggregate.memoryMax;
-        MemorySwapMax = resourceControl.agentAggregate.memorySwapMax;
-      };
+      Slice.MemoryMax = resourceControl.memoryMax;
     };
 
-    # A sibling slice lets explicit builds exceed the provider hard caps.
+    # A sibling slice lets explicit builds run outside the agent hard cap at
+    # lower CPU and IO priority.
     systemd.user.slices.app-build = {
-      Unit.Description = "Soft-limited build workloads";
+      Unit.Description = "Deprioritized build workloads";
       Slice = {
         CPUWeight = lib.mkDefault 20;
         IOWeight = lib.mkDefault 20;
-        MemoryHigh = resourceControl.build.memoryHigh;
       };
     };
 

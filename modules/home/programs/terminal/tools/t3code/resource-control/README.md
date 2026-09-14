@@ -1,36 +1,29 @@
 # Agent and build memory policy
 
-On Linux, T3's managed provider processes run separately from its backend.
-Ordinary commands inherit their provider's limits. Large builds need an explicit
-build runner; commands are not classified automatically.
+On Linux, T3's managed provider processes run separately from its backend in
+per-provider scopes under `app-agent-workloads.slice`. Ordinary tool commands
+inherit that slice. Explicit build runners move a command to a sibling slice.
 
-The budgets are configurable under
-`khanelinix.programs.terminal.tools.t3code.resourceControl`. The options are
-strings because systemd accepts values such as `6G` directly. Set
-`agent.memoryHigh`, `agent.memoryMax`, and `agent.memorySwapMax` for each scope;
-`agentAggregate.memoryHigh`, `agentAggregate.memoryMax`, and
-`agentAggregate.memorySwapMax` for the shared agent slice; and
-`build.memoryHigh` for build scopes and their shared slice.
+The only memory ceiling is a hard cap on the shared agent slice, configurable
+as `khanelinix.programs.terminal.tools.t3code.resourceControl.memoryMax`. It
+defaults to `75%` of physical memory. systemd accepts sizes such as `40G` too.
 
 ```nix
-khanelinix.programs.terminal.tools.t3code.resourceControl = {
-  agent.memoryMax = "10G";
-  agentAggregate.memoryMax = "20G";
-  build.memoryHigh = "24G";
-};
+khanelinix.programs.terminal.tools.t3code.resourceControl.memoryMax = "40G";
 ```
 
-The existing limits below are the defaults.
+There is deliberately no soft threshold. cgroup `memory.high` does not fail a
+process; it puts every allocating process in the scope to sleep, including the
+agent's own event loop. Two large Nix evaluations under a 6 GiB soft limit
+turned into an hour-long silent hang with no error anywhere. A hard cap kills
+the largest process in the scope instead, and the runners use
+`OOMPolicy=continue` so the agent survives and sees a failed tool result.
 
-| Workload                                    | Soft memory threshold | Hard memory limit | Swap limit      |
-| ------------------------------------------- | --------------------- | ----------------- | --------------- |
-| Each managed provider or `agent-run` scope  | 6 GiB                 | 8 GiB             | 2 GiB           |
-| All ordinary agent scopes together          | 12 GiB                | 16 GiB            | 4 GiB           |
-| Each build scope and the shared build slice | 16 GiB                | None configured   | None configured |
+## Build lane
 
-## Large builds
-
-From a T3 tool command, prefix the build with `t3code-build`:
+The build lane exists for CPU and IO priority and to escape the agent hard cap,
+not for a memory budget. From a T3 tool command, prefix the build with
+`t3code-build`:
 
 ```sh
 t3code-build nix build .#my-package
@@ -43,38 +36,28 @@ For shell syntax, pass a shell explicitly:
 t3code-build bash -lc 'cd /path/to/project && cargo build --release'
 ```
 
-Outside T3, use `build-run` instead. Use `agent-run` for a manually capped
-ordinary command. These commands are installed when T3 resource control is
+Outside T3, use `build-run` instead. Use `agent-run` to place a manual command
+under the agent slice. These commands are installed when T3 resource control is
 enabled on Linux.
 
-The build runners preserve arguments, working directory, environment, standard
-streams, and exit status. They move execution outside the provider's hard-capped
-slice. Soft memory pressure can slow builds; it does not impose a memory
-ceiling.
-
-`t3code-build` scopes stop when the T3 backend stops. Stopping only a provider
-does not necessarily stop its separate build scopes. `build-run` has no backend
-lifetime dependency.
+The runners preserve arguments, working directory, environment, standard
+streams, and exit status. `t3code-build` scopes stop when the T3 backend
+stops. Stopping only a provider does not necessarily stop its separate build
+scopes. `build-run` has no backend lifetime dependency.
 
 ## Boundaries
 
-Nix daemon builds run separately from their clients. Khanelinix's daemon slice
-has a 16 GiB soft threshold and no hard memory or swap cap. Client evaluation
-still inherits ordinary provider limits unless launched through the build
-runner. The `nixre-fast` alias retains its explicit concurrency overrides.
+Nix daemon builds run separately from their clients under the system
+`resources-limiter` slice, which has its own soft threshold. Client evaluation
+runs in the caller's scope.
 
-The agent slice keeps systemd's default `ManagedOOMMemoryPressure=auto`;
-reclaim pressure alone does not trigger a kill from this slice. Hard memory
-caps still apply. An ancestor configured for oomd killing can still select
-agent scopes. System-wide memory exhaustion can interrupt workloads through
-earlyoom or the kernel. Ancestor cgroup limits, if configured elsewhere, also
-apply.
+System-wide memory exhaustion can still interrupt workloads through earlyoom
+or the kernel. Ancestor cgroup limits, if configured elsewhere, also apply.
 
 Agent scopes run with `TMPDIR=/var/tmp` unless the caller already exported
-`TMPDIR`. The default `/tmp` is a tmpfs, so
-build scratch left there stays resident until reboot; `/var/tmp` is disk backed
-and cleaned by tmpfiles after 30 days.
+`TMPDIR`. The default `/tmp` is a tmpfs, so build scratch left there stays
+resident until reboot; `/var/tmp` is disk backed and cleaned by tmpfiles after
+30 days.
 
-The provider limit covers the whole process tree, not each tool command
-individually. Wrapping applies to Nix-managed canonical provider paths; custom
-provider instances configured through the GUI are not covered automatically.
+Wrapping applies to Nix-managed canonical provider paths; custom provider
+instances configured through the GUI are not covered automatically.

@@ -106,10 +106,11 @@ cost, not the fewest lines or fastest workaround.
   answers faster than asking. Reserve questions for product or preference calls.
 - Own delegated work. Inspect its artifact and write your own conclusion.
 - When evidence supports disagreement, state reason, alternative, and risk.
-- Run compilers, package builds, and heavy test suites through `t3code-build` or
-  `build-run` when one is on PATH; interactive agent scopes are memory capped
-  and throttle into a stall instead of failing. Keep disposable build scratch in
-  the repository's ignored build directory or under `$XDG_CACHE_HOME`, not
+- Run compilers, package builds, heavy test suites, and whole-flake Nix
+  evaluation such as `nix flake check` or host `nix eval` through `t3code-build`
+  or `build-run` when one is on PATH. Interactive agent scopes share one hard
+  memory cap; a process that exceeds it is killed. Keep disposable build scratch
+  in the repository's ignored build directory or under `$XDG_CACHE_HOME`, not
   `/tmp`.
 - Verify in proportion to risk before reporting completion. Complete required
   checks. Broaden or repeat them only when changes, failures, or unresolved
