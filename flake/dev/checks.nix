@@ -131,16 +131,18 @@
       # darwinConfigurations. Check the Darwin systems native to the
       # checking system: nix-rosetta-builder is patched with applyPatches
       # and imported at eval time, which a Linux runner cannot realise.
+      # Guard before filtering: reading cfg.pkgs already evaluates Darwin.
       # Home Manager is exercised through the systems that embed it.
       checks = {
         docs-html = self.packages.${system}.docs-html;
       }
-      //
+      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin (
         lib.mapAttrs'
           (name: cfg: {
             name = "darwin-${name}";
             value = cfg.system;
           })
-          (lib.filterAttrs (_: cfg: cfg.pkgs.stdenv.hostPlatform.system == system) self.darwinConfigurations);
+          (lib.filterAttrs (_: cfg: cfg.pkgs.stdenv.hostPlatform.system == system) self.darwinConfigurations)
+      );
     };
 }
