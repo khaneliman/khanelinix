@@ -138,6 +138,12 @@ in
       }
       // cfg.hosts;
 
+      # Keep RFC 4941 temporary addresses for outbound privacy but source
+      # from the stable address. With "default" the kernel prefers the
+      # rotating temporary address, avahi publishes it as the host's AAAA
+      # record, and LAN peers get "No route to host" once it rotates.
+      tempAddresses = mkDefault "enabled";
+
       firewall = {
         allowedUDPPorts = [
           # mDNS
