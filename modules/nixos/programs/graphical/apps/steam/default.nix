@@ -34,9 +34,31 @@ let
         description = "Arguments appended after `exe`.";
       };
       icon = lib.mkOption {
-        type = lib.types.str;
-        default = "";
-        description = "Absolute path of an icon image.";
+        type = lib.types.nullOr lib.types.path;
+        default = null;
+        description = "Icon image shown in the library list and taskbar.";
+      };
+      artwork = {
+        grid = lib.mkOption {
+          type = lib.types.nullOr lib.types.path;
+          default = null;
+          description = "Vertical capsule, 600x900.";
+        };
+        wideGrid = lib.mkOption {
+          type = lib.types.nullOr lib.types.path;
+          default = null;
+          description = "Horizontal capsule, 920x430 or 460x215.";
+        };
+        hero = lib.mkOption {
+          type = lib.types.nullOr lib.types.path;
+          default = null;
+          description = "Library page banner, 1920x620 or 3840x1240.";
+        };
+        logo = lib.mkOption {
+          type = lib.types.nullOr lib.types.path;
+          default = null;
+          description = "Transparent logo drawn over the hero.";
+        };
       };
       tags = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -66,7 +88,8 @@ in
       description = ''
         Non-Steam programs kept in every Steam user's library. Managed entries
         are tagged and pruned when removed here; entries added through the
-        Steam client are left alone.
+        Steam client are left alone. Artwork is copied into each user's grid
+        directory under the shortcut's app id.
       '';
     };
   };

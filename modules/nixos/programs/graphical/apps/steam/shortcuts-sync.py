@@ -2,6 +2,7 @@
 
 import json
 import os
+import shutil
 import sys
 import zlib
 from pathlib import Path
@@ -9,6 +10,15 @@ from pathlib import Path
 import vdf
 
 MANAGED_TAG = "khanelinix"
+
+# Steam looks up custom art by the unsigned shortcut app id plus a suffix:
+# "p" vertical capsule, none horizontal capsule, "_hero" banner, "_logo".
+ARTWORK_SUFFIX = {
+    "grid": "p",
+    "wideGrid": "",
+    "hero": "_hero",
+    "logo": "_logo",
+}
 
 
 def steam_root() -> Path | None:
@@ -37,6 +47,10 @@ def shortcut_appid(exe: str, name: str) -> int:
     return crc - (1 << 32) if crc >= 1 << 31 else crc
 
 
+def unsigned(appid: int) -> int:
+    return appid & 0xFFFFFFFF
+
+
 def quoted(path: str) -> str:
     return f'"{path}"'
 
@@ -52,7 +66,7 @@ def build_entry(spec: dict) -> dict:
         "AppName": spec["name"],
         "Exe": quoted(exe),
         "StartDir": quoted(start_dir),
-        "icon": spec.get("icon", ""),
+        "icon": spec.get("icon") or "",
         "ShortcutPath": "",
         "LaunchOptions": spec.get("launchOptions", ""),
         "IsHidden": 0,
@@ -80,6 +94,32 @@ def merge(existing: list[dict], desired: list[dict]) -> list[dict]:
         if entry.get("AppName") not in names and not is_managed(entry)
     ]
     return kept + desired
+
+
+def sync_artwork(config_dir: Path, specs: list, desired: list) -> bool:
+    changed = False
+    grid_dir = config_dir / "grid"
+    for spec, entry in zip(specs, desired):
+        artwork = spec.get("artwork") or {}
+        stem = str(unsigned(entry["appid"]))
+        for kind, suffix in ARTWORK_SUFFIX.items():
+            source = artwork.get(kind)
+            if not source:
+                continue
+            source = Path(source)
+            target = grid_dir / f"{stem}{suffix}{source.suffix}"
+            if target.is_file() and target.read_bytes() == source.read_bytes():
+                continue
+            grid_dir.mkdir(exist_ok=True)
+            # Drop any previous format of the same slot so Steam does not
+            # pick a stale .jpg over the new .png.
+            for stale in grid_dir.glob(f"{stem}{suffix}.*"):
+                if stale != target and stale.suffix != ".json":
+                    stale.unlink()
+            shutil.copyfile(source, target)
+            os.chmod(target, 0o644)
+            changed = True
+    return changed
 
 
 def sync_profile(config_dir: Path, desired: list[dict]) -> bool:
@@ -117,7 +157,9 @@ def main() -> int:
             continue
         config_dir = user_dir / "config"
         config_dir.mkdir(exist_ok=True)
-        if sync_profile(config_dir, desired):
+        updated = sync_profile(config_dir, desired)
+        updated = sync_artwork(config_dir, specs, desired) or updated
+        if updated:
             print(f"steam-shortcuts-sync: updated {config_dir}", file=log)
     return 0
 
