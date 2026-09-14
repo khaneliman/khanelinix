@@ -204,7 +204,9 @@ _: {
               lib.mapAttrsToList (name: cfg: ''
                 "${name}")
                   target_hostname="${cfg.hostname}"
+                  target_user="${cfg.username}"
                   target_system="${cfg.system}"
+                  target_ts_ip="${cfg.tailscaleIp or ""}"
                   ;;
               '') hosts
             );
@@ -220,6 +222,7 @@ _: {
                   description = "Deploy a host configuration remotely";
                 };
                 runtimeInputs = [
+                  pkgs.gawk
                   pkgs.openssh
                   (pkgs.nixos-rebuild-ng or pkgs.nixos-rebuild)
                 ];
@@ -282,14 +285,30 @@ _: {
                   fi
 
                   # Home Manager writes an SSH alias per host (port, user, agent
-                  # forwarding) plus a <name>-ts twin on the tailnet. mDNS can
-                  # resolve a LAN name whose route is dead, so probe the
-                  # connection itself and fall back to the tailnet.
-                  target="$target_name"
-                  if [ "$action" != "build" ] \
-                     && ! ssh -o BatchMode=yes -o ConnectTimeout=5 "$target_name" true 2>/dev/null; then
-                    echo "$target_hostname unreachable, using tailnet alias $target_name-ts" >&2
-                    target="$target_name-ts"
+                  # forwarding) plus a <name>-ts twin on the tailnet. mDNS and
+                  # MagicDNS both drop out on this fleet, so probe candidates in
+                  # order and finish with the raw tailnet IP, which needs no
+                  # name resolution at all. Aliases are matched by name, so the
+                  # IP candidate re-applies the alias's port and user itself.
+                  target=""
+                  if [ "$action" != "build" ]; then
+                    reachable() { ssh -o BatchMode=yes -o ConnectTimeout=5 "$@" true 2>/dev/null; }
+                    if reachable "$target_name"; then
+                      target="$target_name"
+                    elif reachable "$target_name-ts"; then
+                      echo "$target_hostname unreachable, using tailnet alias $target_name-ts" >&2
+                      target="$target_name-ts"
+                    else
+                      port="$(ssh -G "$target_name" | awk '/^port /{print $2}')"
+                      if [ -n "$target_ts_ip" ] && reachable -p "$port" "$target_user@$target_ts_ip"; then
+                        echo "$target_name names unreachable, using tailnet ip $target_ts_ip" >&2
+                        target="$target_user@$target_ts_ip"
+                        export NIX_SSHOPTS="-p $port"
+                      else
+                        echo "Error: $target_name is unreachable over LAN, MagicDNS, and tailnet ip" >&2
+                        exit 1
+                      fi
+                    fi
                   fi
 
                   case "$target_system" in
@@ -347,8 +366,8 @@ _: {
                       if [ -t 0 ]; then
                         ssh_opts+=("-t")
                       fi
-                      # shellcheck disable=SC2029
-                      ssh "''${ssh_opts[@]}" "$target" sudo "$out_path/activate"
+                      # shellcheck disable=SC2029,SC2086
+                      ssh "''${ssh_opts[@]}" ''${NIX_SSHOPTS:-} "$target" sudo "$out_path/activate"
                       ;;
 
                     *)
