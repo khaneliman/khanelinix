@@ -8,7 +8,7 @@
   imports = lib.optional (inputs.git-hooks-nix ? flakeModule) inputs.git-hooks-nix.flakeModule;
 
   perSystem =
-    { pkgs, ... }:
+    { pkgs, system, ... }:
     {
       pre-commit = lib.mkIf (inputs.git-hooks-nix ? flakeModule) {
         check.enable = false;
@@ -136,7 +136,10 @@
           mkEvalCheck =
             name: drv: pkgs.writeText "${name}-eval" (builtins.unsafeDiscardStringContext drv.drvPath);
         in
-        lib.mapAttrs' (name: cfg: {
+        {
+          docs-html = self.packages.${system}.docs-html;
+        }
+        // lib.mapAttrs' (name: cfg: {
           name = "darwin-${name}";
           value =
             if pkgs.stdenv.hostPlatform.isDarwin then cfg.system else mkEvalCheck "darwin-${name}" cfg.system;
