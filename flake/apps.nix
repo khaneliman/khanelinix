@@ -204,7 +204,6 @@ _: {
               lib.mapAttrsToList (name: cfg: ''
                 "${name}")
                   target_hostname="${cfg.hostname}"
-                  target_user="${cfg.username}"
                   target_system="${cfg.system}"
                   ;;
               '') hosts
@@ -282,6 +281,17 @@ _: {
                     exit 1
                   fi
 
+                  # Home Manager writes an SSH alias per host (port, user, agent
+                  # forwarding) plus a <name>-ts twin on the tailnet. mDNS can
+                  # resolve a LAN name whose route is dead, so probe the
+                  # connection itself and fall back to the tailnet.
+                  target="$target_name"
+                  if [ "$action" != "build" ] \
+                     && ! ssh -o BatchMode=yes -o ConnectTimeout=5 "$target_name" true 2>/dev/null; then
+                    echo "$target_hostname unreachable, using tailnet alias $target_name-ts" >&2
+                    target="$target_name-ts"
+                  fi
+
                   case "$target_system" in
                     nixos)
                       case "$action" in
@@ -292,9 +302,14 @@ _: {
                           ;;
                       esac
 
+                      if [ "$action" = "build" ]; then
+                        nixos-rebuild build --flake "$flake#$target_name" "$@"
+                        exit 0
+                      fi
+
                       nixos-rebuild "$action" \
                         --flake "$flake#$target_name" \
-                        --target-host "$target_user@$target_hostname" \
+                        --target-host "$target" \
                         --sudo \
                         "$@"
                       ;;
@@ -326,14 +341,14 @@ _: {
                       # after verifying root privileges. We directly execute the documented '<result>/activate'
                       # script as root on the target host.
                       out_path="$(nix build "$flake#darwinConfigurations.''${target_name}.system" --no-link --print-out-paths "$@")"
-                      nix copy --to "ssh-ng://$target_user@$target_hostname" "$out_path"
+                      nix copy --to "ssh-ng://$target" "$out_path"
 
                       ssh_opts=()
                       if [ -t 0 ]; then
                         ssh_opts+=("-t")
                       fi
                       # shellcheck disable=SC2029
-                      ssh "''${ssh_opts[@]}" "$target_user@$target_hostname" sudo "$out_path/activate"
+                      ssh "''${ssh_opts[@]}" "$target" sudo "$out_path/activate"
                       ;;
 
                     *)
