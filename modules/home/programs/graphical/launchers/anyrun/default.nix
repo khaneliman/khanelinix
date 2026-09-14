@@ -12,6 +12,7 @@ let
   inherit (inputs) anyrun-nixos-options;
 
   cfg = config.khanelinix.programs.graphical.launchers.anyrun;
+  nixosDocsEnabled = osConfig.documentation.nixos.enable or false;
 in
 {
   options.khanelinix.programs.graphical.launchers.anyrun = {
@@ -34,7 +35,8 @@ in
           "${config.programs.anyrun.package}/lib/libstdin.so"
           "${config.programs.anyrun.package}/lib/libtranslate.so"
           "${config.programs.anyrun.package}/lib/libwebsearch.so"
-
+        ]
+        ++ lib.optionals nixosDocsEnabled [
           anyrun-nixos-options.packages.${system}.default
         ];
 
@@ -67,20 +69,6 @@ in
               max_entries: 10,
               terminal: Some("kitty"),
               preprocess_exec_script: Some("${lib.getExe preprocessScript}"),
-            )
-          '';
-
-        "nixos-options.ron".text =
-          let
-            nixos-options =
-              (osConfig.system.build.manual.optionsJSON or "/dev/null") + "/share/doc/nixos/options.json";
-            options = builtins.toJSON { ":nix" = [ nixos-options ]; };
-          in
-          /* Ron */ ''
-            Config(
-              options: ${options},
-              min_score: 5,
-              max_entries: Some(3),
             )
           '';
 
@@ -125,6 +113,20 @@ in
             engines: [DuckDuckGo]
           )
         '';
+      }
+      // lib.optionalAttrs nixosDocsEnabled {
+        "nixos-options.ron".text =
+          let
+            nixos-options = "${osConfig.system.build.manual.optionsJSON}/share/doc/nixos/options.json";
+            options = builtins.toJSON { ":nix" = [ nixos-options ]; };
+          in
+          /* Ron */ ''
+            Config(
+              options: ${options},
+              min_score: 5,
+              max_entries: Some(3),
+            )
+          '';
       };
 
       extraCss = /* CSS */ ''
