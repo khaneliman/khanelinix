@@ -21,4 +21,16 @@
     url = "https://github.com/pingdotgg/t3code/pull/11594.patch";
     hash = "sha256-syM7uEsYLPBmeWOlP2M5VJKYR/uU4yBqU8aUxT79mtY=";
   })
+  (fetchpatch2 {
+    name = "t3code-pr-10881-agent-history.patch";
+    # Use the combined diff so normalization preserves new-file amendments.
+    url = "https://github.com/pingdotgg/t3code/pull/10881.diff";
+    # Reanchor the new tests after the pinned source's Grok rollback test.
+    postFetch = ''
+      substituteInPlace "$out" --replace-fail \
+        $'@@ -212,6 +212,123 @@\n });\n \n it.layer(grokAdapterTestLayer)("GrokAdapterLive", (it) => {\n' \
+        $'@@ -235,3 +235,120 @@\n'
+    '';
+    hash = "sha256-VvBjM4VsZtSAaxf2eqoAKac6Tlna2KfvJqlc7RLor3c=";
+  })
 ]
