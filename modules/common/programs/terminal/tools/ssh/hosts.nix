@@ -7,6 +7,8 @@
   bruddynix = {
     hostname = "bruddynix.local";
     tailscaleIp = "100.99.226.7";
+    # Gamescope session cannot survive a live switch; see flake/apps.nix.
+    deployAction = "boot";
     username = "bruddy";
     system = "nixos";
     publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFeLt5cnRnKeil39Ds+CimMJQq/5dln32YqQ+EfYSCvc";

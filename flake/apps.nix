@@ -207,6 +207,7 @@ _: {
                   target_user="${cfg.username}"
                   target_system="${cfg.system}"
                   target_ts_ip="${cfg.tailscaleIp or ""}"
+                  target_deploy_action="${cfg.deployAction or "switch"}"
                   ;;
               '') hosts
             );
@@ -324,6 +325,14 @@ _: {
                       if [ "$action" = "build" ]; then
                         nixos-rebuild build --flake "$flake#$target_name" "$@"
                         exit 0
+                      fi
+
+                      # gamescope-session.service is RefuseManualStart; a live
+                      # switch stops it and leaves SDDM with no greeter and a
+                      # black screen. Default such hosts to boot and say so.
+                      if [ "$action" = "switch" ] && [ "''${target_deploy_action}" = "boot" ]; then
+                        echo "$target_name runs a gamescope session; deploying with 'boot' (reboot to apply)" >&2
+                        action=boot
                       fi
 
                       nixos-rebuild "$action" \
