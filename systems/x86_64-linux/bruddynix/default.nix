@@ -25,6 +25,9 @@ in
   boot.kernelParams = [
     "amdgpu.sg_display=0"
     "amdgpu.dcdebugmask=0x10"
+    # A wedged Navi 10 spent four days in SDMA ring-reset loops that never
+    # cleared. Let the driver escalate to a full GPU reset instead.
+    "amdgpu.gpu_recovery=1"
   ];
 
   khanelinix = {
