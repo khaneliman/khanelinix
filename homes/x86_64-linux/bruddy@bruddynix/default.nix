@@ -43,6 +43,7 @@ in
             "org.gnome.Console.desktop"
             "firefox-devedition.desktop"
             "steam.desktop"
+            "org.prismlauncher.PrismLauncher.desktop"
             "org.vinegarhq.Sober.desktop"
           ];
         };
@@ -55,6 +56,7 @@ in
             "applications:org.kde.konsole.desktop"
             "applications:firefox-devedition.desktop"
             "applications:steam.desktop"
+            "applications:org.prismlauncher.PrismLauncher.desktop"
             "applications:org.vinegarhq.Sober.desktop"
           ];
         };
