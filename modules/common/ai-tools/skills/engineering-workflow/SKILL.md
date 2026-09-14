@@ -71,8 +71,9 @@ Honor explicit skill requests and the risk-based review gate.
 6. **Correct.** Fix accepted findings, then revalidate the touched surface.
    Continue on accepted blockers while making progress within scope. Re-ground
    repeated unchanged failures instead of repeating the same correction.
-7. **Hand off.** Report outcome, changed files, intentional omissions,
-   verification gaps, and residual risk.
+7. **Hand off.** Complete `git-toolkit` cleanup mode after integration, including
+   worker resources. Account for removed resources and exact retention blockers.
+   Report outcome, changed files, omissions, verification gaps, and residual risk.
 8. **Reflect.** Optional when installed. Use `reflect` after a correction or
    after a clean complex landing.
 

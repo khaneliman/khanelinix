@@ -27,6 +27,9 @@ Route to one mode and load only named reference:
 9. **maintainer-queue**: collect a bounded repository queue, rank evidenced next
    actions, and route selected items. Read
    [maintainer-queue.md](references/maintainer-queue.md).
+10. **pr-merge**: merge an authorized PR or finish post-merge closeout. Read
+    [pr-merge.md](references/pr-merge.md). Use its closeout after stack merges
+    too.
 
 If intent is unclear, ask for mode before GitHub writes or source edits.
 
@@ -42,5 +45,6 @@ If intent is unclear, ask for mode before GitHub writes or source edits.
   generic significance claims, canned acknowledgement, or repeated detail.
 - Use `git-toolkit` change-stack mode to decide commit/branch slices and review
   units. Use pr-stacking mode here to execute those slices as a GitHub stack.
-- Call out destructive Git risk before reset, rewrite, force-push, or branch
-  deletion.
+- Call out destructive Git risk before reset, rewrite, force-push, or remote
+  branch deletion. Route verified task-owned local cleanup to `git-toolkit`;
+  honor existing cleanup authority without asking again.

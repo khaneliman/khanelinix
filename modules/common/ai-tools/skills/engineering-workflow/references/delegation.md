@@ -45,6 +45,10 @@ with the same write policy and lane.
   each other.
 - Read-only probes may run in parallel with a single writer.
 - Preserve unrelated work in the tree.
+- Before allocating isolated work, use `git-toolkit` cleanup mode to record
+  ownership and the integration target. Include resource paths in the worker
+  packet. The parent integrates, verifies, stops workers, and performs cleanup;
+  worker completion alone does not finish that lifecycle.
 
 ## Boundaries
 

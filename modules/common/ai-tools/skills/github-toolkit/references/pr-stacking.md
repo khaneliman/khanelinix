@@ -137,6 +137,9 @@ next one to the bottom.
 Call out before merging that lower PRs land with the selected one. State the
 exact set of PR numbers that will merge.
 
+After a merge, run the closeout in [pr-merge.md](pr-merge.md) for each confirmed
+merged layer. Keep open dependents and queued layers outside cleanup scope.
+
 ## Failure Modes
 
 | Symptom                           | Cause                                                                   | Remedy                                                                                                                                                           |

@@ -99,7 +99,7 @@
 		{
 			"name": "engineering-workflow",
 			"description": "Run routine software changes through a complete lifecycle.",
-			"version": "0.1.19",
+			"version": "0.1.20",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -109,7 +109,7 @@
 		{
 			"name": "figure-it-out",
 			"description": "Design an auditable playbook when no narrower one fits.",
-			"version": "0.1.8",
+			"version": "0.1.9",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -139,7 +139,7 @@
 		{
 			"name": "github-toolkit",
 			"description": "Manage GitHub queues, issues, pull requests, reviews, and CI.",
-			"version": "0.1.15",
+			"version": "0.1.16",
 			"author": {
 				"name": "khaneliman"
 			},

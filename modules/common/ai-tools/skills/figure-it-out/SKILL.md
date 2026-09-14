@@ -46,7 +46,8 @@ riskiest unknown first. Reuse the acceptance summary from
   It selects one sketch or competing candidates according to the decision risk.
   Skip design artifacts for mechanical work whose shape is already concrete.
 - Parallelize only across genuine seams. Give each parallel worker its own
-  worktree or branch so no two workers share mutable state.
+  worktree so no two writers share mutable state. Use `git-toolkit` cleanup
+  mode to record ownership and the integration target before allocation.
 - Keep the designed phase list visible for review. When the run
   spans sessions or risks compaction, persist it and the findings through
   `planning-with-files`.
@@ -81,6 +82,10 @@ the trail when needed to review the result: commit it with local-commit authorit
 with the workspace-only artifact. Prefer reproducible evidence.
 
 ## Phase E: Verify and hand back
+
+Complete `git-toolkit` cleanup mode after integrating worker results. Remove
+integrated task-owned resources, stop workers, and account for every retained
+path/ref with its reason and next action before claiming completion.
 
 Check the whole against the Phase A predicate on the real product, not only the
 harness. Encode any recurring correction as a gate, a lint rule, a check, or a
