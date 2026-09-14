@@ -9,10 +9,10 @@ let
   inherit (lib) mkIf mkEnableOption;
   inherit (lib.khanelinix) mkBoolOpt;
 
-  cfg = config.khanelinix.programs.graphical.mangohud;
+  cfg = config.khanelinix.programs.graphical.addons.mangohud;
 in
 {
-  options.khanelinix.programs.graphical.mangohud = {
+  options.khanelinix.programs.graphical.addons.mangohud = {
     enable = mkEnableOption "mangohud";
     enableSessionWide = mkBoolOpt true "Enable MangoHud for all applications";
   };
