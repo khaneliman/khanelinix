@@ -32,6 +32,11 @@ in
     enable = mkBoolOpt true "Whether or not to manage nix configuration.";
     useLix = mkBoolOpt false "Whether or not to use Lix.";
     package = mkOpt lib.types.package pkgs.nixVersions.latest "Which nix package to use.";
+    localCache = {
+      publicKey =
+        mkOpt (lib.types.nullOr lib.types.str) null
+          "Public key for the local Harmonia binary cache.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -89,6 +94,10 @@ in
         hasRemoteBuilders =
           config.khanelinix.security.sops.enable
           && (config.khanelinix.environments.home-network.enable or false);
+        hasLocalCache =
+          (config.khanelinix.environments.home-network.enable or false)
+          && hostname != "khanelinix"
+          && cfg.localCache.publicKey != null;
         experimentalFeatures = [
           "nix-command"
           "flakes"
@@ -277,25 +286,29 @@ in
           max-free = 10737418240; # 10GB
           keep-going = true;
 
-          substituters = [
-            "https://khanelinix.cachix.org"
-            "https://nix-community.cachix.org"
-            "https://nixpkgs-unfree.cachix.org"
-          ]
-          ++ lib.optionals khanelivimEnabled [ "https://khanelivim.cachix.org" ]
-          ++ lib.optionals aiDevelopmentEnabled [ "https://cache.numtide.com" ];
+          substituters =
+            lib.optionals hasLocalCache [ "http://khanelinix.local:5000" ]
+            ++ [
+              "https://khanelinix.cachix.org"
+              "https://nix-community.cachix.org"
+              "https://nixpkgs-unfree.cachix.org"
+            ]
+            ++ lib.optionals khanelivimEnabled [ "https://khanelivim.cachix.org" ]
+            ++ lib.optionals aiDevelopmentEnabled [ "https://cache.numtide.com" ];
 
-          trusted-public-keys = [
-            "khanelinix.cachix.org-1:FTmbv7OqlMsmJEOFvAlz7PVkoGtstbwLC2OldAiJZ10="
-            "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-            "nixpkgs-unfree.cachix.org-1:hqvoInulhbV4nJ9yJOEr+4wxhDV4xq2d1DK7S6Nj6rs="
-          ]
-          ++ lib.optionals khanelivimEnabled [
-            "khanelivim.cachix.org-1:Tb0jsMlhXSJDtI2ISiGPBrvL1XIzQrWap80AiJuBGI0="
-          ]
-          ++ lib.optionals aiDevelopmentEnabled [
-            "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
-          ];
+          trusted-public-keys =
+            lib.optionals hasLocalCache [ cfg.localCache.publicKey ]
+            ++ [
+              "khanelinix.cachix.org-1:FTmbv7OqlMsmJEOFvAlz7PVkoGtstbwLC2OldAiJZ10="
+              "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+              "nixpkgs-unfree.cachix.org-1:hqvoInulhbV4nJ9yJOEr+4wxhDV4xq2d1DK7S6Nj6rs="
+            ]
+            ++ lib.optionals khanelivimEnabled [
+              "khanelivim.cachix.org-1:Tb0jsMlhXSJDtI2ISiGPBrvL1XIzQrWap80AiJuBGI0="
+            ]
+            ++ lib.optionals aiDevelopmentEnabled [
+              "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+            ];
 
           use-xdg-base-directories = true;
         };
