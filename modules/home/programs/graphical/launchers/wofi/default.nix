@@ -8,10 +8,10 @@
 let
   inherit (lib) mkIf;
 
-  cfg = config.khanelinix.programs.graphical.addons.wofi;
+  cfg = config.khanelinix.programs.graphical.launchers.wofi;
 in
 {
-  options.khanelinix.programs.graphical.addons.wofi = {
+  options.khanelinix.programs.graphical.launchers.wofi = {
     enable = lib.mkEnableOption "the Wofi in the desktop environment";
   };
 
