@@ -237,7 +237,11 @@ in
             direct_scanout = 2;
           };
 
-          xwayland.force_zero_scaling = false;
+          xwayland = {
+            # Xvfb -displayfd can replace a live filesystem-only X11 socket.
+            create_abstract_socket = true;
+            force_zero_scaling = false;
+          };
         };
       };
     };
