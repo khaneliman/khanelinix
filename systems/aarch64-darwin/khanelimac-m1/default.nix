@@ -87,5 +87,9 @@ in
 
   system.defaults.universalaccess.reduceMotion = lib.mkForce null;
 
-  sops.secrets."time-machine-password" = { };
+  sops.secrets = {
+    # Remote-builder SSH identity referenced by nix.buildMachines.
+    "khanelimac_khaneliman_ssh_key".sopsFile = lib.getFile "secrets/khanelimac/khaneliman/default.yaml";
+    "time-machine-password" = { };
+  };
 }
