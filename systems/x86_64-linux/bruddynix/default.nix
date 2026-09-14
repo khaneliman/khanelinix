@@ -150,6 +150,11 @@ in
     steamos.useSteamOSConfig = false;
   };
 
+  # drkonqi cannot reach a display inside the gamescope session, so every
+  # coredump spawns a crashing drkonqi that itself dumps core: 20k loops per
+  # boot and a journal too noisy to diagnose anything.
+  systemd.services."drkonqi-coredump-processor@".wantedBy = lib.mkForce [ ];
+
   nix.settings = {
     cores = 8;
     max-jobs = 8;
