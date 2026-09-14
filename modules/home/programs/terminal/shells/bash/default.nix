@@ -7,10 +7,10 @@
 }:
 let
   aliasCompat = import ../alias-compat.nix { inherit lib pkgs; };
-  cfg = config.khanelinix.programs.terminal.shell.bash;
+  cfg = config.khanelinix.programs.terminal.shells.bash;
 in
 {
-  options.khanelinix.programs.terminal.shell.bash = {
+  options.khanelinix.programs.terminal.shells.bash = {
     enable = lib.mkEnableOption "bash";
   };
 

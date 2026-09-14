@@ -8,10 +8,10 @@ let
   inherit (lib) mkEnableOption mkIf;
   aliasCompat = import ../alias-compat.nix { inherit lib pkgs; };
 
-  cfg = config.khanelinix.programs.terminal.shell.nushell;
+  cfg = config.khanelinix.programs.terminal.shells.nushell;
 in
 {
-  options.khanelinix.programs.terminal.shell.nushell = {
+  options.khanelinix.programs.terminal.shells.nushell = {
     enable = mkEnableOption "nushell";
   };
 

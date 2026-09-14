@@ -72,7 +72,7 @@ in
           ncmpcpp = disabled;
         };
 
-        shell.nushell.enable = false;
+        shells.nushell.enable = false;
 
         tools = {
           # No need for all these on his computer

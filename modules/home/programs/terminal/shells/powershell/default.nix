@@ -8,10 +8,10 @@
 let
   inherit (lib) mkIf;
 
-  cfg = config.khanelinix.programs.terminal.shell.powershell;
+  cfg = config.khanelinix.programs.terminal.shells.powershell;
 in
 {
-  options.khanelinix.programs.terminal.shell.powershell = {
+  options.khanelinix.programs.terminal.shells.powershell = {
     enable = lib.mkEnableOption "PowerShell";
   };
 

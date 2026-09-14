@@ -26,7 +26,7 @@
 
   ```nix
   programs.zoxide.enableZshIntegration =
-    config.khanelinix.programs.terminal.shell.zsh.enable;
+    config.khanelinix.programs.terminal.shells.zsh.enable;
   ```
 
 ## Theme Priority

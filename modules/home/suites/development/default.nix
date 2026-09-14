@@ -237,7 +237,7 @@ in
         };
 
         terminal = {
-          shell.powershell.enable = mkDefault cfg.azureEnable;
+          shells.powershell.enable = mkDefault cfg.azureEnable;
 
           editors = {
             # helix = enabled;

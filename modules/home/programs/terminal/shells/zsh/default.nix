@@ -11,12 +11,12 @@ let
   inherit (lib.strings) fileContents;
   aliasCompat = import ../alias-compat.nix { inherit lib pkgs; };
 
-  cfg = config.khanelinix.programs.terminal.shell.zsh;
+  cfg = config.khanelinix.programs.terminal.shells.zsh;
   hasSystemZsh = osConfig.programs.zsh.enable or false;
 in
 {
 
-  options.khanelinix.programs.terminal.shell.zsh = {
+  options.khanelinix.programs.terminal.shells.zsh = {
     enable = mkEnableOption "ZSH";
   };
 

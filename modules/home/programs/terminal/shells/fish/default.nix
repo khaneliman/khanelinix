@@ -10,7 +10,7 @@ let
   inherit (lib) mkIf;
   aliasCompat = import ../alias-compat.nix { inherit lib pkgs; };
 
-  cfg = config.khanelinix.programs.terminal.shell.fish;
+  cfg = config.khanelinix.programs.terminal.shells.fish;
   nixpkgsReviewGuard = /* fish */ ''
     if set -q NIXPKGS_REVIEW_ROOT
         return
@@ -24,7 +24,7 @@ let
   '';
 in
 {
-  options.khanelinix.programs.terminal.shell.fish = {
+  options.khanelinix.programs.terminal.shells.fish = {
     enable = lib.mkEnableOption "fish";
   };
 
