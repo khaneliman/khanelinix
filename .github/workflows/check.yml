@@ -4,16 +4,31 @@ permissions:
 on: [push, pull_request, workflow_dispatch]
 jobs:
   checks:
-    name: Check flake
-    runs-on: ubuntu-latest
+    name: Check flake on ${{ matrix.system }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - system: x86_64-linux
+            os: ubuntu-latest
+          - system: aarch64-darwin
+            os: macos-latest
     steps:
       - uses: actions/checkout@v7
       - name: Check Nix flake inputs
+        if: matrix.system == 'x86_64-linux'
         uses: DeterminateSystems/flake-checker-action@v12
       - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            system = ${{ matrix.system }}
       - uses: cachix/cachix-action@v17
         with:
           name: khanelinix
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
       - name: Run flake checks
-        run: nix flake check --system x86_64-linux --print-build-logs
+        # Darwin systems and homes are only checked on the Darwin runner;
+        # their patched inputs cannot be realised on Linux. --no-build keeps
+        # the macOS job to evaluation so it stays inside the runner budget.
+        run: nix flake check --system ${{ matrix.system }} --print-build-logs ${{ matrix.system == 'aarch64-darwin' && '--no-build' || '' }}
