@@ -18,4 +18,5 @@
 - `package-profile/`: shared package-tier selection
 - `programs/`: reusable system-level application configuration
 - `suites/`: shared capability bundles
-- `system/`: fonts and other shared system settings
+- `security/`: shared sops wiring imported by both platform sops modules
+- `system/`: env, fonts, and other shared system settings
