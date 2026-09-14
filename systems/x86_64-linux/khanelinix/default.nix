@@ -162,6 +162,11 @@ in
         enable = true;
       };
 
+      harmonia = {
+        enable = true;
+        signKeyPath = config.sops.secrets."harmonia-signing-key".path;
+      };
+
       sunshine = {
         enable = true;
       };
@@ -266,6 +271,16 @@ in
   sops.secrets."khanelinix_khaneliman_ssh_key" = {
     sopsFile = lib.getFile "secrets/khanelinix/khaneliman/default.yaml";
   };
+
+  # One-time key generation:
+  #   nix-store --generate-binary-cache-key khanelinix.local-1 secret public
+  # Add secret key to secrets/khanelinix/default.yaml:
+  #   sops secrets/khanelinix/default.yaml
+  # under the key "harmonia-signing-key".
+  # Upstream nixpkgs services.harmonia uses DynamicUser = true and User = "harmonia".
+  # Systemd LoadCredential reads the key as root before dropping privileges,
+  # so no custom sops owner is needed (harmonia is not in /etc/passwd).
+  sops.secrets."harmonia-signing-key" = { };
 
   programs.hyprland.withUWSM = false;
 
