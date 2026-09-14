@@ -8,7 +8,7 @@
 }:
 let
   cfg = config.khanelinix.programs.terminal.tools.t3code;
-  t3codePatches = import ./patches.nix;
+  t3codePatches = import ./patches.nix { inherit (pkgs) fetchpatch2; };
 in
 {
   options.khanelinix.programs.terminal.tools.t3code.enable =

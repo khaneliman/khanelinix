@@ -1,3 +1,4 @@
+{ fetchpatch2 }:
 # Rebased onto pingdotgg/t3code e22040dfc190. Order is load-bearing:
 # the sidebar and identity patches extend the timeout-patched Codex runtime.
 [
@@ -15,4 +16,9 @@
   # Emit session exit on signals so the next turn can resume its saved thread.
   ./fix-codex-signal-exit-recovery.patch
   ./desktop-attach-existing-backend.patch
+  (fetchpatch2 {
+    name = "t3code-pr-11594-chat-width.patch";
+    url = "https://github.com/pingdotgg/t3code/pull/11594.patch";
+    hash = "sha256-syM7uEsYLPBmeWOlP2M5VJKYR/uU4yBqU8aUxT79mtY=";
+  })
 ]
