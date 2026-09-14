@@ -14,6 +14,15 @@ let
 
   cfg = config.khanelinix.suites.games;
   includes = suiteProfileIncludes config cfg;
+  userName = config.khanelinix.user.name;
+  homeCfg = config.home-manager.users.${userName} or { };
+  prismLauncherEnabled = homeCfg.khanelinix.programs.graphical.apps.prismlauncher.enable or false;
+  soberEnabled =
+    config.khanelinix.services.flatpak.enable
+    && builtins.any (
+      package:
+      (if builtins.isAttrs package then package.appId or null else package) == "org.vinegarhq.Sober"
+    ) config.khanelinix.services.flatpak.extraPackages;
 in
 {
   options.khanelinix.suites.games = {
@@ -43,8 +52,24 @@ in
             gamescope = lib.mkIf (includes "standard") (mkDefault enabled);
           };
 
-          apps = {
-            steam = lib.mkIf (includes "standard") (mkDefault enabled);
+          apps.steam = lib.mkIf (includes "standard") {
+            enable = mkDefault true;
+            # Surface the launchers the household uses inside Gaming Mode,
+            # where only the Steam library is reachable.
+            shortcuts =
+              lib.optionals prismLauncherEnabled [
+                {
+                  name = "Prism Launcher";
+                  exe = "/etc/profiles/per-user/${userName}/bin/prismlauncher";
+                }
+              ]
+              ++ lib.optionals soberEnabled [
+                {
+                  name = "Sober";
+                  exe = "/run/current-system/sw/bin/flatpak";
+                  launchOptions = "run org.vinegarhq.Sober";
+                }
+              ];
           };
         };
       };
