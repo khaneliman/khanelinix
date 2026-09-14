@@ -131,7 +131,12 @@ in
           };
         }
         // lib.mapAttrs (name: host: {
-          hostNames = [ host.hostname ] ++ lib.optional tailscaleEnabled "${name}.${magicDnsSuffix}";
+          hostNames = [
+            host.hostname
+          ]
+          ++ lib.optionals tailscaleEnabled (
+            [ "${name}.${magicDnsSuffix}" ] ++ lib.optional (host ? tailscaleIp) host.tailscaleIp
+          );
           inherit (host) publicKey;
         }) (lib.filterAttrs (_: host: host ? publicKey) hosts)
       );

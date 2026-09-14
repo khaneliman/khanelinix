@@ -1,9 +1,12 @@
 # Static host metadata for SSH configuration
+# tailscaleIp lets deploys and known_hosts bypass mDNS and MagicDNS, which both
+# drop out on this fleet; keep it in sync with `tailscale status`.
 # This replaces the dynamic cross-configuration evaluation that caused multiple evaluations
 {
   # NixOS hosts
   bruddynix = {
     hostname = "bruddynix.local";
+    tailscaleIp = "100.99.226.7";
     username = "bruddy";
     system = "nixos";
     publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFeLt5cnRnKeil39Ds+CimMJQq/5dln32YqQ+EfYSCvc";
@@ -12,6 +15,7 @@
 
   khanelinix = {
     hostname = "khanelinix.local";
+    tailscaleIp = "100.91.175.48";
     username = "khaneliman";
     system = "nixos";
     gpgAgent = true;
@@ -21,6 +25,7 @@
 
   khanelilab = {
     hostname = "khanelilab.local";
+    tailscaleIp = "100.75.12.108";
     username = "khaneliman";
     system = "nixos";
     gpgAgent = true;
@@ -29,6 +34,7 @@
   # Darwin hosts
   khanelimac = {
     hostname = "khanelimac.local";
+    tailscaleIp = "100.91.72.100";
     username = "khaneliman";
     system = "darwin";
     gpgAgent = true;
