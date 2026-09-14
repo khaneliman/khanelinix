@@ -179,6 +179,170 @@ _: {
           );
         };
 
+        deploy =
+          let
+            hosts = import ../modules/common/programs/terminal/tools/ssh/hosts.nix;
+
+            formatRow =
+              name: cfg:
+              let
+                pad =
+                  str: n:
+                  let
+                    s = toString str;
+                    diff = n - (lib.stringLength s);
+                  in
+                  if diff > 0 then s + lib.concatStrings (lib.genList (_: " ") diff) else "${s} ";
+              in
+              "${pad name 15}${pad cfg.hostname 22}${pad cfg.username 12}${cfg.system}";
+
+            tableHeader = "NAME           HOSTNAME              USER        SYSTEM";
+            tableRows = lib.concatStringsSep "\n" (lib.mapAttrsToList formatRow hosts);
+            hostTable = "${tableHeader}\n${tableRows}";
+
+            hostCases = lib.concatStringsSep "\n" (
+              lib.mapAttrsToList (name: cfg: ''
+                "${name}")
+                  target_hostname="${cfg.hostname}"
+                  target_user="${cfg.username}"
+                  target_system="${cfg.system}"
+                  ;;
+              '') hosts
+            );
+          in
+          {
+            type = "app";
+            meta.description = "Deploy a host configuration remotely";
+            program = lib.getExe (
+              pkgs.writeShellApplication {
+                name = "deploy";
+                meta = {
+                  mainProgram = "deploy";
+                  description = "Deploy a host configuration remotely";
+                };
+                runtimeInputs = [
+                  pkgs.openssh
+                  (pkgs.nixos-rebuild-ng or pkgs.nixos-rebuild)
+                ];
+                text = ''
+                  host_table='${hostTable}'
+
+                  print_usage() {
+                    echo "Usage: deploy <host> [switch|boot|test|build] [extra args...]"
+                    echo
+                    echo "Available hosts:"
+                    echo "$host_table"
+                  }
+
+                  if [ $# -eq 0 ]; then
+                    print_usage
+                    exit 1
+                  fi
+
+                  target_name="$1"
+                  shift
+
+                  action="switch"
+                  if [ $# -gt 0 ]; then
+                    case "$1" in
+                      switch|boot|test|build)
+                        action="$1"
+                        shift
+                        ;;
+                      -*)
+                        ;;
+                      *)
+                        action="$1"
+                        shift
+                        ;;
+                    esac
+                  fi
+
+                  case "$target_name" in
+                  ${hostCases}
+                    *)
+                      echo "Error: Unknown host '$target_name'" >&2
+                      echo >&2
+                      print_usage >&2
+                      exit 1
+                      ;;
+                  esac
+
+                  current_host="$(hostname 2>/dev/null || uname -n)"
+                  current_short="''${current_host%%.*}"
+                  target_short="''${target_hostname%%.*}"
+
+                  if [ "$target_name" = "$current_host" ] || [ "$target_name" = "$current_short" ] || \
+                     [ "$target_hostname" = "$current_host" ] || [ "$target_short" = "$current_short" ]; then
+                    echo "Target host '$target_name' matches current machine ('$current_host')." >&2
+                    echo "Use 'nixre' for local rebuilds." >&2
+                    exit 1
+                  fi
+
+                  case "$target_system" in
+                    nixos)
+                      case "$action" in
+                        switch|boot|test|build) ;;
+                        *)
+                          echo "Error: Invalid action '$action' for NixOS host. Expected: switch, boot, test, build" >&2
+                          exit 1
+                          ;;
+                      esac
+
+                      nixos-rebuild "$action" \
+                        --flake ".#$target_name" \
+                        --target-host "$target_user@$target_hostname" \
+                        --sudo \
+                        "$@"
+                      ;;
+
+                    darwin)
+                      case "$action" in
+                        switch|build) ;;
+                        boot|test)
+                          echo "Error: Action '$action' is not supported on Darwin hosts (supported: switch, build)" >&2
+                          exit 1
+                          ;;
+                        *)
+                          echo "Error: Invalid action '$action' for Darwin host. Expected: switch, build" >&2
+                          exit 1
+                          ;;
+                      esac
+
+                      if [ "$action" = "build" ]; then
+                        nix build ".#darwinConfigurations.''${target_name}.system" "$@"
+                        exit 0
+                      fi
+
+                      # nix-darwin does not support remote deployment via --target-host.
+                      # In nix-darwin's darwin-rebuild.sh (pkgs/nix-tools/darwin-rebuild.sh), 'switch'
+                      # invokes 'nix build' on the target host rather than accepting a pre-built store path.
+                      # Upstream nix-darwin (modules/system/default.nix) documents activating pre-built
+                      # systems via '$systemConfig/sw/bin/darwin-rebuild activate' or running '$systemConfig/activate'
+                      # as root. In darwin-rebuild.sh, 'activate' simply calls '$systemConfig/activate'
+                      # after verifying root privileges. We directly execute the documented '<result>/activate'
+                      # script as root on the target host.
+                      out_path="$(nix build ".#darwinConfigurations.''${target_name}.system" --no-link --print-out-paths "$@")"
+                      nix copy --to "ssh-ng://$target_user@$target_hostname" "$out_path"
+
+                      ssh_opts=()
+                      if [ -t 0 ]; then
+                        ssh_opts+=("-t")
+                      fi
+                      # shellcheck disable=SC2029
+                      ssh "''${ssh_opts[@]}" "$target_user@$target_hostname" sudo "$out_path/activate"
+                      ;;
+
+                    *)
+                      echo "Error: Unknown system '$target_system' for host '$target_name'" >&2
+                      exit 1
+                      ;;
+                  esac
+                '';
+              }
+            );
+          };
+
         update-vicinae-extensions = {
           type = "app";
           meta.description = "Update pinned Vicinae Raycast extensions";

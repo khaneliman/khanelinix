@@ -64,6 +64,16 @@ nh os switch .
 flake switch
 ```
 
+### Remote deploy
+
+```bash
+# List available hosts
+nix run .#deploy
+
+# Deploy to remote host
+nix run .#deploy -- <host> [switch|boot|test|build]
+```
+
 ## Features
 
 Here's an overview of what my Nix configuration offers:
