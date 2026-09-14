@@ -33,9 +33,12 @@ in
     useLix = mkBoolOpt false "Whether or not to use Lix.";
     package = mkOpt lib.types.package pkgs.nixVersions.latest "Which nix package to use.";
     localCache = {
+      # Signing key served by khanelinix.services.harmonia; the private half
+      # lives in secrets/khanelinix/default.yaml as harmonia-signing-key.
       publicKey =
-        mkOpt (lib.types.nullOr lib.types.str) null
-          "Public key for the local Harmonia binary cache.";
+        mkOpt (lib.types.nullOr lib.types.str)
+          "khanelinix.local-1:nIZrdCkkwLNueBa7lFeEaktr6zicYPyblSHy2YGnHKU="
+          "Public key for the local Harmonia binary cache, or null to disable it.";
     };
   };
 
@@ -278,6 +281,9 @@ in
           experimental-features = experimentalFeatures;
           # Prevent builds failing just because we can't contact a substituter
           fallback = true;
+          # The harmonia substituter is only reachable on the home LAN; fail
+          # over to the public caches quickly when it is absent.
+          connect-timeout = 5;
           flake-registry = "/etc/nix/registry.json";
           log-lines = 50;
           sandbox = true;
