@@ -128,25 +128,19 @@
       };
 
       # `nix flake check` evaluates nixosConfigurations itself but ignores
-      # darwinConfigurations and homeConfigurations. Build Darwin systems on
-      # Darwin; elsewhere force only evaluation so Linux CI still catches
-      # module regressions without building foreign closures.
-      checks =
-        let
-          mkEvalCheck =
-            name: drv: pkgs.writeText "${name}-eval" (builtins.unsafeDiscardStringContext drv.drvPath);
-        in
-        {
-          docs-html = self.packages.${system}.docs-html;
-        }
-        // lib.mapAttrs' (name: cfg: {
-          name = "darwin-${name}";
-          value =
-            if pkgs.stdenv.hostPlatform.isDarwin then cfg.system else mkEvalCheck "darwin-${name}" cfg.system;
-        }) self.darwinConfigurations
-        // lib.mapAttrs' (name: cfg: {
-          name = "home-${lib.replaceStrings [ "@" ] [ "-" ] name}";
-          value = mkEvalCheck "home-${lib.replaceStrings [ "@" ] [ "-" ] name}" cfg.activationPackage;
-        }) self.homeConfigurations;
+      # darwinConfigurations. Check the Darwin systems native to the
+      # checking system: nix-rosetta-builder is patched with applyPatches
+      # and imported at eval time, which a Linux runner cannot realise.
+      # Home Manager is exercised through the systems that embed it.
+      checks = {
+        docs-html = self.packages.${system}.docs-html;
+      }
+      //
+        lib.mapAttrs'
+          (name: cfg: {
+            name = "darwin-${name}";
+            value = cfg.system;
+          })
+          (lib.filterAttrs (_: cfg: cfg.pkgs.stdenv.hostPlatform.system == system) self.darwinConfigurations);
     };
 }
