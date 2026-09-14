@@ -65,18 +65,22 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      bfg-repo-cleaner
-      git-absorb
-      git-crypt
-      git-surgeon
-      git-filter-repo
-      git-lfs
-      gitflow
-      gitleaks
-      gitlint
-      tig
-    ];
+    home.packages =
+      with pkgs;
+      [
+        bfg-repo-cleaner
+        git-absorb
+        git-crypt
+        git-filter-repo
+        git-lfs
+        gitflow
+        gitleaks
+        gitlint
+        tig
+      ]
+      # git-surgeon comes from the llm-agents input; keep that input out of
+      # hosts that do not opt into AI tooling.
+      ++ lib.optionals (config.khanelinix.suites.development.aiEnable or false) [ git-surgeon ];
 
     programs = {
       delta = {
