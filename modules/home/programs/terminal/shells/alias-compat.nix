@@ -135,8 +135,8 @@ let
       translatedSubs = lib.replaceStrings [ "$(" ] [ "(" ] translatedArgs;
       restoredAwkFields = lib.replaceStrings (map (index: "{print $argv[${index}]}") positionalIndexes) (
         map
-        (index: "{print $" + index + "}")
-        positionalIndexes
+          (index: "{print $" + index + "}")
+          positionalIndexes
       ) translatedSubs;
     in
     lib.replaceStrings [ " && " " || " ] [ "\nand " "\nor " ] restoredAwkFields;
