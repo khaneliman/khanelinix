@@ -82,8 +82,14 @@ in
                 pnpm config set fetch-retries 5
                 pnpm config set network-concurrency 8
               '';
-              hash = "sha256-EO844JyOlqtUG+mGWOeXlVtQjRpFFgwiXRvTgfEh7ao=";
+              hash = "sha256-gEY2em9pNTC1EuVX0V3L/Wu1apZ+BKBXxALEcPQ/pwA=";
             };
+            # License generation otherwise downloads SPDX notices during the sandboxed build.
+            preBuild = ''
+              mkdir -p .generated/third-party-licenses/spdx
+              cp -r ${pkgs.spdx-license-list-data.json}/json/details \
+                .generated/third-party-licenses/spdx/v${pkgs.spdx-license-list-data.version}
+            '' + (old.preBuild or "");
             postBuild = (old.postBuild or "") + ''
               ${lib.getExe pkgs.nodejs} ${./prune-node-modules.mjs} "$PWD"
             '';
