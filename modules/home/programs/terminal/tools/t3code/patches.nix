@@ -25,12 +25,15 @@
     name = "t3code-pr-10881-agent-history.patch";
     # Use the combined diff so normalization preserves new-file amendments.
     url = "https://github.com/pingdotgg/t3code/pull/10881.diff";
-    # Reanchor the new tests after the pinned source's Grok rollback test.
+    # Reanchor the Grok tests and retain the blank line before Claude imports.
     postFetch = ''
       substituteInPlace "$out" --replace-fail \
         $'@@ -212,6 +212,123 @@\n });\n \n it.layer(grokAdapterTestLayer)("GrokAdapterLive", (it) => {\n' \
         $'@@ -235,3 +235,120 @@\n'
+      substituteInPlace "$out" --replace-fail \
+        $'@@ -6,6 +6,9 @@\n  *\n  * @module ClaudeAdapterLive\n  */\n' \
+        $'@@ -7,7 +7,10 @@\n  *\n  * @module ClaudeAdapterLive\n  */\n \n'
     '';
-    hash = "sha256-VvBjM4VsZtSAaxf2eqoAKac6Tlna2KfvJqlc7RLor3c=";
+    hash = "sha256-L84M41UL6IvBKgQNKIYxJFByqNrqlKDD4lNedgvTcFQ=";
   })
 ]
