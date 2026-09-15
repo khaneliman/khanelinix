@@ -1,8 +1,7 @@
 diff --git a/apps/desktop/src/app/DesktopApp.ts b/apps/desktop/src/app/DesktopApp.ts
-index e84e6d5c730ddbe06e0d7d2575283ecff1bb81b5..69a6979165bd661a790283ecc857d1cfaa740cf9 100644
 --- a/apps/desktop/src/app/DesktopApp.ts
 +++ b/apps/desktop/src/app/DesktopApp.ts
-@@ -31,6 +31,7 @@ import * as DesktopRemoteUpdates from "../updates/DesktopRemoteUpdates.ts";
+@@ -32,6 +32,7 @@
  import * as DesktopUpdates from "../updates/DesktopUpdates.ts";
  import * as DesktopSnapShot from "../snapShot/DesktopSnapShot.ts";
  import * as DesktopWslBackend from "../wsl/DesktopWslBackend.ts";
@@ -10,35 +9,22 @@ index e84e6d5c730ddbe06e0d7d2575283ecff1bb81b5..69a6979165bd661a790283ecc857d1cf
  
  const DEFAULT_DESKTOP_BACKEND_PORT = 3773;
  const MAX_TCP_PORT = 65_535;
-@@ -143,22 +144,60 @@ const fatalStartupCause = <E>(stage: string, cause: Cause.Cause<E>) =>
-   handleFatalStartupError(stage, Cause.pretty(cause)).pipe(Effect.andThen(Effect.failCause(cause)));
+@@ -158,14 +159,47 @@
+ );
  
  const bootstrap = Effect.gen(function* () {
--  const pool = yield* DesktopBackendPool.DesktopBackendPool;
--  const primaryBackend = yield* pool.primary;
 +  const attachment = yield* DesktopExistingBackendAttachment.DesktopExistingBackendAttachment;
    const state = yield* DesktopState.DesktopState;
    const environment = yield* DesktopEnvironment.DesktopEnvironment;
 -  const desktopSettings = yield* DesktopAppSettings.DesktopAppSettings;
--  const serverExposure = yield* DesktopServerExposure.DesktopServerExposure;
--  const wslBackend = yield* DesktopWslBackend.DesktopWslBackend;
    const desktopWindow = yield* DesktopWindow.DesktopWindow;
    const snapShot = yield* DesktopSnapShot.DesktopSnapShot;
    const appActivation = yield* DesktopAppActivation.DesktopAppActivation;
    yield* logBootstrapInfo("bootstrap start");
  
--  if (environment.isDevelopment && Option.isNone(environment.configuredBackendPort)) {
 +  yield* attachment.bootstrap;
 +  const attached = yield* attachment.ready;
 +
-+  if (
-+    Option.isNone(attached) &&
-+    environment.isDevelopment &&
-+    Option.isNone(environment.configuredBackendPort)
-+  ) {
-     return yield* new DesktopDevelopmentBackendPortRequiredError();
-   }
- 
 +  if (Option.isSome(attached)) {
 +    if (yield* Ref.get(state.quitting)) return;
 +    const electronProtocol = yield* ElectronProtocol.ElectronProtocol;
@@ -48,7 +34,6 @@ index e84e6d5c730ddbe06e0d7d2575283ecff1bb81b5..69a6979165bd661a790283ecc857d1cf
 +    yield* electronProtocol.registerDesktopProtocol({
 +      scheme: ElectronProtocol.getDesktopScheme(environment.isDevelopment),
 +      targetOrigin: rendererTarget,
-+      backendOrigin: attached.value.httpBaseUrl,
 +      clerkFrontendApiHostname: DesktopClerk.desktopClerkFrontendApiHostname,
 +    });
 +    yield* logBootstrapInfo("bootstrap attached to existing backend", {
@@ -69,86 +54,10 @@ index e84e6d5c730ddbe06e0d7d2575283ecff1bb81b5..69a6979165bd661a790283ecc857d1cf
 +    return;
 +  }
 +
-+  const pool = yield* DesktopBackendPool.DesktopBackendPool;
-+  const primaryBackend = yield* pool.primary;
 +  const desktopSettings = yield* DesktopAppSettings.DesktopAppSettings;
-+  const serverExposure = yield* DesktopServerExposure.DesktopServerExposure;
-+  const wslBackend = yield* DesktopWslBackend.DesktopWslBackend;
-   const backendPortSelection = yield* resolveDesktopBackendPort(environment.configuredBackendPort);
-   const backendPort = backendPortSelection.port;
-   yield* logBootstrapInfo(
-@@ -304,6 +343,14 @@ const startup = Effect.gen(function* () {
-   yield* bootstrap.pipe(Effect.catchCause((cause) => fatalStartupCause("bootstrap", cause)));
- }).pipe(Effect.withSpan("desktop.startup"));
- 
-+export const stopDesktopOwnedBackends = <E, R>(
-+  instances: ReadonlyArray<{ readonly stop: () => Effect.Effect<void, E, R> }>,
-+): Effect.Effect<void, E, R> =>
-+  Effect.forEach(instances, (instance) => instance.stop(), {
-+    concurrency: "unbounded",
-+    discard: true,
-+  });
-+
- const scopedProgram = Effect.scoped(
-   Effect.gen(function* () {
-     const runId = yield* makeDesktopRunId;
-@@ -321,9 +368,7 @@ const scopedProgram = Effect.scoped(
-         // finalizer means it gets hard-killed by the OS instead of
-         // receiving SIGTERM + grace. Stops run concurrently.
-         const instances = yield* pool.list;
--        yield* Effect.forEach(instances, (instance) => instance.stop(), {
--          concurrency: "unbounded",
--        });
-+        yield* stopDesktopOwnedBackends(instances);
-       }).pipe(Effect.ensuring(shutdown.markComplete)),
-     );
- 
-diff --git a/apps/desktop/src/app/DesktopAppErrors.test.ts b/apps/desktop/src/app/DesktopAppErrors.test.ts
-index 666c36d391de2efc3fad2c487307886a59eb4219..6599b34db42cd1da660dd081f8e308f9e528c61c 100644
---- a/apps/desktop/src/app/DesktopAppErrors.test.ts
-+++ b/apps/desktop/src/app/DesktopAppErrors.test.ts
-@@ -1,9 +1,13 @@
- import { assert, describe, it } from "@effect/vitest";
-+import { spawn } from "node:child_process";
-+import * as Effect from "effect/Effect";
- 
- import {
-   DesktopBackendPortUnavailableError,
-   DesktopDevelopmentBackendPortRequiredError,
-+  stopDesktopOwnedBackends,
- } from "./DesktopApp.ts";
-+import { processIsAlive } from "../backend/DesktopExistingBackendAttachment.ts";
- 
- describe("DesktopApp errors", () => {
-   it("preserves unavailable backend port context", () => {
-@@ -27,4 +31,27 @@ describe("DesktopApp errors", () => {
- 
-     assert.equal(error.message, "T3CODE_PORT is required in desktop development.");
-   });
-+
-+  it.effect("stops Desktop-owned backends without terminating the attached process", () =>
-+    Effect.gen(function* () {
-+      const external = yield* Effect.acquireRelease(
-+        Effect.sync(() =>
-+          spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], { stdio: "ignore" }),
-+        ),
-+        (child) => Effect.sync(() => child.kill()),
-+      );
-+      if (external.pid === undefined) return yield* Effect.die("external process has no pid");
-+      let stopCount = 0;
-+      yield* stopDesktopOwnedBackends([
-+        {
-+          stop: () =>
-+            Effect.sync(() => {
-+              stopCount += 1;
-+            }),
-+        },
-+      ]);
-+      assert.strictEqual(stopCount, 1);
-+      assert.isTrue(processIsAlive(external.pid));
-+    }).pipe(Effect.scoped),
-+  );
- });
+   const settings = yield* desktopSettings.get;
+   // The renderer is served from the bundled client (or Vite in development)
+   // rather than through the local backend, so the window can open without one.
 diff --git a/apps/desktop/src/app/DesktopConfig.ts b/apps/desktop/src/app/DesktopConfig.ts
 index d157a4c6ba44122c413ac1be525ec30fb5d98bdf..f7413b7232868d06cfc837fca65e648a4db26eaa 100644
 --- a/apps/desktop/src/app/DesktopConfig.ts
@@ -993,3 +902,38 @@ index ed920abcdc8f77d7b490d570558807c24dcc692e..70fd4874b9f20e6381cb3097d32c6218
  );
  
  const desktopApplicationLayer = Layer.mergeAll(
+diff --git a/apps/desktop/src/backend/DesktopBackendManager.test.ts b/apps/desktop/src/backend/DesktopBackendManager.test.ts
+--- a/apps/desktop/src/backend/DesktopBackendManager.test.ts
++++ b/apps/desktop/src/backend/DesktopBackendManager.test.ts
+@@ -21,6 +21,9 @@
+ import * as TestClock from "effect/testing/TestClock";
+ import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/unstable/http";
+ import { ChildProcess, ChildProcessSpawner } from "effect/unstable/process";
++
++import { spawn } from "node:child_process";
++import { processIsAlive } from "./DesktopExistingBackendAttachment.ts";
+ 
+ import * as DesktopBackendManager from "./DesktopBackendManager.ts";
+ import * as DesktopApp from "../app/DesktopApp.ts";
+@@ -1509,6 +1512,13 @@
+   it.effect("stopAllPoolInstances bounds the quit finalizer when backends hang", () =>
+     Effect.scoped(
+       Effect.gen(function* () {
++        const external = yield* Effect.acquireRelease(
++          Effect.sync(() =>
++            spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], { stdio: "ignore" }),
++          ),
++          (child) => Effect.sync(() => child.kill()),
++        );
++        if (external.pid === undefined) return yield* Effect.die("external process has no pid");
+         // Each backend's process-scope finalizer reports when it starts and
+         // when it finishes, keyed by instance name, so the test can prove
+         // both backends reached each milestone instead of inferring it from
+@@ -1574,6 +1584,7 @@
+         yield* Deferred.succeed(allowTeardown, undefined);
+         const finished = yield* Queue.takeN(teardownFinished, 2);
+         assert.deepEqual(finished.toSorted(), ["instance1", "instance2"]);
++        assert.isTrue(processIsAlive(external.pid));
+       }).pipe(Effect.provide(TestClock.layer())),
+     ),
+   );

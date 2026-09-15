@@ -1,6 +1,6 @@
 {
   apple-sdk_15,
-  boost,
+  boost189,
   buildNpmPackage,
   cmake,
   curl,
@@ -71,7 +71,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs = [
     apple-sdk_15
-    boost
+    # Upstream requires Boost 1.89.0 EXACT or falls back to a network fetch.
+    boost189
     curl
     libopus
     miniupnpc
