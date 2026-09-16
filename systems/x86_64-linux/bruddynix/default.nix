@@ -125,7 +125,6 @@ in
   stylix.targets.gtksourceview.enable = false;
 
   services = {
-    displayManager.defaultSession = "gamescope-wayland";
     flatpak.update = {
       onActivation = true;
       auto = {
@@ -144,13 +143,12 @@ in
         NO_POINTER_VIEWPORT = "1";
       };
 
-  # Steam Deck-style Gaming Mode as an optional SDDM session (no auto-launch)
   jovian = {
     steam = {
       enable = true;
+      autoStart = true;
       user = "bruddy";
-      # Only takes effect with autoStart; re-enable together if switching to console mode
-      # desktopSession = "plasma";
+      desktopSession = "plasma";
     };
     # This is a desktop with a discrete Navi 10, not a Deck APU. SteamOS's
     # amdgpu cmdline, sysctls, earlyoom, and automount tuning target the
