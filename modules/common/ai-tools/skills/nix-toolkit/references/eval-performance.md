@@ -116,8 +116,7 @@ establish improvement in the caller's workload.
   overlay does NOT re-evaluate all of Nixpkgs. Only overridden attributes
   re-evaluate.
 - `specialisations` and NixOS `containers` are highest-cost: each
-  duplicates/re-evaluates the config graph (N×M multiplier). Prefer lighter
-  isolation when full graph duplication isn't required.
+  duplicates/re-evaluates the config graph (N x M multiplier).
 - `flake-parts` or module helpers are not automatically the problem; profile
   first.
 
@@ -138,17 +137,19 @@ hyperfine --warmup 3 --runs 10 \
   "nix eval --raw \".#nixosConfigurations.${host}.config.system.build.toplevel.drvPath\" --option eval-cache false"
 ```
 
-Accept changes only after semantic checks pass and measured benefits justify
-complexity against the task target. Report timing mean, variance, and percentage
+Accept changes only after semantic checks pass and the measured benefit is large
+enough and stable enough across runs to justify the complexity, stated
+explicitly with the numbers. Report timing mean, variance, and percentage
 change; report memory regressions even when time improves. Fewer thunks alone do
 not prove a user-visible speedup.
 
 ## Readability And Feature Tradeoffs
 
-Accept localized complexity when measured benefits meet the task's performance
-target. Explain the readability cost and why the simpler form is insufficient.
-There is no universal percentage threshold. Retain the clearer form when
-measurements are inconclusive.
+Accept localized complexity only when the measured benefit is large enough and
+stable enough across runs to justify the readability cost, stated explicitly
+with the numbers. Explain the readability cost and why the simpler form is
+insufficient. There is no universal percentage threshold. Retain the clearer
+form when measurements are inconclusive.
 
 Keep feature reductions separate from behavior-preserving changes. Disabling
 documentation or removing needed modules and packages sacrifices capabilities;

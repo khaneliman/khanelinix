@@ -13,7 +13,10 @@
 
 - Show exact commands used or recommended.
 - Separate measured facts from hypotheses.
-- Label snippets: executed | dry-run checked | syntax checked | template only.
+- Label command or code snippets reported back to the user (not in reference
+  files) with their verification status: `executed`, `dry-run checked`,
+  `syntax checked`, or `template only`. Example:
+  `[dry-run checked] nix build .#package`
 - Performance claims require before/after measurements from same command shape.
 - Package diffs: report compared inputs and comparison method.
 
