@@ -24,6 +24,9 @@ playbooks when diagnosis or custom command shaping is needed.
   <config-installable> <option.path>`:
   report an option's type, winning priority tier, and defining files as
   repository-relative paths. Read-only; realizes nothing.
+- `scripts/config-assertions.sh [--all] [--raw] <config-installable>`: report
+  failed assertions and warnings without building. Exits 1 when an assertion
+  failed.
 - `scripts/trace_eval.py [--frames N] [--root DIR] [--full PATH] [--json]
   (<installable> | -- <command...>)`:
   run a failing evaluation with `--show-trace` and distil it to the error,
