@@ -27,6 +27,9 @@ playbooks when diagnosis or custom command shaping is needed.
 - `scripts/config-assertions.sh [--all] [--raw] <config-installable>`: report
   failed assertions and warnings without building. Exits 1 when an assertion
   failed.
+- `scripts/option-tree.sh [--set-only] [--unset-only] [--depth N] [--limit N]
+  <config-installable> [option.path]`:
+  list an option subtree with types, definition state, and priority tier.
 - `scripts/trace_eval.py [--frames N] [--root DIR] [--full PATH] [--json]
   (<installable> | -- <command...>)`:
   run a failing evaluation with `--show-trace` and distil it to the error,
