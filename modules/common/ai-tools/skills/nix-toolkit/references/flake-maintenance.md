@@ -1,5 +1,9 @@
 # Flake Maintenance
 
+For a first-pass inventory, run `scripts/flake_input_report.py`. It reports
+every locked input with its age, `follows` edges, and the inputs that pin it,
+replacing the individual metadata queries below.
+
 ## Inspect Inputs
 
 ```bash
