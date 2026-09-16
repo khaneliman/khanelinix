@@ -23,10 +23,11 @@ Every evaluated option carries metadata. These are attributes on
 | `type.description`         | The type contract the definitions must satisfy.           |
 
 `highestPrio` is the numeric _minimum_ across contributing definitions, so a
-lower number wins. Read `50` as stronger than `1000`. An option sitting at
-`1500` is using its own declared `default` and nothing has overridden it. A
-value of `9999` is the fold's starting value and means there are no definitions
-at all.
+lower number wins. [Module style](module-style.md#options-and-merge-priority)
+maps each number to its wrapper. Two values do not appear in that table: `1500`
+means the option is using its own declared `default` and nothing has overridden
+it, and `9999` is the fold's starting value, meaning there are no definitions at
+all.
 
 The evaluation result itself carries two more handles:
 

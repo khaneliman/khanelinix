@@ -20,7 +20,7 @@ Read only the references needed for the authoring decisions in this task:
   and bulky inline expressions.
 - [Assertions and warnings](assertions-and-warnings.md): option typing versus
   evaluation failure, valid-configuration warnings, and behavioral overrides.
-- [Anti-patterns](anti-patterns.md): `with`, `rec`, chained conditionals, and
+- [Syntax choices](syntax-choices.md): `with`, `rec`, chained conditionals, and
   attrset composition.
 - [Performance-aware patterns](performance-patterns.md): strict folds,
   `genericClosure`, path coercion versus `lib.fileset`, string handling,
@@ -33,14 +33,14 @@ measured cost. Neither requires a review workflow.
 
 ## Apply the Defaults
 
-- Prefer explicit `lib.` usage, justified local `inherit (...)`, or
-  expression-local `with` when it keeps one value clearer.
-- Prefer explicit qualification across broad scopes. Expression-local
-  `with lib.types;` is suitable for a single option type.
-- Keep bindings at their narrowest useful scope.
-- Prefer module-system merging to hand-written `if/else` for module config.
-- Keep option surfaces small. Select normal assignments, `mkDefault`, and
-  `mkForce` by intended merge priority.
+Each reference above owns its own rule. Two defaults cut across all of them:
+
+- Prefer explicit qualification. Reach for `with` or `inherit (...)` only when a
+  single expression reads better for it, never across a module body or config
+  block.
+- Prefer the module system to hand-written logic. Merge priority, `mkIf`, and
+  option types express conditional configuration that `if/else` and manual
+  attrset composition express worse, and they compose with other modules.
 
 ## Verify
 

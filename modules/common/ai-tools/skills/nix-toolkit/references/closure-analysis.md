@@ -53,15 +53,13 @@ change.
 
 ```bash
 nix why-depends .#package nixpkgs#dependency
-nix why-depends --derivation .#package nixpkgs#dependency  # build-time edges
 nix why-depends --all .#package nixpkgs#dependency
 ```
 
-Use `--derivation` when runtime references don't explain the dependency. Use
-`--all` only after shortest path is understood.
-
-For deeper unwanted-dependency work →
-[dependency-forensics.md](dependency-forensics.md).
+Use `--all` only after the shortest path is understood. Runtime versus
+build-time edges, output resolution, and embedded store paths belong to
+[Dependency forensics](dependency-forensics.md#runtime-vs-build-time), which
+owns the unwanted-dependency workflow.
 
 ## Reference Queries
 

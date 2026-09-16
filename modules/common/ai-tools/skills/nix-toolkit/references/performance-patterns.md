@@ -129,19 +129,18 @@ ordinary attribute selection on an unmeasured string-interning hypothesis.
 
 ## Module Import Boundaries
 
-Imports must resolve before final configuration. Keep import selection
-independent of `config` and `_module.args`; see
-[module arguments](module-style.md#module-arguments) for the phase distinction
-and the
-[Nixpkgs module API](https://nixos.org/manual/nixpkgs/stable/#module-system-lib-evalModules).
+Why imports must resolve before final configuration belongs to
+[module arguments](module-style.md#module-arguments); the recursion it causes
+belongs to [Option forensics](option-forensics.md#infinite-recursion). This
+section covers only what that constraint costs.
 
 Decision rule:
 
 1. Profile import discovery and repeated Nixpkgs evaluation before reducing
    imports. Cost depends on forced work, not merely the number of files.
-2. Keep static module imports and gate their definitions with `mkIf`. Select
-   optional imports only from import-time inputs such as `specialArgs` when
-   appropriate; verify that required options remain declared.
+2. Keep static module imports and gate their definitions with `mkIf`. Gating
+   costs less than it looks: `mkIf` defers the branch rather than evaluating
+   both.
 3. Narrow expensive `builtins.readDir` discovery only after checking coverage.
    Keep transient test configurations to the required baseline imports.
 

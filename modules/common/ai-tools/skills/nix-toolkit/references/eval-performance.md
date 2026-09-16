@@ -157,10 +157,13 @@ needed. Keep behavior unchanged until that tradeoff is accepted. Shared package
 sets and input `follows` also require checking configuration, overlays, and
 versions.
 
-## Constitutional Rules
+## Rules
 
-- Never propose an optimization without a `hyperfine` baseline command.
 - Always include `--option eval-cache false` in performance tests.
 - Never claim a speedup without before/after multi-run benchmark output.
+- A change argued for on performance grounds needs a `hyperfine` baseline before
+  it is proposed. Choosing a construct for clarity, correctness, or semantics
+  does not; [Performance-aware patterns](performance-patterns.md) owns that
+  selection and explicitly does not establish speedups.
 - Prioritize measured hotspots. Keep feature reductions separate from equivalent
   changes; obtain an explicit user decision before sacrificing capabilities.
