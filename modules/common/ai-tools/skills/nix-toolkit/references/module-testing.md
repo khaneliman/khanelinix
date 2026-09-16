@@ -104,6 +104,19 @@ as well as membership; see
 
 ## Configuration Build Tier
 
+Before building or running a dry-run build, use `config-assertions.sh` as the
+cheaper first pass to check assertions without realizing derivations. It reports
+failed assertions and warnings, and exits 1 when an assertion failed:
+
+```bash
+<path-to-skill>/scripts/config-assertions.sh .#nixosConfigurations.host
+```
+
+Run with `--help` for filter and output flags (`--all`, `--raw`).
+
+When assertions pass or the question requires verifying package instantiation
+and generated files, run the build checks:
+
 ```bash
 nix flake check
 nix build --dry-run .#nixosConfigurations.host.config.system.build.toplevel

@@ -11,11 +11,18 @@
 ## Core Commands
 
 ```bash
-nix build .#package
+nix build .#package -L
 nix log .#package
 nix derivation show .#package
 nix path-info .#package
 ```
+
+Pass `-L` (or `--print-build-logs`) to `nix build` during iterative debugging.
+It streams builder output directly to the terminal, showing failure context at
+the exact failing line. This beats the `nix log` round trip when reproducing a
+failure or when an intermediate derivation build fails before top-level
+completion. Reserve `nix log` for inspecting already-completed builds or remote
+failures.
 
 Legacy: `nix-build -A package && nix log result`
 
@@ -55,6 +62,26 @@ If `nix log .#package` cannot resolve the failing drv:
 drv="$(nix build .#package --derivation --no-link --print-out-paths)"
 nix log "$drv"
 ```
+
+## Fixed-Output Hash Mismatch
+
+When a build fails with:
+
+```text
+error: hash mismatch in fixed-output derivation '<store-path>':
+  specified: sha256-...
+  got:    sha256-...
+```
+
+Seeing this error during a build you did not expect to fetch indicates that an
+upstream source archive or release tag changed in place, an ecosystem lockfile
+(such as `Cargo.lock`, `go.mod`, or `package-lock.json`) drifted without
+updating its corresponding derivation hash (`cargoHash`, `vendorHash`, or
+`npmDepsHash`), or an unexpected fixed-output derivation dependency is pulling
+remote assets.
+
+For the workflow to derive and update the expected hash using `lib.fakeHash`,
+see [Fixed-Output Hashes](packages-and-overlays.md#fixed-output-hashes).
 
 ## Patch Debugging
 
