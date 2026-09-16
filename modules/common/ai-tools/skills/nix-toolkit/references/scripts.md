@@ -24,5 +24,10 @@ playbooks when diagnosis or custom command shaping is needed.
   <config-installable> <option.path>`:
   report an option's type, winning priority tier, and defining files as
   repository-relative paths. Read-only; realizes nothing.
+- `scripts/trace_eval.py [--frames N] [--root DIR] [--full PATH] [--json]
+  (<installable> | -- <command...>)`:
+  run a failing evaluation with `--show-trace` and distil it to the error,
+  evaluator hints, innermost frames, and frames inside this project. Exits 1
+  when the command failed and a report was produced.
 
 Run script `--help` first when present.
