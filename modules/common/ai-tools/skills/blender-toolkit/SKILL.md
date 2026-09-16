@@ -68,11 +68,9 @@ structure:
 - inspect the actual image and runtime import. File freshness, object names,
   node existence, and hashes do not prove visual correctness.
 
-Before details or materials, compare silhouette and proportions from consistent
-views beside the authorized art authority. List concrete mismatches, correct the
-highest-impact one, and render again. When generated views disagree, record the
-camera interpretation and resolve the contradiction without claiming measured
-anatomy that the references do not establish.
+For artwork matching or repeated visual corrections, use the
+[visual iteration loop](references/visual-iteration.md). It owns comparable
+views, bounded edits, and visual acceptance before broader render batches.
 
 ## Rig, pose, and weights
 
