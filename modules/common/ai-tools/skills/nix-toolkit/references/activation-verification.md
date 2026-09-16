@@ -1,7 +1,8 @@
 # Activation Verification
 
 Confirm what a switch actually deployed. Applies to `nh os switch`,
-`nh home switch`, `nixos-rebuild`, and `home-manager switch`.
+`nh home switch`, `nh darwin switch`, `nixos-rebuild`, `darwin-rebuild`, and
+`home-manager switch`.
 
 ## Switch Output Is Not Evidence
 
@@ -37,6 +38,37 @@ nix derivation show "$(nix path-info --derivation '<store-path>')" \
 
 Check the derivation when the change is an input rather than a version, such as
 an added patch or an overridden dependency.
+
+## nix-darwin Activation
+
+`darwin-rebuild switch` and `nh darwin switch` manage macOS system state. System
+profile generations use `/nix/var/nix/profiles/system` by default, or
+`/nix/var/nix/profiles/system-profiles/<name>` when invoked with
+`--profile-name <name>`.
+
+List or compare generations:
+
+```bash
+darwin-rebuild --list-generations
+readlink -f /nix/var/nix/profiles/system-'<previous>'-link
+readlink -f /nix/var/nix/profiles/system-'<new>'-link
+```
+
+How nix-darwin differs from the NixOS profile flow:
+
+1. Link structure: this matches NixOS rather than differing from it. Both point
+   `/run/current-system` straight at the store path and advance the profile
+   generation separately with `nix-env -p <profile> --set`, so on either
+   platform the generation links, not `/run/current-system`, are the comparison
+   to trust.
+2. Root filesystem: macOS root is read-only APFS; `/run` is provided through a
+   synthetic firmlink in `/etc/synthetic.conf` rather than an early-boot tmpfs.
+3. No bootloader integration: NixOS generations populate bootloader menus (GRUB
+   or systemd-boot) with kernels and initrds for offline rollback. nix-darwin
+   manages only user-space services, LaunchDaemons, system defaults, and
+   `/run/current-system/sw`. Rollback occurs online via
+   `darwin-rebuild --rollback` or `--switch-generation <id>`.
+4. Privilege requirement: `darwin-rebuild switch` must run as root.
 
 ## Home Manager Activation
 

@@ -59,6 +59,20 @@ The script works against any `lib.evalModules` result, including
 `darwinConfigurations`, `homeConfigurations`, and a bare `evalModules` call
 exposed as a flake output.
 
+## Subtree Exploration
+
+When you do not yet know which option is wrong, list the subtree first.
+`option-tree.sh` answers what is defined across an option subtree, whereas
+`option-forensics.sh` answers why one specific option resolved to that value.
+
+```bash
+<path-to-skill>/scripts/option-tree.sh .#nixosConfigurations.host services.openssh
+```
+
+It lists options under the prefix with types, definition state, and priority
+tiers. Run with `--help` for depth bounding, set/unset filtering, and raw JSON
+flags.
+
 ## Error Matrix
 
 Match the evaluator's text, not a paraphrase of it. The strings below are the
