@@ -11,6 +11,9 @@ Read only the references needed for the authoring decisions in this task:
 - [Module style](module-style.md): module templates, option surfaces, merge
   priority, module arguments, normal assignments, `mkDefault`, `mkForce`, and
   `mkMerge`.
+- [Packages and overlays](packages-and-overlays.md): `final: prev:` semantics,
+  `override` versus `overrideAttrs`, `finalAttrs` derivations, dependency
+  classification, fixed-output hashes, and flake outputs.
 - [Option types](option-types.md): type selection, `addCheck`, submodules,
   `freeformType` with `pkgs.formats`, `deferredModule`, and custom types.
 - [Bindings](bindings.md): `let` locality, single-use bindings, `inherit (...)`,
