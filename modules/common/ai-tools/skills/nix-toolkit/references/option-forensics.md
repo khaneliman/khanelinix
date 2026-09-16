@@ -161,9 +161,18 @@ The extended evaluation is a separate fixpoint, so the base configuration is
 unaffected. Confirm the probe value is absent before the change, as this example
 does; comparing against a value the configuration already sets proves nothing.
 
-To confirm a file actually reached the evaluation, walk the module graph. It is
-a tree, so flatten it before filtering; the top level holds only the root
-modules.
+To confirm a file actually reached the evaluation, query the module graph:
+
+```bash
+scripts/module_graph.py .#nixosConfigurations.host 'services/my-module'
+```
+
+It exits 1 when nothing matched, which is itself the answer: an unimported file
+declares no options and its definitions never merge. Add `--disabled` to list
+what `disabledModules` excised.
+
+The underlying graph is a tree, so flattening is required before filtering; the
+top level holds only the root modules.
 
 ```bash
 nix eval --json --impure --expr '
