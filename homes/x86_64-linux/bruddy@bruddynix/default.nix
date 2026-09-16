@@ -99,6 +99,12 @@ in
     };
 
     services = {
+      ludusavi = {
+        enable = true;
+        backupDirectory = "/mnt/austinserver/data/backups/bruddynix";
+        networkMount = "/mnt/austinserver/data";
+      };
+
       # sops = {
       #   enable = true;
       #   defaultSopsFile = lib.getFile "secrets/khanelinix/khaneliman/default.yaml";
