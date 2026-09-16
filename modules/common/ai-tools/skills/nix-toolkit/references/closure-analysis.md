@@ -83,4 +83,4 @@ nix-store -q --tree result
 - Total closure size before/after.
 - Largest added/removed dependencies.
 - Whether size change is direct output or dependency closure.
-- Follow-up changes needed.
+- Root cause or `why-depends` path for unexpected additions.
