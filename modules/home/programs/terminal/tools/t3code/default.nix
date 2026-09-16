@@ -89,7 +89,8 @@ in
               mkdir -p .generated/third-party-licenses/spdx
               cp -r ${pkgs.spdx-license-list-data.json}/json/details \
                 .generated/third-party-licenses/spdx/v${pkgs.spdx-license-list-data.version}
-            '' + (old.preBuild or "");
+            ''
+            + (old.preBuild or "");
             postBuild = (old.postBuild or "") + ''
               ${lib.getExe pkgs.nodejs} ${./prune-node-modules.mjs} "$PWD"
             '';
@@ -264,7 +265,8 @@ in
 
         userSettings = {
           addProjectBaseDirectory = githubRoot;
-          sidebarAutoSettleAfterDays = 3;
+          # I like to manually settle
+          # sidebarAutoSettleAfterDays = 3;
           textGenerationModelSelection = {
             instanceId = "codex";
             model = "gpt-5.6-luna";
