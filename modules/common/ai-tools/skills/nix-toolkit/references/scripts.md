@@ -8,44 +8,33 @@ installed outside the repository under analysis and runs with the repository as
 the working directory, so a bare `scripts/...` path does not resolve. Every
 reference uses the prefixed form.
 
+This is an index. Run `--help` for the flag surface, and read the owning
+reference for when to reach for the script and how to read its output.
+
 ## Available Scripts
 
-- `<path-to-skill>/scripts/package_diff_report.py --before <installable>
-  --after <installable>`:
-  build without result links or lock-file updates, compare deterministic file
-  manifests and closures, and emit bounded stable JSON. Add `--diffoscope` for
-  bounded normalized structural excerpts.
-- `<path-to-skill>/scripts/closure-diff-report.sh <before> <after>`: build two
-  installables without linking and report closure drift.
-- `<path-to-skill>/scripts/dependency-trace.sh <target> [dependency]`: inspect
-  direct references, recursive closure, and optional `why-depends` paths.
-- `<path-to-skill>/scripts/package-option-scan.sh <package-list-installable> [pattern]`:
-  inspect package-list options without building package or system closure.
-- `<path-to-skill>/scripts/drv-graph-grep.sh [--allow-meta] <derivation> <pattern>`:
-  instantiate derivation graph and search drv names without realizing outputs.
-- `<path-to-skill>/scripts/eval-benchmark.sh [--runs N] [--warmup N] <eval command...>`:
-  benchmark eval commands and capture `NIX_SHOW_STATS`.
-- `<path-to-skill>/scripts/option-forensics.sh [--values] [--limit N] [--raw]
-  <config-installable> <option.path>`:
-  report an option's type, winning priority tier, and defining files as
-  repository-relative paths. Read-only; realizes nothing.
-- `<path-to-skill>/scripts/config-assertions.sh [--all] [--raw] <config-installable>`:
-  report failed assertions and warnings without building. Exits 1 when an
-  assertion failed.
-- `<path-to-skill>/scripts/option-tree.sh [--set-only] [--unset-only] [--depth N] [--limit N]
-  <config-installable> [option.path]`:
-  list an option subtree with types, definition state, and priority tier.
-- `<path-to-skill>/scripts/trace_eval.py [--frames N] [--root DIR] [--full PATH] [--json]
-  (<installable> | -- <command...>)`:
-  run a failing evaluation with `--show-trace` and distil it to the error,
-  evaluator hints, innermost frames, and frames inside this project. Exits 1
-  when the command failed and a report was produced.
-- `<path-to-skill>/scripts/module_graph.py [--disabled] [--limit N] [--json]
-  <config-installable> [pattern]`:
-  report whether a module reached the evaluation, what imported it, and what
-  `disabledModules` excised. Exits 1 when nothing matched.
-- `<path-to-skill>/scripts/flake_input_report.py [--stale-days N] [--limit N] [--json]
-  [flake-ref]`:
-  inventory locked inputs with age, `follows` edges, and which inputs pin them.
+| Script                   | Answers                                                     | Owner                                           |
+| ------------------------ | ----------------------------------------------------------- | ----------------------------------------------- |
+| `option-forensics.sh`    | Why does this option resolve to that value?                 | [Option forensics](option-forensics.md)         |
+| `option-tree.sh`         | What is defined across this option subtree?                 | [Option forensics](option-forensics.md)         |
+| `module_graph.py`        | Did this module reach the evaluation, and what imported it? | [Option forensics](option-forensics.md)         |
+| `trace_eval.py`          | What does this failing evaluation actually say?             | [Option forensics](option-forensics.md)         |
+| `config-assertions.sh`   | Which assertions and warnings fire, without building?       | [Module testing](module-testing.md)             |
+| `eval-benchmark.sh`      | What does this evaluation cost, across repeated runs?       | [Evaluation performance](eval-performance.md)   |
+| `package_diff_report.py` | How do two built installables differ?                       | [Package diffing](package-diffing.md)           |
+| `closure-diff-report.sh` | How did the closure drift between two installables?         | [Closure analysis](closure-analysis.md)         |
+| `dependency-trace.sh`    | Why does this target depend on that package?                | [Dependency forensics](dependency-forensics.md) |
+| `package-option-scan.sh` | Which package-list option pulls this in?                    | [Dependency forensics](dependency-forensics.md) |
+| `drv-graph-grep.sh`      | Which derivation in the graph matches, without realizing?   | [Dependency forensics](dependency-forensics.md) |
+| `flake_input_report.py`  | How stale are the locked inputs, and what pins them?        | [Flake maintenance](flake-maintenance.md)       |
+| `validate-snippets.sh`   | Do this skill's own snippets and cited APIs still hold?     | [Operating rules](operating-rules.md)           |
 
-Run script `--help` first when present.
+All query scripts are read-only. `option-forensics.sh`, `option-tree.sh`,
+`module_graph.py`, `config-assertions.sh`, and `package-option-scan.sh` realize
+nothing. `package_diff_report.py` and `closure-diff-report.sh` build, but never
+create result links or touch the lock file.
+
+Three scripts use a non-zero exit as an answer rather than an error:
+`config-assertions.sh` exits 1 when an assertion failed, `module_graph.py` exits
+1 when nothing matched, and `trace_eval.py` exits 1 when the command failed and
+a report was produced.

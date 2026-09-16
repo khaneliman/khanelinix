@@ -1,7 +1,8 @@
-# Anti-Patterns
+# Syntax Choices
 
-Choose explicit expressions that fit repository canon. The alternatives below
-explain syntax and scope choices; valid local idioms need not be normalized.
+Choose explicit expressions that fit repository canon. These constructs are not
+defects in themselves; the rules below decide which form to prefer where more
+than one is valid. A different valid choice is not a review finding.
 
 ## `with`
 
@@ -81,21 +82,10 @@ in {
 
 ## `type // { check = ...; }`
 
-Never add validation by updating a type's `check` attribute. Nixpkgs detects the
-ad-hoc override and throws, because the replaced `check` loses the marker the
-merge machinery relies on.
-
-```nix
-# Throws during evaluation
-type = lib.types.str // { check = v: builtins.match "[a-z]+" v != null; };
-
-# Composes correctly
-type = lib.types.addCheck lib.types.str (v: builtins.match "[a-z]+" v != null);
-```
-
-Overriding `name` or `description` with `//` is fine and is how nixpkgs defines
-its own checked types. See [Option types](option-types.md) for the rest of the
-selection order.
+This one is a real defect, not a style choice: nixpkgs detects the ad-hoc
+override and throws. [Option types](option-types.md) owns the rule, the
+`addCheck` replacement, and why overriding `name` or `description` with `//` is
+still fine.
 
 ## Chained `if/else if/else`
 

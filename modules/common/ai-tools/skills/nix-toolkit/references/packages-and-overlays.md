@@ -161,7 +161,7 @@ With `stdenv.mkDerivation (finalAttrs: { ... })`:
 - `finalAttrs.finalPackage` references the final resulting derivation itself,
   allowing self-referential `passthru.tests` without cyclic evaluation.
 - For attribute sets outside derivations, see
-  [Anti-patterns](anti-patterns.md#rec) for `rec` versus `let` rules.
+  [Syntax choices](syntax-choices.md#rec) for `rec` versus `let` rules.
 
 ## Derivation Essentials
 
