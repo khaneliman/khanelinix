@@ -116,9 +116,22 @@ the first frame naming a file you control, then for frames beginning "while
 evaluating the module argument" or "while evaluating the option", which name the
 exact argument or option closing the loop.
 
+Run the distiller rather than reading the raw trace. It keeps the error, the
+advice the evaluator attached, the innermost frames, and every frame pointing at
+a file in this project.
+
 ```bash
-nix eval --show-trace .#nixosConfigurations.host.config.system.build.toplevel.drvPath 2>&1 | head -60
+scripts/trace_eval.py .#nixosConfigurations.host.config.system.build.toplevel.drvPath
 ```
+
+Use `--frames 0` to keep every frame, `--full PATH` to save the untruncated
+trace, `--json` for structured output, and `-- <command...>` to distil something
+other than a `nix eval`. It exits 1 when the command failed and a report was
+produced, and 0 when there was nothing to diagnose.
+
+The "frames in this project" section is the one to act on. A recursion whose
+frames are all inside dependencies usually means the cycle closes through a
+module argument rather than through your own expression.
 
 If the trace is unhelpful, bisect instead: comment out imports until evaluation
 succeeds, then reintroduce them. `extendModules` makes this cheap without
