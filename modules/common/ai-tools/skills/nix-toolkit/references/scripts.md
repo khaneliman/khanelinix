@@ -39,5 +39,8 @@ playbooks when diagnosis or custom command shaping is needed.
   <config-installable> [pattern]`:
   report whether a module reached the evaluation, what imported it, and what
   `disabledModules` excised. Exits 1 when nothing matched.
+- `scripts/flake_input_report.py [--stale-days N] [--limit N] [--json]
+  [flake-ref]`:
+  inventory locked inputs with age, `follows` edges, and which inputs pin them.
 
 Run script `--help` first when present.
