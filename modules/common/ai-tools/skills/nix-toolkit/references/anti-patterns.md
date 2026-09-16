@@ -79,6 +79,24 @@ in {
 }
 ```
 
+## `type // { check = ...; }`
+
+Never add validation by updating a type's `check` attribute. Nixpkgs detects the
+ad-hoc override and throws, because the replaced `check` loses the marker the
+merge machinery relies on.
+
+```nix
+# Throws during evaluation
+type = lib.types.str // { check = v: builtins.match "[a-z]+" v != null; };
+
+# Composes correctly
+type = lib.types.addCheck lib.types.str (v: builtins.match "[a-z]+" v != null);
+```
+
+Overriding `name` or `description` with `//` is fine and is how nixpkgs defines
+its own checked types. See [Option types](option-types.md) for the rest of the
+selection order.
+
 ## Chained `if/else if/else`
 
 For chains that obscure composition, consider:
