@@ -30,9 +30,11 @@ an already authorized modeling task does not cancel that task's remaining work.
    normals, material support, skinning, file size, or importer behavior.
 3. If operating Blender, discover the installed executable and API version, then
    choose the available interactive, control, or headless workflow. A
-   version-matched headless script is valid without MCP/control. Never assume an
-   executable path, socket protocol, or `bpy` version. Before scripted or live
-   control, read [automation](references/automation.md).
+   version-matched headless script is valid without MCP/control only when the
+   task permits it. When MCP is requested, establish and verify the live MCP
+   path before modeling; do not silently fall back. Never assume an executable
+   path, socket protocol, or `bpy` version. Read
+   [automation](references/automation.md) before scripted or live control.
 
 ## Choose a modeling route deliberately
 
