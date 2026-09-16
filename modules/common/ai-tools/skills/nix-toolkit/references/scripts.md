@@ -20,5 +20,9 @@ playbooks when diagnosis or custom command shaping is needed.
   derivation graph and search drv names without realizing outputs.
 - `scripts/eval-benchmark.sh [--runs N] [--warmup N] <eval command...>`:
   benchmark eval commands and capture `NIX_SHOW_STATS`.
+- `scripts/option-forensics.sh [--values] [--limit N] [--raw]
+  <config-installable> <option.path>`:
+  report an option's type, winning priority tier, and defining files as
+  repository-relative paths. Read-only; realizes nothing.
 
 Run script `--help` first when present.

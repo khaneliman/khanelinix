@@ -30,6 +30,8 @@ guidance owns finding thresholds and suggestions; load it only for review work.
 | Review Nix changes, decide whether to request changes, or write suggestions                                     | [Review guidance](references/review.md)                          |
 | Compare package versions or outputs                                                                             | [Package diffing](references/package-diffing.md)                 |
 | Diagnose a failed build                                                                                         | [Build debugging](references/build-debugging.md)                 |
+| Find why an option resolves to that value, conflicts, or recurses infinitely                                    | [Option forensics](references/option-forensics.md)               |
+| Choose or verify a module test tier                                                                             | [Module testing](references/module-testing.md)                   |
 | Explain or reduce closure contents                                                                              | [Closure analysis](references/closure-analysis.md)               |
 | Trace a dependency or its owning option                                                                         | [Dependency forensics](references/dependency-forensics.md)       |
 | Update flake inputs or maintain lock files                                                                      | [Flake maintenance](references/flake-maintenance.md)             |

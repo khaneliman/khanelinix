@@ -9,7 +9,10 @@ conflicting local guidance before editing. Keep unrelated Nix unchanged.
 Read only the references needed for the authoring decisions in this task:
 
 - [Module style](module-style.md): module templates, option surfaces, merge
-  priority, normal assignments, `mkDefault`, `mkForce`, and `mkMerge`.
+  priority, module arguments, normal assignments, `mkDefault`, `mkForce`, and
+  `mkMerge`.
+- [Option types](option-types.md): type selection, `addCheck`, submodules,
+  `freeformType` with `pkgs.formats`, `deferredModule`, and custom types.
 - [Bindings](bindings.md): `let` locality, single-use bindings, `inherit (...)`,
   and bulky inline expressions.
 - [Assertions and warnings](assertions-and-warnings.md): option typing versus
@@ -39,6 +42,8 @@ measured cost. Neither requires a review workflow.
 ## Verify
 
 Run the relevant repository formatter and focused evaluation, build, test, or
-module-specific validation. State which behavior the check proves. For
-performance claims, use [Evaluation performance](eval-performance.md) to measure
-the same command shape before and after the change.
+module-specific validation. State which behavior the check proves.
+[Module testing](module-testing.md) selects the cheapest tier that can observe
+the change and lists the cases a merge-sensitive module needs. For performance
+claims, use [Evaluation performance](eval-performance.md) to measure the same
+command shape before and after the change.
