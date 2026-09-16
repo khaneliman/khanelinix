@@ -69,9 +69,9 @@ options.example.autoEnableSources = lib.mkOption {
 };
 
 config = lib.mkIf (cfg.enable && cfg.autoEnableSources) {
-  warnings = lib.optional (lib.types.isRawType cfg.sources) ''
-    example.sources is raw Lua, so source auto-enablement cannot be inferred.
-    To keep raw sources and silence this warning, set:
+  warnings = lib.optional (lib.isString cfg.sources) ''
+    example.sources is an opaque string, so auto-enablement cannot be inferred.
+    To keep the opaque form and silence this warning, set:
       example.autoEnableSources = false;
   '';
 };

@@ -3,7 +3,7 @@
 ## Scripted Diff
 
 ```bash
-scripts/closure-diff-report.sh nixpkgs#hello nixpkgs#hello
+<path-to-skill>/scripts/closure-diff-report.sh nixpkgs#hello nixpkgs#hello
 ```
 
 Builds without linking, prints direct closure sizes, runs

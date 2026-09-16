@@ -43,7 +43,7 @@ inside a large attrset is the problem.
 ## First Command
 
 ```bash
-scripts/option-forensics.sh .#nixosConfigurations.host services.openssh.enable
+<path-to-skill>/scripts/option-forensics.sh .#nixosConfigurations.host services.openssh.enable
 ```
 
 It reports the type, whether the option is defined, the winning priority with
@@ -121,7 +121,7 @@ advice the evaluator attached, the innermost frames, and every frame pointing at
 a file in this project.
 
 ```bash
-scripts/trace_eval.py .#nixosConfigurations.host.config.system.build.toplevel.drvPath
+<path-to-skill>/scripts/trace_eval.py .#nixosConfigurations.host.config.system.build.toplevel.drvPath
 ```
 
 Use `--frames 0` to keep every frame, `--full PATH` to save the untruncated
@@ -164,7 +164,7 @@ does; comparing against a value the configuration already sets proves nothing.
 To confirm a file actually reached the evaluation, query the module graph:
 
 ```bash
-scripts/module_graph.py .#nixosConfigurations.host 'services/my-module'
+<path-to-skill>/scripts/module_graph.py .#nixosConfigurations.host 'services/my-module'
 ```
 
 It exits 1 when nothing matched, which is itself the answer: an unimported file
