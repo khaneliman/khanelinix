@@ -35,5 +35,9 @@ playbooks when diagnosis or custom command shaping is needed.
   run a failing evaluation with `--show-trace` and distil it to the error,
   evaluator hints, innermost frames, and frames inside this project. Exits 1
   when the command failed and a report was produced.
+- `scripts/module_graph.py [--disabled] [--limit N] [--json]
+  <config-installable> [pattern]`:
+  report whether a module reached the evaluation, what imported it, and what
+  `disabledModules` excised. Exits 1 when nothing matched.
 
 Run script `--help` first when present.
