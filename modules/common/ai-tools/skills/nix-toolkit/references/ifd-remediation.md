@@ -22,9 +22,16 @@ Static local paths (e.g. `builtins.readFile ./config.json`) do NOT trigger IFD.
 
 ```bash
 nix build .#package --option allow-import-from-derivation false
-nix eval .#package --allow-import-from-derivation false
-nix flake check --allow-import-from-derivation false
+nix eval .#package --option allow-import-from-derivation false
+nix flake check --option allow-import-from-derivation false
 ```
+
+`allow-import-from-derivation` is a boolean setting, so Nix generates
+`--allow-import-from-derivation` and `--no-allow-import-from-derivation`,
+neither of which takes an argument. Writing
+`--allow-import-from-derivation false` leaves `false` to be parsed as an
+installable and fails with a selection-path error. Use the `--option` form
+above, or `--no-allow-import-from-derivation`.
 
 ### Error Signatures
 
@@ -109,14 +116,24 @@ haskell-pkg = pkgs.haskellPackages.callPackage ./src/default.nix {};
 Decouple network calls from evaluation: lock revisions and hashes beforehand via
 `flake.lock`, `niv`, or `npins`.
 
-## 4. Parallel Evaluation (Determinate Nix 3.11.0+)
+## 4. Parallel Evaluation (Determinate Nix)
 
-When IFD is architecturally unavoidable:
+When IFD is architecturally unavoidable, parallel evaluation can hide some of
+its cost. This is Determinate Nix only; upstream Nix evaluates single-threaded.
 
-`/etc/nix/nix.conf`:
+Parallel evaluation shipped in Determinate Nix 3.11.1 behind `eval-cores`, which
+defaulted to 1 and needed `eval-cores = 0` to use every core. Since 3.16.3 it
+defaults to unlimited cores, so no opt-in is required on a current release. Set
+it only to cap parallelism.
+
+Determinate Nix owns `/etc/nix/nix.conf`. Put overrides in
+`/etc/nix/nix.custom.conf`, or in `nix.settings` on a NixOS host, so a daemon
+upgrade does not discard them.
+
+`builtins.parallel` parallelizes evaluation inside an expression and is gated
+behind a separate experimental feature:
 
 ```text
-eval-cores = 0
 extra-experimental-features = parallel-eval
 ```
 
@@ -126,6 +143,11 @@ builtins.parallel [
   (import ./arch-aarch64.nix)
 ]
 ```
+
+Treat `builtins.parallel` as unstable. Determinate documented it as subject to
+significant semantic change or removal during the developer preview, and it is
+absent from the 3.22.4 builtins reference. Confirm it exists on the pinned
+Determinate version before depending on it; prefer removing the IFD.
 
 ## Verification Checklist
 

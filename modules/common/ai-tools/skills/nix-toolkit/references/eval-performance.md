@@ -8,7 +8,7 @@ controls, profiling, and acceptance evidence.
 ## 1. Benchmarking and Baselining
 
 ```bash
-scripts/eval-benchmark.sh --runs 10 --warmup 3 \
+<path-to-skill>/scripts/eval-benchmark.sh --runs 10 --warmup 3 \
   nix eval --raw .#nixosConfigurations.host.config.system.build.toplevel.drvPath
 ```
 

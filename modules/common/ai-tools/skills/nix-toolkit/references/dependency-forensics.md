@@ -8,7 +8,7 @@ package), probe narrower options before building the system closure.
 Scan a known package-list option:
 
 ```bash
-scripts/package-option-scan.sh \
+<path-to-skill>/scripts/package-option-scan.sh \
   path:/path/to/flake#nixosConfigurations.host.config.environment.systemPackages \
   curl
 ```
@@ -20,7 +20,7 @@ from error trace). Evaluates only that list; does not realize outputs.
 If not in a direct option, try bounded drv-graph grep:
 
 ```bash
-timeout 60s scripts/drv-graph-grep.sh --allow-meta \
+timeout 60s <path-to-skill>/scripts/drv-graph-grep.sh --allow-meta \
   path:/path/to/flake#nixosConfigurations.host.config.system.build.toplevel \
   curl
 ```
@@ -32,7 +32,7 @@ not carry those flags into the fix.
 ## Scripted Trace
 
 ```bash
-scripts/dependency-trace.sh nixpkgs#hello nixpkgs#glibc
+<path-to-skill>/scripts/dependency-trace.sh nixpkgs#hello nixpkgs#glibc
 ```
 
 Resolves outputs, prints direct references, summarizes recursive closure, runs

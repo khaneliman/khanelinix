@@ -3,6 +3,11 @@
 Use scripts for first-pass reports and repeatable measurements; use mode
 playbooks when diagnosis or custom command shaping is needed.
 
+`<path-to-skill>` is the directory holding this skill's `SKILL.md`. The skill is
+installed outside the repository under analysis and runs with the repository as
+the working directory, so a bare `scripts/...` path does not resolve. Every
+reference uses the prefixed form.
+
 ## Available Scripts
 
 - `<path-to-skill>/scripts/package_diff_report.py --before <installable>
@@ -10,36 +15,36 @@ playbooks when diagnosis or custom command shaping is needed.
   build without result links or lock-file updates, compare deterministic file
   manifests and closures, and emit bounded stable JSON. Add `--diffoscope` for
   bounded normalized structural excerpts.
-- `scripts/closure-diff-report.sh <before> <after>`: build two installables
-  without linking and report closure drift.
-- `scripts/dependency-trace.sh <target> [dependency]`: inspect direct
-  references, recursive closure, and optional `why-depends` paths.
-- `scripts/package-option-scan.sh <package-list-installable> [pattern]`: inspect
-  package-list options without building package or system closure.
-- `scripts/drv-graph-grep.sh [--allow-meta] <derivation> <pattern>`: instantiate
-  derivation graph and search drv names without realizing outputs.
-- `scripts/eval-benchmark.sh [--runs N] [--warmup N] <eval command...>`:
+- `<path-to-skill>/scripts/closure-diff-report.sh <before> <after>`: build two
+  installables without linking and report closure drift.
+- `<path-to-skill>/scripts/dependency-trace.sh <target> [dependency]`: inspect
+  direct references, recursive closure, and optional `why-depends` paths.
+- `<path-to-skill>/scripts/package-option-scan.sh <package-list-installable> [pattern]`:
+  inspect package-list options without building package or system closure.
+- `<path-to-skill>/scripts/drv-graph-grep.sh [--allow-meta] <derivation> <pattern>`:
+  instantiate derivation graph and search drv names without realizing outputs.
+- `<path-to-skill>/scripts/eval-benchmark.sh [--runs N] [--warmup N] <eval command...>`:
   benchmark eval commands and capture `NIX_SHOW_STATS`.
-- `scripts/option-forensics.sh [--values] [--limit N] [--raw]
+- `<path-to-skill>/scripts/option-forensics.sh [--values] [--limit N] [--raw]
   <config-installable> <option.path>`:
   report an option's type, winning priority tier, and defining files as
   repository-relative paths. Read-only; realizes nothing.
-- `scripts/config-assertions.sh [--all] [--raw] <config-installable>`: report
-  failed assertions and warnings without building. Exits 1 when an assertion
-  failed.
-- `scripts/option-tree.sh [--set-only] [--unset-only] [--depth N] [--limit N]
+- `<path-to-skill>/scripts/config-assertions.sh [--all] [--raw] <config-installable>`:
+  report failed assertions and warnings without building. Exits 1 when an
+  assertion failed.
+- `<path-to-skill>/scripts/option-tree.sh [--set-only] [--unset-only] [--depth N] [--limit N]
   <config-installable> [option.path]`:
   list an option subtree with types, definition state, and priority tier.
-- `scripts/trace_eval.py [--frames N] [--root DIR] [--full PATH] [--json]
+- `<path-to-skill>/scripts/trace_eval.py [--frames N] [--root DIR] [--full PATH] [--json]
   (<installable> | -- <command...>)`:
   run a failing evaluation with `--show-trace` and distil it to the error,
   evaluator hints, innermost frames, and frames inside this project. Exits 1
   when the command failed and a report was produced.
-- `scripts/module_graph.py [--disabled] [--limit N] [--json]
+- `<path-to-skill>/scripts/module_graph.py [--disabled] [--limit N] [--json]
   <config-installable> [pattern]`:
   report whether a module reached the evaluation, what imported it, and what
   `disabledModules` excised. Exits 1 when nothing matched.
-- `scripts/flake_input_report.py [--stale-days N] [--limit N] [--json]
+- `<path-to-skill>/scripts/flake_input_report.py [--stale-days N] [--limit N] [--json]
   [flake-ref]`:
   inventory locked inputs with age, `follows` edges, and which inputs pin them.
 
