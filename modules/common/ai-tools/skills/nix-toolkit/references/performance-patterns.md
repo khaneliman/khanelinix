@@ -130,7 +130,9 @@ ordinary attribute selection on an unmeasured string-interning hypothesis.
 ## Module Import Boundaries
 
 Imports must resolve before final configuration. Keep import selection
-independent of `config` and `_module.args`; see the
+independent of `config` and `_module.args`; see
+[module arguments](module-style.md#module-arguments) for the phase distinction
+and the
 [Nixpkgs module API](https://nixos.org/manual/nixpkgs/stable/#module-system-lib-evalModules).
 
 Decision rule:

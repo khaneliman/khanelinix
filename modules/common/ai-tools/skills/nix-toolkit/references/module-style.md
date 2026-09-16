@@ -17,7 +17,8 @@ in {
 
 ## Options And Merge Priority
 
-- Define strict option types.
+- Define strict option types. [Option types](option-types.md) covers selection,
+  `addCheck`, `freeformType`, and submodules.
 - In `mkOption`, use `default = ...;` for the option's default value.
 - In config, use a normal assignment when the behavior should require an
   explicit override.
@@ -26,6 +27,29 @@ in {
 - Use `lib.mkForce` only for targeted fixes or must-win overrides.
 - Use `mkBefore`/`mkAfter` for list ordering, not override priority. Ordering
   retains contributions that `mkForce` could discard.
+
+Priority and order are independent axes. Every definition carries an override
+priority, and the merge keeps only the definitions at the strongest priority
+present; ordering then arranges the survivors.
+
+| Wrapper                | Priority | Meaning                                                 |
+| ---------------------- | -------- | ------------------------------------------------------- |
+| `mkOptionDefault`      | 1500     | The option's own declared `default`.                    |
+| `mkDefault`            | 1000     | Soft default, yields to any plain assignment.           |
+| plain assignment       | 100      | The normal case.                                        |
+| `mkImageMediaOverride` | 60       | Image and installer profiles; still loses to `mkForce`. |
+| `mkForce`              | 50       | Must-win override.                                      |
+| `mkVMOverride`         | 10       | `build-vm` and test harnesses.                          |
+| `mkOverride n`         | n        | Arbitrary tier.                                         |
+
+Lower numbers win. `mkBefore` and `mkAfter` are `mkOrder 500` and `mkOrder 1500`
+on the separate ordering axis, where unordered values sit at 1000; their numbers
+look like priorities but never discard anything.
+
+Two definitions at the same priority must be mergeable by the option's type. For
+a scalar type they are not, which is the usual source of the "defined multiple
+times" and "conflicting definition values" errors. Diagnose those with
+[Option forensics](option-forensics.md) rather than guessing which module wins.
 
 Test default-only, normal-override, and conflicting definitions when changing
 priority. Compare list contents and order with a second contributing module.
@@ -91,6 +115,25 @@ the same branch selection when `cfg` supplies the two Boolean values:
 Evaluate all four Boolean combinations with the owning option types. The
 experimental definition must remain absent whenever `cfg.enable` is true. Use
 the delayed form when `cfg` comes from `config`.
+
+## Module Arguments
+
+Extra arguments reach module bodies two ways, and the difference is when they
+resolve.
+
+|                        | `specialArgs`                                     | `_module.args`                                  |
+| ---------------------- | ------------------------------------------------- | ----------------------------------------------- |
+| Resolved               | Before any module body evaluates.                 | Inside the fixpoint, like any other option.     |
+| Usable in `imports`    | Yes.                                              | No; it closes a recursion loop.                 |
+| Settable by a module   | No, it is fixed by the `evalModules` caller.      | Yes, including `mkDefault` and `mkForce`.       |
+| May depend on `config` | No.                                               | Yes.                                            |
+| Typical contents       | Flake inputs, target system, architectural flags. | `pkgs`, generated values, internal helper sets. |
+
+Choose `specialArgs` for anything an `imports` list must consult, and
+`_module.args` for everything else, because a module can then override it.
+Deciding an import from a value that came out of `_module.args` fails with
+`infinite recursion encountered`; see
+[Option forensics](option-forensics.md#infinite-recursion).
 
 ## Option Surface
 
