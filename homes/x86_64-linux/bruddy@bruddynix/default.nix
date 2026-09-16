@@ -20,6 +20,8 @@ in
 
     programs = {
       graphical = {
+        addons.mangohud.enableSessionWide = false;
+
         # 32 GB host and a modpack habit; the 4 GiB default heap stutters on
         # large packs.
         apps.prismlauncher.maxMemoryMiB = 8192;
