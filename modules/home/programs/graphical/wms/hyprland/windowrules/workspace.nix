@@ -114,6 +114,11 @@ in
             match.title = "^(Spotify|Spotify Free)$";
             workspace = "7 silent";
           }
+          # Creative workspaces
+          {
+            match.class = "^(?i:blender)$";
+            workspace = "7 silent";
+          }
           #Remote
           {
             match.class = moonlightClass;

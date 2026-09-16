@@ -71,6 +71,8 @@ in
             { title = "^Spotify$"; }
             { title = "^Spotify Free$"; }
             { class = "^elisa$"; }
+            { app_id = "^(?i:blender)$"; }
+            { class = "^(?i:blender)$"; }
           ];
           "8" = [
             { class = "^virt-manager|qemu$"; }
