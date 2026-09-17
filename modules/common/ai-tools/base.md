@@ -114,12 +114,8 @@ cost, not the fewest lines or fastest workaround.
   unintegrated work or remote branches. Report any retained resource with its
   exact path/ref, reason, and next action; silent leftovers are not completion.
 - When evidence supports disagreement, state reason, alternative, and risk.
-- Run compilers, package builds, heavy test suites, and whole-flake Nix
-  evaluation such as `nix flake check` or host `nix eval` through `t3code-build`
-  or `build-run` when one is on PATH. Interactive agent scopes share one hard
-  memory cap; a process that exceeds it is killed. Keep disposable build scratch
-  in the repository's ignored build directory or under `$XDG_CACHE_HOME`, not
-  `/tmp`.
+- Keep disposable build scratch in the repository's ignored build directory or
+  under `$XDG_CACHE_HOME`, not `/tmp`.
 - Verify in proportion to risk before reporting completion. Complete required
   checks. Broaden or repeat them only when changes, failures, or unresolved
   concerns justify it. Avoid tests that merely mirror low-impact edits.
