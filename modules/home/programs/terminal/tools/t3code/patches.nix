@@ -29,11 +29,14 @@
     postFetch = ''
       substituteInPlace "$out" --replace-fail \
         $'@@ -212,6 +212,123 @@\n });\n \n it.layer(grokAdapterTestLayer)("GrokAdapterLive", (it) => {\n' \
-        $'@@ -235,3 +235,120 @@\n'
+        $'@@ -295,3 +295,120 @@\n'
+      substituteInPlace "$out" --replace-fail \
+        'it.effect("sends runtime context with the current model without changing saved prompts", () =>' \
+        'it.effect("keeps runtime context out of native command arguments", () =>'
       substituteInPlace "$out" --replace-fail \
         $'@@ -6,6 +6,9 @@\n  *\n  * @module ClaudeAdapterLive\n  */\n' \
         $'@@ -7,8 +7,11 @@\n  *\n  * @module ClaudeAdapterLive\n  */\n \n import * as NodeUtil from "node:util";\n'
     '';
-    hash = "sha256-lwMaY+K0at4fuNf1O7g2JwOSpF/HLDDn2HPI0XNCeDE=";
+    hash = "sha256-MOnsUKYXkEv1v3qSrx02BoltIyRYMncAZwyDkB+fAtQ=";
   })
 ]

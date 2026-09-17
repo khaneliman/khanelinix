@@ -37,6 +37,7 @@ let
       "nixpkgs-unstable"
       "nixpkgs-master"
       "home-manager"
+      "sops-nix"
     ];
   };
   common = import ./common.nix { inputs = patchedInputs; };
