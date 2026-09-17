@@ -96,11 +96,12 @@ in
       # MPRIS 2 support to mpd
       mpdris2 = {
         enable = true;
-        notifications = true;
-        multimediaKeys = true;
-        mpd = {
-          # inherit (config.services.mpd) musicDirectory;
-          musicDirectory = null;
+        settings = {
+          Bling = {
+            notify = true;
+            mmkeys = true;
+          };
+          Library.music_dir = null;
         };
       };
 
