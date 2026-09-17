@@ -265,8 +265,13 @@ in
 
         userSettings = {
           addProjectBaseDirectory = githubRoot;
-          # I like to manually settle
-          # sidebarAutoSettleAfterDays = 3;
+          # Nix owns every provider binary, so upstream version advisories are
+          # never actionable. This also gates the remote model-manifest fetch,
+          # so new model ids arrive with package updates instead.
+          enableProviderUpdateChecks = false;
+          continueThreadsAfterServerUpdate = true;
+          # Disable automatic settlement so threads are settled manually.
+          sidebarAutoSettleAfterDays = null;
           textGenerationModelSelection = {
             instanceId = "codex";
             model = "gpt-5.6-luna";
@@ -319,6 +324,7 @@ in
           confirmThreadDelete = true;
           diffIgnoreWhitespace = true;
           environmentIdentificationMode = "artwork";
+          followUpBehavior = "steer";
           favorites = [
             {
               provider = "claudeAgent";
@@ -360,6 +366,8 @@ in
           fontSmoothing = true;
           glassOpacity = 80;
           legacySidebarEnabled = false;
+          inAppNotificationsEnabled = true;
+          notificationMode = "notifications";
           planModeEnabled = false;
           providerModelPreferences = { };
           sidebarProjectGroupingMode = "repository";
