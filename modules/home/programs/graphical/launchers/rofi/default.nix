@@ -26,8 +26,10 @@ in
       # NOTE: rofi-wayland doesn't support plugins with HM module. But... non wayland sucks... sooo
       package = pkgs.rofi-wayland;
 
-      font = "MonaspaceNeon NF 14";
-      location = "center";
+      settings = {
+        font = "MonaspaceNeon NF 14";
+        location = 0;
+      };
       theme =
         if config.khanelinix.theme.catppuccin.enable then
           "catppuccin"
