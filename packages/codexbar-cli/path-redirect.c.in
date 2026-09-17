@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 
 #include <dlfcn.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <openssl/evp.h>
 #include <openssl/ssl.h>
@@ -12,6 +13,10 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#include "antigravity-cert.h"
+
+char **antigravity_argv(const char *path, char *const argv[]);
 
 #define ZONEINFO_PREFIX "/usr/share/zoneinfo"
 
@@ -52,12 +57,6 @@ __attribute__((constructor)) static void drop_preload_for_children(void) {
 }
 
 static int certificate_matches_antigravity(X509 *cert) {
-  // Antigravity CLI serves localhost HTTPS with this bundled self-signed cert.
-  static const unsigned char antigravity_fingerprint[SHA256_DIGEST_LENGTH] = {
-      0xB1, 0x36, 0x69, 0x41, 0xE9, 0x8E, 0x58, 0x4C, 0xAD, 0x69, 0x9A,
-      0x9A, 0xEC, 0xFF, 0xF2, 0xFD, 0xD3, 0x57, 0x6C, 0x73, 0x1D, 0x38,
-      0x0C, 0xCC, 0xBF, 0x31, 0xC4, 0x85, 0x4C, 0x07, 0x65, 0x7C};
-
   unsigned char fingerprint[EVP_MAX_MD_SIZE];
   unsigned int fingerprint_length = 0;
 
@@ -134,8 +133,16 @@ int posix_spawn(pid_t *pid, const char *path,
     real_posix_spawn = dlsym(RTLD_NEXT, "posix_spawn");
   }
 
-  return real_posix_spawn(pid, redirect_path(path), file_actions, attrp, argv,
-                          envp);
+  char **args = antigravity_argv(path, argv);
+  if (args == NULL) {
+    return ENOMEM;
+  }
+  int result = real_posix_spawn(pid, redirect_path(path), file_actions, attrp,
+                                args, envp);
+  if (args != argv) {
+    free(args);
+  }
+  return result;
 }
 
 int posix_spawnp(pid_t *pid, const char *file,

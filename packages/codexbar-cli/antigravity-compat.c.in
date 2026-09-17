@@ -1,0 +1,285 @@
+#define _GNU_SOURCE
+#define CURL_DISABLE_TYPECHECK
+
+#include <curl/curl.h>
+#include <dlfcn.h>
+#include <openssl/rand.h>
+#include <pthread.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static char csrf_token[65];
+
+__attribute__((constructor)) static void initialize_csrf_token(void) {
+  unsigned char random[32];
+  if (RAND_bytes(random, sizeof(random)) != 1) {
+    return;
+  }
+  for (size_t i = 0; i < sizeof(random); i++) {
+    snprintf(csrf_token + i * 2, 3, "%02x", random[i]);
+  }
+}
+
+char **antigravity_argv(const char *path, char *const argv[]) {
+  if (path == NULL || strcmp(path, "@agy@") != 0) {
+    return (char **)argv;
+  }
+  if (csrf_token[0] == '\0') {
+    return NULL;
+  }
+  size_t count = 0;
+  while (argv[count] != NULL) {
+    count++;
+  }
+  char **args = calloc(count + 3, sizeof(char *));
+  if (args == NULL) {
+    return NULL;
+  }
+  args[0] = argv[0];
+  args[1] = "--csrf_token";
+  args[2] = csrf_token;
+  for (size_t i = 1; i < count; i++) {
+    args[i + 2] = argv[i];
+  }
+  return args;
+}
+
+static int is_antigravity_url(const char *url) {
+  const char prefix[] = "https://127.0.0.1:";
+  if (url == NULL || strncmp(url, prefix, sizeof(prefix) - 1) != 0) {
+    return 0;
+  }
+  const char *port = url + sizeof(prefix) - 1;
+  const char *end = port + strspn(port, "0123456789");
+  const char service[] = "/exa.language_server_pb.LanguageServerService/";
+  return end != port && strncmp(end, service, sizeof(service) - 1) == 0;
+}
+
+// libcurl borrows header lists. Keep our own copy so reuse, redirects, and
+// caller cleanup cannot send a managed-session token to another origin.
+struct request_headers {
+  CURL *handle;
+  struct curl_slist *original;
+  struct curl_slist *effective;
+  long follow_location;
+  int local;
+  struct request_headers *next;
+};
+static struct request_headers *requests;
+static pthread_mutex_t requests_lock = PTHREAD_MUTEX_INITIALIZER;
+static CURLcode (*real_setopt)(CURL *, CURLoption, ...);
+static void (*real_cleanup)(CURL *);
+static void (*real_reset)(CURL *);
+static CURL *(*real_duplicate)(CURL *);
+static pthread_once_t curl_symbols_once = PTHREAD_ONCE_INIT;
+
+static void load_curl_symbols(void) {
+  real_setopt = dlsym(RTLD_NEXT, "curl_easy_setopt");
+  real_cleanup = dlsym(RTLD_NEXT, "curl_easy_cleanup");
+  real_reset = dlsym(RTLD_NEXT, "curl_easy_reset");
+  real_duplicate = dlsym(RTLD_NEXT, "curl_easy_duphandle");
+}
+
+static struct request_headers *find_request(CURL *handle) {
+  for (struct request_headers *entry = requests; entry != NULL;
+       entry = entry->next) {
+    if (entry->handle == handle) {
+      return entry;
+    }
+  }
+  return NULL;
+}
+
+static struct curl_slist *copy_headers(struct curl_slist *headers) {
+  struct curl_slist *copy = NULL;
+  for (; headers != NULL; headers = headers->next) {
+    struct curl_slist *next = curl_slist_append(copy, headers->data);
+    if (next == NULL) {
+      curl_slist_free_all(copy);
+      return NULL;
+    }
+    copy = next;
+  }
+  return copy;
+}
+
+static CURLcode set_headers(struct request_headers *entry) {
+  struct curl_slist *headers = copy_headers(entry->original);
+  if (entry->original != NULL && headers == NULL) {
+    return CURLE_OUT_OF_MEMORY;
+  }
+  int has_csrf = 0;
+  for (struct curl_slist *header = headers; header != NULL;
+       header = header->next) {
+    if (strncasecmp(header->data, "X-Codeium-Csrf-Token:", 21) == 0) {
+      has_csrf = 1;
+    }
+  }
+  if (entry->local && !has_csrf && csrf_token[0] != '\0') {
+    char header[sizeof(csrf_token) + 22];
+    snprintf(header, sizeof(header), "X-Codeium-Csrf-Token: %s", csrf_token);
+    struct curl_slist *next = curl_slist_append(headers, header);
+    if (next == NULL) {
+      curl_slist_free_all(headers);
+      return CURLE_OUT_OF_MEMORY;
+    }
+    headers = next;
+  }
+  CURLcode result = real_setopt(entry->handle, CURLOPT_FOLLOWLOCATION,
+                                entry->local ? 0L : entry->follow_location);
+  if (result == CURLE_OK) {
+    result = real_setopt(entry->handle, CURLOPT_HTTPHEADER, headers);
+  }
+  if (result != CURLE_OK) {
+    curl_slist_free_all(headers);
+    return result;
+  }
+  curl_slist_free_all(entry->effective);
+  entry->effective = headers;
+  return CURLE_OK;
+}
+
+static struct request_headers *take_request(CURL *handle) {
+  struct request_headers **link = &requests;
+  while (*link != NULL) {
+    struct request_headers *entry = *link;
+    if (entry->handle == handle) {
+      *link = entry->next;
+      return entry;
+    }
+    link = &entry->next;
+  }
+  return NULL;
+}
+
+static void free_request(struct request_headers *entry) {
+  if (entry != NULL) {
+    curl_slist_free_all(entry->original);
+    curl_slist_free_all(entry->effective);
+    free(entry);
+  }
+}
+
+void curl_easy_cleanup(CURL *handle) {
+  pthread_once(&curl_symbols_once, load_curl_symbols);
+  pthread_mutex_lock(&requests_lock);
+  struct request_headers *entry = take_request(handle);
+  pthread_mutex_unlock(&requests_lock);
+  // Remove the lookup before libcurl can reuse this address in another thread,
+  // but keep borrowed headers alive through cleanup and its callbacks.
+  real_cleanup(handle);
+  free_request(entry);
+}
+
+void curl_easy_reset(CURL *handle) {
+  pthread_once(&curl_symbols_once, load_curl_symbols);
+  pthread_mutex_lock(&requests_lock);
+  struct request_headers *entry = take_request(handle);
+  pthread_mutex_unlock(&requests_lock);
+  real_reset(handle);
+  free_request(entry);
+}
+
+CURL *curl_easy_duphandle(CURL *handle) {
+  pthread_once(&curl_symbols_once, load_curl_symbols);
+  CURL *copy = real_duplicate(handle);
+  if (copy == NULL) {
+    return NULL;
+  }
+  pthread_mutex_lock(&requests_lock);
+  struct request_headers *source = find_request(handle);
+  if (source != NULL) {
+    struct request_headers *entry = calloc(1, sizeof(*entry));
+    if (entry == NULL) {
+      real_cleanup(copy);
+      copy = NULL;
+    } else {
+      entry->handle = copy;
+      entry->follow_location = source->follow_location;
+      entry->local = source->local;
+      entry->original = copy_headers(source->original);
+      if ((source->original != NULL && entry->original == NULL) ||
+          set_headers(entry) != CURLE_OK) {
+        curl_slist_free_all(entry->original);
+        free(entry);
+        real_cleanup(copy);
+        copy = NULL;
+      } else {
+        entry->next = requests;
+        requests = entry;
+      }
+    }
+  }
+  pthread_mutex_unlock(&requests_lock);
+  return copy;
+}
+
+CURLcode curl_easy_setopt(CURL *handle, CURLoption option, ...) {
+  pthread_once(&curl_symbols_once, load_curl_symbols);
+  if (option == CURLOPT_URL || option == CURLOPT_HTTPHEADER ||
+      option == CURLOPT_FOLLOWLOCATION) {
+    pthread_mutex_lock(&requests_lock);
+    struct request_headers *entry = find_request(handle);
+    if (entry == NULL) {
+      entry = calloc(1, sizeof(*entry));
+      if (entry == NULL) {
+        pthread_mutex_unlock(&requests_lock);
+        return CURLE_OUT_OF_MEMORY;
+      }
+      entry->handle = handle;
+      entry->next = requests;
+      requests = entry;
+    }
+    va_list value;
+    va_start(value, option);
+    CURLcode result = CURLE_OK;
+    if (option == CURLOPT_FOLLOWLOCATION) {
+      entry->follow_location = va_arg(value, long);
+    } else if (option == CURLOPT_URL) {
+      const char *url = va_arg(value, const char *);
+      result = real_setopt(handle, option, url);
+      if (result == CURLE_OK) {
+        // Effective URLs can name a prior redirect, not the next retry's origin.
+        entry->local = is_antigravity_url(url);
+      }
+    } else {
+      struct curl_slist *headers = va_arg(value, struct curl_slist *);
+      struct curl_slist *copy = copy_headers(headers);
+      if (headers != NULL && copy == NULL) {
+        result = CURLE_OUT_OF_MEMORY;
+      } else {
+        curl_slist_free_all(entry->original);
+        entry->original = copy;
+      }
+    }
+    va_end(value);
+    if (result == CURLE_OK) {
+      result = set_headers(entry);
+    }
+    pthread_mutex_unlock(&requests_lock);
+    return result;
+  }
+  va_list args;
+  va_start(args, option);
+  CURLcode result;
+  if (option < CURLOPTTYPE_OBJECTPOINT) {
+    long value = va_arg(args, long);
+    result = real_setopt(handle, option, value);
+  } else if (option < CURLOPTTYPE_FUNCTIONPOINT) {
+    void *value = va_arg(args, void *);
+    result = real_setopt(handle, option, value);
+  } else if (option < CURLOPTTYPE_OFF_T) {
+    void (*value)(void) = va_arg(args, void (*)(void));
+    result = real_setopt(handle, option, value);
+  } else if (option < CURLOPTTYPE_BLOB) {
+    curl_off_t value = va_arg(args, curl_off_t);
+    result = real_setopt(handle, option, value);
+  } else {
+    void *value = va_arg(args, void *);
+    result = real_setopt(handle, option, value);
+  }
+  va_end(args);
+  return result;
+}

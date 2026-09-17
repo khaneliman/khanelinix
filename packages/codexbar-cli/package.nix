@@ -4,6 +4,7 @@
   fetchzip,
   autoPatchelfHook,
   makeWrapper,
+  antigravity-cli,
   curl,
   openssl,
   sqlite,
@@ -11,6 +12,7 @@
   lsof,
   which,
   tzdata,
+  python3,
   ...
 }:
 
@@ -49,6 +51,7 @@ stdenv.mkDerivation {
   nativeBuildInputs = lib.optionals stdenv.hostPlatform.isLinux [
     autoPatchelfHook
     makeWrapper
+    python3
   ];
 
   buildInputs = lib.optionals stdenv.hostPlatform.isLinux [
@@ -101,9 +104,16 @@ stdenv.mkDerivation {
         --replace-fail @which@ ${lib.getExe which} \
         --replace-fail @tzdata@ ${tzdata}/share/zoneinfo
 
-      $CC -shared -fPIC path-redirect.c -o $out/lib/codexbar-path-redirect.so -ldl -lssl -lcrypto
+      python3 ${./antigravity-cert.py} ${lib.getExe antigravity-cli} \
+        ${lib.getExe openssl} > antigravity-cert.h
+      substitute ${./antigravity-compat.c.in} antigravity-compat.c \
+        --replace-fail @agy@ ${lib.getExe antigravity-cli}
+
+      $CC -Wall -Wextra -Werror -shared -fPIC path-redirect.c antigravity-compat.c \
+        -o $out/lib/codexbar-path-redirect.so -ldl -lssl -lcrypto -lcurl
 
       makeWrapper $out/bin/.codexbar-wrapped $out/bin/codexbar \
+        --prefix PATH : ${lib.makeBinPath [ antigravity-cli ]} \
         --set LD_PRELOAD $out/lib/codexbar-path-redirect.so
     ''}
 
@@ -112,6 +122,18 @@ stdenv.mkDerivation {
     ''}
 
     runHook postInstall
+  '';
+
+  doInstallCheck = stdenv.hostPlatform.isLinux;
+  installCheckPhase = lib.optionalString stdenv.hostPlatform.isLinux ''
+    runHook preInstallCheck
+
+    $CC -Wall -Wextra -Werror ${./tests/antigravity-compat.c} -o antigravity-compat-test \
+      -L$out/lib -Wl,-rpath,$out/lib -l:codexbar-path-redirect.so -lcurl -lssl -lcrypto
+    python3 ${./tests/antigravity-cert.py} ${./antigravity-cert.py} \
+      ${lib.getExe antigravity-cli} ${lib.getExe openssl} ./antigravity-compat-test
+
+    runHook postInstallCheck
   '';
 
   meta = {
