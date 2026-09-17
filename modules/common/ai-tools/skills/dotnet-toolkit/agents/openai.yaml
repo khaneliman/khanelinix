@@ -1,0 +1,4 @@
+interface:
+  display_name: ".NET Toolkit"
+  short_description: ".NET, ASP.NET Core, and Blazor architecture and review"
+  default_prompt: "Use $dotnet-toolkit to design, implement, review, or test this .NET project."

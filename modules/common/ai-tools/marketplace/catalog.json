@@ -99,6 +99,21 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "dotnet-toolkit",
+			"dependencies": {
+				"required": [],
+				"optional": [
+					"memory-profiler",
+					"security-toolkit",
+					"typescript-best-practices"
+				]
+			},
+			"displayName": ".NET Toolkit",
+			"description": "Build and maintain .NET web apps, APIs, and Blazor front ends.",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
 			"name": "engineering-principles",
 			"dependencies": {
 				"required": [],

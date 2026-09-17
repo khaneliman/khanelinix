@@ -1,0 +1,10 @@
+{
+	"name": "dotnet-toolkit",
+	"displayName": ".NET Toolkit",
+	"description": "Build and maintain .NET web apps, APIs, and Blazor front ends.",
+	"version": "0.1.0",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./"
+}

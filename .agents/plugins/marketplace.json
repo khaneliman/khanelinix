@@ -101,6 +101,18 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "dotnet-toolkit",
+			"source": {
+				"source": "local",
+				"path": "./modules/common/ai-tools/skills/dotnet-toolkit"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Developer Tools"
+		},
+		{
 			"name": "engineering-principles",
 			"source": {
 				"source": "local",

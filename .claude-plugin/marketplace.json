@@ -87,6 +87,16 @@
 			"source": "./modules/common/ai-tools/skills/diagnosing-bugs"
 		},
 		{
+			"name": "dotnet-toolkit",
+			"description": "Build and maintain .NET web apps, APIs, and Blazor front ends.",
+			"version": "0.1.0",
+			"author": {
+				"name": "khaneliman"
+			},
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/dotnet-toolkit"
+		},
+		{
 			"name": "engineering-principles",
 			"description": "Principles for lean, verified agentic work.",
 			"version": "0.1.17",
