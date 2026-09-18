@@ -46,7 +46,6 @@ in
         run ${getExe pkgs.blender} \
           --online-mode \
           --background \
-          --factory-startup \
           --command extension install-file \
           "${blenderMcpPackage}/share/blender-mcp/addon/blender_mcp_addon-1.0.0.zip" \
           --repo user_default \
