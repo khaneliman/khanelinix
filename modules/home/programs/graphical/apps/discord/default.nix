@@ -30,7 +30,7 @@ in
         betterdiscordInstall = # bash
           home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             echo "Running betterdiscord install"
-            ${getExe pkgs.betterdiscordctl} install || ${getExe pkgs.betterdiscordctl} reinstall || true
+            run ${getExe pkgs.betterdiscordctl} install || run ${getExe pkgs.betterdiscordctl} reinstall || true
           '';
       };
     };
