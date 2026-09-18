@@ -81,10 +81,7 @@ in
     services = {
       avahi = enabled;
 
-      resources-limiter = {
-        enable = true;
-        memoryHigh = "16G";
-      };
+      resources-limiter = enabled;
 
       comfyui = {
         # Restore after https://github.com/NixOS/nixpkgs/issues/560210 is resolved.

@@ -14,8 +14,11 @@ in
     enable = mkEnableOption "resources limiter slice";
     memoryHigh = lib.mkOption {
       type = lib.types.str;
-      default = "25%";
-      description = "Memory usage at which build workloads are throttled.";
+      default = "75%";
+      description = ''
+        Memory usage at which all build workloads in the shared slice are
+        throttled. Percentages are relative to each host's physical RAM.
+      '';
     };
     memoryMax = lib.mkOption {
       type = lib.types.str;
