@@ -15,6 +15,7 @@ let
   cfg = config.khanelinix.programs.terminal.tools.opencode;
   ollamaEnabled =
     (config.services.ollama.enable or false) || (osConfig.services.ollama.enable or false);
+  swapEnabled = osConfig.khanelinix.services.llm.llamaSwap.enable or false;
 
   aiTools = import (lib.getFile "modules/common/ai-tools") {
     gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
@@ -54,9 +55,12 @@ in
     // lib.optionalAttrs ollamaEnabled {
       opencode-ollama = ''f(){ model="$1"; shift; opencode --model "ollama/$model" "$@"; }; f'';
       opencode-ollama-agent = "opencode --model ollama/glm-4.7-flash";
-      opencode-ollama-coder = "opencode --model ollama/qwen3-coder:30b";
       opencode-ollama-gpt-oss = "opencode --model ollama/gpt-oss:20b";
-      opencode-ollama-qwen = "opencode --model ollama/qwen3.6:27b";
+    }
+    // lib.optionalAttrs swapEnabled {
+      opencode-local-coder = "opencode --model llama-swap/qwen3-coder-30b";
+      opencode-local-qwen = "opencode --model llama-swap/qwen3-6-27b";
+      opencode-local-streamed = "opencode --model llama-swap/qwen36-colibri";
     };
 
     programs.opencode = {
