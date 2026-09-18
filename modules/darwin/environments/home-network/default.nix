@@ -35,7 +35,7 @@ in
       '';
     };
 
-    system.activationScripts.extraActivation.text = mkIf cfg.enableNFSMounts (
+    system.activationScripts.postActivation.text = mkIf cfg.enableNFSMounts (
       lib.mkAfter ''
         autoMaster="/etc/auto_master"
         autoMasterEntry="/Volumes/austinserver auto_austinserver -nosuid"
