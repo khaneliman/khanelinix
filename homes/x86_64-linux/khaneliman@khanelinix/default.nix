@@ -354,7 +354,7 @@ in
       terminal = {
         editors = {
           neovim = {
-            opencodeModel = "ollama/qwen3-coder:30b";
+            opencodeModel = "llama-swap/qwen3-coder-30b";
             extraProfiles = [
               "minimal"
               "basic"
