@@ -20,7 +20,7 @@ in
 
     port = lib.mkOption {
       type = lib.types.port;
-      default = 5000;
+      default = 5020;
       description = "Port to bind Harmonia binary cache to.";
     };
 

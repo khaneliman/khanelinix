@@ -291,7 +291,7 @@ in
           keep-going = true;
 
           substituters =
-            lib.mapAttrsToList (name: _: "http://${name}.local:5000") localCaches
+            lib.mapAttrsToList (name: _: "http://${name}.local:5020") localCaches
             ++ [
               "https://khanelinix.cachix.org"
               "https://nix-community.cachix.org"
