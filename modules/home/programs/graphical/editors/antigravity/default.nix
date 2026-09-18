@@ -58,21 +58,25 @@ in
   config = mkIf cfg.enable {
     home = {
       activation.antigravityGlobalSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        config_file="${config.home.homeDirectory}/.gemini/config/config.json"
-        declared_file=${globalSettingsFile}
+        applyAntigravityGlobalSettings() (
+          config_file="${config.home.homeDirectory}/.gemini/config/config.json"
+          declared_file=${globalSettingsFile}
 
-        run mkdir -p "$(dirname "$config_file")"
-        temporary_file="$(mktemp "$config_file.tmp.XXXXXX")"
+          mkdir -p "$(dirname "$config_file")"
+          temporary_file="$(mktemp "$config_file.tmp.XXXXXX")"
+          trap 'rm -f "$temporary_file"' EXIT
 
-        if [ -f "$config_file" ]; then
-          ${lib.getExe pkgs.jq} --slurpfile declared "$declared_file" \
-            'if type == "object" then . * $declared[0] else $declared[0] end' \
-            "$config_file" > "$temporary_file"
-        else
-          run cp "$declared_file" "$temporary_file"
-        fi
+          if [ -f "$config_file" ]; then
+            ${lib.getExe pkgs.jq} --slurpfile declared "$declared_file" \
+              'if type == "object" then . * $declared[0] else $declared[0] end' \
+              "$config_file" > "$temporary_file"
+          else
+            cp "$declared_file" "$temporary_file"
+          fi
 
-        run mv "$temporary_file" "$config_file"
+          mv "$temporary_file" "$config_file"
+        )
+        run applyAntigravityGlobalSettings
       '';
 
       file = {
