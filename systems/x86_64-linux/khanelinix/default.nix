@@ -126,6 +126,10 @@ in
             "qwen3-8-27b" = {
               tag = "qwen3.8:27b";
               contextSize = 32768;
+              extraArgs = [
+                "--spec-type"
+                "draft-mtp"
+              ];
             };
 
             "qwen3-coder-30b" = {
