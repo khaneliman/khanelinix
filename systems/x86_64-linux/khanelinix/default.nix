@@ -126,6 +126,11 @@ in
             "qwen3-8-27b" = {
               tag = "qwen3.8:27b";
               contextSize = 32768;
+              # On this 7900 XTX, MTP generated identical code at 36 vs 16 tok/s
+              # (Q4_K_M, 32K context, q8_0 KV cache; 2026-09-17 smoke test).
+              # Total VRAM was 21.2 GiB, falling to 4.5 GiB after idle unload.
+              # Ollama reached 66 tok/s; this route coordinates residency,
+              # not backend speed parity. These are not full agent benchmarks.
               extraArgs = [
                 "--spec-type"
                 "draft-mtp"
