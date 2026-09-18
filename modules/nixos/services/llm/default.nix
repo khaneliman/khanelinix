@@ -30,7 +30,25 @@ in
   ];
 
   options.khanelinix.services.llm = {
-    enable = lib.mkEnableOption "local large language model serving";
+    enable = lib.mkEnableOption "local large language model serving" // {
+      description = ''
+        Enable local llama.cpp tooling and optional llama-swap/Colibri serving.
+
+        Downloaded weights do not occupy GPU memory until loaded. Check
+        residency with `ollama ps` and llama-swap's `/running` endpoint;
+        use `nvtop` or `amdgpu_top` to identify competing GPU applications.
+        Use the `available` column in `free -h` for system RAM headroom,
+        rather than treating reclaimable filesystem cache as unavailable.
+
+        Ollama defaults to 60 seconds idle; clients can override `keep_alive`.
+        llama-swap models default to a 300-second inactivity TTL. Use
+        `ollama stop MODEL` or POST to llama-swap's `/api/models/unload`
+        after active requests finish to release memory without deleting weights.
+        Memory release can lag the unload acknowledgement.
+
+        See `modules/nixos/services/llm/README.md` for commands and trade-offs.
+      '';
+    };
 
     acceleration = lib.mkOption {
       type = lib.types.enum [
@@ -45,8 +63,10 @@ in
         Compute backend for llama.cpp.
 
         "auto" picks cuda on an NVIDIA host, vulkan on an AMD host, and cpu
-        elsewhere. Vulkan serves RDNA3 consumer cards at least as well as rocm,
-        and the binary cache carries both variants.
+        elsewhere. Compare backends with the same model, quantization, context
+        and speculative-decoding settings; performance varies by model and
+        runtime. Ollama and llama.cpp results are not a controlled backend
+        comparison unless their runner settings also match.
       '';
     };
 
