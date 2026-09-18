@@ -10,7 +10,7 @@ If (Test-Path $StoreToDir) {
 }
 New-Item $StoreToDir -ItemType directory
 
-# If you want to filter by Cert Usage (ex. for language independent match proividing server authentificaten Certs: "(1.3.6.1.5.5.7.3.1)"), just add:
+# If you want to filter by Cert Usage (ex. for language independent match providing server authentication Certs: "(1.3.6.1.5.5.7.3.1)"), just add:
 # -and -not $_.Archived -and ( $_.EnhancedKeyUsageList -match '(1.3.6.1.5.5.7.3.1)' -or -not $_.EnhancedKeyUsageList )
 Get-ChildItem -Recurse cert: `
   | Where-Object { $_ -is [System.Security.Cryptography.X509Certificates.X509Certificate2] -and $_.NotAfter.Date -gt (Get-Date).Date } `
