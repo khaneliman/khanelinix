@@ -51,26 +51,29 @@ in
             "setupLaunchAgents"
           ]
           ''
-            state_file=${lib.escapeShellArg dynamicIslandConfigState}
-            current_source=${lib.escapeShellArg "${dynamicIslandConfigSource}"}
-            launchd_target="gui/$(id -u)/${dynamicIslandLaunchdLabel}"
+            restartDynamicIslandSketchybar() (
+              state_file=${lib.escapeShellArg dynamicIslandConfigState}
+              current_source=${lib.escapeShellArg "${dynamicIslandConfigSource}"}
+              launchd_target="gui/$(id -u)/${dynamicIslandLaunchdLabel}"
 
-            previous_source=
-            if [ -f "$state_file" ]; then
-              previous_source="$(cat "$state_file")"
-            fi
-
-            if [ "$previous_source" != "$current_source" ]; then
-              restarted=1
-              if /bin/launchctl print "$launchd_target" >/dev/null 2>&1; then
-                /bin/launchctl kickstart -k "$launchd_target" || restarted=0
+              previous_source=
+              if [ -f "$state_file" ]; then
+                previous_source="$(cat "$state_file")"
               fi
 
-              if [ "$restarted" = 1 ]; then
-                mkdir -p "$(dirname "$state_file")"
-                printf '%s\n' "$current_source" > "$state_file"
+              if [ "$previous_source" != "$current_source" ]; then
+                restarted=1
+                if /bin/launchctl print "$launchd_target" >/dev/null 2>&1; then
+                  /bin/launchctl kickstart -k "$launchd_target" || restarted=0
+                fi
+
+                if [ "$restarted" = 1 ]; then
+                  mkdir -p "$(dirname "$state_file")"
+                  printf '%s\n' "$current_source" > "$state_file"
+                fi
               fi
-            fi
+            )
+            run restartDynamicIslandSketchybar
           ''
       );
 
