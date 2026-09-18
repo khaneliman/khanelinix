@@ -32,8 +32,8 @@ in
         "gpt-oss:20b"
         # Preferred local coding model for Linux; use Qwen3-Coder-Next on Apple Silicon instead.
         "qwen3-coder:30b"
-        # Creative/general long-context model that is safer than the 35B tag on 24 GB VRAM.
-        "qwen3.6:27b"
+        # Dense agent model that leaves more VRAM headroom than the 35B MoE tag.
+        "qwen3.8:27b"
         # Strong 30B-class agentic/tool-use option for coding, research, and analytical tasks.
         "glm-4.7-flash"
         # Editor completion at the cursor. Only a base tag carries the template

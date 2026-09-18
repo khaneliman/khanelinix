@@ -59,7 +59,7 @@ in
     }
     // lib.optionalAttrs swapEnabled {
       opencode-local-coder = "opencode --model llama-swap/qwen3-coder-30b";
-      opencode-local-qwen = "opencode --model llama-swap/qwen3-6-27b";
+      opencode-local-qwen = "opencode --model llama-swap/qwen3-8-27b";
       opencode-local-streamed = "opencode --model llama-swap/qwen36-colibri";
     };
 

@@ -48,7 +48,7 @@ in
           baseURL = swapEndpoint;
         };
         models = {
-          "qwen3-6-27b".name = "Qwen3.6 27B";
+          "qwen3-8-27b".name = "Qwen3.8 27B";
           "qwen3-coder-30b".name = "Qwen3 Coder 30B";
           "qwen36-colibri".name = "Qwen3.6 35B-A3B (streamed)";
         };

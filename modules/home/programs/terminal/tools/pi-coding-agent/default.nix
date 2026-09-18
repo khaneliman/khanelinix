@@ -61,8 +61,8 @@ let
         compat = localCompat;
         models = [
           {
-            id = "qwen3-6-27b";
-            name = "Qwen3.6 27B";
+            id = "qwen3-8-27b";
+            name = "Qwen3.8 27B";
           }
           {
             id = "qwen3-coder-30b";

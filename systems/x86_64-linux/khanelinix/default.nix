@@ -123,8 +123,8 @@ in
           # tags whose architecture matches upstream belong here, and ollama
           # keeps serving the rest.
           models = {
-            "qwen3-6-27b" = {
-              tag = "qwen3.6:27b";
+            "qwen3-8-27b" = {
+              tag = "qwen3.8:27b";
               contextSize = 32768;
             };
 
