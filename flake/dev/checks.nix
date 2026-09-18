@@ -37,11 +37,38 @@
               ''
             );
           };
-          eslint = {
-            enable = true;
-            entry = "${lib.getExe pkgs.eslint_d} --fix";
-            package = pkgs.eslint_d;
-          };
+          eslint =
+            let
+              eslintConfig = pkgs.writeText "eslint.config.mjs" ''
+                import recommended from "${pkgs.eslint.src}/packages/js/src/configs/eslint-recommended.js";
+
+                export default [
+                  recommended,
+                  {
+                    languageOptions: {
+                      globals: {
+                        console: "readonly",
+                        document: "readonly",
+                        window: "readonly",
+                        Event: "readonly",
+                        setTimeout: "readonly",
+                      },
+                    },
+                  },
+                  {
+                    files: ["modules/common/ai-tools/skills/develop-web-game/scripts/*.js"],
+                    languageOptions: {
+                      globals: { Buffer: "readonly", process: "readonly" },
+                    },
+                  },
+                ];
+              '';
+            in
+            {
+              enable = true;
+              entry = "${lib.getExe' pkgs.eslint "eslint"} --config ${eslintConfig}";
+              package = pkgs.eslint;
+            };
           luals = {
             enable = true;
             description = "LuaLS diagnostics";
