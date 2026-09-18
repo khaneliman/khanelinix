@@ -5,7 +5,7 @@
   ...
 }:
 let
-  llvm = pkgs.llvmPackages_latest;
+  llvm = pkgs.llvmPackages;
 
   # simple script which replaces the functionality of make
   # it works with <math.h> and includes debugging symbols by default
