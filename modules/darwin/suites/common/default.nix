@@ -96,7 +96,7 @@ in
 
         echo >&2 "Cleaning up dead LaunchServices Nix store entries..."
         /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -dump | \
-          /usr/bin/grep -o "/nix/store/.*\.app" | sort | uniq | while read -r app; do
+          { /usr/bin/grep -o "/nix/store/.*\.app" || test "$?" -eq 1; } | sort | uniq | while read -r app; do
           if [ ! -e "$app" ]; then
             echo >&2 "Removing dead LaunchServices entry: $app"
             /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -u "$app"
