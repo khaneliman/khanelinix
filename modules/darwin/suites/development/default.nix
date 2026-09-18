@@ -9,6 +9,15 @@ let
   cfg = config.khanelinix.suites.development;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
   tomlFormat = pkgs.formats.toml { };
+  acceptXcodeLicense = /* Bash */ ''
+    if developerDirectory="$(/usr/bin/xcode-select -p 2>/dev/null)" \
+      && [ -x "$developerDirectory/usr/bin/xcodebuild" ]; then
+      if ! /usr/bin/xcodebuild -license check >/dev/null 2>&1; then
+        echo >&2 "Accepting Xcode license..."
+        /usr/bin/xcodebuild -license accept
+      fi
+    fi
+  '';
 in
 {
   options.khanelinix.suites.development = {
@@ -101,6 +110,9 @@ in
       "codex/hooks".source = aiTools.codex.hooksDir;
     };
 
+    # Homebrew checks the active Xcode license before it processes the bundle.
+    system.activationScripts.preActivation.text = lib.mkAfter acceptXcodeLicense;
+
     system.activationScripts.postActivation.text = lib.mkAfter /* Bash */ ''
       echo >&2 "Reconciling Apple developer tool policy..."
 
@@ -116,6 +128,8 @@ in
           /usr/bin/xcode-select --switch "$expectedDeveloperDirectory"
         fi
       ''}
+
+      ${acceptXcodeLicense}
 
       ${lib.optionalString (cfg.devToolsSecurity != "ignore") ''
         expectedDevToolsSecurity=${lib.escapeShellArg cfg.devToolsSecurity}
