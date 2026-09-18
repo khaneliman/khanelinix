@@ -137,6 +137,14 @@
                   # 15-byte /proc/PID/comm truncation of .Hyprland-wrapped
                   wrapp = "wrapp";
                 };
+                extend-identifiers = {
+                  snd_hda_intel = "snd_hda_intel";
+                  HSA_OVERRIDE_GFX_VERSION = "HSA_OVERRIDE_GFX_VERSION";
+                  # ISO 639-2 code, file format, and copyright holder surname.
+                  fre = "fre";
+                  edn = "edn";
+                  Zink = "Zink";
+                };
                 extend-ignore-re = [
                   # SSH public keys (ssh-rsa, ssh-ed25519, etc.)
                   "ssh-[a-z0-9]+ [A-Za-z0-9+/=]+"
@@ -156,7 +164,7 @@
                 "*.gif"
                 "*.ico"
                 "*.webp"
-                "*/nix/deps.nix"
+                "**/nix/deps.nix"
                 "*/ssh/hosts.nix"
                 "custom.css"
               ];
