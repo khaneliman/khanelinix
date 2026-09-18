@@ -9,6 +9,8 @@ let
   inherit (lib) mkIf mkOption;
 
   cfg = config.khanelinix.programs.graphical.apps.citrix-workspace;
+  # TODO: remove after hits channel
+  pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
 
   toINI = lib.generators.toINI { };
   iniFormat = pkgs.formats.ini { };
@@ -95,12 +97,7 @@ in
     };
 
     home = {
-      packages =
-        let
-          # TODO: remove after hits channel
-          pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
-        in
-        [ pkgsMaster.citrix-workspace ];
+      packages = [ pkgsMaster.citrix-workspace ];
 
       # Generate wfclient.ini configuration file
       file.".ICAClient/wfclient.ini" = {
@@ -123,6 +120,10 @@ in
         $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ${config.home.homeDirectory}/.ICAClient/cache
       '';
     };
+
+    systemd.user.packages = [ pkgsMaster.citrix-workspace ];
+    xdg.configFile."systemd/user/default.target.wants/ctxcwalogd.service".source =
+      "${pkgsMaster.citrix-workspace}/share/systemd/user/ctxcwalogd.service";
 
     # Citrix leaves one AuthManager log per launch and never prunes them.
     systemd.user.tmpfiles.rules = [
