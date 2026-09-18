@@ -67,7 +67,7 @@ index d157a4c6ba44122c413ac1be525ec30fb5d98bdf..f7413b7232868d06cfc837fca65e648a
    xdgDataHome: trimmedString("XDG_DATA_HOME"),
    t3Home: trimmedString("T3CODE_HOME"),
 +  attachExistingBackend: optionalBoolean("T3CODE_DESKTOP_ATTACH_EXISTING"),
-   devServerUrl: Config.url("VITE_DEV_SERVER_URL").pipe(Config.option),
+   devServerUrl: Config.URL("VITE_DEV_SERVER_URL").pipe(Config.option),
    appUserModelIdOverride: trimmedString("T3CODE_DESKTOP_APP_USER_MODEL_ID"),
    devRemoteT3ServerEntryPath: trimmedString("T3CODE_DEV_REMOTE_T3_SERVER_ENTRY_PATH"),
 diff --git a/apps/desktop/src/app/DesktopEnvironment.ts b/apps/desktop/src/app/DesktopEnvironment.ts
