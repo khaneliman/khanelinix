@@ -25,7 +25,18 @@
               "modules/common/ai-tools/skills/jj-toolkit/references/conflict-resolution.md"
             ];
           };
-          clang-tidy.enable = true;
+          # Package C sources need their derivation's SDKs and generated inputs.
+          # Only the standalone templates share a repository-level compile context.
+          clang-tidy = {
+            enable = true;
+            files = "^templates/(c|cpp)/.*\\.(c|cpp)$";
+            entry = lib.getExe (
+              pkgs.writeShellScriptBin "clang-tidy-templates" ''
+                exec ${pkgs.clang-tools}/bin/clang-tidy \
+                  --checks='-*,clang-analyzer-*' --warnings-as-errors='*' "$@" --
+              ''
+            );
+          };
           eslint = {
             enable = true;
             entry = "${lib.getExe pkgs.eslint_d} --fix";
