@@ -53,7 +53,6 @@
           fantomas.enable = true;
           fish_indent.enable = true;
           gofmt.enable = true;
-          isort.enable = true;
           nixf-diagnose = {
             enable = true;
             priority = -1;
@@ -70,7 +69,10 @@
               "*.scss"
             ];
           };
-          ruff-check.enable = true;
+          ruff-check = {
+            enable = true;
+            extendSelect = [ "I" ];
+          };
           ruff-format.enable = true;
           rustfmt.enable = true;
           shfmt = {
