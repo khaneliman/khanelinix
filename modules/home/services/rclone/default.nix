@@ -7,6 +7,27 @@
 let
   cfg = config.khanelinix.services.rclone;
 
+  initializeConfig = pkgs.writeShellApplication {
+    name = "rclone-initialize-config";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.util-linux
+    ];
+    text = ''
+      umask 077
+      configFile=${lib.escapeShellArg cfg.configFile}
+      mkdir -p "$(dirname "$configFile")"
+      exec 9>"$configFile.lock"
+      flock 9
+      if [ ! -e "$configFile" ]; then
+        temporary=$(mktemp "$configFile.XXXXXX")
+        trap 'rm -f "$temporary"' EXIT
+        install -m 0600 ${lib.escapeShellArg cfg.initialConfigFile} "$temporary"
+        mv -T "$temporary" "$configFile"
+      fi
+    '';
+  };
+
   mountType =
     with lib.types;
     submodule (
@@ -62,14 +83,17 @@ let
     {
       Unit = {
         Description = "Rclone FUSE daemon for ${remote}";
-        ConditionPathExists = cfg.configFile;
+        ConditionPathExists = lib.mkIf (cfg.initialConfigFile == null) cfg.configFile;
         After = [ "network-online.target" ];
         Wants = [ "network-online.target" ];
       };
 
       Service = {
         Environment = "PATH=/run/wrappers/bin:/run/current-system/sw/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
-        ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p ${lib.escapeShellArg (toString mount.mountPoint)} ${lib.escapeShellArg cfg.cacheDir}";
+        ExecStartPre = [
+          "${pkgs.coreutils}/bin/mkdir -p ${lib.escapeShellArg (toString mount.mountPoint)} ${lib.escapeShellArg cfg.cacheDir}"
+        ]
+        ++ lib.optional (cfg.initialConfigFile != null) (lib.getExe initializeConfig);
         ExecStart = lib.concatStringsSep " " [
           "${lib.getExe cfg.package} mount"
           "--config ${lib.escapeShellArg cfg.configFile}"
@@ -97,6 +121,12 @@ in
       type = lib.types.path;
       default = "/run/secrets/rclone/config";
       description = "The rclone config file to use for mounts.";
+    };
+
+    initialConfigFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Secret used to seed a missing writable config; existing OAuth tokens are preserved.";
     };
 
     cacheDir = lib.mkOption {
