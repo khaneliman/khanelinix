@@ -267,11 +267,15 @@ in
       wakapi = {
         image = "ghcr.io/muety/wakapi:2.13.1";
         autoStart = true;
+        user = "99:100";
         # Port:
         # - 5000/tcp: wakapi web/API
         ports = [ "5000:3000" ];
         volumes = [ "${appdataDir}/wakapi/data:/data" ];
         environment = {
+          WAKAPI_DB_TYPE = "sqlite3";
+          WAKAPI_DB_NAME = "/data/wakapi.db";
+          WAKAPI_LISTEN_IPV4 = "0.0.0.0";
           PORT = "5000";
           ENVIRONMENT = "prod";
           WAKAPI_ALLOW_SIGNUP = "true";
