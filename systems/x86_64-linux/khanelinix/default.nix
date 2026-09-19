@@ -25,8 +25,6 @@ in
   };
 
   khanelinix = {
-    packageProfile = "standard";
-
     nix = {
       enable = true;
       # useLix = true;
