@@ -203,7 +203,7 @@ in
         autoStart = true;
         # Port:
         # - 5433/tcp: PostgreSQL for immich workload
-        ports = [ "5433:5432" ];
+        ports = [ "127.0.0.1:5433:5432" ];
         volumes = [ "${appdata}/PostgreSQL_Immich:/var/lib/postgresql/data" ];
         extraOptions = [
           "-m"
@@ -419,7 +419,6 @@ in
       {
         # immich sidecars + service
         allowedTCPPorts = [
-          5433
           8081
         ];
       }

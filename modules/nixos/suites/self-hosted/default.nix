@@ -35,7 +35,7 @@ in
         autoStart = true;
         # Port:
         # - 27017/tcp: MongoDB API/transport
-        ports = [ "27017:27017" ];
+        ports = [ "127.0.0.1:27017:27017" ];
         volumes = [ "${appdataDir}/mongodb:/data/db" ];
         environment.TZ = "America/Chicago";
       };
@@ -63,7 +63,7 @@ in
         autoStart = true;
         # Port:
         # - 8585/tcp: adminer UI
-        ports = [ "8585:8080" ];
+        ports = [ "127.0.0.1:8585:8080" ];
         environment = {
           ADMINER_DESIGN = "dracula";
           TZ = "America/Chicago";
@@ -167,7 +167,7 @@ in
         autoStart = true;
         # Port:
         # - 3306/tcp: MariaDB TCP
-        ports = [ "3306:3306" ];
+        ports = [ "127.0.0.1:3306:3306" ];
         volumes = [ "${appdataDir}/mariadb:/config" ];
         environment = {
           PUID = "99";
@@ -349,11 +349,6 @@ in
       }
 
       {
-        # adminer
-        allowedTCPPorts = [ 8585 ];
-      }
-
-      {
         # cleanuparr
         allowedTCPPorts = [ 11011 ];
       }
@@ -376,11 +371,6 @@ in
       {
         # profilarr
         allowedTCPPorts = [ 6868 ];
-      }
-
-      {
-        # mariadb
-        allowedTCPPorts = [ 3306 ];
       }
 
       {
@@ -413,10 +403,6 @@ in
         allowedTCPPorts = [ 5055 ];
       }
 
-      {
-        # mongodb
-        allowedTCPPorts = [ 27017 ];
-      }
     ];
   };
 }
