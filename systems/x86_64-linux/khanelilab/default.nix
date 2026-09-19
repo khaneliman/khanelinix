@@ -18,6 +18,7 @@ in
     ./networking.nix
     ./secrets.nix
     ./storage.nix
+    ./tunnel.nix
     ./workloads.nix
   ];
 
@@ -116,11 +117,6 @@ in
   };
 
   sops.secrets = lib.mkIf config.khanelinix.security.sops.enable {
-    "cloudflared/khanelimancom.json" = {
-      key = "cloudflared_json";
-      path = "/run/secrets/cloudflared/khanelimancom.json";
-    };
-
     "hermes-agent/env" = {
       sopsFile = lib.getFile "secrets/khanelilab/services.yaml";
       key = "hermes-env";
