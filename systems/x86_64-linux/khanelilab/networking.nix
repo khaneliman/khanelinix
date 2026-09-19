@@ -36,13 +36,10 @@ in
       driverOptions = {
         miimon = "100";
         mode = "active-backup";
-        primary = "eth0";
+        primary = "lan0";
       };
       interfaces = [
-        "eth0"
-        "eth1"
-        "eth2"
-        "eth3"
+        "lan0"
       ];
     };
 
@@ -63,5 +60,10 @@ in
       checkReversePath = lib.mkForce "loose";
       trustedInterfaces = [ "br0" ];
     };
+  };
+
+  systemd.network.links."10-lab-lan" = {
+    matchConfig.PermanentMACAddress = "d8:bb:c1:1c:35:18";
+    linkConfig.Name = "lan0";
   };
 }
