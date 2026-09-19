@@ -14,6 +14,7 @@ in
     # ./disks.nix
     ./containers.nix
     ./hardware.nix
+    ./hermes.nix
     ./media.nix
     ./networking.nix
     ./secrets.nix
