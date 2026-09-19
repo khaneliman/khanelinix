@@ -71,20 +71,31 @@ in
       };
 
       dockersocket = {
-        image = "ghcr.io/tecnativa/docker-socket-proxy:latest";
+        image = "tecnativa/docker-socket-proxy";
         autoStart = true;
-        # Port:
-        # - 2375/tcp: Docker API proxy endpoint
-        ports = [ "127.0.0.1:2375:2375" ];
         volumes = [ "/var/run/docker.sock:/var/run/docker.sock:ro" ];
         environment = {
+          ALLOW_START = "0";
+          ALLOW_STOP = "0";
+          ALLOW_RESTARTS = "0";
+          AUTH = "0";
+          BUILD = "0";
           CONTAINERS = "0";
-          POST = "1";
-          BUILD = "1";
-          PUSH = "1";
-          PULL = "1";
-          DISTRIBUTION = "1";
+          DISTRIBUTION = "0";
+          EVENTS = "1";
+          EXEC = "0";
           IMAGES = "1";
+          INFO = "0";
+          NETWORKS = "0";
+          PING = "1";
+          POST = "0";
+          PULL = "0";
+          PUSH = "0";
+          SERVICES = "0";
+          SYSTEM = "0";
+          TASKS = "0";
+          VERSION = "1";
+          VOLUMES = "0";
         };
       };
 
@@ -332,11 +343,6 @@ in
 
     networking.firewall = lib.mkMerge [
       { allowedTCPPorts = [ ]; }
-
-      {
-        # dockersocket
-        allowedTCPPorts = [ 2375 ];
-      }
 
       {
         # ah-webapp
