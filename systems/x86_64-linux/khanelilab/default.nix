@@ -16,6 +16,7 @@ in
     ./hardware.nix
     ./media.nix
     ./networking.nix
+    ./secrets.nix
     ./storage.nix
     ./workloads.nix
   ];
@@ -121,6 +122,8 @@ in
     };
 
     "hermes-agent/env" = {
+      sopsFile = lib.getFile "secrets/khanelilab/services.yaml";
+      key = "hermes-env";
       mode = "0400";
       owner = config.services.hermes-agent.user;
       group = config.services.hermes-agent.group;
@@ -128,6 +131,8 @@ in
     };
 
     "hermes-agent/ssh-key" = {
+      sopsFile = lib.getFile "secrets/khanelilab/services.yaml";
+      key = "hermes-ssh-key";
       mode = "0400";
       owner = config.services.hermes-agent.user;
       group = config.services.hermes-agent.group;

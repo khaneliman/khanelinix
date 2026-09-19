@@ -172,8 +172,6 @@ in
         ];
         environment = {
           VPN_ENABLED = "yes";
-          VPN_USER = "REPLACE_ME_VPN_USER";
-          VPN_PASS = "REPLACE_ME_VPN_PASS";
           VPN_PROV = "pia";
           VPN_CLIENT = "wireguard";
           VPN_OPTIONS = "";
@@ -211,7 +209,6 @@ in
           "8GB"
         ];
         environment = {
-          POSTGRES_PASSWORD = "REPLACE_ME_IMMICH_DB_PASSWORD";
           POSTGRES_USER = "postgres";
           POSTGRES_DB = "immich";
           TZ = "America/Chicago";
@@ -235,7 +232,6 @@ in
         environment = {
           DB_HOSTNAME = hostAddress;
           DB_USERNAME = "postgres";
-          DB_PASSWORD = "REPLACE_ME_IMMICH_DB_PASSWORD";
           DB_DATABASE_NAME = "immich";
           REDIS_HOSTNAME = hostAddress;
           DB_PORT = "5433";

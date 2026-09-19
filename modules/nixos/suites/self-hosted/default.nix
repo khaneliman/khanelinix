@@ -153,7 +153,6 @@ in
         environment = {
           GIT_USER_NAME = "Khaneliman";
           GIT_USER_EMAIL = "khaneliman12@gmail.com";
-          PROFILARR_PAT = "REPLACE_ME_GITHUB_TOKEN";
           PUID = "99";
           PGID = "100";
           UMASK = "002";
@@ -173,7 +172,6 @@ in
         environment = {
           PUID = "99";
           PGID = "100";
-          MYSQL_ROOT_PASSWORD = "REPLACE_ME_MYSQL_ROOT_PASSWORD";
           TZ = "America/Chicago";
         };
       };
@@ -242,7 +240,6 @@ in
         environment = {
           VOLUME_SIZE_LIMIT = "4 T";
           TM_USERNAME = "khaneliman";
-          PASSWORD = "REPLACE_ME_TM_PASSWORD";
           ADVERTISED_HOSTNAME = "timemachine";
           CUSTOM_SMB_CONF = "false";
           CUSTOM_USER = "false";
@@ -275,7 +272,6 @@ in
         ports = [ "5000:3000" ];
         volumes = [ "${appdataDir}/wakapi/data:/data" ];
         environment = {
-          WAKAPI_PASSWORD_SALT = "REPLACE_ME_WAKAPI_PASSWORD_SALT";
           PORT = "5000";
           ENVIRONMENT = "prod";
           WAKAPI_ALLOW_SIGNUP = "true";
