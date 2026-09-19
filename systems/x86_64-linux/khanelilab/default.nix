@@ -12,6 +12,7 @@ in
   imports = [
     # TODO: re-enable disk partition module when target layout is finalized
     # ./disks.nix
+    ./containers.nix
     ./hardware.nix
     ./networking.nix
     ./storage.nix
@@ -109,7 +110,6 @@ in
         enable = true;
         platform = "intel";
       };
-      podman = enabled;
     };
   };
 
