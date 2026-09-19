@@ -351,19 +351,16 @@ in
         };
       };
 
-      "kometa-ls" = {
-        image = "lscr.io/linuxserver/kometa";
+      kometa = {
+        image = "kometateam/kometa";
         autoStart = true;
         volumes = [ "${appdata}/Kometa:/config" ];
         environment = {
-          KOMETA_CONFIG = "/config/config.yml";
-          KOMETA_TIME = "03:00";
-          KOMETA_RUN = "False";
-          KOMETA_TEST = "False";
-          KOMETA_NO_MISSING = "False";
-          PUID = "99";
-          PGID = "100";
-          UMASK = "022";
+          KOMETA_CONFIG = "";
+          KOMETA_TIME = "";
+          KOMETA_RUN = "false";
+          KOMETA_TEST = "false";
+          KOMETA_NO_MISSING = "false";
         };
       };
 

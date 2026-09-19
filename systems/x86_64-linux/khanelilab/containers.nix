@@ -39,7 +39,7 @@ let
       address = "172.18.0.12";
       alias = "immich";
     };
-    kometa-ls = {
+    kometa = {
       address = "172.18.0.4";
       alias = "Kometa";
     };
