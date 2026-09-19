@@ -19,6 +19,7 @@ in
     ./hermes.nix
     ./images.nix
     ./media.nix
+    ./nas.nix
     ./networking.nix
     ./reports.nix
     ./secrets.nix
