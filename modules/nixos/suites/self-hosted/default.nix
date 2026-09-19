@@ -118,13 +118,13 @@ in
         };
       };
 
-      huntarr = {
-        image = "huntarr/huntarr:latest";
+      neutarr = {
+        image = "iampuid0/neutarr:latest";
         autoStart = true;
         # Port:
-        # - 9705/tcp: huntarr web UI
+        # - 9705/tcp: NeutArr web UI
         ports = [ "9705:9705" ];
-        volumes = [ "${appdataDir}/Huntarr:/config" ];
+        volumes = [ "${appdataDir}/NeutArr:/config" ];
         environment = {
           PUID = "99";
           PGID = "100";
@@ -363,7 +363,7 @@ in
       }
 
       {
-        # huntarr
+        # neutarr
         allowedTCPPorts = [ 9705 ];
       }
 
