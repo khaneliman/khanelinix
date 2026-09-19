@@ -25,6 +25,7 @@ in
     ./secrets.nix
     ./storage.nix
     ./tunnel.nix
+    ./virtual-machines.nix
     ./workloads.nix
   ];
 
