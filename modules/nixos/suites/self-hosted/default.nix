@@ -102,7 +102,7 @@ in
           PUID = "99";
           PGID = "100";
           TZ = "America/Chicago";
-          UMASK = "002";
+          UMASK = "022";
         };
       };
 
