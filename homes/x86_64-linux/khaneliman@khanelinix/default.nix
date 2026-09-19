@@ -447,7 +447,9 @@ in
       development = {
         azureEnable = true;
         dotnetEnable = true;
-        dockerEnable = true;
+        # FIXME: Keep this aligned with the system setting until Podman
+        # Desktop's pnpm/Node build no longer makes rebuilds prohibitively slow.
+        # dockerEnable = true;
         gameEnable = true;
         kubernetesEnable = true;
         sqlEnable = true;

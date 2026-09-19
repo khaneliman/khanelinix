@@ -242,7 +242,9 @@ in
     suites.development = {
       enable = true;
       aiEnable = true;
-      dockerEnable = true;
+      # FIXME: Re-enable when Podman Desktop's pnpm/Node build no longer makes
+      # system rebuilds prohibitively slow.
+      # dockerEnable = true;
       sqlEnable = true;
     };
 

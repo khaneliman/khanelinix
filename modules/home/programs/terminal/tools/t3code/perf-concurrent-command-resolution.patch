@@ -2,30 +2,6 @@ diff --git a/apps/server/src/process/externalLauncher.ts b/apps/server/src/proce
 index 2b7310051b894f71bf098f89154990aa725b024e..252d3951bbd34d0313efd35383f5fe81f93392a6 100644
 --- a/apps/server/src/process/externalLauncher.ts
 +++ b/apps/server/src/process/externalLauncher.ts
-@@ -166,12 +166,17 @@ const resolveAvailableCommand = Effect.fn("externalLauncher.resolveAvailableComm
-   commands: ReadonlyArray<string>,
-   env: NodeJS.ProcessEnv,
- ): Effect.fn.Return<Option.Option<string>, never, FileSystem.FileSystem | Path.Path> {
--  for (const command of commands) {
--    if (yield* isCommandAvailable(command, { env })) {
--      return Option.some(command);
--    }
--  }
--  return Option.none();
-+  const results = yield* Effect.all(
-+    commands.map((command) =>
-+      isCommandAvailable(command, { env }).pipe(
-+        Effect.map((available) => ({ command, available })),
-+      ),
-+    ),
-+    { concurrency: "unbounded" },
-+  );
-+  // Same order-preserving-under-concurrency reasoning as resolveCommandPathForPlatform.
-+  const match = results.find((result) => result.available);
-+  return match === undefined ? Option.none() : Option.some(match.command);
- });
- 
- function encodeUtf16LeBase64(input: string): string {
 @@ -425,23 +430,22 @@ const buildAvailableEditors = Effect.fn("externalLauncher.buildAvailableEditors"
    never,
    FileSystem.FileSystem | Path.Path | ChildProcessSpawner.ChildProcessSpawner
@@ -40,7 +16,7 @@ index 2b7310051b894f71bf098f89154990aa725b024e..252d3951bbd34d0313efd35383f5fe81
 -      continue;
 -    }
 -
--    const command = yield* resolveAvailableCommand(editor.commands, env);
+-    const command = yield* resolveEditorCommand(editor, env);
 -    if (Option.isSome(command)) {
 -      available.push(editor.id);
 -    }
@@ -51,7 +27,7 @@ index 2b7310051b894f71bf098f89154990aa725b024e..252d3951bbd34d0313efd35383f5fe81
 +        ? resolveUsableFileManagerCommand(platform, env).pipe(
 +            Effect.map((command) => command !== undefined),
 +          )
-+        : resolveAvailableCommand(editor.commands, env).pipe(Effect.map(Option.isSome))
++        : resolveEditorCommand(editor, env).pipe(Effect.map(Option.isSome))
 +      ).pipe(Effect.map((available) => ({ id: editor.id, available }))),
 +    ),
 +    // Checking each editor is independent, and each check itself fans out
@@ -65,6 +41,30 @@ index 2b7310051b894f71bf098f89154990aa725b024e..252d3951bbd34d0313efd35383f5fe81
  });
  
  const resolveBrowserLaunch = Effect.fn("externalLauncher.resolveBrowserLaunch")(function* (
+diff --git a/packages/shared/src/editor.ts b/packages/shared/src/editor.ts
+--- a/packages/shared/src/editor.ts
++++ b/packages/shared/src/editor.ts
+@@ -23,9 +23,17 @@
+ ) {
+   if (editor.commands === null) return Option.none();
+   const baseArgs = "baseArgs" in editor ? editor.baseArgs : [];
+-  for (const command of editor.commands) {
+-    if (yield* isCommandAvailable(command, { env })) return Option.some({ command, baseArgs });
+-  }
++  const results = yield* Effect.all(
++    editor.commands.map((command) =>
++      isCommandAvailable(command, { env }).pipe(
++        Effect.map((available) => ({ command, available })),
++      ),
++    ),
++    { concurrency: "unbounded" },
++  );
++  // Preserve command preference even when probes complete out of order.
++  const match = results.find((result) => result.available);
++  if (match !== undefined) return Option.some({ command: match.command, baseArgs });
+ 
+   const platform = yield* HostProcess.HostProcessPlatform;
+   const path = yield* Path.Path;
 diff --git a/packages/shared/src/shell.ts b/packages/shared/src/shell.ts
 index 07ac73f8c6a769af3a174381e2149ade15632ece..1b1d85119bb62c844dc4633aa82335268a42e527 100644
 --- a/packages/shared/src/shell.ts
