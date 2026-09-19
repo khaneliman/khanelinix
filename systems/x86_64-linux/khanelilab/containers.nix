@@ -93,6 +93,7 @@ let
     };
   };
   nativeNames = [
+    "GitHub-Triage"
     "plex"
     "binhex-jellyfin"
     "lidarr"

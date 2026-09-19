@@ -19,6 +19,7 @@ in
     ./images.nix
     ./media.nix
     ./networking.nix
+    ./reports.nix
     ./secrets.nix
     ./storage.nix
     ./tunnel.nix

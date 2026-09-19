@@ -7,7 +7,6 @@
       [
         "adguardhome"
         "bazarr"
-        "nginx"
         "photoprism"
         "postgresql"
         "readarr"
