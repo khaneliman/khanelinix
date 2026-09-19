@@ -180,7 +180,7 @@ in
           STRICT_PORT_FORWARD = "yes";
           ENABLE_PRIVOXY = "no";
           WEBUI_PORT = "8082";
-          LAN_NETWORK = "192.168.4.0/24";
+          LAN_NETWORK = "192.168.4.0/22";
           NAME_SERVERS = "209.222.18.222,84.200.69.80,37.235.1.174,1.1.1.1,209.222.18.218,37.235.1.177,84.200.70.40,1.0.0.1";
           DEBUG = "false";
           UMASK = "000";
@@ -188,8 +188,9 @@ in
           PGID = "100";
           TZ = "America/Chicago";
         };
+        capabilities.NET_ADMIN = true;
+        devices = [ "/dev/net/tun:/dev/net/tun" ];
         extraOptions = [
-          "--privileged"
           "--sysctl=net.ipv4.conf.all.src_valid_mark=1"
         ];
       };
