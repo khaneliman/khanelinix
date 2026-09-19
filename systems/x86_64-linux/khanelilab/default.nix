@@ -47,7 +47,7 @@ in
       tailscale = {
         enable = true;
         advertiseExitNode = true;
-        advertiseRoutes = [ "192.168.4.0/24" ];
+        advertiseRoutes = [ "192.168.4.0/22" ];
         ssh.enable = true;
       };
       hermes-agent = {
