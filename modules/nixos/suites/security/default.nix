@@ -77,6 +77,11 @@ in
         "/mnt/user/appdata/NginxProxyManager:/config"
         "${cacheAppdata}/dmz/goaccess/log:/config/log"
       ];
+      environment = {
+        USER_ID = "99";
+        GROUP_ID = "100";
+        UMASK = "027";
+      };
     };
 
     # Legacy Unraid auth edge service retained until an equivalent NixOS-native
