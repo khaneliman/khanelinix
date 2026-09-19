@@ -43,19 +43,15 @@ in
       ah-webapp = {
         image = "ghcr.io/khaneliman/austin-horstman-webapp:latest";
         autoStart = true;
-        # Ports:
+        # Port:
         # - 8088/tcp: app UI
-        # - 17443/tcp: app HTTPS
-        ports = [
-          "8088:80"
-          "17443:443"
-        ];
+        ports = [ "8088:8080" ];
         environment.TZ = "America/Chicago";
       };
 
       ah-webapp-dev = {
-        image = "ghcr.io/khaneliman/austin-horstman-webapp:master";
-        autoStart = false;
+        image = "ghcr.io/khaneliman/austin-horstman-webapp:main";
+        autoStart = true;
         # Port:
         # - 8099/tcp: dev web UI
         ports = [ "8099:80" ];
@@ -343,10 +339,7 @@ in
 
       {
         # ah-webapp
-        allowedTCPPorts = [
-          8088
-          17443
-        ];
+        allowedTCPPorts = [ 8088 ];
       }
 
       {
