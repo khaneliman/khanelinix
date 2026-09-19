@@ -1,14 +1,7 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 let
-  dataDisks = {
-    disk1 = "/mnt/disk1";
-    disk2 = "/mnt/disk2";
-    disk3 = "/mnt/disk3";
-    disk4 = "/mnt/disk4";
-  };
-
   xfsDataOptions = [
-    "ro"
+    "rw"
     "noatime"
     "nofail"
     "x-systemd.device-timeout=10s"
@@ -25,25 +18,8 @@ let
   ];
 in
 {
-  # TODO: replace this Unraid-compatible layout with idiomatic NixOS/ZFS/Btrfs
-  # mountpoints after khanelilab is stable and backups are verified.
-  #
-  # Existing Unraid inventory:
-  # - /mnt/disk1..4 are XFS data disks behind Unraid md.
-  # - /mnt/cache is the 1 TB NVMe Btrfs cache pool.
-  # - /mnt/pool is the 2 TB SATA SSD Btrfs appdata pool.
-  # - /mnt/user is Unraid shfs. NixOS approximates it with mergerfs.
-  # - /mnt/user/domains keeps old VM disks available for rollback/import.
-  # - /mnt/user/domains/FreeIPA is intentionally preserved but not auto-started
-  #   until LDAP/Kerberos, DNS, and CA dependencies are audited.
-  # - The 16 TB WDC WD160EDGZ disk appears to be parity; do not mount it.
-  #
-  # Quirks:
-  # - This does not preserve Unraid's realtime md parity behavior.
-  # - The XFS data disks are mounted read-only for first boot confidence.
-  # - Writes through /mnt/user can only land on the writable cache/pool legs.
-  # - SnapRAID parity is scheduled parity, not realtime parity. A restore can
-  #   only recover the latest synced state.
+  # The parity filesystem must be provisioned separately. Never use the raw
+  # Unraid parity device as a SnapRAID file or include it in mergerfs.
   boot.supportedFilesystems = [
     "btrfs"
     "xfs"
@@ -91,12 +67,20 @@ in
       options = btrfsPoolOptions;
     };
 
+    "/mnt/parity" = {
+      device = "/dev/disk/by-label/snapraid-parity";
+      fsType = "xfs";
+      options = xfsDataOptions;
+    };
+
     "/mnt/user" = {
-      device = "/mnt/disk1=RO:/mnt/disk2=RO:/mnt/disk3=RO:/mnt/disk4=RO:/mnt/cache=RW:/mnt/pool=RW";
+      device = "/mnt/disk1=RW:/mnt/disk2=RW:/mnt/disk3=RW:/mnt/disk4=RW:/mnt/cache=RW:/mnt/pool=RW";
       fsType = "fuse.mergerfs";
       options = [
         "allow_other"
         "use_ino"
+        "inodecalc=path-hash"
+        "never-forget-nodes=true"
         "cache.files=off"
         "dropcacheonclose=true"
         "category.create=epmfs"
@@ -110,39 +94,37 @@ in
         "x-systemd.requires-mounts-for=/mnt/disk4"
         "x-systemd.requires-mounts-for=/mnt/cache"
         "x-systemd.requires-mounts-for=/mnt/pool"
+        "x-systemd.requires-mounts-for=/mnt/parity"
       ];
     };
   };
 
   services.snapraid = {
     enable = true;
-
-    inherit dataDisks;
-
-    parityFiles = [
-      "/dev/disk/by-id/ata-WDC_WD160EDGZ-11B2DA0_3FJ49DMT"
-    ];
-
+    dataDisks = {
+      disk1 = "/mnt/disk1";
+      disk2 = "/mnt/disk2";
+      disk3 = "/mnt/disk3";
+      disk4 = "/mnt/disk4";
+    };
+    parityFiles = [ "/mnt/parity/snapraid.parity" ];
     contentFiles = [
       "/var/lib/snapraid.content"
       "/mnt/cache/snapraid.content"
       "/mnt/pool/snapraid.content"
     ];
-
     exclude = [
       "*.unrecoverable"
       "/.Trash-*/"
       "/.Recycle.Bin/"
       "/lost+found/"
       "/tmp/"
+      "/appdata/"
+      "/domains/"
+      "/system/"
     ];
-
-    # Data disks are intentionally read-only during first migration boot, so do
-    # not let SnapRAID update mtimes before sync.
     touchBeforeSync = false;
-
     sync.interval = "03:00";
-
     scrub = {
       interval = "Sun *-*-* 04:00:00";
       plan = 8;
@@ -150,23 +132,28 @@ in
     };
   };
 
-  systemd.services.snapraid-sync = {
-    after = [
-      "mnt-disk1.mount"
-      "mnt-disk2.mount"
-      "mnt-disk3.mount"
-      "mnt-disk4.mount"
-      "mnt-cache.mount"
-      "mnt-pool.mount"
+  systemd.services = lib.genAttrs [ "snapraid-sync" "snapraid-scrub" ] (_: {
+    unitConfig.RequiresMountsFor = [
+      "/mnt/disk1"
+      "/mnt/disk2"
+      "/mnt/disk3"
+      "/mnt/disk4"
+      "/mnt/cache"
+      "/mnt/pool"
+      "/mnt/parity"
     ];
+    # The first sync creates the parity file. Sandboxing its nonexistent file
+    # path would fail before SnapRAID can initialize it.
+    serviceConfig.ReadWritePaths = lib.mkForce [
+      "/var/lib"
+      "/mnt/disk1"
+      "/mnt/disk2"
+      "/mnt/disk3"
+      "/mnt/disk4"
+      "/mnt/cache"
+      "/mnt/pool"
+      "/mnt/parity"
+    ];
+  });
 
-    requires = [
-      "mnt-disk1.mount"
-      "mnt-disk2.mount"
-      "mnt-disk3.mount"
-      "mnt-disk4.mount"
-      "mnt-cache.mount"
-      "mnt-pool.mount"
-    ];
-  };
 }
