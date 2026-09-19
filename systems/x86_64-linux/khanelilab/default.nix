@@ -13,6 +13,7 @@ in
     # TODO: re-enable disk partition module when target layout is finalized
     # ./disks.nix
     ./containers.nix
+    ./dockge.nix
     ./hardware.nix
     ./hermes.nix
     ./media.nix
