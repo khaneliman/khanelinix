@@ -15,6 +15,7 @@ in
     ./hardware.nix
     ./networking.nix
     ./storage.nix
+    ./workloads.nix
   ];
 
   khanelinix = {
@@ -84,7 +85,7 @@ in
       };
       nas = enabled;
       observability = {
-        enable = true;
+        enable = false;
         cacheAppdataDir = "/mnt/pool/appdata";
       };
       security = {
@@ -99,7 +100,7 @@ in
     };
 
     services.home-assistant = {
-      enable = true;
+      enable = false;
       configDir = "/mnt/pool/appdata/home-assistant";
     };
 
