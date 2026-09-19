@@ -26,6 +26,8 @@ in
     services = {
       rclone = {
         enable = true;
+        configFile = "/mnt/pool/appdata/rclone/rclone.conf";
+        initialConfigFile = "/run/secrets/rclone/config";
         mounts = {
           dropbox.mountPoint = "/mnt/disks/dropbox";
           googledrive.mountPoint = "/mnt/disks/googledrive";
@@ -36,7 +38,7 @@ in
 
       sops = {
         enable = true;
-        defaultSopsFile = lib.getFile "secrets/khanelilab/khaneliman/default.yaml";
+        defaultSopsFile = lib.getFile "secrets/khaneliman/default.yaml";
         sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
       };
     };
