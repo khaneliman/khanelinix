@@ -1,4 +1,5 @@
 keys:
+  - &host_khanelilab age1klwa2umtkerhu6canp2sphkawfx880w30d9f0fe48ruaynyxnyts8dnt87
   - &host_khanelimac_m1 age1wdcttrjd379j0y5uzc2hslulk0tdynykq8tuh0f3q63qxkqc9ghqurtw6a
   - &admin_khaneliman age1547vqtqhgtxu54eewxwttjsfd85w0lm4f46fyxxhnx2ydxt7kyxs36ts2d
   - &user_khanelinix_khaneliman age13xfa77f49ne56z3yyqh9qc9upjmrjfva8kcvg3jfem2m99dhr9fs34gdrp
@@ -33,6 +34,7 @@ creation_rules:
     key_groups:
       - age:
           - *admin_khaneliman
+          - *host_khanelilab
   - path_regex: secrets/khanelimac/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
