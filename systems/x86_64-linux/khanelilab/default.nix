@@ -14,6 +14,7 @@ in
     # ./disks.nix
     ./containers.nix
     ./hardware.nix
+    ./media.nix
     ./networking.nix
     ./storage.nix
     ./workloads.nix
