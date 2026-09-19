@@ -314,6 +314,7 @@ in
       seerr = {
         image = "ghcr.io/seerr-team/seerr:latest";
         autoStart = true;
+        user = "99:100";
         # Port:
         # - 5055/tcp: seerr web API/UI
         ports = [ "5055:5055" ];
