@@ -16,6 +16,7 @@ in
     ./dockge.nix
     ./hardware.nix
     ./hermes.nix
+    ./images.nix
     ./media.nix
     ./networking.nix
     ./secrets.nix
