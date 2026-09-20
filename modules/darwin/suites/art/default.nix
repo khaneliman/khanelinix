@@ -24,6 +24,7 @@ in
       casks = [
         # FIXME: should be done through nixpkgs
         "blender"
+        "freecad"
         "gimp"
         "orcaslicer"
       ];
