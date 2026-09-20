@@ -146,6 +146,8 @@ in
     };
   };
 
+  homebrew.casks = [ "dropbox" ];
+
   services.karabiner-elements.enable = true;
 
   sops.secrets = {
