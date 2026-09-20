@@ -86,6 +86,7 @@ in
           };
           herdr = enabled;
           mcp.firefox = enabled;
+          mcp.freecad = enabled;
           sesh = enabled;
           ssh = enabled;
           tmux = enabled;
