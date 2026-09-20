@@ -25,6 +25,8 @@ python3Packages.buildPythonApplication {
 
   nativeCheckInputs = [ python3Packages.pytestCheckHook ];
   pythonImportsCheck = [ "freecad_mcp.server" ];
+  # RPC tests bind loopback sockets inside the Darwin build sandbox.
+  __darwinAllowLocalNetworking = true;
 
   postInstall = ''
     install -d "$out/share/freecad-mcp"
