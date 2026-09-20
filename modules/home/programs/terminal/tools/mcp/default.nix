@@ -18,6 +18,8 @@ let
   blenderMcpPackage = pkgs.khanelinix.blender-mcp;
 in
 {
+  imports = [ ./freecad.nix ];
+
   options.khanelinix.programs.terminal.tools.mcp = {
     enable = lib.mkEnableOption "MCP (Model Context Protocol) servers";
 
