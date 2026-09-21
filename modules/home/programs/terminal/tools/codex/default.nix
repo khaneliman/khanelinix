@@ -277,6 +277,7 @@ in
           multi_agent = true;
           multi_agent_v2 = false;
           prevent_idle_sleep = true;
+          reasoning_effort_override = true;
         };
 
         agents = {
