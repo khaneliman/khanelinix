@@ -20,14 +20,9 @@ in
       # Nix-ld documentation
       # See: https://github.com/nix-community/nix-ld
       enable = true;
-      package = pkgs.nix-ld;
-
       libraries = with pkgs; [
-        gcc
         icu
         libcxx
-        stdenv.cc.cc.lib
-        zlib
       ];
     };
   };
