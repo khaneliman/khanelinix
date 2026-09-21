@@ -1,8 +1,6 @@
 {
   config,
   lib,
-
-  pkgs,
   ...
 }:
 let
@@ -20,10 +18,6 @@ in
       # Nix-ld documentation
       # See: https://github.com/nix-community/nix-ld
       enable = true;
-      libraries = with pkgs; [
-        icu
-        libcxx
-      ];
     };
   };
 }
