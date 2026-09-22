@@ -2,6 +2,7 @@
   buildGoModule,
   fetchFromGitHub,
   lib,
+  stdenv,
   ...
 }:
 
@@ -16,6 +17,9 @@ buildGoModule (finalAttrs: {
     hash = "sha256-9ZiYPBEoxTcZaomY0Be4Q5hwQf5FCfdbvcJzYEGI+So=";
   };
 
+  # Agent SDK requests must not inherit the proxy's older CLI version.
+  patches = [ ./agent-sdk-client-version.patch ];
+
   vendorHash = "sha256-r3yWkdMcM40G9jV7MxW/qNv3E9WrHavFilW24quEf+8=";
 
   subPackages = [ "cmd/server" ];
@@ -27,6 +31,16 @@ buildGoModule (finalAttrs: {
     "-X main.Commit=2430354"
     "-X main.BuildDate=2026-09-22T18:41:31Z"
   ];
+
+  preCheck = ''
+    ${lib.optionalString stdenv.hostPlatform.isDarwin ''
+      go test -run '^TestClaudeRequestVersion$' ./internal/runtime/executor/helps
+      go test -run '^$' ./internal/runtime/executor
+    ''}
+    ${lib.optionalString (!stdenv.hostPlatform.isDarwin) ''
+      go test ./internal/runtime/executor/helps ./internal/runtime/executor
+    ''}
+  '';
 
   postInstall = ''
     mv "$out/bin/server" "$out/bin/cli-proxy-api"

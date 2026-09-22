@@ -1,0 +1,164 @@
+--- a/internal/runtime/executor/helps/claude_device_profile.go
++++ b/internal/runtime/executor/helps/claude_device_profile.go
+@@ -598,6 +598,21 @@
+ 	return "2.1.258"
+ }
+ 
++// ClaudeRequestVersion keeps Agent SDK client versions independent of the CLI
++// cloaking baseline. These clients still receive the existing cloaking policy.
++func ClaudeRequestVersion(headers http.Header, cfg *config.Config) string {
++	userAgent := strings.TrimSpace(headerValue(headers, "User-Agent"))
++	entrypoint, sdkVersion := parseClaudeCodeUserAgentDetails(userAgent)
++	if headerValue(headers, "X-App") == "cli" &&
++		(entrypoint == "sdk-ts" || entrypoint == "sdk-py") && sdkVersion != "" &&
++		claudeCodeNativeUserAgentPattern.MatchString(userAgent) {
++		if matches := claudeCLIVersionPattern.FindStringSubmatch(userAgent); len(matches) == 4 {
++			return strings.Join(matches[1:], ".")
++		}
++	}
++	return DefaultClaudeVersion(cfg)
++}
++
+ func ApplyClaudeDefaultDeviceProfileHeaders(r *http.Request, cfg *config.Config) {
+ 	ApplyClaudeDeviceProfileHeaders(r, defaultClaudeDeviceProfile(cfg))
+ }
+--- a/internal/runtime/executor/helps/claude_device_profile_test.go
++++ b/internal/runtime/executor/helps/claude_device_profile_test.go
+@@ -410,3 +410,22 @@
+ 		t.Fatalf("KV calls = get %d set %d setnx %d, want all zero", client.getCount, client.setCount, client.setNXCount)
+ 	}
+ }
++
++func TestClaudeRequestVersion(t *testing.T) {
++	for _, test := range []struct{ name, ua, app, want string }{
++		{"typescript", "claude-cli/2.1.280 (external, sdk-ts, agent-sdk/0.3.276)", "cli", "2.1.280"},
++		{"python", "claude-cli/2.1.281 (external, sdk-py, agent-sdk/0.1.0)", "cli", "2.1.281"},
++		{"future", "claude-cli/3.0.0 (external, sdk-ts, agent-sdk/1.0.0)", "cli", "3.0.0"},
++		{"missing app", "claude-cli/2.1.280 (external, sdk-ts, agent-sdk/0.3.276)", "", "2.1.258"},
++		{"unknown client", "claude-cli/2.1.280 (external, copied-client)", "cli", "2.1.258"},
++		{"malformed", "claude-cli/2.1.280 (external, sdk-ts, agent-sdk/bad)", "cli", "2.1.258"},
++		{"missing sdk", "claude-cli/2.1.280 (external, sdk-ts)", "cli", "2.1.258"},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			headers := http.Header{"User-Agent": {test.ua}, "X-App": {test.app}}
++			if got := ClaudeRequestVersion(headers, nil); got != test.want {
++				t.Fatalf("version = %q, want %q", got, test.want)
++			}
++		})
++	}
++}
+--- a/internal/runtime/executor/claude_executor_request.go
++++ b/internal/runtime/executor/claude_executor_request.go
+@@ -1219,6 +1219,12 @@
+ 	} else {
+ 		helps.ApplyClaudeLegacyDeviceHeaders(r, incomingHeaders, cfg, confirmedClaudeCode)
+ 	}
++	if !confirmedClaudeCode {
++		r.Header.Set("User-Agent", strings.Replace(r.Header.Get("User-Agent"),
++			"claude-cli/"+helps.DefaultClaudeVersion(cfg),
++			"claude-cli/"+helps.ClaudeRequestVersion(incomingHeaders, cfg), 1))
++	}
++
+ 	var attrs map[string]string
+ 	if auth != nil {
+ 		attrs = auth.Attributes
+--- a/internal/runtime/executor/claude_executor_cloaking.go
++++ b/internal/runtime/executor/claude_executor_cloaking.go
+@@ -282,7 +282,7 @@
+ 	isSubagent := helps.IsClaudeSubagentRequest(incomingHeaders, payload)
+ 	return generateBillingHeader(
+ 		true,
+-		helps.DefaultClaudeVersion(cfg),
++		helps.ClaudeRequestVersion(incomingHeaders, cfg),
+ 		claudeBillingFingerprintMessageText(payload),
+ 		entrypoint,
+ 		getWorkloadFromContext(ctx),
+@@ -1382,7 +1382,7 @@
+ 		}
+ 	}
+ 
+-	billingVersion := helps.DefaultClaudeVersion(cfg)
++	billingVersion := helps.ClaudeRequestVersion(resolveIncomingClaudeHeaders(ctx, helps.IncomingHeadersFromContext(ctx)), cfg)
+ 	workload := getWorkloadFromContext(ctx)
+ 
+ 	isProbeOrHelper := helps.IsClaudeProbeOrHelperRequest(payload)
+--- a/internal/runtime/executor/claude_executor_test.go
++++ b/internal/runtime/executor/claude_executor_test.go
+@@ -1138,7 +1138,7 @@
+ 		SourceFormat:    sdktranslator.FormatClaude,
+ 		OriginalRequest: payload,
+ 		Headers: http.Header{
+-			"User-Agent":     {"claude-cli/2.1.258 (external, sdk-ts, agent-sdk/0.3.220)"},
++			"User-Agent":     {"claude-cli/2.1.280 (external, sdk-ts, agent-sdk/0.3.276)"},
+ 			"X-App":          {"cli"},
+ 			"Anthropic-Beta": {"claude-code-20250219"},
+ 		},
+@@ -1147,11 +1147,67 @@
+ 		t.Fatalf("Execute() error = %v", errExecute)
+ 	}
+ 
+-	if got := seenHeaders.Get("User-Agent"); got != "claude-cli/2.1.258 (external, cli)" {
++	if got := seenHeaders.Get("User-Agent"); got != "claude-cli/2.1.280 (external, cli)" {
+ 		t.Fatalf("User-Agent = %q, want CLI cloak", got)
+ 	}
+ 	if got := gjson.GetBytes(seenBody, "system.0.text").String(); !strings.Contains(got, "cc_entrypoint=cli;") {
+ 		t.Fatalf("billing attribution = %q, want cli", got)
++	}
++	if got := gjson.GetBytes(seenBody, "system.0.text").String(); !strings.Contains(got, "cc_version=2.1.280") {
++		t.Fatalf("billing attribution = %q, want incoming client version", got)
++	}
++	if got := gjson.GetBytes(seenBody, "system.1.text").String(); got != claudeCodeCLIIdentity {
++		t.Fatalf("system.1.text = %q, want official CLI identity", got)
++	}
++}
++
++func TestClaudeExecutor_AgentSDKStreamPreservesClientVersion(t *testing.T) {
++	var seenBody []byte
++	var seenHeaders http.Header
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		seenBody, _ = io.ReadAll(r.Body)
++		seenHeaders = r.Header.Clone()
++		w.Header().Set("Content-Type", "text/event-stream")
++		_, _ = w.Write([]byte("event: message_stop\ndata: {\"type\":\"message_stop\"}\n\n"))
++	}))
++	defer server.Close()
++
++	payload := []byte(`{"model":"claude-opus-4-6","system":"agent-sdk-system","messages":[{"role":"user","content":"x"}],"metadata":{"user_id":"agent-sdk-user"}}`)
++	executor := NewClaudeExecutor(&config.Config{})
++	auth := &cliproxyauth.Auth{Attributes: map[string]string{
++		"api_key":    "key-agent-sdk-client",
++		"base_url":   server.URL,
++		"cloak_mode": "always",
++	}}
++	result, errExecute := executor.ExecuteStream(context.Background(), auth, cliproxyexecutor.Request{
++		Model:   "claude-opus-4-6",
++		Payload: payload,
++	}, cliproxyexecutor.Options{
++		SourceFormat:    sdktranslator.FormatClaude,
++		OriginalRequest: payload,
++		Headers: http.Header{
++			"User-Agent":     {"claude-cli/2.1.280 (external, sdk-ts, agent-sdk/0.3.276)"},
++			"X-App":          {"cli"},
++			"Anthropic-Beta": {"claude-code-20250219"},
++		},
++	})
++	if errExecute != nil {
++		t.Fatalf("Execute() error = %v", errExecute)
++	}
++
++	for chunk := range result.Chunks {
++		if chunk.Err != nil {
++			t.Fatal(chunk.Err)
++		}
++	}
++	if got := seenHeaders.Get("User-Agent"); got != "claude-cli/2.1.280 (external, cli)" {
++		t.Fatalf("User-Agent = %q, want CLI cloak", got)
++	}
++	if got := gjson.GetBytes(seenBody, "system.0.text").String(); !strings.Contains(got, "cc_entrypoint=cli;") {
++		t.Fatalf("billing attribution = %q, want cli", got)
++	}
++	if got := gjson.GetBytes(seenBody, "system.0.text").String(); !strings.Contains(got, "cc_version=2.1.280") {
++		t.Fatalf("billing attribution = %q, want incoming client version", got)
+ 	}
+ 	if got := gjson.GetBytes(seenBody, "system.1.text").String(); got != claudeCodeCLIIdentity {
+ 		t.Fatalf("system.1.text = %q, want official CLI identity", got)
