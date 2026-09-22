@@ -1,6 +1,6 @@
 ---
 name: skill-creator
-description: Create or update portable agent skills with precise triggers, progressive disclosure, deterministic scripts, references, assets, and optional harness metadata. Use for skill package design or scaffolding.
+description: Create or update portable agent skills and their supporting resources.
 license: Complete terms in LICENSE.txt
 metadata:
   disable-model-selection: "true"
@@ -8,56 +8,55 @@ metadata:
 
 # Skill Creator
 
-Create or update skills that add durable workflows, tool integrations, domain
-knowledge, scripts, references, or assets without wasting context.
+Create skills that supply non-obvious guidance for a defined task. Preserve the
+user's scope, existing authorization, invocation metadata, and licenses.
+Assume the agent can handle ordinary programming and tool use.
 
-## Load Detail On Demand
+## Design
 
-- `references/design-principles.md`: token budget, degrees of freedom,
-  progressive disclosure.
-- `references/package-layout.md`: SKILL.md, scripts, references, assets.
-- `references/creation-workflow.md`: step-by-step creation/update process.
-- `references/workflows.md`: workflow-writing patterns.
-- `references/output-patterns.md`: output contracts and examples.
+- Describe the capability and its actual trigger briefly. Avoid lists of every
+  supported feature or broad keywords that attract unrelated tasks.
+- Keep the root self-contained for simple work. For substantial modes, link
+  supporting references with a clear read condition. Do not load all modes.
+- Describe outcomes and decision criteria for flexible work. Reserve fixed
+  sequences for fragile operations or concrete correctness constraints.
+- Add scripts when repeated mechanics justify them, references for conditional
+  detail, and assets for reusable output. Inspect callers before removing
+  existing resources. Do not add empty scaffolding or duplicate documentation.
+- Keep existing invocation policies. For new skills, allow automatic discovery
+  unless the user requests explicit-only invocation. Sensitivity alone is not
+  a discovery gate; check authorization before the consequential action.
 
-Use bundled scripts directly when useful:
+## Create or Update
 
-- `scripts/init_skill.py`
-- `scripts/quick_validate.py`
-- `scripts/package_skill.py`
+Use the request and existing package to establish the trigger, output, and
+constraints. Ask only when missing information materially affects the result.
+A narrow update may need only an edit and focused validation, not initialization
+or package planning. Do not turn a past example into a universal requirement.
 
-## Design Rules
+For new packages, use `scripts/init_skill.py` when it helps. Preserve a requested
+location and create only resources with a current use. Use
+`scripts/package_skill.py` only when an archive is part of the requested output.
 
-- Keep `SKILL.md` lean: trigger metadata plus essential workflow.
-- Put detailed variants, schemas, long examples, and edge cases in
-  `references/`.
-- Put deterministic or repetitive work in `scripts/`.
-- Put reusable output materials in `assets/`.
-- Do not add README, changelog, install guide, or process notes unless user asks.
-- Avoid duplicating same guidance in `SKILL.md` and references.
+## References
 
-## Workflow
-
-1. Clarify skill name, trigger use case, target agents, and expected outputs.
-2. Decide package shape:
-   - text-only workflow: `SKILL.md`
-   - branching/deep guidance: `SKILL.md` + `references/`
-   - fragile/repeated operation: add `scripts/`
-   - reusable output material: add `assets/`
-3. Write frontmatter `name` and `description` so trigger conditions are clear.
-4. Write body as short decision tree plus required workflow.
-5. Move non-core examples/details into references and link them with "read when"
-   guidance.
-6. Validate structure and metadata.
-
-Read only focused references needed for current skill design problem.
+- Read [design-principles.md](references/design-principles.md) for context
+  placement and degree-of-freedom decisions.
+- Read [package-layout.md](references/package-layout.md) when choosing package
+  files and resource types.
+- Read [creation-workflow.md](references/creation-workflow.md) for a new or
+  substantially revised package, adapting its steps to the task.
+- Read [workflows.md](references/workflows.md) or
+  [output-patterns.md](references/output-patterns.md) when a workflow or output
+  contract needs examples.
 
 ## Validation
 
-Run `scripts/quick_validate.py <skill-dir>` when available. Check:
+Run `scripts/quick_validate.py <skill-dir>`. Check reference reachability,
+metadata preservation, and trigger precision. Run new or changed scripts against
+representative inputs. Structural validation does not prove useful behavior.
 
-- required `SKILL.md` exists
-- frontmatter has `name` and `description`
-- references/scripts/assets are linked from workflow when needed
-- trigger text is specific enough to avoid accidental activation
-- body fits progressive disclosure and avoids generic advice
+For a complex or risky skill, use an independent agent with a realistic request
+and raw artifacts when delegation is available. Do not supply the intended
+answer. Keep evaluation side effects within the authorized scope, inspect the
+result, and revise only where observed behavior warrants it.

@@ -1,6 +1,6 @@
 ---
 name: nix-toolkit
-description: Nix authoring and operations for expressions, NixOS/Home Manager modules, overlays, packages, and flakes. Use for style reviews, merge semantics, binding locality, build failures, package diffs, closures, dependencies, and evaluation performance.
+description: Author, review, or diagnose Nix expressions, modules, packages, and flakes, including builds, closures, and evaluation performance.
 ---
 
 # Nix Toolkit Playbook

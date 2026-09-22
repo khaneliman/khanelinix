@@ -1,6 +1,6 @@
 {
 	"name": "dotnet-toolkit",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Build and maintain .NET web apps, APIs, and Blazor front ends.",
 	"author": {
 		"name": "khaneliman"

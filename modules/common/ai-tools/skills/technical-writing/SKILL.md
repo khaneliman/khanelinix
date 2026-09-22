@@ -1,12 +1,13 @@
 ---
 name: technical-writing
-description: Write or review concise technical prose for docs, procedures, comments, commits, releases, incidents, and postmortems. Preserve facts, caveats, figures, code, commands, links, and tables. Claim full ASD-STE100 conformance only with the official current standard and controlled dictionary.
+description: Write or revise technical documentation, procedures, comments, commits, releases, and incident reports.
 ---
 
 # Technical Writing
 
 Make text easier to understand without deleting technical content. Treat source
-facts and structure as invariants, not optional detail.
+facts and structure as invariants, not optional detail. Claim full ASD-STE100
+conformance only with the official current standard and controlled dictionary.
 
 ## Select Workflow
 

@@ -1,6 +1,8 @@
 # Skill Creation Workflow
 
-Use for new skill creation or substantial updates.
+Use for new skill creation or substantial updates. These are design activities,
+not mandatory checkpoints. Reuse information already supplied by the user or
+package; a narrow edit does not require a fresh interview or initialization.
 
 ## 1. Understand Task
 
@@ -49,8 +51,9 @@ Run:
 
 ```bash
 python scripts/quick_validate.py <skill-dir>
-python scripts/package_skill.py <skill-dir>
 ```
+
+Package with `scripts/package_skill.py` only when an archive is requested.
 
 If scripts are absent, manually check frontmatter, file links, and trigger
 specificity.

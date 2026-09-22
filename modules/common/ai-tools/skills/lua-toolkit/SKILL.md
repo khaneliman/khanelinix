@@ -1,6 +1,6 @@
 ---
 name: lua-toolkit
-description: Neovim Lua plugin architecture, lazy loading, configuration APIs, commands, keymaps, health checks, type-aware tooling, tests, and LuaRocks distribution. Use when creating, refactoring, validating, or releasing a Neovim Lua plugin.
+description: Create, refactor, test, or release Neovim Lua plugins. Not a general Lua application workflow.
 ---
 
 # Lua Toolkit

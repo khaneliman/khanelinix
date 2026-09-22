@@ -1,6 +1,6 @@
 ---
 name: ai-tools-architect
-description: AI-tool architecture for instructions, prompts, rules, agents, commands, skills, hooks, and provider context. Use for setup, refactoring, or audits needing clear boundaries, deterministic automation, reproducibility, or lean context.
+description: Design and audit agent instructions, skills, prompts, hooks, and provider configuration. Use for AI-tool setup or context and routing problems.
 ---
 
 # AI Tools Architecture Playbook
@@ -9,8 +9,8 @@ Enforce progressive disclosure and deterministic execution boundaries for this
 project's AI setup. Keep model context focused on judgment while routing exact,
 repeatable mechanics through tools or bundled scripts.
 
-For an existing AI configuration tree, run the structural audit before manual
-review:
+For a tree-wide audit or changes to skill discovery and packaging, run the
+structural audit:
 
 ```bash
 python3 <skill-dir>/scripts/audit_ai_tools.py <ai-tools-root> --format markdown
@@ -57,8 +57,8 @@ review, in any repository:
 
 ## Execution Routing
 
-Do not guess or hallucinate architectural standards. For advice about a specific
-AI-configuration component, read its reference in `refs/` before responding:
+Use the component reference when its constraints affect the task. Do not load
+references merely because the component appears in the tree:
 
 - **For Subagents (Specialized tool/context boundaries):** Read
   [refs/AGENTS.md](refs/AGENTS.md)
@@ -76,5 +76,6 @@ AI-configuration component, read its reference in `refs/` before responding:
   [refs/INITIALIZATION.md](refs/INITIALIZATION.md), then only the component
   references it selects.
 
-If AI-configuration scope remains broad, ask which component fits the need.
-Example: "How should I structure this new agent workflow?"
+For a broad audit, inventory the layers and prioritize concrete context,
+routing, and execution problems. Ask only when a material scope choice remains
+unresolved.

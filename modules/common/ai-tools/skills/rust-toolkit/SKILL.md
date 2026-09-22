@@ -1,6 +1,6 @@
 ---
 name: rust-toolkit
-description: Rust and Cargo architecture, correctness, toolchain, concurrency, unsafe-code, testing, migration, and performance workflows for crates and workspaces. Use for Rust libraries, services, or CLIs.
+description: Build, debug, review, or migrate Rust crates and Cargo workspaces, including unsafe code and performance.
 ---
 
 # Rust Toolkit

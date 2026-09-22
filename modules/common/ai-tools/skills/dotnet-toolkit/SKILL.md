@@ -1,6 +1,6 @@
 ---
 name: dotnet-toolkit
-description: .NET and ASP.NET Core architecture, Blazor render modes, EF Core data access, async and DI lifetime, testing, SDK tooling, security, and deployment workflows. Use for C# web apps, HTTP APIs, Blazor components, and worker services.
+description: Build, debug, or review C# and ASP.NET Core applications, including Blazor, EF Core, HTTP APIs, and worker services.
 ---
 
 # .NET Toolkit

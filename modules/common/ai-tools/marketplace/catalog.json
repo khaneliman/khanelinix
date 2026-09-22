@@ -18,7 +18,7 @@
 			},
 			"displayName": "AI Tools Architect",
 			"description": "Design and audit portable AI-tool configuration.",
-			"version": "0.1.13",
+			"version": "0.1.14",
 			"category": "Developer Tools"
 		},
 		{
@@ -110,7 +110,7 @@
 			},
 			"displayName": ".NET Toolkit",
 			"description": "Build and maintain .NET web apps, APIs, and Blazor front ends.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"category": "Developer Tools"
 		},
 		{
@@ -174,7 +174,7 @@
 			},
 			"displayName": "Frontend Design",
 			"description": "Create distinctive production-grade frontend interfaces.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"category": "Developer Tools"
 		},
 		{
@@ -245,7 +245,7 @@
 			},
 			"displayName": "Lua Toolkit",
 			"description": "Build and maintain Neovim Lua plugins.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"category": "Developer Tools"
 		},
 		{
@@ -278,7 +278,7 @@
 			},
 			"displayName": "Nix Toolkit",
 			"description": "Author Nix code and diagnose builds, flakes, and evaluation.",
-			"version": "0.4.0",
+			"version": "0.4.1",
 			"category": "Developer Tools"
 		},
 		{
@@ -370,7 +370,7 @@
 			},
 			"displayName": "Rust Toolkit",
 			"description": "Build and maintain Rust crates, services, and CLIs.",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"category": "Developer Tools"
 		},
 		{
@@ -414,7 +414,7 @@
 			},
 			"displayName": "Skill Creator",
 			"description": "Create and update portable agent skills.",
-			"version": "0.1.6",
+			"version": "0.1.7",
 			"category": "Developer Tools"
 		},
 		{
@@ -425,7 +425,7 @@
 			},
 			"displayName": "Software Engineering",
 			"description": "Evaluate software architecture and plan large changes.",
-			"version": "0.1.6",
+			"version": "0.1.7",
 			"category": "Developer Tools"
 		},
 		{
@@ -447,7 +447,7 @@
 			},
 			"displayName": "Technical Writing",
 			"description": "Write and review concise technical prose.",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"category": "Developer Tools"
 		},
 		{

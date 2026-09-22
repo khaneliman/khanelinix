@@ -9,7 +9,7 @@
 		{
 			"name": "ai-tools-architect",
 			"description": "Design and audit portable AI-tool configuration.",
-			"version": "0.1.13",
+			"version": "0.1.14",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -89,7 +89,7 @@
 		{
 			"name": "dotnet-toolkit",
 			"description": "Build and maintain .NET web apps, APIs, and Blazor front ends.",
-			"version": "0.1.0",
+			"version": "0.1.1",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -129,7 +129,7 @@
 		{
 			"name": "frontend-design",
 			"description": "Create distinctive production-grade frontend interfaces.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -189,7 +189,7 @@
 		{
 			"name": "lua-toolkit",
 			"description": "Build and maintain Neovim Lua plugins.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -219,7 +219,7 @@
 		{
 			"name": "nix-toolkit",
 			"description": "Author Nix code and diagnose builds, flakes, and evaluation.",
-			"version": "0.4.0",
+			"version": "0.4.1",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -299,7 +299,7 @@
 		{
 			"name": "rust-toolkit",
 			"description": "Build and maintain Rust crates, services, and CLIs.",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -339,7 +339,7 @@
 		{
 			"name": "skill-creator",
 			"description": "Create and update portable agent skills.",
-			"version": "0.1.6",
+			"version": "0.1.7",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -349,7 +349,7 @@
 		{
 			"name": "software-engineering",
 			"description": "Evaluate software architecture and plan large changes.",
-			"version": "0.1.6",
+			"version": "0.1.7",
 			"author": {
 				"name": "khaneliman"
 			},
@@ -369,7 +369,7 @@
 		{
 			"name": "technical-writing",
 			"description": "Write and review concise technical prose.",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"author": {
 				"name": "khaneliman"
 			},
