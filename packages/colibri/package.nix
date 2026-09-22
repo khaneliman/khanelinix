@@ -90,34 +90,16 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "colibri";
-  version = "1.10.1-unstable-2026-08-31";
+  version = "1.12.0-unstable-2026-09-21";
 
   src = fetchFromGitHub {
     owner = "JustVugg";
     repo = "colibri";
-    rev = "12a5c464b5c1f8292d578c62458706bc32d6ac95";
-    hash = "sha256-nWIp71zq0jb15+W8w5tyfmegFREgy1zgEiAcvO1d1hU=";
+    rev = "9d5d05de7f4ccf39840224ed295f292ab8aeb598";
+    hash = "sha256-FY3EA6PULupN9RKi7HNVHP7xpEX/cvH6K5Keuk4H3oY=";
   };
 
   nativeBuildInputs = [ makeWrapper ];
-
-  # Upstream gates the qwen36 VRAM expert tier on CUDA alone, yet HIP=1 still
-  # links the shared backend object into that engine. The tier then compiles
-  # out while NOCUDA_LDFLAGS strips -lstdc++, so the C++ object cannot link and
-  # the build fails on __throw_system_error. Widening the gate to accept HIP
-  # fixes the link and enables the tier: qwen36_tier.c includes no vendor
-  # headers and calls only the coli_cuda_* ABI that either backend provides.
-  postPatch = lib.optionalString hipSupport ''
-    ${lib.getExe python3} - <<'PATCH'
-    import pathlib
-    m = pathlib.Path("c/Makefile")
-    text = m.read_text()
-    old = "ifeq ($(CUDA),1)\nQWEN36_TIER_SRC = qwen36_tier.c"
-    new = "ifneq (,$(filter 1,$(CUDA) $(HIP)))\nQWEN36_TIER_SRC = qwen36_tier.c"
-    assert text.count(old) == 1, "qwen36 tier gate not found"
-    m.write_text(text.replace(old, new))
-    PATCH
-  '';
 
   # libgomp belongs to the runtime closure because the engine is an OpenMP
   # build.
@@ -155,11 +137,11 @@ stdenv.mkDerivation (finalAttrs: {
   installPhase = ''
         runHook preInstall
 
-        # openai_server.py imports v4_dsml unconditionally and iq3_pack.py reads
+        # openai_server.py imports v41_dsml unconditionally and iq3_pack.py reads
         # the grid asset, but the upstream file lists stage neither. Each guard
         # defers to a release that installs them itself.
-        [ -e "$out/lib/colibri/v4_dsml.py" ] \
-          || install -m 644 c/v4_dsml.py "$out/lib/colibri/"
+        [ -e "$out/lib/colibri/v41_dsml.py" ] \
+          || install -m 644 c/v41_dsml.py "$out/lib/colibri/"
         [ -e "$out/lib/colibri/tools/iq3xxs_grid.json" ] \
           || install -m 644 c/tools/iq3xxs_grid.json "$out/lib/colibri/tools/"
 
