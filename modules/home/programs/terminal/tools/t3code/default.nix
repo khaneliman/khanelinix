@@ -348,10 +348,6 @@ in
               model = "gpt-6-luna";
             }
             {
-              provider = "codex";
-              model = "gpt-5.3-codex-spark";
-            }
-            {
               provider = "antigravity";
               model = "gemini-3.8-flash-medium";
             }

@@ -26,5 +26,5 @@ Astra has no benchmark measurement in the snapshot. The routing policy reserves
 it for higher-cost, higher-latency review and orchestration work until direct
 measurements are available. Astra shares the OpenAI `general` quota pool
 conservatively pending live pool telemetry that verifies a separate allocation.
-Spark, Terra, and GPT-OSS do not appear in the snapshot. Keep their existing
-latency-first or explicit-only roles until comparable measurements exist.
+Terra and GPT-OSS do not appear in the snapshot. Keep their existing
+explicit-only or noisy-validation roles until comparable measurements exist.

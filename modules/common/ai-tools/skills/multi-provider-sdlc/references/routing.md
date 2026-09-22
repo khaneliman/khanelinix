@@ -12,18 +12,19 @@ apply the generated section update, then run it with `check`.
 
 | Subscription         | Model agents                                                                                 |
 | -------------------- | -------------------------------------------------------------------------------------------- |
-| OpenAI (Codex)       | `gpt-5-3-codex-spark`, `gpt-6-luna`, `gpt-5-6-terra`, `gpt-6-sol`, `gpt-6-astra`             |
+| OpenAI (Codex)       | `gpt-6-luna`, `gpt-5-6-terra`, `gpt-6-sol`, `gpt-6-astra`                                    |
 | Google (Antigravity) | `gpt-oss-120b`, `google-opus-4-6`, `google-sonnet-4-6`, `gemini-3-8-flash`, `gemini-3-1-pro` |
 | Anthropic            | `opus-5-5`, `fable-5-1`, `sonnet-5`                                                          |
 
 <!-- END GENERATED SUBSCRIPTIONS -->
 
 Prefer Sol for routine implementation and diagnosis; do not reserve it for
-difficult work. Luna remains the cheap default for repository discovery and
-reproduction, with Gemini Flash and Sol as fallbacks. Use Sol and Opus for
-difficult implementation. Keep `fable-5-1` and `gpt-6-astra` as equal preferred
-review routes. Use `sonnet-5` only when explicitly requested. Every subscription
-requires a live route and current authentication.
+difficult work. Luna remains the cheap default for repository discovery,
+reproduction, mechanical edits, and focused checks, with Gemini Flash and Sol as
+fallbacks. Use Sol and Opus for difficult implementation. Keep `fable-5-1` and
+`gpt-6-astra` as equal preferred review routes. Use `sonnet-5` only when
+explicitly requested. Every subscription requires a live route and current
+authentication.
 
 ## Preferred routes
 
@@ -31,10 +32,10 @@ requires a live route and current authentication.
 
 | Need                                       | Preferred                        | Fallback                                     | Semantic role  | Write policy                      |
 | ------------------------------------------ | -------------------------------- | -------------------------------------------- | -------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark`            | `gpt-6-luna`, `gemini-3-8-flash`             | `mechanic`     | read-only unless edit is explicit |
-| repository discovery                       | `gpt-6-luna`, `gemini-3-8-flash` | `gpt-6-sol`, `gpt-5-3-codex-spark`           | `fact-finder`  | read-only                         |
+| obvious lookup or mechanical one-file edit | `gpt-6-luna`                     | `gemini-3-8-flash`                           | `mechanic`     | read-only unless edit is explicit |
+| repository discovery                       | `gpt-6-luna`, `gemini-3-8-flash` | `gpt-6-sol`                                  | `fact-finder`  | read-only                         |
 | bounded reproduction                       | `gpt-6-luna`                     | `gpt-6-sol`, `opus-5-5`, `gemini-3-8-flash`  | `probe-runner` | build artifacts only              |
-| focused validation                         | `gpt-5-3-codex-spark`            | `gpt-6-luna`                                 | `checker`      | build artifacts only              |
+| focused validation                         | `gpt-6-luna`                     | `gemini-3-8-flash`                           | `checker`      | build artifacts only              |
 | noisy validation                           | `gpt-oss-120b`                   | `gpt-6-luna`, `gemini-3-8-flash`             | `test-runner`  | build artifacts only              |
 | implementation                             | `gpt-6-sol`                      | `gpt-6-luna`, `gemini-3-8-flash`, `opus-5-5` | `implementer`  | workspace write                   |
 | difficult implementation                   | `gpt-6-sol`, `opus-5-5`          | `gpt-6-luna`, `gemini-3-8-flash`             | `implementer`  | workspace write                   |
@@ -165,9 +166,9 @@ binding evidence.
 - Google: Opus, Sonnet, and GPT-OSS share `claude-gpt`; Gemini Pro and Flash
   share `gemini`. Run [check-google-quota](../scripts/check-google-quota.sh)
   once before Google dispatch when `codexbar` is available.
-- OpenAI: Spark has a separate `spark` pool; Luna, Terra, Sol, and Astra share
-  `general` conservatively. Current CodexBar data does not distinguish both
-  pools, so do not preflight. A `429` opens only the matching pool.
+- OpenAI: Luna, Terra, Sol, and Astra share `general` conservatively. Do not
+  preflight without reliable pool telemetry. A `429` opens this shared pool;
+  switch providers rather than retry another OpenAI model.
 - Anthropic: no reliable quota query is available in the current environment.
   Let the first required dispatch act as probe; a quota failure opens the
   Anthropic circuit.
@@ -189,8 +190,8 @@ binding evidence.
 
 - Give frontier reasoning seats such as Astra, Opus, Fable, Sol, or comparable
   models time to research, reason, and synthesize on large tasks. Fast models
-  such as Luna, Spark, Flash, or Haiku should receive narrower packets and may
-  be redirected sooner.
+  such as Luna, Flash, or Haiku should receive narrower packets and may be
+  redirected sooner.
 - Treat a wait or poll timeout as observer cadence, not worker failure or a
   runtime deadline. Repeat polls without changing healthy seat state; use longer
   waits when the harness can still provide required user updates.
@@ -203,12 +204,11 @@ binding evidence.
   limit. Never invent a shorter deadline from repeated poll expiry.
 
 Choose for capability and total retry cost. Among equal routes, prefer the
-independent quota pool with more headroom. Keep Spark first for obvious low-risk
-lookups, mechanical edits, and focused checks even when the parent uses the
-OpenAI general pool. Use Sol for implementation and diagnosis. Use Luna for
-discovery, reproduction, implementation fallback, and broad tests. Keep Terra
-explicit-only. Prefer provider diversity only after capability and quota-pool
-fit. Do not duplicate work only to balance subscriptions.
+independent quota pool with more headroom. Keep Luna first for obvious low-risk
+lookups, mechanical edits, focused checks, discovery, and reproduction. Use Sol
+for implementation and diagnosis. Use Luna for implementation fallback and broad
+tests. Keep Terra explicit-only. Prefer provider diversity only after capability
+and quota-pool fit. Do not duplicate work only to balance subscriptions.
 
 Confirm agent type before dispatch and omit model overrides. Unknown type means
 use its semantic role or one bounded native worker. If the host returns

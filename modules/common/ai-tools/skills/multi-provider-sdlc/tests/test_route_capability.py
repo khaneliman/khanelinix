@@ -389,11 +389,11 @@ class RouteCapabilityTests(unittest.TestCase):
     def test_independent_claim_outcomes_merge_by_claim_id(self) -> None:
         self.initialize()
         self.complete("gpt-6-luna", "success")
-        spark = self.claim("gpt-5-3-codex-spark", 2)
+        luna = self.claim("gpt-6-luna", 2)
         gemini = self.claim("gemini-3-8-flash", 3)
 
         first = capability.record_outcome(
-            self.state, self.task_id, spark["claimId"], "success"
+            self.state, self.task_id, luna["claimId"], "success"
         )
         second = capability.record_outcome(
             self.state, self.task_id, gemini["claimId"], "success"
@@ -403,7 +403,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(first["revision"], 5)
         self.assertEqual(second["revision"], 6)
         self.assertEqual(state["claims"], {})
-        self.assertEqual(state["routes"]["gpt-5-3-codex-spark"], "available")
+        self.assertEqual(state["routes"]["gpt-6-luna"], "available")
         self.assertEqual(state["routes"]["gemini-3-8-flash"], "available")
 
     def test_route_failure_blocks_only_one_model(self) -> None:
@@ -618,7 +618,7 @@ class RouteCapabilityTests(unittest.TestCase):
                 self.task_id,
                 0,
                 "obvious lookup or mechanical one-file edit",
-                "gpt-5-3-codex-spark",
+                "gpt-6-luna",
             )
 
         self.assertEqual(self.state.read_bytes(), before)

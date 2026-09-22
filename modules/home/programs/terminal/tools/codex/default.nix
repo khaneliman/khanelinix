@@ -145,16 +145,6 @@ let
       web_search = "disabled";
     };
 
-    # Trivial latency-first profile for obvious, low-risk work.
-    spark = {
-      model = "gpt-5.3-codex-spark";
-      model_reasoning_effort = "medium";
-      model_verbosity = "medium";
-      plan_mode_reasoning_effort = "high";
-      service_tier = "priority";
-      web_search = "disabled";
-    };
-
     # Force local-only behavior when you do not want network access.
     offline = {
       sandbox_mode = "workspace-write";
@@ -205,7 +195,6 @@ in
         codex-long = "codex --strict-config --profile long -c model_context_window=1000000 -c model_auto_compact_token_limit=850000";
         codex-offline = "codex --strict-config --profile offline";
         codex-quick = "codex --strict-config --profile quick";
-        codex-spark = "codex --strict-config --profile spark";
         codex-unsafe = "codex --strict-config --profile unsafe --dangerously-bypass-hook-trust";
       }
       // lib.optionalAttrs swapEnabled (

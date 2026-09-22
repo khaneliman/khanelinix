@@ -44,7 +44,6 @@ in
       opencode-deep = "opencode --model ${deliberateModel}";
       opencode-nano = "opencode --model openai/gpt-6-luna";
       opencode-research = "opencode --agent build --model ${deliberateModel}";
-      opencode-spark = "opencode --model openai/gpt-5.3-codex-spark";
     }
     // lib.optionalAttrs config.services.exo.enable {
       opencode-exo = ''f(){ model="$1"; shift; opencode --model "exo/$model" "$@"; }; f'';
@@ -86,7 +85,7 @@ in
         command = {
           quick = {
             template = "Make fast, minimal edits and keep responses concise.";
-            model = "openai/gpt-5.3-codex-spark";
+            model = "openai/gpt-6-luna";
             agent = "build";
             subtask = true;
           };

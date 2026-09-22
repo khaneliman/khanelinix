@@ -37,7 +37,6 @@ in
         # OpenCode roster, so routedModel keeps these gateway-aware.
         debuggerModel = aiTools.agents.debugger.model.opencode;
         testRunnerModel = aiTools.agents.test-runner.model.opencode;
-        sparkModel = "openai/gpt-5.3-codex-spark";
         miniModel = "openai/gpt-6-luna";
         opencodeSkillsPath = "${config.xdg.configHome}/opencode/skills";
         disabledPluginSkills = aiTools.opencode.disabledPluginSkills;
@@ -48,10 +47,6 @@ in
             reasoningEffort = "high";
           }
           testRunnerModel
-        ];
-
-        explorationFallbackModels = [
-          sparkModel
         ];
 
         defaultConfig = {
@@ -87,20 +82,15 @@ in
             };
             explore = {
               model = testRunnerModel;
-              fallback_models = explorationFallbackModels;
             };
             librarian = {
               model = testRunnerModel;
-              fallback_models = explorationFallbackModels;
             };
           };
 
           categories = {
             quick = {
-              model = sparkModel;
-              fallback_models = [
-                miniModel
-              ];
+              model = miniModel;
               description = "Fast, minimal edits and low-surface changes.";
             };
             deep = {
@@ -115,14 +105,10 @@ in
             };
             unspecified-low = {
               model = testRunnerModel;
-              fallback_models = explorationFallbackModels;
               description = "Cheaper general subtasks and verification work.";
             };
             writing = {
               model = testRunnerModel;
-              fallback_models = [
-                sparkModel
-              ];
               description = "Documentation and prose-heavy tasks.";
             };
           };

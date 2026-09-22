@@ -57,7 +57,7 @@ in
 
       settings =
         let
-          auxiliaryModel = "gpt-5.3-codex-spark";
+          auxiliaryModel = "gpt-6-luna";
         in
         lib.recursiveUpdate {
           model = {
@@ -68,7 +68,7 @@ in
           fallback_providers = [
             {
               provider = "openai-codex";
-              model = "gpt-5.3-codex-spark";
+              model = "gpt-6-luna";
             }
             {
               provider = "gemini";
@@ -153,7 +153,7 @@ in
 
           delegation = {
             provider = "openai-codex";
-            model = "gpt-5.3-codex-spark";
+            model = "gpt-6-luna";
             reasoning_effort = "medium";
             max_iterations = 50;
             child_timeout_seconds = 900;

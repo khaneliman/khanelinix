@@ -124,9 +124,8 @@ in
         pi-deep = "pi --model openai-codex/gpt-6-astra --thinking high";
         pi-json = "pi --mode json";
         pi-print = "pi --print";
-        pi-quick = "pi --model openai-codex/gpt-5.3-codex-spark --thinking low";
+        pi-quick = "pi --model openai-codex/gpt-6-luna --thinking low";
         pi-read = "pi --tools read,grep,find,ls";
-        pi-spark = "pi --model openai-codex/gpt-5.3-codex-spark --thinking high";
       };
     };
 
