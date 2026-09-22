@@ -7,11 +7,9 @@
 - `AGENTS.md` files are provider-neutral repository guidance. Before editing a
   subtree, read every `AGENTS.md` from repository root through target path;
   closest guidance wins.
-- `CLAUDE.md` files import sibling `AGENTS.md` files. Claude-only provider
-  behavior lives in dedicated addendum files (for example
-  `modules/common/ai-tools/claude-delivery.md`) that `default.nix` concatenates
-  onto `base.md` for generated Claude context, not in the `CLAUDE.md` files
-  themselves. Keep repository rules out of those Claude-only addenda.
+- `CLAUDE.md` files only import sibling `AGENTS.md` files. Provider-only
+  behavior belongs in `modules/common/ai-tools/` adapter addenda, not in
+  `CLAUDE.md` files or repository guidance.
 - `modules/common/ai-tools/base.md` owns installed cross-repository behavior.
   Skills own reusable workflows. Do not copy either into repository guidance.
 

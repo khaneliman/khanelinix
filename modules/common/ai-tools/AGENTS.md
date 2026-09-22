@@ -8,8 +8,9 @@
 - `base.md` contains only cross-repository, cross-provider behavior that should
   always load. Keep khanelinix-specific guidance in repository `AGENTS.md`
   files.
-- Keep provider-only behavior in provider adapters such as `CLAUDE.md` and
-  `codex.md`.
+- Keep provider-only behavior in adapter addenda such as `codex.md`, which
+  `default.nix` concatenates onto `base.md`. `CLAUDE.md` files only import
+  sibling `AGENTS.md`.
 - Treat vendored provider copies under `planning-with-files/` as upstream
   artifacts unless task explicitly targets them.
 
