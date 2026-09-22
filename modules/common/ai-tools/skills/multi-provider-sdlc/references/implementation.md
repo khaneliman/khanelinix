@@ -9,6 +9,7 @@
 4. Return changed files, focused validation, assumptions, and residual risk to
    the lifecycle owner. Do not start validation or review phases.
 
-Use Luna or Gemini Flash for routine implementation. Use Sol or Opus for
-difficult implementation, with Luna or Gemini Flash as write-capable fallbacks.
-Sol and Opus remain read-only when assigned deliberation or review.
+Prefer Sol for routine implementation, not only difficult work. Use Luna or
+Gemini Flash for narrow mechanical packets and write-capable fallbacks. Use Sol
+or Opus for difficult implementation. Sol and Opus remain read-only when
+assigned deliberation or review.

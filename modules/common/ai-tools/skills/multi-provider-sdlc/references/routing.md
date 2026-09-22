@@ -18,27 +18,28 @@ apply the generated section update, then run it with `check`.
 
 <!-- END GENERATED SUBSCRIPTIONS -->
 
-Use Luna and Gemini Flash for routine implementation and repository research.
-Use Sol and Opus for difficult implementation. Use `fable-5-1` and `gpt-6-astra`
-as equal preferred review routes. Keep Sol as the debugger route. Use `sonnet-5`
-only when explicitly requested. Every subscription requires a live route and
-current authentication.
+Prefer Sol for routine implementation and diagnosis; do not reserve it for
+difficult work. Luna remains the cheap default for repository discovery and
+reproduction, with Gemini Flash and Sol as fallbacks. Use Sol and Opus for
+difficult implementation. Keep `fable-5-1` and `gpt-6-astra` as equal preferred
+review routes. Use `sonnet-5` only when explicitly requested. Every subscription
+requires a live route and current authentication.
 
 ## Preferred routes
 
 <!-- BEGIN GENERATED ROUTES -->
 
-| Need                                       | Preferred                        | Fallback                                    | Semantic role  | Write policy                      |
-| ------------------------------------------ | -------------------------------- | ------------------------------------------- | -------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark`            | `gpt-6-luna`, `gemini-3-8-flash`            | `mechanic`     | read-only unless edit is explicit |
-| repository discovery                       | `gpt-6-luna`, `gemini-3-8-flash` | `gpt-5-3-codex-spark`                       | `fact-finder`  | read-only                         |
-| bounded reproduction                       | `gpt-6-luna`                     | `opus-5-5`, `gpt-6-sol`, `gemini-3-8-flash` | `probe-runner` | build artifacts only              |
-| focused validation                         | `gpt-5-3-codex-spark`            | `gpt-6-luna`                                | `checker`      | build artifacts only              |
-| noisy validation                           | `gpt-oss-120b`                   | `gpt-6-luna`, `gemini-3-8-flash`            | `test-runner`  | build artifacts only              |
-| implementation                             | `gpt-6-luna`, `gemini-3-8-flash` | `gpt-6-sol`, `opus-5-5`                     | `implementer`  | workspace write                   |
-| difficult implementation                   | `gpt-6-sol`, `opus-5-5`          | `gpt-6-luna`, `gemini-3-8-flash`            | `implementer`  | workspace write                   |
-| ambiguous diagnosis                        | `opus-5-5`                       | `gpt-6-sol`, `gemini-3-8-flash`             | `debugger`     | read-only                         |
-| plan or code review                        | `fable-5-1`, `gpt-6-astra`       | `gpt-6-sol`, `opus-5-5`, `google-opus-4-6`  | `reviewer`     | read-only                         |
+| Need                                       | Preferred                        | Fallback                                     | Semantic role  | Write policy                      |
+| ------------------------------------------ | -------------------------------- | -------------------------------------------- | -------------- | --------------------------------- |
+| obvious lookup or mechanical one-file edit | `gpt-5-3-codex-spark`            | `gpt-6-luna`, `gemini-3-8-flash`             | `mechanic`     | read-only unless edit is explicit |
+| repository discovery                       | `gpt-6-luna`, `gemini-3-8-flash` | `gpt-6-sol`, `gpt-5-3-codex-spark`           | `fact-finder`  | read-only                         |
+| bounded reproduction                       | `gpt-6-luna`                     | `gpt-6-sol`, `opus-5-5`, `gemini-3-8-flash`  | `probe-runner` | build artifacts only              |
+| focused validation                         | `gpt-5-3-codex-spark`            | `gpt-6-luna`                                 | `checker`      | build artifacts only              |
+| noisy validation                           | `gpt-oss-120b`                   | `gpt-6-luna`, `gemini-3-8-flash`             | `test-runner`  | build artifacts only              |
+| implementation                             | `gpt-6-sol`                      | `gpt-6-luna`, `gemini-3-8-flash`, `opus-5-5` | `implementer`  | workspace write                   |
+| difficult implementation                   | `gpt-6-sol`, `opus-5-5`          | `gpt-6-luna`, `gemini-3-8-flash`             | `implementer`  | workspace write                   |
+| ambiguous diagnosis                        | `gpt-6-sol`                      | `opus-5-5`, `gemini-3-8-flash`               | `debugger`     | read-only                         |
+| plan or code review                        | `fable-5-1`, `gpt-6-astra`       | `gpt-6-sol`, `opus-5-5`, `google-opus-4-6`   | `reviewer`     | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5-5`, Google
 `gemini-3-8-flash` with `google-opus-4-6` fallback (degraded family diversity),
@@ -204,10 +205,10 @@ binding evidence.
 Choose for capability and total retry cost. Among equal routes, prefer the
 independent quota pool with more headroom. Keep Spark first for obvious low-risk
 lookups, mechanical edits, and focused checks even when the parent uses the
-OpenAI general pool. Use Luna for average discovery, implementation fallback,
-probes, and broad tests. Keep Terra explicit-only. Prefer provider diversity
-only after capability and quota-pool fit. Do not duplicate work only to balance
-subscriptions.
+OpenAI general pool. Use Sol for implementation and diagnosis. Use Luna for
+discovery, reproduction, implementation fallback, and broad tests. Keep Terra
+explicit-only. Prefer provider diversity only after capability and quota-pool
+fit. Do not duplicate work only to balance subscriptions.
 
 Confirm agent type before dispatch and omit model overrides. Unknown type means
 use its semantic role or one bounded native worker. If the host returns

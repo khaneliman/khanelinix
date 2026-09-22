@@ -178,6 +178,33 @@ class RouteCapabilityTests(unittest.TestCase):
         with self.assertRaisesRegex(capability.CapabilityError, "unsupported.*schema"):
             capability.initialize(self.state, self.task_id)
 
+    def test_sol_is_selected_for_general_reasoning_work(self) -> None:
+        self.initialize()
+        for need in ("implementation", "ambiguous diagnosis"):
+            with self.subTest(need=need):
+                plan = capability.plan_route(self.state, self.task_id, need)
+                self.assertEqual(plan["selected"], "gpt-6-sol")
+                self.assertFalse(plan["selectionRequired"])
+
+    def test_luna_stays_first_for_cheap_read_work(self) -> None:
+        self.initialize()
+        for need in ("repository discovery", "bounded reproduction"):
+            with self.subTest(need=need):
+                plan = capability.plan_route(self.state, self.task_id, need)
+                preferred = [item["model"] for item in plan["preferredCandidates"]]
+                self.assertEqual(preferred[0], "gpt-6-luna")
+                self.assertNotIn("gpt-6-sol", preferred)
+
+    def test_sol_quota_failure_uses_an_independent_pool(self) -> None:
+        self.initialize()
+        self.complete("gpt-6-sol", "quota-exhausted")
+        plan = capability.plan_route(self.state, self.task_id, "implementation")
+        self.assertEqual(plan["selected"], "gemini-3-8-flash")
+        self.assertEqual(
+            {item["model"] for item in plan["blocked"]},
+            {"gpt-6-sol", "gpt-6-luna"},
+        )
+
     def test_cli_runs_claimed_named_model_lifecycle(self) -> None:
         initialized = self.run_cli("init")
         plan = self.run_cli("plan", "--need", "repository discovery")
@@ -468,7 +495,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertIsNone(opened["selected"])
         self.assertEqual(opened["semanticFallback"], "implementer")
         self.assertEqual(state["named_agents"], "available")
-        self.assertIsNone(recovered["selected"])
+        self.assertEqual(recovered["selected"], "gpt-6-sol")
         self.assertEqual(recovered["blocked"], [])
 
     def test_explicit_agent_type_available_closes_surface_only(self) -> None:

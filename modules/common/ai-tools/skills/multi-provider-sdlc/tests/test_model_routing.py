@@ -107,7 +107,7 @@ class ModelRoutingTests(unittest.TestCase):
         self.assertFalse(self.registry["models"]["fable-5-1"]["workspace_write"])
         self.assertEqual(
             routes["implementation"]["preferred"],
-            ["gpt-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-sol"],
         )
         self.assertEqual(
             routes["difficult implementation"]["preferred"],
@@ -363,8 +363,8 @@ class ModelRoutingTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
-            False: "450e54b1b13ee59aa099cb85f6db85086cf9c352578b8652ade13046c011aa7e",
-            True: "e264fe1ba3923b29014f60abe2e16c35a6395fd8782a631b251d9ab45bccd81a",
+            False: "2957824022cf32115b8a14faedd0093f6295cb250ec2587113dee8157582d999",
+            True: "bf024bfbdee8115bf80f1960bbb762160bd27f4e2c116c166acd746a540a69d6",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():
