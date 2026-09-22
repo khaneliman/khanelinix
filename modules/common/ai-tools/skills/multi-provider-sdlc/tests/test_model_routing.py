@@ -97,7 +97,7 @@ class ModelRoutingTests(unittest.TestCase):
         )
         self.assertEqual(
             routes["plan or code review"]["fallbacks"],
-            ["gpt-5-6-sol", "opus-5", "google-opus-4-6"],
+            ["gpt-6-sol", "opus-5", "google-opus-4-6"],
         )
         self.assertEqual(
             self.registry["semantic_roles"]["reviewer"]["gateway"]["claude"],
@@ -111,14 +111,14 @@ class ModelRoutingTests(unittest.TestCase):
         )
         self.assertEqual(
             routes["difficult implementation"]["preferred"],
-            ["gpt-5-6-sol", "opus-5"],
+            ["gpt-6-sol", "opus-5"],
         )
         self.assertEqual(
             routes["difficult implementation"]["fallbacks"],
             ["gpt-5-6-luna", "gemini-3-8-flash"],
         )
         self.assertTrue(self.registry["models"]["gemini-3-8-flash"]["write"])
-        self.assertTrue(self.registry["models"]["gpt-5-6-sol"]["workspace_write"])
+        self.assertTrue(self.registry["models"]["gpt-6-sol"]["workspace_write"])
         self.assertFalse(self.registry["models"]["gpt-6-astra"]["write"])
 
     def test_astra_gateway_default_effort_is_low(self) -> None:
@@ -236,7 +236,7 @@ class ModelRoutingTests(unittest.TestCase):
             ),
             "rendered model ID": lambda value: value["semantic_roles"]["reviewer"][
                 "native"
-            ].__setitem__("codex", "gpt-5.6-sol\nname = injected"),
+            ].__setitem__("codex", "gpt-6-sol\nname = injected"),
         }
 
         for label, mutate in cases.items():
@@ -363,8 +363,8 @@ class ModelRoutingTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
-            False: "d1e26a5150dc23d119177befa326039e2047663a43bf5499c6f9192bb6e5a684",
-            True: "d782ffcc4fcdd41d8530d5b394167187867b0d483a8687b1a0a137c4d9fec9d4",
+            False: "29e663ecc600651ea8d66b835539caffc712d651d66678f8ee85528015e944c0",
+            True: "6a5475dfc113854e34ac954ecf0dc52b3a3f268bf4e0a2f6eb2acd4d153e0c06",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():

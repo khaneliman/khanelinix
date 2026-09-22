@@ -148,7 +148,7 @@ def fixture(directory: Path) -> Path:
                 "data": {
                     "item": {
                         "tool": "spawnAgent",
-                        "model": "gpt-5.6-sol",
+                        "model": "gpt-6-sol",
                         "reasoningEffort": "high",
                     }
                 },
@@ -268,7 +268,7 @@ class SessionAuditTests(unittest.TestCase):
                 (row["provider"], row["model"])
                 for row in report["delegation_models_by_provider"]
             },
-            {("claudeAgent", "fable"), ("codex", "gpt-5.6-sol")},
+            {("claudeAgent", "fable"), ("codex", "gpt-6-sol")},
         )
 
     def test_provider_and_time_filters_are_applied_before_normalization(self) -> None:
@@ -459,7 +459,7 @@ class SessionAuditTests(unittest.TestCase):
                 payload={
                     "taskId": "task",
                     "role": "reviewer",
-                    "model": "gpt-5.6-sol",
+                    "model": "gpt-6-sol",
                     "effort": "high",
                 },
             )
@@ -479,7 +479,7 @@ class SessionAuditTests(unittest.TestCase):
 
         self.assertEqual(report["totals"]["worker_tasks_started"], 1)
         self.assertEqual(report["worker_roles"], [{"role": "reviewer", "count": 1}])
-        self.assertEqual(report["models"], [{"model": "gpt-5.6-sol", "count": 1}])
+        self.assertEqual(report["models"], [{"model": "gpt-6-sol", "count": 1}])
         self.assertEqual(report["reasoning_efforts"], [{"effort": "high", "count": 1}])
 
     def test_policy_revision_is_attached_without_reading_configuration(self) -> None:

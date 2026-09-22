@@ -44,7 +44,7 @@ in
 
         deliberateFallbackModels = [
           {
-            model = "openai/gpt-5.6-sol";
+            model = "openai/gpt-6-sol";
             reasoningEffort = "high";
           }
           testRunnerModel
@@ -139,7 +139,7 @@ in
             modelConcurrency = {
               "openai/gpt-6-astra" = 1;
               "cliproxyapi/claude-gpt-6-astra" = 1;
-              "openai/gpt-5.6-sol" = 2;
+              "openai/gpt-6-sol" = 2;
               "github-copilot/gpt-5-mini" = 12;
             };
           };

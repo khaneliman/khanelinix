@@ -43,7 +43,7 @@ in
         enableMcpIntegration = mkIf mcpModuleEnabled true;
 
         settings = {
-          model = "gpt-5.6-sol";
+          model = "gpt-6-sol";
           effortLevel = "high";
           theme = "dark";
           banner = "once";

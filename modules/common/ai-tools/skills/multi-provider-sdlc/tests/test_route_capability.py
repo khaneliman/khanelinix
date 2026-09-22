@@ -232,7 +232,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(plan["candidates"][0]["modelFamily"], "anthropic-claude")
         self.assertEqual(
             [candidate["model"] for candidate in plan["candidates"]],
-            ["fable-5-1", "gpt-6-astra", "gpt-5-6-sol", "opus-5", "google-opus-4-6"],
+            ["fable-5-1", "gpt-6-astra", "gpt-6-sol", "opus-5", "google-opus-4-6"],
         )
         self.assertTrue(all(candidate["probe"] for candidate in plan["candidates"]))
         self.assertEqual(plan["semanticFallback"], "reviewer")
@@ -252,7 +252,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(claim["planRevision"], 0)
         self.assertEqual(
             claim["plannedCandidates"],
-            ["gpt-5-6-sol", "opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-sol", "opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
         )
         self.assertIsNone(claim["candidateOverride"])
         self.assertEqual(
@@ -280,7 +280,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(stored_claim["plan_revision"], 0)
         self.assertEqual(
             stored_claim["planned_candidates"],
-            ["gpt-5-6-sol", "opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-sol", "opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
         )
         self.assertIsNone(stored_claim["candidate_override"])
 
@@ -309,7 +309,7 @@ class RouteCapabilityTests(unittest.TestCase):
         )
         self.assertEqual(
             claim["plannedCandidates"],
-            ["gpt-5-6-sol", "opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-sol", "opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
         )
         self.assertEqual(stored_claim["candidate_override"], claim["candidateOverride"])
 
@@ -555,7 +555,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(state["providers"]["openai"], "available")
         self.assertEqual(state["pools"]["openai"]["general"], "available")
         self.assertEqual(state["routes"]["gpt-5-6-luna"], "available")
-        self.assertEqual(state["routes"]["gpt-5-6-sol"], "unknown")
+        self.assertEqual(state["routes"]["gpt-6-sol"], "unknown")
 
     def test_open_pool_is_sticky_after_available_telemetry(self) -> None:
         self.initialize()
