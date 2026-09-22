@@ -21,7 +21,7 @@ let
     gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
     inherit lib pkgs;
   };
-  deliberateModel = "openai/gpt-5.6-luna";
+  deliberateModel = "openai/gpt-6-luna";
 in
 {
   imports = [
@@ -40,9 +40,9 @@ in
     xdg.configFile."opencode/tui.json".force = true;
 
     home.shellAliases = {
-      opencode-coding = "opencode --model openai/gpt-5.6-luna";
+      opencode-coding = "opencode --model openai/gpt-6-luna";
       opencode-deep = "opencode --model ${deliberateModel}";
-      opencode-nano = "opencode --model openai/gpt-5.6-luna";
+      opencode-nano = "opencode --model openai/gpt-6-luna";
       opencode-research = "opencode --agent build --model ${deliberateModel}";
       opencode-spark = "opencode --model openai/gpt-5.3-codex-spark";
     }
@@ -76,7 +76,7 @@ in
         model = deliberateModel;
         share = "manual";
         autoupdate = false;
-        small_model = "openai/gpt-5.6-luna";
+        small_model = "openai/gpt-6-luna";
         default_agent = "build";
         compaction = {
           auto = true;
@@ -97,7 +97,7 @@ in
           };
           nano = {
             template = "Keep each action minimal and targeted for small-surface modifications.";
-            model = "openai/gpt-5.6-luna";
+            model = "openai/gpt-6-luna";
             agent = "build";
             subtask = true;
           };

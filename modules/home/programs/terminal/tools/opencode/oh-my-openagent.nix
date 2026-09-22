@@ -12,7 +12,7 @@ let
     gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
     inherit lib;
   };
-  deliberateModel = "openai/gpt-5.6-luna";
+  deliberateModel = "openai/gpt-6-luna";
 
   json = pkgs.formats.json { };
 in
@@ -38,7 +38,7 @@ in
         debuggerModel = aiTools.agents.debugger.model.opencode;
         testRunnerModel = aiTools.agents.test-runner.model.opencode;
         sparkModel = "openai/gpt-5.3-codex-spark";
-        miniModel = "openai/gpt-5.6-luna";
+        miniModel = "openai/gpt-6-luna";
         opencodeSkillsPath = "${config.xdg.configHome}/opencode/skills";
         disabledPluginSkills = aiTools.opencode.disabledPluginSkills;
 

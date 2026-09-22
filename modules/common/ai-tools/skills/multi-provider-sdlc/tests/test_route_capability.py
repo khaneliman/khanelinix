@@ -188,7 +188,7 @@ class RouteCapabilityTests(unittest.TestCase):
             "--need",
             str(plan["need"]),
             "--model",
-            "gpt-5-6-luna",
+            "gpt-6-luna",
         )
         recorded = self.run_cli(
             "record",
@@ -202,7 +202,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertTrue(initialized["created"])
         self.assertEqual(recorded["revision"], 2)
         self.assertEqual(status_value["activeClaims"], [])
-        self.assertEqual(status_value["routes"]["gpt-5-6-luna"], "available")
+        self.assertEqual(status_value["routes"]["gpt-6-luna"], "available")
 
     def test_directory_sync_rejection_keeps_atomic_state_portable(self) -> None:
         real_fsync = os.fsync
@@ -252,7 +252,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(claim["planRevision"], 0)
         self.assertEqual(
             claim["plannedCandidates"],
-            ["gpt-6-sol", "opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-sol", "opus-5", "gpt-6-luna", "gemini-3-8-flash"],
         )
         self.assertIsNone(claim["candidateOverride"])
         self.assertEqual(
@@ -280,7 +280,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(stored_claim["plan_revision"], 0)
         self.assertEqual(
             stored_claim["planned_candidates"],
-            ["gpt-6-sol", "opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-sol", "opus-5", "gpt-6-luna", "gemini-3-8-flash"],
         )
         self.assertIsNone(stored_claim["candidate_override"])
 
@@ -309,7 +309,7 @@ class RouteCapabilityTests(unittest.TestCase):
         )
         self.assertEqual(
             claim["plannedCandidates"],
-            ["gpt-6-sol", "opus-5", "gpt-5-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-sol", "opus-5", "gpt-6-luna", "gemini-3-8-flash"],
         )
         self.assertEqual(stored_claim["candidate_override"], claim["candidateOverride"])
 
@@ -361,7 +361,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
     def test_independent_claim_outcomes_merge_by_claim_id(self) -> None:
         self.initialize()
-        self.complete("gpt-5-6-luna", "success")
+        self.complete("gpt-6-luna", "success")
         spark = self.claim("gpt-5-3-codex-spark", 2)
         gemini = self.claim("gemini-3-8-flash", 3)
 
@@ -445,7 +445,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
     def test_named_agent_surface_recovers_on_availability_evidence(self) -> None:
         self.initialize()
-        self.complete("gpt-5-6-luna", "success")
+        self.complete("gpt-6-luna", "success")
         blocked_claim = self.claim("opus-5", 2)
         healthy_claim = self.claim("gemini-3-8-flash", 3)
 
@@ -473,7 +473,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
     def test_explicit_agent_type_available_closes_surface_only(self) -> None:
         self.initialize()
-        self.complete("gpt-5-6-luna", "success")
+        self.complete("gpt-6-luna", "success")
         blocked_claim = self.claim("opus-5", 2)
         healthy_claim = self.claim("gemini-3-8-flash", 3)
 
@@ -499,7 +499,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
     def test_gateway_role_in_exhausted_pool_has_no_semantic_fallback(self) -> None:
         self.initialize()
-        self.complete("gpt-5-6-luna", "quota-exhausted")
+        self.complete("gpt-6-luna", "quota-exhausted")
         capability.ingest_google_telemetry(
             self.state,
             self.task_id,
@@ -516,7 +516,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
     def test_native_role_survives_exhausted_gateway_pool(self) -> None:
         self.initialize()
-        self.complete("gpt-5-6-luna", "quota-exhausted")
+        self.complete("gpt-6-luna", "quota-exhausted")
         capability.ingest_google_telemetry(
             self.state,
             self.task_id,
@@ -547,14 +547,14 @@ class RouteCapabilityTests(unittest.TestCase):
 
     def test_success_marks_exact_route_pool_provider_and_surface(self) -> None:
         self.initialize()
-        result = self.complete("gpt-5-6-luna", "success")
+        result = self.complete("gpt-6-luna", "success")
         state = self.load_state()
 
         self.assertEqual(result["revision"], 2)
         self.assertEqual(state["named_agents"], "available")
         self.assertEqual(state["providers"]["openai"], "available")
         self.assertEqual(state["pools"]["openai"]["general"], "available")
-        self.assertEqual(state["routes"]["gpt-5-6-luna"], "available")
+        self.assertEqual(state["routes"]["gpt-6-luna"], "available")
         self.assertEqual(state["routes"]["gpt-6-sol"], "unknown")
 
     def test_open_pool_is_sticky_after_available_telemetry(self) -> None:
@@ -580,7 +580,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
     def test_stale_revision_is_rejected_without_mutation(self) -> None:
         self.initialize()
-        self.claim("gpt-5-6-luna")
+        self.claim("gpt-6-luna")
         before = self.state.read_bytes()
 
         with self.assertRaisesRegex(
@@ -653,7 +653,7 @@ class RouteCapabilityTests(unittest.TestCase):
                 self.task_id,
                 True,
                 "repository discovery",
-                "gpt-5-6-luna",
+                "gpt-6-luna",
             )
 
     def test_google_telemetry_opens_only_exhausted_pool(self) -> None:
@@ -750,7 +750,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.claim("opus-5")
         state = self.load_state()
         claim = next(iter(state["claims"].values()))
-        claim["planned_candidates"] = ["gpt-5-6-luna"]
+        claim["planned_candidates"] = ["gpt-6-luna"]
         self.state.write_text(json.dumps(state), encoding="utf-8")
 
         with self.assertRaisesRegex(capability.CapabilityError, "not a planned"):
@@ -758,7 +758,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
         claim["planned_candidates"] = [
             "opus-5",
-            "gpt-5-6-luna",
+            "gpt-6-luna",
             "gemini-3-8-flash",
         ]
         claim["candidate_override"] = {

@@ -648,8 +648,10 @@ def candidate_model_ids(
 def semantic_fallback_models(
     registry: dict[str, Any], route: dict[str, Any], gateway_enabled: bool
 ) -> list[str]:
+    if not gateway_enabled:
+        return []
     role = registry["semantic_roles"][route["semantic_role"]]
-    projection = role["gateway"] if gateway_enabled else role["native"]
+    projection = role["gateway"]
     return sorted(
         {model for model in projection.values() if model in registry["models"]}
     )

@@ -137,7 +137,7 @@ let
     # Faster implementation loop for routine coding tasks.
     quick = {
       model_reasoning_effort = "medium";
-      model = "gpt-5.6-luna";
+      model = "gpt-6-luna";
       model_reasoning_summary = "none";
       model_verbosity = "low";
       plan_mode_reasoning_effort = "medium";

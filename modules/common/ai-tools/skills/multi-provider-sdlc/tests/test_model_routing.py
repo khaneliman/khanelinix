@@ -107,7 +107,7 @@ class ModelRoutingTests(unittest.TestCase):
         self.assertFalse(self.registry["models"]["fable-5-1"]["workspace_write"])
         self.assertEqual(
             routes["implementation"]["preferred"],
-            ["gpt-5-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-luna", "gemini-3-8-flash"],
         )
         self.assertEqual(
             routes["difficult implementation"]["preferred"],
@@ -115,7 +115,7 @@ class ModelRoutingTests(unittest.TestCase):
         )
         self.assertEqual(
             routes["difficult implementation"]["fallbacks"],
-            ["gpt-5-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-luna", "gemini-3-8-flash"],
         )
         self.assertTrue(self.registry["models"]["gemini-3-8-flash"]["write"])
         self.assertTrue(self.registry["models"]["gpt-6-sol"]["workspace_write"])
@@ -194,9 +194,9 @@ class ModelRoutingTests(unittest.TestCase):
 
     def test_cross_provider_model_is_rejected(self) -> None:
         invalid = copy.deepcopy(self.registry)
-        invalid["models"]["gpt-5-6-luna"]["upstream_provider"] = "antigravity"
+        invalid["models"]["gpt-6-luna"]["upstream_provider"] = "antigravity"
 
-        with self.assertRaisesRegex(routes.RoutingError, "gpt-5-6-luna"):
+        with self.assertRaisesRegex(routes.RoutingError, "gpt-6-luna"):
             routes.validate_registry(invalid)
 
     def test_cross_provider_native_model_is_rejected(self) -> None:
@@ -311,8 +311,8 @@ class ModelRoutingTests(unittest.TestCase):
         self.assertIn("modelRouting.gatewayAgentSpecs", agents)
         self.assertIn("Explicit model route", agents)
         self.assertIn("modelRouting.cliproxyAliases", service)
-        self.assertNotIn("claude-gpt-5.6-luna", agents)
-        self.assertNotIn("claude-gpt-5.6-luna", service)
+        self.assertNotIn("claude-gpt-6-luna", agents)
+        self.assertNotIn("claude-gpt-6-luna", service)
 
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_shared_worker_core_reaches_every_provider_projection(self) -> None:
@@ -363,8 +363,8 @@ class ModelRoutingTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
-            False: "29e663ecc600651ea8d66b835539caffc712d651d66678f8ee85528015e944c0",
-            True: "6a5475dfc113854e34ac954ecf0dc52b3a3f268bf4e0a2f6eb2acd4d153e0c06",
+            False: "450e54b1b13ee59aa099cb85f6db85086cf9c352578b8652ade13046c011aa7e",
+            True: "0ca2d5c380173e76e075d610c014c982d4d39ea0f7a37e712fe2ba91cd471137",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():

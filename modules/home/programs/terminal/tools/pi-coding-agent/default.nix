@@ -137,7 +137,7 @@ in
       models = lib.mkIf (localProviders != { }) { providers = localProviders; };
       settings = lib.recursiveUpdate {
         defaultProvider = "openai-codex";
-        defaultModel = "gpt-5.6-luna";
+        defaultModel = "gpt-6-luna";
         defaultThinkingLevel = "high";
         modelThinkingLevels = {
           "openai-codex/gpt-6-astra" = "low";

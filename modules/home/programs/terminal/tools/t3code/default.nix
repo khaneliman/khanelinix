@@ -275,7 +275,7 @@ in
           sidebarAutoSettleAfterDays = null;
           textGenerationModelSelection = {
             instanceId = "codex";
-            model = "gpt-5.6-luna";
+            model = "gpt-6-luna";
             options = [
               {
                 id = "reasoningEffort";
@@ -345,7 +345,7 @@ in
             }
             {
               provider = "codex";
-              model = "gpt-5.6-luna";
+              model = "gpt-6-luna";
             }
             {
               provider = "codex";
