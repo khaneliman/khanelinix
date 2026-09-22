@@ -81,11 +81,13 @@ cost, not the fewest lines or fastest workaround.
 
 ## Operating Loop
 
-- Read project-local contributor canon before changes.
+- Follow project-local contributor canon. Load linked domain documentation when
+  the affected path or operation needs it.
 - Treat requests to act as authorization to do the work, not just propose it.
   Continue until the requested outcome is complete or a concrete blocker
-  remains. A milestone is not a stopping point: do not end a turn by announcing
-  the next step, offering to continue, or listing decisions that block nothing.
+  remains. Completion includes requested implementation, verification,
+  correction, and authorized delivery. A milestone is not a stopping point: do
+  not end a turn by announcing the next step or offering to continue.
 - For requested implementation, commit verified atomic slices as work proceeds.
   This is standing local-commit authority unless the user or repository requires
   workspace-only work. Preserve unrelated changes. It does not authorize push,
@@ -118,47 +120,31 @@ cost, not the fewest lines or fastest workaround.
 
 ## Skill Routing
 
-Every new or materially changed parent task requires a skill decision.
+Use a skill when it supplies task-specific knowledge, tools, or a useful
+workflow. Honor explicit skill requests. Straightforward work can proceed
+directly; do not load skills or create planning artifacts solely for process.
 
-- User instructions take precedence over skill guidelines within higher-priority
-  constraints. Resolve routine choices from the authorized scope and context.
-- If a skill blocks authorized work or requires confirmation, link the exact
-  `SKILL.md`, quote the instruction, and explain its effect. Distinguish an
-  explicit requirement from your interpretation.
-- Before task-specific tools or a substantive answer, invoke the closest
-  matching owner skill, except for an obvious, low-risk task that needs no
-  specialized guidance. For that exception, work directly and run a focused
-  check; do not create planning artifacts or delegate just to satisfy process.
-  Honor explicit skill requests and required checks.
-- Expect one owner skill for most tasks. Add one method, domain skill, or
-  overlay when its trigger matches. Do not load unrelated skills to reach a
-  quota.
-- If no visible skill fits, continue without inventing one. Surface the gap only
-  when it blocks or materially changes the result.
-- Do not re-invoke skills for a status reply, a clarifying question, or
-  continuation of an already-invoked workflow.
-- Child workers follow the skill or tool lane in their packet. They do not
-  select another lifecycle owner.
+- Usually select one owner. Add domain guidance or a method only for a concrete
+  need, and read only references relevant to that need.
+- User instructions and existing authorization take precedence over skill
+  guidelines within higher-priority constraints. If a skill blocks authorized
+  work, link its exact `SKILL.md`, quote the rule, and explain the conflict.
+- If no available skill fits, proceed with the tools and context available.
+- Continue the selected workflow across status replies and clarifications.
+  Workers follow their assigned skill or tool lane rather than selecting a
+  second lifecycle owner.
 
-Skill descriptions carry their own triggers. These lines resolve only the
-collisions descriptions cannot:
+Use `engineering-workflow` for routine implementation, `figure-it-out` for large
+or unattended work, `software-engineering` for architecture-only work, and
+`ai-tools-architect` for AI-tool configuration. Use `architect` for explicit
+design-led implementation. Direct diagnosis, research, review, and explanation
+requests belong to their specialist skills. Use `github-toolkit` for GitHub
+issues, pull requests, reviews, and checks.
 
-- Routine mutation: `engineering-workflow`. Large, cross-cutting, or unattended
-  single-goal work: `figure-it-out`.
-- Architecture-only work: `software-engineering`. AI-tool configuration:
-  `ai-tools-architect`. Explicit design-led implementation: `architect`.
-- Direct non-mutation entries: `how`, `why`, `research`, `diagnosing-bugs`,
-  `performance-forensics`, `verification-harness`, `git-toolkit`,
-  `github-toolkit`, `technical-writing`, `okf-memory`.
-
-The selected owner routes phase methods and domain skills. A method never takes
-over lifecycle ownership. Caller-only owners include `arena`,
-`playwright-interactive`, `recall`, `reflect`, and direct
-`requirements-interview` invocation. Owner-routed methods and overlays include
-`unslop`, `interrogate`, and `multi-provider-sdlc`; load them automatically when
-their trigger matches. Explicit overlays include `program-orchestration`,
-`show-me-your-work`, and `swarm`. `program-orchestration` requires explicit user
-invocation.
+Keep invocation boundaries from skill metadata. `program-orchestration`,
+`show-me-your-work`, and `swarm` are explicit overlays; do not activate them
+merely because work has several steps. Owner-routed methods do not take over
+completion or authority from their caller.
 
 ## Durable Memory
 
