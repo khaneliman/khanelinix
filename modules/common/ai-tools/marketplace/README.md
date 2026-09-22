@@ -82,24 +82,20 @@ work. This automatic activation is best-effort. If an agent misses the route,
 say `Use engineering-workflow` explicitly. You do not need to invoke every
 downstream skill.
 
-`engineering-workflow` owns this lifecycle:
+`engineering-workflow` carries implementation through verification, accepted
+corrections, and authorized delivery. It selects supporting methods as needed;
+phase names are not mandatory checkpoints or a required stack of documents.
 
-```text
-Ground -> Shape -> Implement -> Verify -> Review -> Correct -> Hand off
-  how      architect   domain skill   blast-radius          interrogate
-  why      engineering-principles     verification-harness
-  research             tdd            performance-forensics
-  diagnosing-bugs
-  requirements-interview
-```
+Every risk level requires focused verification. Fresh independent review is
+required when requested, for high-risk changes, or when correctness or impact
+uncertainty remains after investigation. Correction continues while making
+progress on accepted blockers; repeated unchanged failures require
+investigation.
 
-Every risk level requires focused verification. Normal-risk and high-risk work
-also requires a fresh independent review. The workflow allows one correction and
-one re-review before handoff.
-
-The workflow never commits, pushes, merges, publishes, deploys, or performs
-another external write automatically. The agent stops when required authority is
-missing.
+The workflow honors existing local-commit authority and workspace-only requests.
+Local authority does not authorize push, merge, publication, deployment, pull
+request creation, or another external write. Missing authority blocks only the
+action that needs it, not already-authorized preparation.
 
 Use a direct specialist entry when the task does not need the routine mutation
 lifecycle:
@@ -120,13 +116,13 @@ lifecycle:
 | Run adversarial multi-model review            | `interrogate`            |
 
 An explicit `/architect` request uses the design-led `architect` workflow.
-Inside routine mutation work, `engineering-workflow` can call `architect` only
-for its Shape phase.
+Inside routine mutation work, `engineering-workflow` can call `architect` when
+interfaces or state ownership remain uncertain.
 
 ## Choose the task shape
 
-`engineering-workflow` selects one task shape. Each shape changes the evidence,
-verification target, and completion signal.
+Consult task shapes when their completion criteria help. Each shape describes
+useful evidence, a verification target, and a completion signal.
 
 | Shape         | Required emphasis                                                            |
 | ------------- | ---------------------------------------------------------------------------- |

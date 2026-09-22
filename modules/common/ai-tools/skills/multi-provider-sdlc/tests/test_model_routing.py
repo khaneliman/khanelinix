@@ -363,8 +363,8 @@ class ModelRoutingTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
-            False: "47ab55888e6e6250aa660da0585cdddc1483e4e0ddf31c7040fcf344d8f5157e",
-            True: "40e55762e2e1a1d4c274de003c90d5efb4807e2b688baf3d2cf9e78f7721a3de",
+            False: "d1e26a5150dc23d119177befa326039e2047663a43bf5499c6f9192bb6e5a684",
+            True: "d782ffcc4fcdd41d8530d5b394167187867b0d483a8687b1a0a137c4d9fec9d4",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():

@@ -1,98 +1,65 @@
 ---
 name: engineering-workflow
-description: "Default lifecycle for routine bug fixes, features, refactors, migrations, dependency updates, configuration, scripts, and code. Routes investigation through handoff. Excludes answer-only, diagnosis-only, review-only, architecture-only, large, cross-cutting, and unattended work."
+description: Complete routine bug fixes, features, refactors, migrations, and configuration changes. Use for implementation, not standalone diagnosis, review, or large unattended work.
 license: Complete terms in LICENSE
 ---
 
 # Engineering Workflow
 
-Own the lifecycle for one routine software mutation. This skill sequences phases
-and gates. Matching domain and workflow skills own phase methods.
+Carry a routine software change through working implementation, verification,
+accepted corrections, and authorized delivery. A first patch is not completion.
+Choose the amount of investigation and structure the task needs, not a fixed
+sequence of documents or specialist invocations.
 
-## Scope
+## Scope and Authority
 
-Take mutation work by default. Leave non-mutation work to the direct
-specialist entry its description names.
-
-- Architecture-only work: `software-engineering`.
-- Large, cross-cutting, or unattended work: `figure-it-out`.
-- Explicit provider or model diversity also loads `multi-provider-sdlc` as an
-  overlay. This skill still owns mutation lifecycle and completion.
-
-Investigation inside a mutation is a phase here, not a separate entry.
-
-## Authority
-
-Parent owns architecture acceptance, integration, final judgment, and authority.
-Workers never own them.
+Architecture-only work belongs to `software-engineering`; large, cross-cutting,
+or unattended work belongs to `figure-it-out`. A direct explanation, diagnosis,
+or review request does not authorize implementation.
 
 Honor local-commit authority from the current request or standing user policy.
-Commit each verified atomic slice when authorized; do not wait for a reminder.
-Without that authority, preserve an exact patch before continuing. This grant
-implies no authority to push, merge, publish, deploy, open a pull request, or
-make another external write. Stop and ask when a required capability is missing.
+Commit verified atomic slices when authorized; respect workspace-only requests.
+Local authority implies no authority to push, merge, publish, deploy, open a
+pull request, or perform another external write. Use existing authorization;
+ask only for a missing decision or capability that blocks the requested result.
+The parent retains architecture acceptance, integration, and final judgment.
 
-## Phases
+## Completion
 
-Run these phases in order. Skip a phase only when a gate rule allows it.
-For obvious, low-risk work, a direct read, edit, and focused check can cover
-Ground through Verify. Keep acceptance and change shape brief in the working
-context; no separate planning artifact, specialist invocation, or delegation is
-required unless it resolves a concrete uncertainty or meets a required check.
-Honor explicit skill requests and the risk-based review gate.
+- Establish the intended behavior, affected boundary, and evidence that will
+  demonstrate success. Keep these in working context unless handoff or recovery
+  needs a durable artifact.
+- Implement the smallest complete change consistent with surrounding code.
+  Use domain guidance for non-obvious constraints, not generic programming steps.
+- Run relevant existing checks and any checks required by contributor canon.
+  Verify new behavior and affected regressions. Add tests when they establish
+  a meaningful contract; do not manufacture tests for low-impact edits.
+- Review the diff for correctness and scope. Fresh independent review is
+  required when requested, for high-risk changes, or when correctness or impact
+  uncertainty remains after investigation. Routine changes otherwise do not
+  require a worker. See [gates.md](references/gates.md) for risk and correction
+  criteria when these decisions need more detail.
+- Resolve accepted blockers and rerun checks invalidated by corrections.
+  Continue while making progress; investigate repeated unchanged failures.
+  Stop for a concrete blocker, missing authority, or an explicit budget limit,
+  not merely because the first implementation or review finished.
+- Complete authorized delivery and task-owned resource cleanup. Report the
+  result, actual checks, and material gaps without claiming unobserved success.
 
-1. **Ground.** Keep a compact acceptance summary using
-   [phase-handoff.md](references/phase-handoff.md). Separate requirements from
-   assumptions. Read the real code
-   and constraints. Resolve empirical forks with a cheap probe. Ask only for a
-   product choice or missing authority. Use `research` for external
-   primary-source facts. Use `requirements-interview` only when a material
-   product choice remains unresolved. Use `how` for unfamiliar structure and
-   `why` for motivation or regression history. For a hard general bug, use
-   `diagnosing-bugs` to establish the exact symptom and supported cause.
-2. **Shape.** Choose change shape and sequence. Use `architect` for a
-   material uncertainty about interfaces, state, or module boundaries. Use
-   `engineering-principles` for diff sizing and work order. Before writes, use
-   `git-toolkit` to plan independently valid commit units when work needs
-   multiple slices or local commits. Read [task-shapes.md](references/task-shapes.md).
-3. **Implement.** The matching installed domain skill owns the method. Keep one
-   write owner per batch. Use `tdd` only when the user requests TDD or
-   test-first work. Read [delegation.md](references/delegation.md) before you
-   use workers.
-4. **Verify.** Run focused verification against the matching real surface. Use
-   `verification-harness` to audit or propose when that surface is missing or
-   unreliable. Create or repair only the surface needed within the caller's
-   authorized scope; do not require another grant for already-authorized work. When
-   installed, use `performance-forensics` for measured performance claims. Use
-   `blast-radius` when reach past the diff is unclear. Read
-   [gates.md](references/gates.md).
-5. **Review.** Get a fresh independent review when risk requires it. Use
-   `interrogate` for a contested or high-stakes change.
-6. **Correct.** Fix accepted findings, then revalidate the touched surface.
-   Continue on accepted blockers while making progress within scope. Re-ground
-   repeated unchanged failures instead of repeating the same correction.
-7. **Hand off.** Complete `git-toolkit` cleanup mode after integration, including
-   worker resources. Account for removed resources and exact retention blockers.
-   Report outcome, changed files, omissions, verification gaps, and residual risk.
-8. **Reflect.** Optional when installed. Use `reflect` after a correction or
-   after a clean complex landing.
+## Guidance When Needed
 
-A specialist can complete more than one phase. Inspect its artifact and resume
-at the first unfinished gate. Do not repeat completed work to satisfy the list.
-
-## Slice Execution
-
-Ground and Shape can cover the full stack. When the work needs review evidence,
-commit boundaries, or authority checks, run one planned unit at a time through
-the `verified-slice` method in `engineering-principles`. Each unit runs
-Implement through Correct. With `local-commit`, prepare and commit the candidate,
-then confirm occurrence. Without commit authority, preserve the exact patch or
-an isolated worktree. Do not batch edits before verification. Advance after
-verified evidence and a durable rollback boundary, not a mandatory commit.
-
-## Gates
-
-Scale rigor to trivial, normal, or high risk. Focused verification is the
-minimum at every level. Fresh independent review is optional for trivial risk
-and required for normal and high risk. Read [gates.md](references/gates.md)
-before you claim completion.
+- For unclear acceptance or a handoff, use
+  [phase-handoff.md](references/phase-handoff.md).
+- For task-specific completion criteria, including bounded modernization, use
+  [task-shapes.md](references/task-shapes.md). Its phases are planning vocabulary,
+  not mandatory checkpoints for every change.
+- For uncertain interfaces or state ownership, use `architect`. For difficult
+  diagnosis, use `diagnosing-bugs`; for historical rationale, use `why`.
+- For commit splitting or task-owned worktree creation and cleanup, use
+  `git-toolkit`. For coordinated slices, use `engineering-principles`.
+- Before delegating, read [delegation.md](references/delegation.md). Use
+  `interrogate` for contested or high-stakes review, and `multi-provider-sdlc`
+  only when concrete provider routing is needed.
+- Use `tdd` when explicitly requested. Other specialist methods are optional
+  unless the task or repository requires them. Resume unfinished work after a
+  specialist returns; do not repeat completed checks to satisfy a phase label.

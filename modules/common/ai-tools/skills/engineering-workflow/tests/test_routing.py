@@ -83,23 +83,7 @@ class FrontmatterContract(unittest.TestCase):
         self.assertTrue(description)
         self.assertLessEqual(len(description), MAX_DESCRIPTION_CHARACTERS)
 
-    def test_description_front_loads_mutation_triggers(self) -> None:
-        description = self.fields["description"].lower()
-        head = description[:200]
-        for trigger in ("bug fix", "feature", "refactor", "migration"):
-            self.assertIn(trigger, head)
 
-    def test_description_names_excluded_endpoints(self) -> None:
-        description = self.fields["description"].lower()
-        for exclusion in (
-            "answer-only",
-            "diagnosis-only",
-            "review-only",
-            "architecture-only",
-            "cross-cutting",
-            "unattended",
-        ):
-            self.assertIn(exclusion, description)
 
     def test_playbook_stays_under_line_budget(self) -> None:
         self.assertLess(len(read(SKILL_MD).splitlines()), MAX_PLAYBOOK_LINES)
@@ -109,98 +93,12 @@ class PlaybookContract(unittest.TestCase):
     def setUp(self) -> None:
         _, self.body = split_frontmatter(read(SKILL_MD))
 
-    def test_package_names_required_routing_skills(self) -> None:
-        package_text = self.body + read(REFERENCES / "task-shapes.md")
-        for skill in (
-            "arena",
-            "how",
-            "why",
-            "architect",
-            "engineering-principles",
-            "blast-radius",
-            "interrogate",
-            "reflect",
-            "research",
-            "requirements-interview",
-            "tdd",
-            "verification-harness",
-            "performance-forensics",
-            "diagnosing-bugs",
-        ):
-            self.assertIn(f"`{skill}`", package_text)
 
-    def test_routes_leaf_methods_to_matching_phases(self) -> None:
-        phase_routes = {
-            "ground": ("`research`", "`requirements-interview`"),
-            "implement": ("`tdd`",),
-            "verify": ("`verification-harness`", "`performance-forensics`"),
-        }
-        for phase, skills in phase_routes.items():
-            match = re.search(
-                rf"^\d+\. \*\*{phase.title()}\.\*\*(.*?)(?=^\d+\.|\Z)",
-                self.body,
-                re.MULTILINE | re.DOTALL,
-            )
-            self.assertIsNotNone(match, phase)
-            for skill in skills:
-                self.assertIn(skill, match.group(1), phase)
 
-    def test_routes_implementation_to_installed_domain_skill(self) -> None:
-        self.assertIn("matching installed domain skill owns the method", self.body)
 
-    def test_shape_plans_independently_valid_commit_units(self) -> None:
-        shape = re.search(
-            r"^2\. \*\*Shape\.\*\*(.*?)(?=^3\.)",
-            self.body,
-            re.MULTILINE | re.DOTALL,
-        )
-        self.assertIsNotNone(shape)
-        self.assertIn("`git-toolkit`", shape.group(1))
-        self.assertIn("independently valid commit units", shape.group(1))
-        self.assertIn("Before writes", shape.group(1))
 
-    def test_runs_each_unit_through_verified_slice(self) -> None:
-        slice_section = self.body.split("## Slice Execution", maxsplit=1)[1].split(
-            "## Gates", maxsplit=1
-        )[0]
-        lowered = " ".join(slice_section.lower().split())
-        self.assertIn("`verified-slice` method in `engineering-principles`", lowered)
-        self.assertIn("one planned unit at a time", lowered)
-        self.assertIn(
-            "when the work needs review evidence, commit boundaries, or "
-            "authority checks",
-            lowered,
-        )
-        self.assertRegex(
-            lowered,
-            r"with `local-commit`, prepare and commit the candidate, "
-            r"then confirm occurrence\. without commit authority, preserve the exact patch",
-        )
-        self.assertIn("do not batch edits before verification", lowered)
-        self.assertIn("verified evidence and a durable rollback boundary", lowered)
 
-    def test_architecture_only_has_one_non_mutating_route(self) -> None:
-        self.assertIn("Architecture-only work: `software-engineering`.", self.body)
-        self.assertNotIn(
-            "Architecture-only work: `software-engineering` or `architect`",
-            self.body,
-        )
 
-    def test_phase_order_is_declared(self) -> None:
-        phases = re.findall(r"^\d+\.\s+\*\*([A-Za-z ]+)\.\*\*", self.body, re.MULTILINE)
-        self.assertEqual(
-            [phase.lower() for phase in phases],
-            [
-                "ground",
-                "shape",
-                "implement",
-                "verify",
-                "review",
-                "correct",
-                "hand off",
-                "reflect",
-            ],
-        )
 
     def test_declares_external_write_fences(self) -> None:
         lowered = self.body.lower()
@@ -208,8 +106,8 @@ class PlaybookContract(unittest.TestCase):
             self.assertIn(fence, lowered)
 
     def test_local_commit_authority_does_not_grant_remote_writes(self) -> None:
-        authority = self.body.split("## Authority", maxsplit=1)[1].split(
-            "## Phases", maxsplit=1
+        authority = self.body.split("## Scope and Authority", maxsplit=1)[1].split(
+            "## Completion", maxsplit=1
         )[0]
         self.assertIn("local-commit authority from the current request or standing user policy", authority)
         self.assertIn("implies no authority", authority)
@@ -221,8 +119,6 @@ class PlaybookContract(unittest.TestCase):
         self.assertIn("final judgment", lowered)
         self.assertIn("architecture acceptance", lowered)
 
-    def test_resumes_after_multi_phase_specialists(self) -> None:
-        self.assertIn("first unfinished gate", self.body)
 
 
 class ReferenceReachability(unittest.TestCase):
@@ -259,10 +155,6 @@ class GatesContract(unittest.TestCase):
     def test_focused_verification_is_the_minimum(self) -> None:
         self.assertRegex(self.text, r"focused verification is the minimum")
 
-    def test_review_gate_scales_with_risk(self) -> None:
-        self.assertRegex(self.text, r"trivial:\s*optional")
-        self.assertRegex(self.text, r"normal:\s*required")
-        self.assertRegex(self.text, r"high:\s*required")
 
     def test_correction_is_not_limited_to_one_pass(self) -> None:
         self.assertNotIn("one correction", self.text)
@@ -283,40 +175,14 @@ class RepositoryRoutingContract(unittest.TestCase):
         if not BASE_MD.is_file() or not MULTI_PROVIDER_ROOT.is_dir():
             self.skipTest("repository integration sources are not installed")
 
-    def test_base_routes_routine_mutation_to_workflow(self) -> None:
-        text = read(BASE_MD)
-        self.assertIn("Routine mutation: `engineering-workflow`", text)
 
     def test_base_routes_concrete_provider_work_to_overlay(self) -> None:
         text = normalized(BASE_MD)
         self.assertIn("`multi-provider-sdlc` select concrete models", text)
         self.assertIn("Use `multi-provider-sdlc` when provider diversity", text)
 
-    def test_base_keeps_architect_below_selected_owner(self) -> None:
-        text = normalized(BASE_MD)
-        self.assertIn("Explicit design-led implementation: `architect`", text)
-        self.assertIn("The selected owner routes phase methods", text)
 
-    def test_base_names_direct_and_caller_only_methods(self) -> None:
-        text = read(BASE_MD)
-        for skill in (
-            "research",
-            "requirements-interview",
-            "verification-harness",
-            "performance-forensics",
-            "diagnosing-bugs",
-            "arena",
-            "interrogate",
-            "swarm",
-        ):
-            self.assertIn(f"`{skill}`", text)
 
-    def test_base_keeps_methods_below_lifecycle_owners(self) -> None:
-        text = normalized(BASE_MD)
-        self.assertIn("A method never takes over lifecycle ownership", text)
-        self.assertIn("Owner-routed methods and overlays include", text)
-        self.assertIn("Explicit overlays include", text)
-        self.assertIn("load them automatically when their trigger matches", text)
 
     def test_multi_provider_root_rejects_lifecycle_ownership(self) -> None:
         text = normalized(MULTI_PROVIDER_ROOT / "SKILL.md")
@@ -392,8 +258,6 @@ class RepositoryWorkerLaneContract(unittest.TestCase):
     def test_reviewer_prompt_requires_implementation_ready_findings(self) -> None:
         text = normalized(GENERAL_AGENTS / "reviewer.md").lower()
         for requirement in (
-            "load every corresponding specialist skill",
-            "each changed language or domain",
             "return `blocked`",
             "revalidate every finding against the current target state",
             "current pr head when reviewing a pull request",

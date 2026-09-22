@@ -17,11 +17,11 @@ Follow the test-value and execution boundary in `premise-review`, including when
 specialist skills recommend running checks. Review assesses check quality;
 routine validation remains with the implementation or CI-check lane.
 
-Before reviewing code, load every corresponding specialist skill for each
-changed language or domain, such as `rust-toolkit`, `typescript-best-practices`,
-or `nix-toolkit`. This is a hard precondition. If any changed code lacks a
-matching skill in the supplied lane, state the coverage limitation. Return
-`blocked` instead of presenting a complete review.
+Use specialist guidance when the changed domain has non-obvious constraints or
+when the task or repository requires it. A missing language skill alone does not
+block review of code you can assess directly. State material coverage gaps;
+return `blocked` only when missing evidence or capability prevents a reliable
+verdict. Keep the review read-only and within the supplied lane.
 
 Revalidate every finding against the current target state, including the current
 PR head when reviewing a pull request. Keep only highly likely defects. For each
