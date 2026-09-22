@@ -35,3 +35,5 @@ Define:
 - decorative orbs/blobs
 - rounded text pills where icon controls would be clearer
 - viewport-scaled font sizes
+- cream or off-white page backgrounds, italic accent words in headlines,
+  numbered "01/02/03" section labels, and monospace labels as unchosen defaults

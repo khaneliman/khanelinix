@@ -129,7 +129,7 @@
 		{
 			"name": "frontend-design",
 			"description": "Create distinctive production-grade frontend interfaces.",
-			"version": "0.1.3",
+			"version": "0.1.4",
 			"author": {
 				"name": "khaneliman"
 			},
