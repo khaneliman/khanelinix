@@ -19,6 +19,12 @@ Use the smallest rung that can disprove the change, then widen by risk:
 Do not introduce `-D warnings` ad hoc when the repository does not own that
 policy. New compiler versions can turn unrelated warnings into failures.
 
+When parallel worktrees share `CARGO_TARGET_DIR`, a successful test command can
+reuse a same-package artifact from another worktree. After lock contention,
+check that newly added tests and the expected test count actually ran. If the
+artifact provenance is uncertain, let sibling builds settle and rerun with an
+isolated package target; do not clean the shared target out from under them.
+
 ## Test Placement
 
 - Keep private implementation tests beside the module.

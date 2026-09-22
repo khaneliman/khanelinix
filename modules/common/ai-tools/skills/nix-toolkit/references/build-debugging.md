@@ -24,6 +24,13 @@ failure or when an intermediate derivation build fails before top-level
 completion. Reserve `nix log` for inspecting already-completed builds or remote
 failures.
 
+When capturing a long build, redirect output to a file and check the build's
+exit status before reading a bounded excerpt. A pipeline such as
+`nix build ... | tail` reports `tail`'s status unless `pipefail` is set, and can
+hide the first builder failure behind dependency-failure summaries. Inspect the
+first failing derivation's log; use `nix log <drv>` if its output was lost.
+`--keep-going` can collect independent failures in one run.
+
 Legacy: `nix-build -A package && nix log result`
 
 ## Derivation-First Debugging

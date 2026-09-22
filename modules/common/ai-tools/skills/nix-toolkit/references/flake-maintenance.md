@@ -31,6 +31,15 @@ nix flake metadata --override-input nixpkgs path:/path/to/nixpkgs
 nix flake metadata github:owner/repo --inputs-from .   # evaluate another flake with current repo's pins
 ```
 
+## Local Source Visibility
+
+Git-backed flake references such as `.#package` snapshot tracked files only. If
+a newly added module or package is not discovered, check whether its file is
+untracked before debugging the module logic. Stage the intended file to include
+it in the git snapshot. For a probe that must include untracked files, use an
+impure `path:` reference, but note that it also includes unrelated untracked
+directories, which can break directory-based discovery.
+
 ## Follows Checks
 
 Check duplicate nixpkgs-like inputs before/after a follows change:
