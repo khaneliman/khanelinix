@@ -133,7 +133,8 @@ class RouteCapabilityTests(unittest.TestCase):
         skill = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
         routing = (SKILL_ROOT / "references" / "routing.md").read_text(encoding="utf-8")
 
-        self.assertIn("task-local capability state", skill)
+        self.assertIn("scripts/route-model.py", skill)
+        self.assertIn("Never omit existing state", skill)
         self.assertIn("route-capability.py", routing)
         self.assertIn("Skip the\nstate file for one known dispatch", routing)
         self.assertIn("semanticFallback", routing)

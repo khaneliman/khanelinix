@@ -762,6 +762,15 @@ def plan_route(
     path = state_path(path)
     registry, digest = load_registry_context()
     state = load_state(path, task_id, registry, digest)
+    return plan_from_state(state, registry, need, gateway_enabled)
+
+
+def plan_from_state(
+    state: dict[str, Any],
+    registry: dict[str, Any],
+    need: str,
+    gateway_enabled: bool = True,
+) -> dict[str, Any]:
     route = task_route(registry, need)
     candidates = []
     preferred_candidates = []
@@ -802,7 +811,7 @@ def plan_route(
         selected_candidates = preferred_candidates or candidates
         selected = selected_candidates[0]["model"] if selected_candidates else None
     return {
-        "taskId": task_id,
+        "taskId": state["task_id"],
         "revision": state["revision"],
         "need": need,
         "semanticRole": route["semantic_role"],

@@ -6,6 +6,9 @@ its projection adopts that policy. After a policy edit, run
 [`render-model-routes.py`](../scripts/render-model-routes.py) with `render`,
 apply the generated section update, then run it with `check`.
 
+This is a maintainer reference, not delegation input. Runtime selection is owned
+by `route-model.py` and its JSON contract.
+
 ## Subscription map
 
 <!-- BEGIN GENERATED SUBSCRIPTIONS -->

@@ -186,15 +186,15 @@ class RepositoryRoutingContract(unittest.TestCase):
 
     def test_multi_provider_root_rejects_lifecycle_ownership(self) -> None:
         text = normalized(MULTI_PROVIDER_ROOT / "SKILL.md")
-        self.assertIn("does not own lifecycle sequencing", text)
-        self.assertIn("`engineering-workflow` owns phase order", text)
+        self.assertIn("Caller owns lifecycle and final judgment", text)
+        self.assertIn("Selection grants no new authority", text)
 
     def test_multi_provider_owns_only_concrete_route_selection(self) -> None:
         fields, body = split_frontmatter(read(MULTI_PROVIDER_ROOT / "SKILL.md"))
         body = " ".join(body.split())
         self.assertNotIn("delegated", fields["description"].lower())
-        self.assertIn("`interrogate` or the caller owns method and synthesis", body)
-        self.assertIn("quota fallback, or route retry", body)
+        self.assertIn("scripts/route-model.py", body)
+        self.assertIn("Do not read routing tables", body)
 
     def test_multi_provider_phases_return_without_advancing(self) -> None:
         references = MULTI_PROVIDER_ROOT / "references"
