@@ -11,9 +11,6 @@ clearer. Preserve every fact, caveat, figure, code sample, link, and table when
 editing. Add code comments only for a non-obvious constraint, invariant, hazard,
 or reason; never narrate edits or history. Never use emoji or Unicode em dashes.
 
-Use `technical-writing` for technical prose work. It may invoke `unslop` when
-canned or sterile language remains. User does not need to name that method.
-
 ## Public Prose
 
 Write public reviews, comments, and change requests like a concise peer who did
@@ -48,10 +45,10 @@ risk its default cannot cover. Record the reason and result; use supported
 effort levels rather than assuming every provider accepts the same set.
 
 Delegate bounded fact finding and checks when doing so adds useful evidence or
-reduces elapsed work. Use the smallest capable worker. Keep planning,
-integration, and final judgment in the parent. Give every worker one bounded
-packet: task, paths, verified context, constraints, write policy, skill or tool
-lane, required evidence, and exit criteria. Omit conversation history.
+reduces elapsed work. Keep planning, integration, and final judgment in the
+parent. Give every worker one bounded packet: task, paths, verified context,
+constraints, write policy, skill or tool lane, required evidence, and exit
+criteria. Omit conversation history.
 
 Delegate by semantic role (`reviewer`, `implementer`, `explorer`, and so on).
 Let provider adapters or `multi-provider-sdlc` select concrete models,
@@ -105,26 +102,18 @@ cost, not the fewest lines or fastest workaround.
 - Settle an empirical fork with a cheap experiment or prototype when running it
   answers faster than asking. Reserve questions for product or preference calls.
 - Own delegated work. Inspect its artifact and write your own conclusion.
-- Own task-created branches and worktrees through cleanup, including worker
-  resources. Record their paths, refs, starting commits, and integration target
-  when creating them. Before creation or cleanup, use `git-toolkit` cleanup
-  mode. The parent must integrate and verify the result, stop its workers, and
-  remove integrated task-owned resources before claiming completion. This is
-  standing authority for safe local cleanup, not deletion of unrelated or
-  unintegrated work or remote branches. Report any retained resource with its
-  exact path/ref, reason, and next action; silent leftovers are not completion.
+- Own task-created branches and worktrees, including worker resources, through
+  cleanup; use `git-toolkit` cleanup mode before creating or removing them.
+  Integrate, verify, stop workers, and remove integrated task-owned resources
+  before claiming completion. This is standing authority for safe local cleanup,
+  not deletion of unrelated or unintegrated work or remote branches. Report any
+  retained resource with its exact path/ref, reason, and next action.
 - When evidence supports disagreement, state reason, alternative, and risk.
 - Keep disposable build scratch in the repository's ignored build directory or
   under `$XDG_CACHE_HOME`, not `/tmp`.
 - Verify in proportion to risk before reporting completion. Complete required
   checks. Broaden or repeat them only when changes, failures, or unresolved
   concerns justify it. Avoid tests that merely mirror low-impact edits.
-
-## Context Routing
-
-- Keep always-loaded context lean. Put repository gotchas in scoped guidance,
-  repeatable procedures in skills, and external state behind live tools.
-- Load references only when relevant to current task.
 
 ## Skill Routing
 
