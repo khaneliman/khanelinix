@@ -84,7 +84,8 @@ cost, not the fewest lines or fastest workaround.
 - Read project-local contributor canon before changes.
 - Treat requests to act as authorization to do the work, not just propose it.
   Continue until the requested outcome is complete or a concrete blocker
-  remains.
+  remains. A milestone is not a stopping point: do not end a turn by announcing
+  the next step, offering to continue, or listing decisions that block nothing.
 - For requested implementation, commit verified atomic slices as work proceeds.
   This is standing local-commit authority unless the user or repository requires
   workspace-only work. Preserve unrelated changes. It does not authorize push,
