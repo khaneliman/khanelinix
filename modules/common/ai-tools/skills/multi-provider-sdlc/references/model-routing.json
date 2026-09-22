@@ -24,7 +24,7 @@
 		},
 		"anthropic": {
 			"label": "Anthropic",
-			"model_agents": ["opus-5", "fable-5-1", "sonnet-5"]
+			"model_agents": ["opus-5-5", "fable-5-1", "sonnet-5"]
 		}
 	},
 	"models": {
@@ -168,15 +168,15 @@
 			"workspace_write": true,
 			"publish_alias": true
 		},
-		"opus-5": {
+		"opus-5-5": {
 			"subscription": "anthropic",
 			"model_family": "anthropic-claude",
 			"quota_pool": "general",
 			"upstream_provider": "claude",
-			"upstream_model": "claude-opus-5",
-			"gateway_alias": "claude-opus-5",
-			"display_name": "Anthropic · Opus 5",
-			"description": "Anthropic Opus 5 gateway worker for difficult implementation, plan or code review, and high-confidence diagnosis.",
+			"upstream_model": "claude-opus-5-5",
+			"gateway_alias": "claude-opus-5-5",
+			"display_name": "Anthropic · Opus 5.5",
+			"description": "Anthropic Opus 5.5 gateway worker for difficult implementation, plan or code review, and high-confidence diagnosis.",
 			"reasoning_effort": null,
 			"write": true,
 			"workspace_write": true,
@@ -224,7 +224,7 @@
 		"gpt-oss-120b"
 	],
 	"gateway_defaults": {
-		"claude": "opus-5",
+		"claude": "opus-5-5",
 		"codex": "gpt-6-astra",
 		"gemini": "gemini-3-8-flash"
 	},
@@ -378,7 +378,7 @@
 		{
 			"need": "bounded reproduction",
 			"preferred": ["gpt-6-luna"],
-			"fallbacks": ["opus-5", "gpt-6-sol", "gemini-3-8-flash"],
+			"fallbacks": ["opus-5-5", "gpt-6-sol", "gemini-3-8-flash"],
 			"semantic_role": "probe-runner",
 			"write_policy": "build artifacts only"
 		},
@@ -399,20 +399,20 @@
 		{
 			"need": "implementation",
 			"preferred": ["gpt-6-luna", "gemini-3-8-flash"],
-			"fallbacks": ["gpt-6-sol", "opus-5"],
+			"fallbacks": ["gpt-6-sol", "opus-5-5"],
 			"semantic_role": "implementer",
 			"write_policy": "workspace write"
 		},
 		{
 			"need": "difficult implementation",
-			"preferred": ["gpt-6-sol", "opus-5"],
+			"preferred": ["gpt-6-sol", "opus-5-5"],
 			"fallbacks": ["gpt-6-luna", "gemini-3-8-flash"],
 			"semantic_role": "implementer",
 			"write_policy": "workspace write"
 		},
 		{
 			"need": "ambiguous diagnosis",
-			"preferred": ["opus-5"],
+			"preferred": ["opus-5-5"],
 			"fallbacks": ["gpt-6-sol", "gemini-3-8-flash"],
 			"semantic_role": "debugger",
 			"write_policy": "read-only"
@@ -420,13 +420,13 @@
 		{
 			"need": "plan or code review",
 			"preferred": ["fable-5-1", "gpt-6-astra"],
-			"fallbacks": ["gpt-6-sol", "opus-5", "google-opus-4-6"],
+			"fallbacks": ["gpt-6-sol", "opus-5-5", "google-opus-4-6"],
 			"semantic_role": "reviewer",
 			"write_policy": "read-only"
 		}
 	],
 	"deliberation": {
-		"anthropic": "opus-5",
+		"anthropic": "opus-5-5",
 		"google": "gemini-3-8-flash",
 		"google_fallback": "google-opus-4-6",
 		"openai": "gpt-6-astra"

@@ -167,7 +167,7 @@ in
       settings = {
         inherit hooks;
 
-        model = "claude-opus-5";
+        model = "claude-opus-5-5";
         outputStyle = "concise";
         theme = "dark";
         # Usage credits

@@ -232,7 +232,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(plan["candidates"][0]["modelFamily"], "anthropic-claude")
         self.assertEqual(
             [candidate["model"] for candidate in plan["candidates"]],
-            ["fable-5-1", "gpt-6-astra", "gpt-6-sol", "opus-5", "google-opus-4-6"],
+            ["fable-5-1", "gpt-6-astra", "gpt-6-sol", "opus-5-5", "google-opus-4-6"],
         )
         self.assertTrue(all(candidate["probe"] for candidate in plan["candidates"]))
         self.assertEqual(plan["semanticFallback"], "reviewer")
@@ -243,7 +243,7 @@ class RouteCapabilityTests(unittest.TestCase):
     def test_claim_reserves_unknown_scopes_and_blocks_repeated_probe(self) -> None:
         self.initialize()
 
-        claim = self.claim("opus-5")
+        claim = self.claim("opus-5-5")
         plan = capability.plan_route(self.state, self.task_id, "plan or code review")
         state = self.load_state()
 
@@ -252,7 +252,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(claim["planRevision"], 0)
         self.assertEqual(
             claim["plannedCandidates"],
-            ["gpt-6-sol", "opus-5", "gpt-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-sol", "opus-5-5", "gpt-6-luna", "gemini-3-8-flash"],
         )
         self.assertIsNone(claim["candidateOverride"])
         self.assertEqual(
@@ -261,7 +261,7 @@ class RouteCapabilityTests(unittest.TestCase):
                 "named-agent-surface",
                 "provider:anthropic",
                 "pool:anthropic/general",
-                "route:opus-5",
+                "route:opus-5-5",
             },
         )
         self.assertIsNone(plan["selected"])
@@ -280,7 +280,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(stored_claim["plan_revision"], 0)
         self.assertEqual(
             stored_claim["planned_candidates"],
-            ["gpt-6-sol", "opus-5", "gpt-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-sol", "opus-5-5", "gpt-6-luna", "gemini-3-8-flash"],
         )
         self.assertIsNone(stored_claim["candidate_override"])
 
@@ -309,7 +309,7 @@ class RouteCapabilityTests(unittest.TestCase):
         )
         self.assertEqual(
             claim["plannedCandidates"],
-            ["gpt-6-sol", "opus-5", "gpt-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-sol", "opus-5-5", "gpt-6-luna", "gemini-3-8-flash"],
         )
         self.assertEqual(stored_claim["candidate_override"], claim["candidateOverride"])
 
@@ -320,14 +320,14 @@ class RouteCapabilityTests(unittest.TestCase):
             capability.CapabilityError, "not valid for a candidate"
         ):
             self.claim(
-                "opus-5",
+                "opus-5-5",
                 need="difficult implementation",
                 override_reason="caller-capability-judgment",
             )
 
     def test_cancel_before_dispatch_releases_claim(self) -> None:
         self.initialize()
-        claim = self.claim("opus-5")
+        claim = self.claim("opus-5-5")
 
         cancelled = capability.cancel_claim(self.state, self.task_id, claim["claimId"])
         plan = capability.plan_route(self.state, self.task_id, "plan or code review")
@@ -336,12 +336,12 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertIsNone(plan["selected"])
         self.assertTrue(plan["selectionRequired"])
         self.assertEqual(self.load_state()["claims"], {})
-        repeated = self.claim("opus-5", 2)
+        repeated = self.claim("opus-5-5", 2)
         self.assertEqual(repeated["revision"], 3)
 
     def test_interrupted_dispatch_opens_route_and_releases_claim(self) -> None:
         self.initialize()
-        claim = self.claim("opus-5")
+        claim = self.claim("opus-5-5")
 
         result = capability.record_outcome(
             self.state,
@@ -355,7 +355,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(result["revision"], 2)
         self.assertIsNone(plan["selected"])
         self.assertTrue(plan["selectionRequired"])
-        self.assertEqual(state["routes"]["opus-5"], "open")
+        self.assertEqual(state["routes"]["opus-5-5"], "open")
         self.assertEqual(state["named_agents"], "unknown")
         self.assertEqual(state["claims"], {})
 
@@ -381,7 +381,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
     def test_route_failure_blocks_only_one_model(self) -> None:
         self.initialize()
-        self.complete("opus-5", "route-unavailable")
+        self.complete("opus-5-5", "route-unavailable")
 
         plan = capability.plan_route(self.state, self.task_id, "plan or code review")
         state = self.load_state()
@@ -389,21 +389,21 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertIsNone(plan["selected"])
         self.assertTrue(plan["selectionRequired"])
         self.assertEqual(
-            plan["blocked"], [{"model": "opus-5", "reason": "route:opus-5"}]
+            plan["blocked"], [{"model": "opus-5-5", "reason": "route:opus-5-5"}]
         )
         self.assertEqual(state["providers"]["anthropic"], "available")
         self.assertEqual(state["pools"]["anthropic"]["general"], "unknown")
 
     def test_quota_failure_blocks_one_pool(self) -> None:
         self.initialize()
-        self.complete("opus-5", "quota-exhausted")
+        self.complete("opus-5-5", "quota-exhausted")
 
         plan = capability.plan_route(self.state, self.task_id, "plan or code review")
 
         self.assertEqual(plan["selected"], "gpt-6-astra")
         self.assertEqual(
             {blocked["model"] for blocked in plan["blocked"]},
-            {"opus-5", "fable-5-1"},
+            {"opus-5-5", "fable-5-1"},
         )
         self.assertTrue(
             all(
@@ -414,7 +414,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
     def test_auth_failure_blocks_one_provider(self) -> None:
         self.initialize()
-        self.complete("opus-5", "auth-failure")
+        self.complete("opus-5-5", "auth-failure")
 
         plan = capability.plan_route(self.state, self.task_id, "plan or code review")
 
@@ -426,7 +426,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
     def test_named_agent_failure_returns_semantic_fallback(self) -> None:
         self.initialize()
-        self.complete("opus-5", "agent-type-unavailable")
+        self.complete("opus-5-5", "agent-type-unavailable")
 
         plan = capability.plan_route(self.state, self.task_id, "implementation")
 
@@ -446,7 +446,7 @@ class RouteCapabilityTests(unittest.TestCase):
     def test_named_agent_surface_recovers_on_availability_evidence(self) -> None:
         self.initialize()
         self.complete("gpt-6-luna", "success")
-        blocked_claim = self.claim("opus-5", 2)
+        blocked_claim = self.claim("opus-5-5", 2)
         healthy_claim = self.claim("gemini-3-8-flash", 3)
 
         capability.record_outcome(
@@ -474,7 +474,7 @@ class RouteCapabilityTests(unittest.TestCase):
     def test_explicit_agent_type_available_closes_surface_only(self) -> None:
         self.initialize()
         self.complete("gpt-6-luna", "success")
-        blocked_claim = self.claim("opus-5", 2)
+        blocked_claim = self.claim("opus-5-5", 2)
         healthy_claim = self.claim("gemini-3-8-flash", 3)
 
         capability.record_outcome(
@@ -612,7 +612,7 @@ class RouteCapabilityTests(unittest.TestCase):
             "--need",
             "plan or code review",
             "--model",
-            "opus-5",
+            "opus-5-5",
         ]
         environment = os.environ.copy()
         environment["PYTHONDONTWRITEBYTECODE"] = "1"
@@ -736,7 +736,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
     def test_tampered_claim_cannot_omit_unknown_scope(self) -> None:
         self.initialize()
-        self.claim("opus-5")
+        self.claim("opus-5-5")
         state = self.load_state()
         claim = next(iter(state["claims"].values()))
         claim["scopes"].remove("provider:anthropic")
@@ -747,7 +747,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
     def test_tampered_claim_binding_fails_closed(self) -> None:
         self.initialize()
-        self.claim("opus-5")
+        self.claim("opus-5-5")
         state = self.load_state()
         claim = next(iter(state["claims"].values()))
         claim["planned_candidates"] = ["gpt-6-luna"]
@@ -757,7 +757,7 @@ class RouteCapabilityTests(unittest.TestCase):
             capability.plan_route(self.state, self.task_id, "implementation")
 
         claim["planned_candidates"] = [
-            "opus-5",
+            "opus-5-5",
             "gpt-6-luna",
             "gemini-3-8-flash",
         ]

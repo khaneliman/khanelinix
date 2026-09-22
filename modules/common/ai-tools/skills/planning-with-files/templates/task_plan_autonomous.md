@@ -189,7 +189,7 @@ Phase 1
 | Phase kind                            | Tier       | Example model |
 | ------------------------------------- | ---------- | ------------- |
 | Research / triage / discovery         | small-fast | Sonnet        |
-| Build / implementation / verification | frontier   | Opus 5        |
+| Build / implementation / verification | frontier   | Opus 5.5      |
 
 ## Key Questions
 

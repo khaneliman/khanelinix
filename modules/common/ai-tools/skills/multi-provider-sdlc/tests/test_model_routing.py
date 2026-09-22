@@ -97,7 +97,7 @@ class ModelRoutingTests(unittest.TestCase):
         )
         self.assertEqual(
             routes["plan or code review"]["fallbacks"],
-            ["gpt-6-sol", "opus-5", "google-opus-4-6"],
+            ["gpt-6-sol", "opus-5-5", "google-opus-4-6"],
         )
         self.assertEqual(
             self.registry["semantic_roles"]["reviewer"]["gateway"]["claude"],
@@ -111,7 +111,7 @@ class ModelRoutingTests(unittest.TestCase):
         )
         self.assertEqual(
             routes["difficult implementation"]["preferred"],
-            ["gpt-6-sol", "opus-5"],
+            ["gpt-6-sol", "opus-5-5"],
         )
         self.assertEqual(
             routes["difficult implementation"]["fallbacks"],
@@ -180,14 +180,14 @@ class ModelRoutingTests(unittest.TestCase):
 
     def test_unknown_quota_pool_is_rejected(self) -> None:
         invalid = copy.deepcopy(self.registry)
-        invalid["models"]["opus-5"]["quota_pool"] = "missing"
+        invalid["models"]["opus-5-5"]["quota_pool"] = "missing"
 
         with self.assertRaisesRegex(routes.RoutingError, "unknown quota pool"):
             routes.validate_registry(invalid)
 
     def test_cross_provider_default_is_rejected(self) -> None:
         invalid = copy.deepcopy(self.registry)
-        invalid["gateway_defaults"]["codex"] = "opus-5"
+        invalid["gateway_defaults"]["codex"] = "opus-5-5"
 
         with self.assertRaisesRegex(routes.RoutingError, "wrong provider: codex"):
             routes.validate_registry(invalid)
@@ -201,14 +201,14 @@ class ModelRoutingTests(unittest.TestCase):
 
     def test_cross_provider_native_model_is_rejected(self) -> None:
         invalid = copy.deepcopy(self.registry)
-        invalid["semantic_roles"]["reviewer"]["native"]["codex"] = "claude-opus-5"
+        invalid["semantic_roles"]["reviewer"]["native"]["codex"] = "claude-opus-5-5"
 
         with self.assertRaisesRegex(routes.RoutingError, "cross-provider native"):
             routes.validate_registry(invalid)
 
     def test_cross_provider_deliberation_seat_is_rejected(self) -> None:
         invalid = copy.deepcopy(self.registry)
-        invalid["deliberation"]["google"] = "opus-5"
+        invalid["deliberation"]["google"] = "opus-5-5"
 
         with self.assertRaisesRegex(routes.RoutingError, "wrong provider: google"):
             routes.validate_registry(invalid)
@@ -222,14 +222,14 @@ class ModelRoutingTests(unittest.TestCase):
 
     def test_policy_control_characters_are_rejected(self) -> None:
         cases = {
-            "alias": lambda value: value["models"]["opus-5"].__setitem__(
-                "gateway_alias", "claude-opus-5\nmodel: injected"
+            "alias": lambda value: value["models"]["opus-5-5"].__setitem__(
+                "gateway_alias", "claude-opus-5-5\nmodel: injected"
             ),
-            "description": lambda value: value["models"]["opus-5"].__setitem__(
+            "description": lambda value: value["models"]["opus-5-5"].__setitem__(
                 "description", "worker\tdescription"
             ),
             "model ID": lambda value: value["models"].__setitem__(
-                "model\rID", value["models"].pop("opus-5")
+                "model\rID", value["models"].pop("opus-5-5")
             ),
             "provider ID": lambda value: value["subscriptions"].__setitem__(
                 "openai\nprovider", value["subscriptions"].pop("openai")
@@ -274,7 +274,7 @@ class ModelRoutingTests(unittest.TestCase):
 
     def test_unknown_schema_field_is_rejected(self) -> None:
         invalid = copy.deepcopy(self.registry)
-        invalid["models"]["opus-5"]["provider_typo"] = "claude"
+        invalid["models"]["opus-5-5"]["provider_typo"] = "claude"
 
         with self.assertRaisesRegex(routes.RoutingError, "unknown or missing"):
             routes.validate_registry(invalid)
@@ -364,7 +364,7 @@ class ModelRoutingTests(unittest.TestCase):
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
             False: "450e54b1b13ee59aa099cb85f6db85086cf9c352578b8652ade13046c011aa7e",
-            True: "0ca2d5c380173e76e075d610c014c982d4d39ea0f7a37e712fe2ba91cd471137",
+            True: "e264fe1ba3923b29014f60abe2e16c35a6395fd8782a631b251d9ab45bccd81a",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():
@@ -434,7 +434,7 @@ class ModelRoutingTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_nix_adapter_rejects_policy_control_characters(self) -> None:
         invalid = copy.deepcopy(self.registry)
-        invalid["models"]["opus-5"]["description"] = "worker\ndescription"
+        invalid["models"]["opus-5-5"]["description"] = "worker\ndescription"
 
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -560,7 +560,7 @@ class ModelRoutingTests(unittest.TestCase):
           {{
             defaults = modelRouting.defaultUpstreamModels;
             aliases = modelRouting.cliproxyAliases;
-            directDefault = modelRouting.directGatewayModelsFor {{}} "claude-opus-5";
+            directDefault = modelRouting.directGatewayModelsFor {{}} "claude-opus-5-5";
             directFable = modelRouting.directGatewayModelsFor {{}} "claude-fable-5-1";
             directSonnet = modelRouting.directGatewayModelsFor {{}} "claude-sonnet-5";
             directCustom = modelRouting.directGatewayModelsFor {{}} "claude-custom";

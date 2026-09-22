@@ -333,7 +333,7 @@ in
             }
             {
               provider = "claudeAgent";
-              model = "claude-opus-5";
+              model = "claude-opus-5-5";
             }
             {
               provider = "codex";
