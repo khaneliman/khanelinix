@@ -33,6 +33,9 @@ _: final: prev: {
           ./streaming-session-hooks.patch
           # Type the tail the backend drains after stop, within one second.
           ./streaming-finish.patch
+          # Apply [text] replacements to streamed partials, holding back only
+          # words that could still start a replacement.
+          ./streaming-replacements.patch
         ];
 
       # fetchCargoVendor recurses forever into an ancestor symlink inside the

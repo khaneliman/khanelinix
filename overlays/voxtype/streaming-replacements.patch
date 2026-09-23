@@ -1,0 +1,345 @@
+diff --git a/src/daemon.rs b/src/daemon.rs
+--- a/src/daemon.rs
++++ b/src/daemon.rs
+@@ -1527,6 +1527,15 @@ impl Daemon {
+         self.restore_recording_media();
+     }
+ 
++    /// Text processor for typed streaming partials. Parakeet-family
++    /// engines emit append-only deltas, so replacements can apply as text
++    /// arrives; engines that revise partials by backspace counts need the
++    /// raw text at the cursor.
++    fn partial_text_processor(&self) -> Option<&TextProcessor> {
++        (self.config.engine == crate::config::TranscriptionEngine::Parakeet)
++            .then_some(&self.text_processor)
++    }
++
+     async fn end_streaming(
+         &mut self,
+         state: &mut State,
+@@ -1608,6 +1617,11 @@ impl Daemon {
+             return;
+         }
+ 
++        if let (Some(s), Some(chain)) = (streaming_session.as_mut(), streaming_chain.as_ref()) {
++            if let Err(e) = s.flush_pending(chain, self.partial_text_processor()).await {
++                tracing::warn!("Streaming held-back tail type failed: {}", e);
++            }
++        }
+         *streaming_session = None;
+         *streaming_chain = None;
+ 
+@@ -4290,6 +4304,7 @@ impl Daemon {
+                                     if let Err(e) = s.type_partial_delta(
+                                         chain,
+                                         text,
++                                        self.partial_text_processor(),
+                                         None,
+                                         None,
+                                     ).await {
+diff --git a/src/output/streaming.rs b/src/output/streaming.rs
+--- a/src/output/streaming.rs
++++ b/src/output/streaming.rs
+@@ -67,6 +67,9 @@ pub struct StreamingSession {
+     typed_chars: usize,
+     /// Most recent partial text (for status only; never typed).
+     partial: String,
++    /// Raw partial text received but not typed yet, held back because a
++    /// replacement could still match once more text arrives.
++    pending: String,
+ }
+ 
+ impl StreamingSession {
+@@ -76,6 +79,7 @@ impl StreamingSession {
+             finalized_text: String::new(),
+             typed_chars: 0,
+             partial: String::new(),
++            pending: String::new(),
+         }
+     }
+ 
+@@ -104,6 +108,7 @@ impl StreamingSession {
+         &mut self,
+         chain: &[Box<dyn TextOutput>],
+         new_partial: String,
++        text_processor: Option<&TextProcessor>,
+         pre_output_command: Option<&str>,
+         post_output_command: Option<&str>,
+     ) -> Result<(), OutputError> {
+@@ -111,6 +116,23 @@ impl StreamingSession {
+             return Ok(());
+         }
+ 
++        // Replacements need whole words, and a delta can end mid-word or
++        // mid-phrase. Hold back only a tail that could still start a
++        // replacement; type the rest now. Callers pass a processor only
++        // for engines whose deltas are never revised.
++        let new_partial = match text_processor.filter(|tp| tp.has_replacements()) {
++            Some(tp) => {
++                self.pending.push_str(&new_partial);
++                let hold = tp.replacement_hold_start(&self.pending);
++                let ready: String = self.pending.drain(..hold).collect();
++                tp.apply_replacements_only(&ready)
++            }
++            None => new_partial,
++        };
++        if new_partial.is_empty() {
++            return Ok(());
++        }
++
+         let opts = OutputOptions {
+             pre_output_command,
+             post_output_command,
+@@ -127,6 +149,33 @@ impl StreamingSession {
+         Ok(())
+     }
+ 
++    /// Type the tail held back for replacements. Call at stream end when
++    /// no Final segment arrives to carry it.
++    pub async fn flush_pending(
++        &mut self,
++        chain: &[Box<dyn TextOutput>],
++        text_processor: Option<&TextProcessor>,
++    ) -> Result<(), OutputError> {
++        if self.pending.is_empty() {
++            return Ok(());
++        }
++        let pending = std::mem::take(&mut self.pending);
++        let text = match text_processor {
++            Some(tp) => tp.apply_replacements_only(&pending),
++            None => pending,
++        };
++        let opts = OutputOptions {
++            pre_output_command: None,
++            post_output_command: None,
++            wait_for_modifier_release: false,
++            modifier_release_timeout: std::time::Duration::from_millis(0),
++        };
++        output_with_fallback(chain, &text, opts).await?;
++        self.typed_chars += text.chars().count();
++        self.partial.push_str(&text);
++        Ok(())
++    }
++
+     /// Clear the partial buffer (e.g., when a Final supersedes it).
+     pub fn clear_partial(&mut self) {
+         self.partial.clear();
+@@ -183,6 +232,15 @@ impl StreamingSession {
+         pre_output_command: Option<&str>,
+         post_output_command: Option<&str>,
+     ) -> Result<(), OutputError> {
++        // The Final carries the stream's tail, so a tail held back for
++        // replacements joins it here.
++        let joined;
++        let text = if self.pending.is_empty() {
++            text
++        } else {
++            joined = format!("{}{}", std::mem::take(&mut self.pending), text);
++            joined.as_str()
++        };
+         let processed;
+         let text = match text_processor {
+             Some(tp) => {
+@@ -545,6 +603,82 @@ mod tests {
+     /// provisional, so the daemon's replacements and spoken punctuation
+     /// apply there — what reaches the cursor is the processed text, and
+     /// typed_chars/finalized_text account for what was actually typed.
++    fn nix_processor() -> TextProcessor {
++        let config = crate::config::TextConfig {
++            replacements: [
++                ("nix packages".to_string(), "nixpkgs".to_string()),
++                ("hyperland".to_string(), "Hyprland".to_string()),
++            ]
++            .into_iter()
++            .collect(),
++            ..Default::default()
++        };
++        TextProcessor::new(&config)
++    }
++
++    #[tokio::test]
++    async fn partial_deltas_apply_replacements_across_chunks() {
++        let tp = nix_processor();
++        let rec = std::sync::Arc::new(RecordingOutput::new());
++        let chain = chain_with(rec.clone());
++        let mut session = StreamingSession::new();
++        for delta in ["run nix", " packages", " update"] {
++            session
++                .type_partial_delta(&chain, delta.to_string(), Some(&tp), None, None)
++                .await
++                .unwrap();
++        }
++        assert_eq!(
++            rec.typed(),
++            vec!["run ".to_string(), "nixpkgs update".to_string()]
++        );
++        session.flush_pending(&chain, Some(&tp)).await.unwrap();
++        assert_eq!(rec.typed().len(), 2, "nothing was held back at the end");
++        assert_eq!(session.typed_chars(), "run nixpkgs update".chars().count());
++    }
++
++    #[tokio::test]
++    async fn held_back_tail_is_typed_at_stream_end() {
++        let tp = nix_processor();
++        let rec = std::sync::Arc::new(RecordingOutput::new());
++        let chain = chain_with(rec.clone());
++        let mut session = StreamingSession::new();
++        session
++            .type_partial_delta(&chain, "open hyper".to_string(), Some(&tp), None, None)
++            .await
++            .unwrap();
++        assert_eq!(rec.typed(), vec!["open ".to_string()]);
++
++        // A Final picks up the held-back tail and completes the match.
++        session
++            .commit_segment(&chain, "land", Some(&tp), None, None)
++            .await
++            .unwrap();
++        assert_eq!(rec.typed().last().unwrap(), "Hyprland");
++
++        // Without a Final, flush_pending types whatever is still held.
++        let mut session = StreamingSession::new();
++        session
++            .type_partial_delta(&chain, "open hyperland".to_string(), Some(&tp), None, None)
++            .await
++            .unwrap();
++        session.flush_pending(&chain, Some(&tp)).await.unwrap();
++        assert_eq!(rec.typed().last().unwrap(), "Hyprland");
++        assert_eq!(session.typed_chars(), "open Hyprland".chars().count());
++    }
++
++    #[tokio::test]
++    async fn partial_deltas_without_processor_type_immediately() {
++        let rec = std::sync::Arc::new(RecordingOutput::new());
++        let chain = chain_with(rec.clone());
++        let mut session = StreamingSession::new();
++        session
++            .type_partial_delta(&chain, "run nix".to_string(), None, None, None)
++            .await
++            .unwrap();
++        assert_eq!(rec.typed(), vec!["run nix".to_string()]);
++    }
++
+     #[tokio::test]
+     async fn final_segments_apply_text_processing() {
+         let config = crate::config::TextConfig {
+diff --git a/src/text/mod.rs b/src/text/mod.rs
+--- a/src/text/mod.rs
++++ b/src/text/mod.rs
+@@ -176,6 +176,47 @@ impl TextProcessor {
+         result
+     }
+ 
++    /// Whether any custom replacements are configured.
++    pub fn has_replacements(&self) -> bool {
++        !self.replacements.is_empty()
++    }
++
++    /// Byte offset from which the untyped tail of a streaming transcript
++    /// must be held back, because a replacement could still start there
++    /// once more text arrives. Everything before it is safe to type now;
++    /// `text.len()` means nothing needs holding.
++    pub fn replacement_hold_start(&self, text: &str) -> usize {
++        let max_words = self
++            .replacements
++            .keys()
++            .map(|key| key.split_whitespace().count())
++            .max()
++            .unwrap_or(0);
++        if max_words == 0 {
++            return text.len();
++        }
++        let starts = word_starts(text);
++        // Punctuation splits words more finely than the keys' whitespace
++        // does, so look a little further back than the longest key.
++        let window = &starts[starts.len().saturating_sub(max_words * 2)..];
++        for &start in window {
++            let tail = text[start..].to_lowercase();
++            if self.replacements.keys().any(|key| key.starts_with(&tail)) {
++                return start;
++            }
++        }
++        text.len()
++    }
++
++    /// Apply only the custom replacements, leaving spacing untouched, for
++    /// streaming text that is typed piece by piece.
++    pub fn apply_replacements_only(&self, text: &str) -> String {
++        if self.replacements.is_empty() {
++            return text.to_string();
++        }
++        self.apply_replacements(text)
++    }
++
+     /// Check if text ends with the submit trigger word.
+     ///
+     /// Returns `(stripped_text, should_submit)`. Handles trailing punctuation (e.g.,
+@@ -342,6 +383,21 @@ fn replace_phrase_case_insensitive(text: &str, from: &str, to: &str) -> String {
+     }
+ }
+ 
++/// Byte offsets where a word begins: a word character after a non-word
++/// character or at the start, matching the `\b` that replacements use.
++fn word_starts(text: &str) -> Vec<usize> {
++    let mut starts = Vec::new();
++    let mut prev_word = false;
++    for (i, c) in text.char_indices() {
++        let word = c.is_alphanumeric() || c == '_';
++        if word && !prev_word {
++            starts.push(i);
++        }
++        prev_word = word;
++    }
++    starts
++}
++
+ /// Clean up spacing around punctuation marks
+ fn clean_punctuation_spacing(text: &str) -> String {
+     let mut result = text.to_string();
+@@ -382,6 +438,46 @@ fn clean_punctuation_spacing(text: &str) -> String {
+ 
+ #[cfg(test)]
+ mod tests {
++    fn streaming_processor() -> TextProcessor {
++        let config = TextConfig {
++            replacements: [
++                ("nix packages".to_string(), "nixpkgs".to_string()),
++                ("hyperland".to_string(), "Hyprland".to_string()),
++            ]
++            .into_iter()
++            .collect(),
++            ..Default::default()
++        };
++        TextProcessor::new(&config)
++    }
++
++    #[test]
++    fn replacement_hold_start_holds_possible_phrase_starts() {
++        let tp = streaming_processor();
++        // A complete or partial first word of a key may still grow into it.
++        assert_eq!(tp.replacement_hold_start("run nix"), 4);
++        assert_eq!(tp.replacement_hold_start("run nix pack"), 4);
++        assert_eq!(tp.replacement_hold_start("open hyper"), 5);
++        // Once text runs past every key, nothing needs holding.
++        let done = "run nix packages update";
++        assert_eq!(tp.replacement_hold_start(done), done.len());
++        assert_eq!(tp.replacement_hold_start("nixos"), "nixos".len());
++        assert_eq!(tp.replacement_hold_start("the quick fox"), "the quick fox".len());
++    }
++
++    #[test]
++    fn replacement_hold_start_without_replacements_holds_nothing() {
++        let tp = TextProcessor::new(&TextConfig::default());
++        assert!(!tp.has_replacements());
++        assert_eq!(tp.replacement_hold_start("run nix"), "run nix".len());
++    }
++
++    #[test]
++    fn apply_replacements_only_keeps_spacing() {
++        let tp = streaming_processor();
++        assert_eq!(tp.apply_replacements_only("run nix packages "), "run nixpkgs ");
++        assert_eq!(tp.apply_replacements_only(" hyperland"), " Hyprland");
++    }
+ 
+     /// #566: "um" is the masculine indefinite article in Portuguese, so the
+     /// English filler list silently turned "Faça um commit" into
