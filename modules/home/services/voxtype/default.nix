@@ -81,6 +81,7 @@ in
               mode = "toggle";
             };
             audio.max_duration_secs = 300;
+            text.replacements = import ./replacements.nix;
             parakeet = {
               # Cache-aware streaming encodes each 560 ms chunk once, instead
               # of re-encoding seconds of left context per chunk.
