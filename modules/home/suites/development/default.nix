@@ -166,6 +166,7 @@ in
           lmstudio
           rtk
           semble
+          sqlite
           toon
           tuicr
           workmux
