@@ -3,6 +3,33 @@
 Use the bundled summary for ordinary audits. Add a backend only when saved
 queries, dashboards, or cross-window comparisons justify the operational cost.
 
+## AgentsView archive
+
+The history retrospective reads `~/.agentsview/sessions.db`. AgentsView indexes
+Claude, Codex, Gemini CLI, OpenCode, and Antigravity CLI; Antigravity stays in
+summary mode without `agy-reader`. The archive keeps sessions after their
+sources expire, such as Claude transcripts past `cleanupPeriodDays`, which makes
+it the only durable cross-harness history. T3 provider logs and Codex
+`logs_2.sqlite` retain days to weeks.
+
+Verified with AgentsView 0.41.1:
+
+- One failing provider fails the whole sync pass. The Warp provider fails when
+  `warp.sqlite` lacks `agent_conversations`; point `WARP_DIR` at an empty
+  directory.
+- AgentsView ignores `CODEX_HOME`. Set `CODEX_SESSIONS_DIR`; it takes one path,
+  so an `archived_sessions` root needs `codex_sessions_dirs` in `config.toml`.
+- A cold `agentsview sync` starts the daemon, whose startup sync then rejects
+  the CLI request. Start the daemon and let its startup or watcher sync run.
+- A data-version rebuild can take 13 GB of memory and several times the prior
+  database size when transcripts carry inline screenshots.
+- `tool_calls.skill_name` misses most Codex skill loads. `history_audit.py` also
+  counts reads of installed `SKILL.md` copies.
+- `agentsview mcp` exposes read-only session search for tools such as `recall`.
+
+Read the live database read-only, or copy it with `cp --reflink=auto` first when
+the daemon is rebuilding.
+
 ## DuckDB
 
 The `events` output is newline-delimited JSON. DuckDB can read this format with
