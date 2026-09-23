@@ -226,6 +226,10 @@ let
         from = "$voxtype-stop";
         to = "voxtype record stop";
       }
+      {
+        from = "$voxtype-learn";
+        to = "voxtype learn --from-selection";
+      }
     ];
 
   replaceCommandVars =
@@ -480,6 +484,8 @@ in
               (mkExecBind "CTRL_ALT" "D" "$voxtype-toggle")
               (mkExecBind "" "F14" "$voxtype-cancel")
               (mkExecBind "CTRL_ALT_SHIFT" "D" "$voxtype-cancel")
+              # Select a corrected dictation, then teach VoxType the fixes.
+              (mkExecBind "CTRL_ALT" "F" "$voxtype-learn")
             ];
 
             # Background tools binds (background-graphical.slice)

@@ -192,6 +192,12 @@ in
               "record"
               "cancel"
             ];
+            # Select a corrected dictation, then teach VoxType the fixes.
+            "Ctrl+Alt+F".action.spawn = [
+              "voxtype"
+              "learn"
+              "--from-selection"
+            ];
           };
         in
         launcherBinds

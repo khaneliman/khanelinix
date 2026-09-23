@@ -43,6 +43,7 @@ in
           voxtype-toggle = "voxtype record toggle";
           voxtype-cancel = "voxtype record cancel";
           voxtype-stop = "voxtype record stop";
+          voxtype-learn = "voxtype learn --from-selection";
           listOrFallback = list: fallback: if list == [ ] then fallback else builtins.elemAt list 0;
 
           # screenshot commands using grim/slurp for sway
@@ -232,6 +233,8 @@ in
                 "Ctrl+Alt+d" = "exec ${mkStartCommand voxtype-toggle}";
                 "F14" = "exec ${mkStartCommand voxtype-cancel}";
                 "Ctrl+Alt+Shift+d" = "exec ${mkStartCommand voxtype-cancel}";
+                # Select a corrected dictation, then teach VoxType the fixes.
+                "Ctrl+Alt+f" = "exec ${mkStartCommand voxtype-learn}";
               }
             ))
             (lib.mkOptionDefault (
