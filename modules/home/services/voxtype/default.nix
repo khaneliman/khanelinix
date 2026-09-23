@@ -14,9 +14,6 @@ let
     else
       config.wayland.windowManager.hyprland.package;
   isLinux = pkgs.stdenv.hostPlatform.isLinux;
-  voxtypePackage = pkgs.voxtype-onnx.overrideAttrs (oldAttrs: {
-    patches = (oldAttrs.patches or [ ]) ++ [ ./streaming-session-hooks.patch ];
-  });
 in
 {
   options.khanelinix.services.voxtype = {
@@ -37,7 +34,7 @@ in
       services.voxtype = {
         enable = true;
 
-        package = voxtypePackage;
+        package = pkgs.voxtype-onnx;
         loadModels = [ config.services.voxtype.settings.parakeet.model ];
         environment = {
           DOTOOL_PIPE = "%t/voxtype-dotool-pipe";
