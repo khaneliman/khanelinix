@@ -26,7 +26,14 @@ _: final: prev: {
         hash = "sha256-A4c11s1qu660F74IeFjchjvp58/PqOh59R25t48mukU=";
       };
 
-      patches = (old.patches or [ ]) ++ nemotronPatches ++ [ ./streaming-session-hooks.patch ];
+      patches =
+        (old.patches or [ ])
+        ++ nemotronPatches
+        ++ [
+          ./streaming-session-hooks.patch
+          # Type the tail the backend drains after stop, within one second.
+          ./streaming-finish.patch
+        ];
 
       # fetchCargoVendor recurses forever into an ancestor symlink inside the
       # openvino-rs Git checkout; importCargoLock tolerates it. The lockfile is

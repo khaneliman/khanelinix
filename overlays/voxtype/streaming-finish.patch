@@ -1,0 +1,161 @@
+diff --git a/src/daemon.rs b/src/daemon.rs
+--- a/src/daemon.rs
++++ b/src/daemon.rs
+@@ -479,6 +479,11 @@ fn read_trimmed_nonempty(path: &std::path::Path) -> Option<String> {
+ /// sync with the `value_parser` list on `MeetingAction::Start::diarization`.
+ const ALLOWED_DIARIZATION_OVERRIDES: &[&str] = &["simple", "ml"];
+ 
++/// How long a stopped streaming session keeps typing what the backend
++/// drains after the mic closes. Past this, the tail is discarded rather
++/// than typed into whatever window has focus by then.
++const STREAMING_FINISH_TIMEOUT: Duration = Duration::from_millis(1000);
++
+ /// Validate a diarization backend override against the allowlist.
+ ///
+ /// The CLI's clap `value_parser` already rejects bad values at parse time, but
+@@ -830,6 +835,9 @@ pub struct Daemon {
+     /// streaming session is draining server-side after the mic stopped.
+     /// Aborted in `end_streaming`.
+     streaming_drain_pump: Option<tokio::task::JoinHandle<()>>,
++    /// Deadline for a stopped streaming session to finish typing its
++    /// drained tail. Set on stop; cleared when the session ends.
++    streaming_finish_deadline: Option<tokio::time::Instant>,
+     /// OSD child supervisor task. Holds the JoinHandle so dropping it (on
+     /// daemon shutdown) kill_on_drop's the spawned voxtype-osd process.
+     osd_supervisor_task: Option<tokio::task::JoinHandle<()>>,
+@@ -980,6 +988,7 @@ impl Daemon {
+             silence_tracker: None,
+             is_external_trigger: false,
+             streaming_drain_pump: None,
++            streaming_finish_deadline: None,
+             osd_supervisor_task: None,
+             model_manager: None,
+             model_load_task: None,
+@@ -1259,6 +1268,7 @@ impl Daemon {
+         // an is_recording() state, so a leftover cancel file would kill the
+         // session moments after it starts. See #606.
+         cleanup_cancel_file();
++        self.streaming_finish_deadline = None;
+         // Clone out of the field so the borrow doesn't overlap the
+         // `&mut self` capture start below.
+         let Some(transcriber) = self.transcriber_preloaded.clone() else {
+@@ -1364,8 +1374,6 @@ impl Daemon {
+         &mut self,
+         state: &mut State,
+         audio_capture: &mut Option<Box<dyn AudioCapture>>,
+-        streaming_session: &mut Option<StreamingSession>,
+-        streaming_chain: &mut Option<Vec<Box<dyn TextOutput>>>,
+         eager_transcriber: &mut Option<Arc<dyn Transcriber>>,
+     ) {
+         // Notify an external-trigger caller that this session is ending,
+@@ -1380,11 +1388,11 @@ impl Daemon {
+         if state.is_streaming() {
+             // File-output sessions (`--file=path`) have nowhere to leak
+             // into — they accumulate text instead of typing it (see the
+-            // event pump) — so the disown-on-stop protection below
+-            // doesn't apply; disowning here would just silently drop
+-            // whatever the backend was still draining, and end_streaming
+-            // would then write an empty file. Let it drain normally so
+-            // end_streaming can write the real text.
++            // event pump) — so the drain deadline below doesn't apply;
++            // cutting them off would just silently drop whatever the
++            // backend was still draining, and end_streaming would then
++            // write an empty file. Let it drain fully so end_streaming can
++            // write the real text.
+             let file_output = matches!(
+                 &*state,
+                 State::Streaming {
+@@ -1395,18 +1403,16 @@ impl Daemon {
+             if file_output {
+                 tracing::info!("Stopping streaming session (file output); closing capture");
+             } else {
+-                tracing::info!("Stopping streaming session; closing capture and disowning session");
++                tracing::info!("Stopping streaming session; closing capture and draining the tail");
+             }
+             self.stop_streaming_capture(audio_capture).await;
+-            if !file_output {
+-                // Drop the typing surface synchronously so any
+-                // Final/Partial events the backend emits while
+-                // draining its internal buffer reach the event-pump
+-                // arm with `streaming_session = None` and get
+-                // discarded instead of typed into whatever window
+-                // has focus by then.
+-                *streaming_session = None;
+-                *streaming_chain = None;
++            if !file_output && self.streaming_finish_deadline.is_none() {
++                // Keep typing what the backend drains after the mic stops,
++                // but only until the deadline: a slow drain must not type
++                // into a window the user has since switched to. The
++                // deadline arm in the event loop disowns the session.
++                self.streaming_finish_deadline =
++                    Some(tokio::time::Instant::now() + STREAMING_FINISH_TIMEOUT);
+             }
+         } else if let State::Recording { model_override, .. } = &*state {
+             let model_override = model_override.clone();
+@@ -1529,6 +1535,7 @@ impl Daemon {
+         streaming_session: &mut Option<StreamingSession>,
+         streaming_chain: &mut Option<Vec<Box<dyn TextOutput>>>,
+     ) {
++        self.streaming_finish_deadline = None;
+         if let Some(mut c) = audio_capture.take() {
+             let _ = c.stop().await;
+         }
+@@ -1629,6 +1636,7 @@ impl Daemon {
+         streaming_chain: &mut Option<Vec<Box<dyn TextOutput>>>,
+         notification_body: &str,
+     ) {
++        self.streaming_finish_deadline = None;
+         self.end_external_session(state.is_recording()).await;
+         let backend_task = streaming_handle.take().map(|mut h| {
+             let _ = h.cancel.send(());
+@@ -3343,6 +3351,7 @@ impl Daemon {
+         let mut streaming_chain: Option<Vec<Box<dyn TextOutput>>> = None;
+ 
+         loop {
++            let finish_deadline = self.streaming_finish_deadline;
+             tokio::select! {
+                 // Handle hotkey events (only if hotkey listener is enabled)
+                 Some(hotkey_event) = async {
+@@ -3994,8 +4003,6 @@ impl Daemon {
+                                     self.stop_active_recording(
+                                         &mut state,
+                                         &mut audio_capture,
+-                                        &mut streaming_session,
+-                                        &mut streaming_chain,
+                                         &mut eager_transcriber,
+                                     )
+                                     .await;
+@@ -4224,8 +4231,6 @@ impl Daemon {
+                     self.stop_active_recording(
+                         &mut state,
+                         &mut audio_capture,
+-                        &mut streaming_session,
+-                        &mut streaming_chain,
+                         &mut eager_transcriber,
+                     ).await;
+                 }
+@@ -4241,6 +4246,24 @@ impl Daemon {
+                     self.handle_transcription_result(&mut state, result).await;
+                 }
+ 
++                // A stopped streaming session ran out of time to type its tail.
++                _ = async {
++                    match finish_deadline {
++                        Some(deadline) => tokio::time::sleep_until(deadline).await,
++                        None => std::future::pending().await,
++                    }
++                }, if finish_deadline.is_some() => {
++                    self.streaming_finish_deadline = None;
++                    if state.is_streaming() && streaming_session.is_some() {
++                        tracing::warn!(
++                            "Streaming tail still draining after {:?}; discarding it",
++                            STREAMING_FINISH_TIMEOUT
++                        );
++                        streaming_session = None;
++                        streaming_chain = None;
++                    }
++                }
++
+                 // Streaming event pump (active only while State::Streaming).
+                 event = async {
+                     match streaming_handle.as_mut() {
