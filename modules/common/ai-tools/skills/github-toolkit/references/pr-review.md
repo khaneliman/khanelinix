@@ -157,12 +157,13 @@ only when the user explicitly requested that write. Helpers refresh actor
 ownership and selected IDs before mutation, then read back exact bodies or
 absence. For a pending-review update, include `expected_head_sha` and
 `expected_review_state: "PENDING"`. The helper validates both during preview and
-again immediately before mutation. This guard is optional for separately
-authorized submitted-review updates. When revising a pending review, select only
-the exact review owned by the current actor. Never submit it. GitHub permits
-review-summary updates after submission but permits whole-review deletion only
-while a review is pending. Submitted inline comments can still be updated or
-deleted when explicitly requested.
+again immediately before mutation. Updates and comment deletions refuse a review
+that is no longer pending unless the input sets `"allow_submitted": true`. Set
+it only when the user asked in the current turn to change published content,
+after re-inspecting that review; a user can submit between turns. When revising
+a pending review, select only the exact review owned by the current actor. Never
+submit it. GitHub permits review-summary updates after submission but permits
+whole-review deletion only while a review is pending.
 
 Never infer ownership from prose. Never select update or delete targets by body
 text or diff anchor. Use `id` for a GraphQL node ID or `database_id` for a

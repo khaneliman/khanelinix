@@ -514,6 +514,22 @@ def validate_expected_review_state(value: Any, review: dict[str, Any]) -> str:
     return expected
 
 
+def require_pending_unless_allowed(
+    data: dict[str, Any], review: dict[str, Any]
+) -> None:
+    # Submitted comments are public and replies may hang off them; a stale
+    # "still pending" belief must fail closed rather than edit the record.
+    allowed = data.get("allow_submitted", False)
+    if not isinstance(allowed, bool):
+        raise InputError("allow_submitted must be a boolean")
+    state = review.get("state")
+    if state != "PENDING" and not allowed:
+        raise InputError(
+            f"review is {state}, not PENDING; submitted review content changes "
+            "require allow_submitted: true"
+        )
+
+
 def normalize_create_comment(value: Any, index: int) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise InputError(f"comments[{index}] must be an object")
@@ -959,6 +975,7 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     _only_keys(
         data,
         {
+            "allow_submitted",
             "body",
             "comments",
             "expected_head_sha",
@@ -973,6 +990,7 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     pull_request, reviews = fetch_review_context(client, target)
     actor = current_actor(client)
     review = select_owned_review(reviews, actor, data.get("review_id"))
+    require_pending_unless_allowed(data, review)
     expected_head_sha = (
         validate_expected_sha(data.get("expected_head_sha"), pull_request)
         if "expected_head_sha" in data
@@ -1006,6 +1024,7 @@ def update(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     if latest_actor != actor:
         raise InputError("current GitHub actor changed before review update")
     latest_review = select_owned_review(latest_reviews, latest_actor, review.get("id"))
+    require_pending_unless_allowed(data, latest_review)
     if expected_head_sha is not None:
         validate_expected_sha(expected_head_sha, latest_pull_request)
     if expected_review_state is not None:
@@ -1136,12 +1155,13 @@ def normalize_delete_comments(
 
 def delete(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     data = read_json_input(args.input)
-    _only_keys(data, {"comments", "review_id"}, "input")
+    _only_keys(data, {"allow_submitted", "comments", "review_id"}, "input")
     target = resolve_target(client, args.repo, args.pr)
     pull_request, reviews = fetch_review_context(client, target)
     actor = current_actor(client)
     review = select_owned_review(reviews, actor, data.get("review_id"))
     if "comments" in data:
+        require_pending_unless_allowed(data, review)
         operations = normalize_delete_comments(data, review)
     else:
         if review.get("state") != "PENDING":
@@ -1173,6 +1193,7 @@ def delete(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
         raise InputError("current GitHub actor changed before review deletion")
     latest_review = select_owned_review(latest_reviews, latest_actor, review.get("id"))
     if "comments" in data:
+        require_pending_unless_allowed(data, latest_review)
         operations = normalize_delete_comments(data, latest_review)
     else:
         if latest_review.get("state") != "PENDING":

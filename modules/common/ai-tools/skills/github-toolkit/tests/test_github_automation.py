@@ -700,6 +700,7 @@ class ReviewDraftTests(unittest.TestCase):
 
     def test_update_submitted_review_without_marker(self) -> None:
         data = {
+            "allow_submitted": True,
             "body": "updated teammate summary",
             "review_id": "PRR_1",
         }
@@ -1047,6 +1048,7 @@ class ReviewDraftTests(unittest.TestCase):
 
     def test_delete_submitted_review_comment_by_explicit_id(self) -> None:
         data = {
+            "allow_submitted": True,
             "review_id": "PRR_1",
             "comments": [{"id": "PRRC_1"}],
         }
@@ -1093,6 +1095,80 @@ class ReviewDraftTests(unittest.TestCase):
         self.assertTrue(result["applied"])
         self.assertTrue(result["mutation"]["complete"])
         self.assertEqual(result["verification"]["status"], "verified")
+
+    def _submitted_write_is_refused(
+        self, command: str, data: dict[str, object]
+    ) -> None:
+        review = pending_review(body="old summary", comments=[review_comment()])
+        review["state"] = "COMMENTED"
+        args = argparse.Namespace(
+            input="review.json", repo="base/repo", pr="7", apply=False
+        )
+        client = mock.Mock()
+        with (
+            mock.patch.object(review_draft, "read_json_input", return_value=data),
+            mock.patch.object(
+                review_draft,
+                "resolve_target",
+                return_value=_github.Target("base/repo", 7),
+            ),
+            mock.patch.object(
+                review_draft,
+                "fetch_review_context",
+                return_value=(pull_request(), [review]),
+            ),
+            mock.patch.object(review_draft, "current_actor", return_value="viewer"),
+            self.assertRaisesRegex(_github.InputError, "allow_submitted"),
+        ):
+            getattr(review_draft, command)(args, client)
+        client.graphql.assert_not_called()
+        client.run_json.assert_not_called()
+
+    def test_update_submitted_review_requires_explicit_opt_in(self) -> None:
+        self._submitted_write_is_refused(
+            "update", {"body": "updated summary", "review_id": "PRR_1"}
+        )
+
+    def test_delete_submitted_review_comment_requires_explicit_opt_in(self) -> None:
+        self._submitted_write_is_refused(
+            "delete", {"review_id": "PRR_1", "comments": [{"id": "PRRC_1"}]}
+        )
+
+    def test_delete_comment_rechecks_submission_before_mutation(self) -> None:
+        data = {"review_id": "PRR_1", "comments": [{"id": "PRRC_1"}]}
+        planned = pending_review(comments=[review_comment()])
+        submitted = pending_review(comments=[review_comment()])
+        submitted["state"] = "COMMENTED"
+        args = argparse.Namespace(
+            input="review.json", repo="base/repo", pr="7", apply=True
+        )
+        client = mock.Mock()
+        with (
+            mock.patch.object(review_draft, "read_json_input", return_value=data),
+            mock.patch.object(
+                review_draft,
+                "resolve_target",
+                return_value=_github.Target("base/repo", 7),
+            ),
+            mock.patch.object(
+                review_draft,
+                "fetch_review_context",
+                side_effect=[
+                    (pull_request(), [planned]),
+                    (pull_request(), [submitted]),
+                ],
+            ),
+            mock.patch.object(review_draft, "current_actor", return_value="viewer"),
+            self.assertRaisesRegex(_github.InputError, "not PENDING"),
+        ):
+            review_draft.delete(args, client)
+        client.graphql.assert_not_called()
+
+    def test_allow_submitted_must_be_boolean(self) -> None:
+        with self.assertRaisesRegex(_github.InputError, "boolean"):
+            review_draft.require_pending_unless_allowed(
+                {"allow_submitted": "yes"}, {"state": "COMMENTED"}
+            )
 
     def test_unknown_event_field_is_always_rejected(self) -> None:
         with self.assertRaisesRegex(_github.InputError, "cannot submit"):
