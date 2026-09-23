@@ -36,6 +36,16 @@ _: final: prev: {
           # Apply [text] replacements to streamed partials, holding back only
           # words that could still start a replacement.
           ./streaming-replacements.patch
+          # `voxtype learn` (peteonrails/voxtype#668), minus its authors line.
+          (final.fetchpatch2 {
+            name = "voxtype-learn.patch";
+            url = "https://github.com/peteonrails/voxtype/commit/9dc192fa2b458a857cfc9e800e5e2653a3f2ff40.patch";
+            excludes = [ "Cargo.toml" ];
+            hash = "sha256-6yVsCzxh8bNPoZKhor5M+ZHbfj3OSPNpunjaYxFTNx8=";
+          })
+          # Learn into a writable state file the daemon rereads per session,
+          # since the generated config.toml is read-only.
+          ./learned-replacements.patch
         ];
 
       # fetchCargoVendor recurses forever into an ancestor symlink inside the

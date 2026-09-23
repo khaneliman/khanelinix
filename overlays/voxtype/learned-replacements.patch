@@ -1,0 +1,384 @@
+diff --git a/src/app/learn.rs b/src/app/learn.rs
+--- a/src/app/learn.rs
++++ b/src/app/learn.rs
+@@ -4,12 +4,9 @@ use std::io::Read;
+ use std::path::PathBuf;
+ use std::process::Command;
+ 
+-use voxtype::config_set;
+ use voxtype::notification;
+ use voxtype::text::learn::{self, LearnDiff};
+ 
+-use super::config_set::resolve_config_path_for_write;
+-
+ #[derive(Clone, Copy)]
+ pub(crate) enum LearnSource {
+     /// Wayland primary selection, falling back to the clipboard.
+@@ -19,7 +16,7 @@ pub(crate) enum LearnSource {
+ }
+ 
+ pub(crate) async fn run_learn(
+-    cli_config: Option<PathBuf>,
++    _cli_config: Option<PathBuf>,
+     from_clipboard: bool,
+     from_stdin: bool,
+ ) -> anyhow::Result<()> {
+@@ -70,8 +67,15 @@ pub(crate) async fn run_learn(
+             Ok(())
+         }
+         LearnDiff::Replacements(pairs) => {
+-            let path = resolve_config_path_for_write(cli_config)?;
+-            let written = match config_set::merge_replacements(path, &pairs) {
++            let pairs: Vec<(String, String)> = pairs
++                .iter()
++                .filter_map(|(from, to)| learn::normalize_learned_pair(from, to))
++                .collect();
++            if pairs.is_empty() {
++                println!("Nothing to learn: only punctuation changed.");
++                return Ok(());
++            }
++            let written = match learn::merge_learned_replacements(&pairs) {
+                 Ok(p) => p,
+                 Err(e) => {
+                     eprintln!("error: {e}");
+@@ -82,9 +86,13 @@ pub(crate) async fn run_learn(
+             for (from, to) in &pairs {
+                 println!("Learned \"{from}\" = \"{to}\"");
+             }
+-            println!("Wrote {} in {}", pairs.len(), written.display());
++            // The daemon rereads this file when the next dictation starts.
++            println!(
++                "Wrote {} in {}; applies to the next dictation.",
++                pairs.len(),
++                written.display()
++            );
+ 
+-            restart_daemon();
+             notify_learned(&pairs).await;
+             Ok(())
+         }
+@@ -134,37 +142,6 @@ fn run_stdout(bin: &str, args: &[&str]) -> Option<String> {
+     String::from_utf8(output.stdout).ok()
+ }
+ 
+-fn restart_daemon() {
+-    #[cfg(target_os = "linux")]
+-    {
+-        let active = Command::new("systemctl")
+-            .args(["--user", "is-active", "--quiet", "voxtype"])
+-            .status()
+-            .map(|s| s.success())
+-            .unwrap_or(false);
+-        if !active {
+-            println!("Daemon is not running; replacements apply on next start.");
+-            return;
+-        }
+-        let restart = Command::new("systemctl")
+-            .args(["--user", "restart", "voxtype"])
+-            .status();
+-        match restart {
+-            Ok(s) if s.success() => println!("Restarted voxtype daemon."),
+-            _ => {
+-                eprintln!(
+-                    "warning: could not restart daemon. Restart manually: \
+-                     systemctl --user restart voxtype"
+-                );
+-            }
+-        }
+-    }
+-    #[cfg(not(target_os = "linux"))]
+-    {
+-        println!("Restart voxtype to apply the new replacements.");
+-    }
+-}
+-
+ async fn notify_learned(pairs: &[(String, String)]) {
+     let body = pairs
+         .iter()
+diff --git a/src/daemon.rs b/src/daemon.rs
+--- a/src/daemon.rs
++++ b/src/daemon.rs
+@@ -838,6 +838,10 @@ pub struct Daemon {
+     /// Deadline for a stopped streaming session to finish typing its
+     /// drained tail. Set on stop; cleared when the session ends.
+     streaming_finish_deadline: Option<tokio::time::Instant>,
++    /// Modification time of the learned replacements file when the text
++    /// processor was last built, so a `voxtype learn` is picked up at the
++    /// next dictation without restarting the daemon.
++    learned_replacements_mtime: Option<std::time::SystemTime>,
+     /// OSD child supervisor task. Holds the JoinHandle so dropping it (on
+     /// daemon shutdown) kill_on_drop's the spawned voxtype-osd process.
+     osd_supervisor_task: Option<tokio::task::JoinHandle<()>>,
+@@ -989,6 +993,7 @@ impl Daemon {
+             is_external_trigger: false,
+             streaming_drain_pump: None,
+             streaming_finish_deadline: None,
++            learned_replacements_mtime: None,
+             osd_supervisor_task: None,
+             model_manager: None,
+             model_load_task: None,
+@@ -1155,6 +1160,7 @@ impl Daemon {
+         // point every recording path passes through, so a cancel can only
+         // ever apply to a recording that was live when it was issued (#606).
+         cleanup_cancel_file();
++        self.refresh_learned_replacements();
+         match audio::create_capture(&self.config.audio) {
+             Ok(mut capture) => match capture.start().await {
+                 Ok(chunk_rx) => {
+@@ -1269,6 +1275,7 @@ impl Daemon {
+         // session moments after it starts. See #606.
+         cleanup_cancel_file();
+         self.streaming_finish_deadline = None;
++        self.refresh_learned_replacements();
+         // Clone out of the field so the borrow doesn't overlap the
+         // `&mut self` capture start below.
+         let Some(transcriber) = self.transcriber_preloaded.clone() else {
+@@ -1527,6 +1534,30 @@ impl Daemon {
+         self.restore_recording_media();
+     }
+ 
++    /// Layer `voxtype learn`'s replacements over the configured ones,
++    /// rebuilding the text processor only when the learned file changed.
++    fn refresh_learned_replacements(&mut self) {
++        let path = crate::text::learn::learned_replacements_path();
++        let mtime = std::fs::metadata(&path).and_then(|m| m.modified()).ok();
++        if mtime == self.learned_replacements_mtime {
++            return;
++        }
++        self.learned_replacements_mtime = mtime;
++        let learned = crate::text::learn::load_learned_replacements();
++        let count = learned.len();
++        let mut text = self.config.text.clone();
++        // Lowercase first so a learned entry deterministically overrides a
++        // configured one for the same spoken form.
++        text.replacements = text
++            .replacements
++            .into_iter()
++            .map(|(k, v)| (k.to_lowercase(), v))
++            .collect();
++        text.replacements.extend(learned);
++        self.text_processor = TextProcessor::new_for_language(&text, self.config.active_language());
++        tracing::info!("Loaded {} learned replacements from {:?}", count, path);
++    }
++
+     /// Text processor for typed streaming partials. Parakeet-family
+     /// engines emit append-only deltas, so replacements can apply as text
+     /// arrives; engines that revise partials by backspace counts need the
+@@ -1621,6 +1652,10 @@ impl Daemon {
+             if let Err(e) = s.flush_pending(chain, self.partial_text_processor()).await {
+                 tracing::warn!("Streaming held-back tail type failed: {}", e);
+             }
++            let raw = s.raw_text().trim();
++            if !raw.is_empty() {
++                crate::text::learn::record_last_transcript(raw);
++            }
+         }
+         *streaming_session = None;
+         *streaming_chain = None;
+diff --git a/src/output/streaming.rs b/src/output/streaming.rs
+--- a/src/output/streaming.rs
++++ b/src/output/streaming.rs
+@@ -70,6 +70,8 @@ pub struct StreamingSession {
+     /// Raw partial text received but not typed yet, held back because a
+     /// replacement could still match once more text arrives.
+     pending: String,
++    /// Raw engine transcript of the session, for `voxtype learn`.
++    raw_text: String,
+ }
+ 
+ impl StreamingSession {
+@@ -80,9 +82,15 @@ impl StreamingSession {
+             typed_chars: 0,
+             partial: String::new(),
+             pending: String::new(),
++            raw_text: String::new(),
+         }
+     }
+ 
++    /// Raw engine transcript typed so far, before replacements.
++    pub fn raw_text(&self) -> &str {
++        &self.raw_text
++    }
++
+     /// Update the in-memory partial text. Returns the new partial for
+     /// callers that want to mirror it into status files / Waybar.
+     pub fn observe_partial(&mut self, text: String) -> &str {
+@@ -115,6 +123,7 @@ impl StreamingSession {
+         if new_partial.is_empty() {
+             return Ok(());
+         }
++        self.raw_text.push_str(&new_partial);
+ 
+         // Replacements need whole words, and a delta can end mid-word or
+         // mid-phrase. Hold back only a tail that could still start a
+@@ -232,6 +241,7 @@ impl StreamingSession {
+         pre_output_command: Option<&str>,
+         post_output_command: Option<&str>,
+     ) -> Result<(), OutputError> {
++        self.raw_text.push_str(text);
+         // The Final carries the stream's tail, so a tail held back for
+         // replacements joins it here.
+         let joined;
+@@ -667,6 +677,24 @@ mod tests {
+         assert_eq!(session.typed_chars(), "open Hyprland".chars().count());
+     }
+ 
++    #[tokio::test]
++    async fn raw_text_keeps_the_unreplaced_transcript() {
++        let tp = nix_processor();
++        let rec = std::sync::Arc::new(RecordingOutput::new());
++        let chain = chain_with(rec.clone());
++        let mut session = StreamingSession::new();
++        session
++            .type_partial_delta(&chain, "open hyper".to_string(), Some(&tp), None, None)
++            .await
++            .unwrap();
++        session
++            .commit_segment(&chain, "land now", Some(&tp), None, None)
++            .await
++            .unwrap();
++        assert_eq!(session.raw_text(), "open hyperland now");
++        assert_eq!(rec.typed().concat(), "open Hyprland now");
++    }
++
+     #[tokio::test]
+     async fn partial_deltas_without_processor_type_immediately() {
+         let rec = std::sync::Arc::new(RecordingOutput::new());
+diff --git a/src/text/learn.rs b/src/text/learn.rs
+--- a/src/text/learn.rs
++++ b/src/text/learn.rs
+@@ -5,6 +5,7 @@
+ //! ignored so a compositor selection that only adds or drops words does not
+ //! poison `[text.replacements]`.
+ 
++use std::collections::{BTreeMap, HashMap};
+ use std::path::{Path, PathBuf};
+ 
+ /// Full-string similarity below this refuses to learn (random selection guard).
+@@ -309,10 +310,126 @@ fn longest_match<T: PartialEq>(
+     (best_i, best_j, best_size)
+ }
+ 
++/// Writable file `voxtype learn` merges replacements into. Keeping it out
++/// of config.toml lets read-only generated configs (Nix, system packages)
++/// keep learning; the daemon layers it over `[text.replacements]`.
++pub fn learned_replacements_path() -> PathBuf {
++    dirs::state_dir()
++        .or_else(dirs::data_local_dir)
++        .unwrap_or_else(std::env::temp_dir)
++        .join("voxtype")
++        .join("learned-replacements.toml")
++}
++
++#[derive(Debug, Default, serde::Deserialize, serde::Serialize)]
++struct LearnedReplacements {
++    #[serde(default)]
++    replacements: BTreeMap<String, String>,
++}
++
++/// Learned replacements keyed by lowercase spoken form. A missing or
++/// unreadable file yields none.
++pub fn load_learned_replacements() -> HashMap<String, String> {
++    load_learned_replacements_from(&learned_replacements_path())
++}
++
++fn load_learned_replacements_from(path: &Path) -> HashMap<String, String> {
++    let Ok(content) = std::fs::read_to_string(path) else {
++        return HashMap::new();
++    };
++    match toml::from_str::<LearnedReplacements>(&content) {
++        Ok(file) => file.replacements.into_iter().collect(),
++        Err(e) => {
++            tracing::warn!("Ignoring unreadable {}: {}", path.display(), e);
++            HashMap::new()
++        }
++    }
++}
++
++/// Merge pairs into the learned replacements file, overwriting entries for
++/// the same spoken form. Returns the file written.
++pub fn merge_learned_replacements(pairs: &[(String, String)]) -> std::io::Result<PathBuf> {
++    let path = learned_replacements_path();
++    merge_learned_replacements_at(&path, pairs)?;
++    Ok(path)
++}
++
++fn merge_learned_replacements_at(path: &Path, pairs: &[(String, String)]) -> std::io::Result<()> {
++    let mut file = std::fs::read_to_string(path)
++        .ok()
++        .and_then(|content| toml::from_str::<LearnedReplacements>(&content).ok())
++        .unwrap_or_default();
++    for (from, to) in pairs {
++        file.replacements.insert(from.to_lowercase(), to.clone());
++    }
++    let content = toml::to_string(&file).map_err(std::io::Error::other)?;
++    if let Some(parent) = path.parent() {
++        std::fs::create_dir_all(parent)?;
++    }
++    let tmp = path.with_extension("toml.tmp");
++    std::fs::write(&tmp, content)?;
++    std::fs::rename(tmp, path)
++}
++
++/// Trim punctuation a whitespace diff leaves on phrase edges, so
++/// `"hyperland,"` learns as `"hyperland"`: replacements match on word
++/// boundaries, which a trailing comma or period never satisfies. Edge
++/// punctuation on the spoken side is dropped; the same punctuation on the
++/// corrected side is dropped with it. Returns `None` when nothing remains
++/// to replace.
++pub fn normalize_learned_pair(from: &str, to: &str) -> Option<(String, String)> {
++    let is_edge = |c: char| !c.is_alphanumeric();
++    let lead = &from[..from.len() - from.trim_start_matches(is_edge).len()];
++    let trail = &from[from.trim_end_matches(is_edge).len()..];
++    let key = from.trim_matches(is_edge);
++    if key.is_empty() {
++        return None;
++    }
++    let value = to.strip_prefix(lead).unwrap_or(to);
++    let value = value.strip_suffix(trail).unwrap_or(value).trim();
++    if value.is_empty() || value == key {
++        return None;
++    }
++    Some((key.to_string(), value.to_string()))
++}
++
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn learned_replacements_merge_and_reload() {
++        let dir = tempfile::tempdir().unwrap();
++        let path = dir.path().join("voxtype").join("learned-replacements.toml");
++        merge_learned_replacements_at(&path, &[("Hyperland".into(), "Hyprland".into())]).unwrap();
++        merge_learned_replacements_at(
++            &path,
++            &[
++                ("hyperland".into(), "Hyprland!".into()),
++                ("cubec to".into(), "kubectl".into()),
++            ],
++        )
++        .unwrap();
++        let learned = load_learned_replacements_from(&path);
++        assert_eq!(learned.len(), 2, "keys merge case-insensitively: {learned:?}");
++        assert_eq!(learned["hyperland"], "Hyprland!");
++        assert_eq!(learned["cubec to"], "kubectl");
++        assert!(load_learned_replacements_from(&dir.path().join("missing.toml")).is_empty());
++    }
++
++    #[test]
++    fn normalize_learned_pair_trims_edge_punctuation() {
++        let pair = |from: &str, to: &str| normalize_learned_pair(from, to);
++        assert_eq!(pair("hyperland,", "Hyprland,"), Some(("hyperland".into(), "Hyprland".into())));
++        assert_eq!(
++            pair("omaar gielen nu,", "Omarchy menu"),
++            Some(("omaar gielen nu".into(), "Omarchy menu".into()))
++        );
++        assert_eq!(pair("(foo)", "(bar)"), Some(("foo".into(), "bar".into())));
++        assert_eq!(pair(",", "and"), None);
++        assert_eq!(pair("same.", "same."), None);
++    }
++
+     #[test]
+     fn example_omaar_gielen() {
+         let transcript = "Het omaar gielen nu, doet het niet.";
