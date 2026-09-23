@@ -54,6 +54,21 @@ let
   # TODO: Re-enable Linux exo workers when upstream supports AMD GPU acceleration.
   exoDisableWorker = pkgs.stdenv.hostPlatform.isLinux;
   isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
+  codexHome = config.home.sessionVariables.CODEX_HOME or "${config.home.homeDirectory}/.codex";
+  # agentsview ignores CODEX_HOME, and its Warp provider fails every sync pass
+  # when warp.sqlite lacks `agent_conversations`. Pin both roots so the daemon
+  # and MCP server see them, not only interactive shells.
+  agentsviewPackage = pkgs.symlinkJoin {
+    name = pkgs.agentsview.name;
+    paths = [ pkgs.agentsview ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram "$out/bin/agentsview" \
+        --set-default CODEX_SESSIONS_DIR ${lib.escapeShellArg "${codexHome}/sessions"} \
+        --set-default WARP_DIR ${pkgs.emptyDirectory}
+    '';
+    meta = pkgs.agentsview.meta;
+  };
 in
 {
   options.khanelinix.suites.development = {
@@ -142,7 +157,7 @@ in
           # mysql-workbench
         ]
         ++ lib.optionals cfg.aiEnable [
-          agentsview
+          agentsviewPackage
           ccusage
           ck
           khanelinix.codeburn
@@ -205,9 +220,6 @@ in
         hmt-repl = "nix repl --reference-lock-file flake.lock ./tests";
         hmtf = ''f(){ nix build -L --option allow-import-from-derivation false --reference-lock-file flake.lock "./tests#test-$1"; }; f'';
         hmts = ''f(){ nix build -L --option allow-import-from-derivation false --reference-lock-file flake.lock "./tests#test-$1" && nix path-info -rSh ./result; }; f'';
-      }
-      // lib.optionalAttrs cfg.aiEnable {
-        agentsview = "CODEX_SESSIONS_DIR=${config.xdg.configHome}/codex/sessions agentsview";
       };
     };
 
