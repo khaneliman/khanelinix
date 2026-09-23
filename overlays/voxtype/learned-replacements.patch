@@ -1,7 +1,7 @@
 diff --git a/src/app/learn.rs b/src/app/learn.rs
 --- a/src/app/learn.rs
 +++ b/src/app/learn.rs
-@@ -4,12 +4,9 @@ use std::io::Read;
+@@ -4,12 +4,9 @@
  use std::path::PathBuf;
  use std::process::Command;
  
@@ -14,7 +14,7 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
  #[derive(Clone, Copy)]
  pub(crate) enum LearnSource {
      /// Wayland primary selection, falling back to the clipboard.
-@@ -19,7 +16,7 @@ pub(crate) enum LearnSource {
+@@ -19,7 +16,7 @@
  }
  
  pub(crate) async fn run_learn(
@@ -23,7 +23,45 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
      from_clipboard: bool,
      from_stdin: bool,
  ) -> anyhow::Result<()> {
-@@ -70,8 +67,15 @@ pub(crate) async fn run_learn(
+@@ -36,10 +33,12 @@
+         Ok(text) if !text.trim().is_empty() => text,
+         Ok(_) => {
+             eprintln!("error: corrected text is empty");
++            notify_nothing_learned("Select the corrected text first.").await;
+             std::process::exit(1);
+         }
+         Err(e) => {
+             eprintln!("error: {e}");
++            notify_nothing_learned(&e.to_string()).await;
+             std::process::exit(1);
+         }
+     };
+@@ -49,12 +48,14 @@
+             "error: no last transcript found.\n  \
+              Dictate something first, or check that the voxtype daemon is logging."
+         );
++        notify_nothing_learned("No recent dictation to compare against.").await;
+         std::process::exit(1);
+     };
+ 
+     match learn::diff_replacements(&transcript, &corrected) {
+         LearnDiff::Identical => {
+             println!("Nothing to learn: text matches the last transcript.");
++            notify_nothing_learned("The selection matches the last dictation.").await;
+             Ok(())
+         }
+         LearnDiff::TooDifferent { ratio } => {
+@@ -63,18 +64,29 @@
+                  (similarity {ratio:.2} < {:.2}). Refusing to learn.",
+                 learn::MIN_SIMILARITY
+             );
++            notify_nothing_learned("The selection does not match the last dictation.").await;
+             std::process::exit(1);
+         }
+         LearnDiff::NoReplacements => {
+-            println!("Nothing to learn: no word replacements found (inserts/deletes only).");
++            println!("Nothing to learn: no misheard words found.");
++            notify_nothing_learned("No misheard words found in the selection.").await;
              Ok(())
          }
          LearnDiff::Replacements(pairs) => {
@@ -35,13 +73,18 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
 +                .collect();
 +            if pairs.is_empty() {
 +                println!("Nothing to learn: only punctuation changed.");
++                notify_nothing_learned("Only punctuation changed.").await;
 +                return Ok(());
 +            }
 +            let written = match learn::merge_learned_replacements(&pairs) {
                  Ok(p) => p,
                  Err(e) => {
                      eprintln!("error: {e}");
-@@ -82,9 +86,13 @@ pub(crate) async fn run_learn(
++                    notify_nothing_learned(&format!("Could not save replacements: {e}")).await;
+                     std::process::exit(1);
+                 }
+             };
+@@ -82,9 +94,13 @@
              for (from, to) in &pairs {
                  println!("Learned \"{from}\" = \"{to}\"");
              }
@@ -57,7 +100,7 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
              notify_learned(&pairs).await;
              Ok(())
          }
-@@ -134,37 +142,6 @@ fn run_stdout(bin: &str, args: &[&str]) -> Option<String> {
+@@ -134,35 +150,9 @@
      String::from_utf8(output.stdout).ok()
  }
  
@@ -90,15 +133,16 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
 -    {
 -        println!("Restart voxtype to apply the new replacements.");
 -    }
--}
--
++/// Keybinding runs have no terminal, so say why nothing was learned.
++async fn notify_nothing_learned(reason: &str) {
++    notification::send("Voxtype learned nothing", reason).await;
+ }
+ 
  async fn notify_learned(pairs: &[(String, String)]) {
-     let body = pairs
-         .iter()
 diff --git a/src/daemon.rs b/src/daemon.rs
 --- a/src/daemon.rs
 +++ b/src/daemon.rs
-@@ -838,6 +838,10 @@ pub struct Daemon {
+@@ -838,6 +838,10 @@
      /// Deadline for a stopped streaming session to finish typing its
      /// drained tail. Set on stop; cleared when the session ends.
      streaming_finish_deadline: Option<tokio::time::Instant>,
@@ -109,7 +153,7 @@ diff --git a/src/daemon.rs b/src/daemon.rs
      /// OSD child supervisor task. Holds the JoinHandle so dropping it (on
      /// daemon shutdown) kill_on_drop's the spawned voxtype-osd process.
      osd_supervisor_task: Option<tokio::task::JoinHandle<()>>,
-@@ -989,6 +993,7 @@ impl Daemon {
+@@ -989,6 +993,7 @@
              is_external_trigger: false,
              streaming_drain_pump: None,
              streaming_finish_deadline: None,
@@ -117,7 +161,7 @@ diff --git a/src/daemon.rs b/src/daemon.rs
              osd_supervisor_task: None,
              model_manager: None,
              model_load_task: None,
-@@ -1155,6 +1160,7 @@ impl Daemon {
+@@ -1155,6 +1160,7 @@
          // point every recording path passes through, so a cancel can only
          // ever apply to a recording that was live when it was issued (#606).
          cleanup_cancel_file();
@@ -125,7 +169,7 @@ diff --git a/src/daemon.rs b/src/daemon.rs
          match audio::create_capture(&self.config.audio) {
              Ok(mut capture) => match capture.start().await {
                  Ok(chunk_rx) => {
-@@ -1269,6 +1275,7 @@ impl Daemon {
+@@ -1269,6 +1275,7 @@
          // session moments after it starts. See #606.
          cleanup_cancel_file();
          self.streaming_finish_deadline = None;
@@ -133,7 +177,7 @@ diff --git a/src/daemon.rs b/src/daemon.rs
          // Clone out of the field so the borrow doesn't overlap the
          // `&mut self` capture start below.
          let Some(transcriber) = self.transcriber_preloaded.clone() else {
-@@ -1527,6 +1534,30 @@ impl Daemon {
+@@ -1527,6 +1534,30 @@
          self.restore_recording_media();
      }
  
@@ -164,7 +208,7 @@ diff --git a/src/daemon.rs b/src/daemon.rs
      /// Text processor for typed streaming partials. Parakeet-family
      /// engines emit append-only deltas, so replacements can apply as text
      /// arrives; engines that revise partials by backspace counts need the
-@@ -1621,6 +1652,10 @@ impl Daemon {
+@@ -1621,6 +1652,10 @@
              if let Err(e) = s.flush_pending(chain, self.partial_text_processor()).await {
                  tracing::warn!("Streaming held-back tail type failed: {}", e);
              }
@@ -178,7 +222,7 @@ diff --git a/src/daemon.rs b/src/daemon.rs
 diff --git a/src/output/streaming.rs b/src/output/streaming.rs
 --- a/src/output/streaming.rs
 +++ b/src/output/streaming.rs
-@@ -70,6 +70,8 @@ pub struct StreamingSession {
+@@ -70,6 +70,8 @@
      /// Raw partial text received but not typed yet, held back because a
      /// replacement could still match once more text arrives.
      pending: String,
@@ -187,7 +231,7 @@ diff --git a/src/output/streaming.rs b/src/output/streaming.rs
  }
  
  impl StreamingSession {
-@@ -80,9 +82,15 @@ impl StreamingSession {
+@@ -80,9 +82,15 @@
              typed_chars: 0,
              partial: String::new(),
              pending: String::new(),
@@ -203,7 +247,7 @@ diff --git a/src/output/streaming.rs b/src/output/streaming.rs
      /// Update the in-memory partial text. Returns the new partial for
      /// callers that want to mirror it into status files / Waybar.
      pub fn observe_partial(&mut self, text: String) -> &str {
-@@ -115,6 +123,7 @@ impl StreamingSession {
+@@ -115,6 +123,7 @@
          if new_partial.is_empty() {
              return Ok(());
          }
@@ -211,7 +255,7 @@ diff --git a/src/output/streaming.rs b/src/output/streaming.rs
  
          // Replacements need whole words, and a delta can end mid-word or
          // mid-phrase. Hold back only a tail that could still start a
-@@ -232,6 +241,7 @@ impl StreamingSession {
+@@ -232,6 +241,7 @@
          pre_output_command: Option<&str>,
          post_output_command: Option<&str>,
      ) -> Result<(), OutputError> {
@@ -219,7 +263,7 @@ diff --git a/src/output/streaming.rs b/src/output/streaming.rs
          // The Final carries the stream's tail, so a tail held back for
          // replacements joins it here.
          let joined;
-@@ -667,6 +677,24 @@ mod tests {
+@@ -667,6 +677,24 @@
          assert_eq!(session.typed_chars(), "open Hyprland".chars().count());
      }
  
@@ -255,7 +299,54 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
  use std::path::{Path, PathBuf};
  
  /// Full-string similarity below this refuses to learn (random selection guard).
-@@ -309,10 +310,126 @@ fn longest_match<T: PartialEq>(
+@@ -177,6 +178,25 @@
+     2.0 * matches as f64 / (a.len() + b.len()) as f64
+ }
+ 
++/// Longest phrase, in words, learned from one replace block. Longer blocks
++/// are rewrites of the sentence rather than a misheard term.
++const MAX_LEARNED_WORDS: usize = 4;
++
++/// Letter similarity a learned pair needs. Misheard terms sound alike and
++/// share most letters ("hyper end" and "Hyprland"); reworded text does not
++/// ("ship" and "wait until").
++const MIN_PAIR_SIMILARITY: f64 = 0.4;
++
++fn looks_misheard(old: &str, new: &str) -> bool {
++    let letters = |s: &str| -> Vec<char> {
++        s.chars()
++            .filter(|c| c.is_alphanumeric())
++            .flat_map(char::to_lowercase)
++            .collect()
++    };
++    sequence_ratio(letters(old), letters(new)) >= MIN_PAIR_SIMILARITY
++}
++
+ fn replace_pairs(old_tokens: &[&str], new_tokens: &[&str]) -> Vec<(String, String)> {
+     let mut pairs = Vec::new();
+     for op in opcodes(old_tokens, new_tokens) {
+@@ -185,13 +205,15 @@
+         }
+         let a_len = op.a_end - op.a_start;
+         let b_len = op.b_end - op.b_start;
+-        let n = a_len.min(b_len);
+-        if n == 0 {
++        if a_len == 0 || b_len == 0 || a_len.max(b_len) > MAX_LEARNED_WORDS {
+             continue;
+         }
+-        let old_phrase = old_tokens[op.a_start..op.a_start + n].join(" ");
+-        let new_phrase = new_tokens[op.b_start..op.b_start + n].join(" ");
+-        if old_phrase != new_phrase {
++        // Keep the whole block: speech models split and merge words
++        // ("hyper end" for "Hyprland"), so truncating to the shorter side
++        // would learn half a phrase.
++        let old_phrase = old_tokens[op.a_start..op.a_end].join(" ");
++        let new_phrase = new_tokens[op.b_start..op.b_end].join(" ");
++        if old_phrase != new_phrase && looks_misheard(&old_phrase, &new_phrase) {
+             pairs.push((old_phrase, new_phrase));
+         }
+     }
+@@ -309,10 +331,159 @@
      (best_i, best_j, best_size)
  }
  
@@ -328,14 +419,17 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
 +/// to replace.
 +pub fn normalize_learned_pair(from: &str, to: &str) -> Option<(String, String)> {
 +    let is_edge = |c: char| !c.is_alphanumeric();
-+    let lead = &from[..from.len() - from.trim_start_matches(is_edge).len()];
-+    let trail = &from[from.trim_end_matches(is_edge).len()..];
 +    let key = from.trim_matches(is_edge);
-+    if key.is_empty() {
++    // Nothing spoken, or only punctuation around the same words changed.
++    if key.is_empty() || to.trim_matches(is_edge) == key {
 +        return None;
 +    }
++    let lead = &from[..from.len() - from.trim_start_matches(is_edge).len()];
++    let trail = &from[from.trim_end_matches(is_edge).len()..];
 +    let value = to.strip_prefix(lead).unwrap_or(to);
-+    let value = value.strip_suffix(trail).unwrap_or(value).trim();
++    let value = value.strip_suffix(trail).unwrap_or(value);
++    // Sentence punctuation belongs to the surrounding text, not the term.
++    let value = value.trim_end_matches([',', ';', ':', '.', '!', '?']).trim();
 +    if value.is_empty() || value == key {
 +        return None;
 +    }
@@ -377,8 +471,47 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
 +        assert_eq!(pair("(foo)", "(bar)"), Some(("foo".into(), "bar".into())));
 +        assert_eq!(pair(",", "and"), None);
 +        assert_eq!(pair("same.", "same."), None);
++        // Punctuation-only edits teach nothing.
++        assert_eq!(pair("check", "check,"), None);
++        // Trailing sentence punctuation stays with the sentence...
++        assert_eq!(pair("cube cuddle", "kubectl,"), Some(("cube cuddle".into(), "kubectl".into())));
++        // ...while punctuation inside a term survives.
++        assert_eq!(pair("dot net", ".NET"), Some(("dot net".into(), ".NET".into())));
++    }
++
++    #[test]
++    fn multi_word_misrecognition_learns_the_whole_phrase() {
++        let transcript = "open the hyper end keybinds and run nix flake check";
++        let corrected = "open the Hyprland keybinds and run nix flake check,";
++        match diff_replacements(transcript, corrected) {
++            LearnDiff::Replacements(pairs) => {
++                assert_eq!(pairs[0], ("hyper end".to_string(), "Hyprland".to_string()));
++                let learned: Vec<_> = pairs
++                    .iter()
++                    .filter_map(|(from, to)| normalize_learned_pair(from, to))
++                    .collect();
++                assert_eq!(learned, vec![("hyper end".to_string(), "Hyprland".to_string())]);
++            }
++            other => panic!("expected replacements, got {other:?}"),
++        }
++    }
++
++    #[test]
++    fn long_rewrites_are_not_learned() {
++        let transcript = "we should ship the build before lunch today";
++        let corrected = "we should wait until the review finishes before shipping today";
++        assert_eq!(diff_replacements(transcript, corrected), LearnDiff::NoReplacements);
 +    }
 +
      #[test]
      fn example_omaar_gielen() {
          let transcript = "Het omaar gielen nu, doet het niet.";
+@@ -321,7 +492,7 @@
+             LearnDiff::Replacements(pairs) => {
+                 assert_eq!(
+                     pairs,
+-                    vec![("omaar gielen".to_string(), "Omarchy menu".to_string())]
++                    vec![("omaar gielen nu,".to_string(), "Omarchy menu".to_string())]
+                 );
+             }
+             other => panic!("expected replacements, got {other:?}"),
