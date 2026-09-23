@@ -222,6 +222,10 @@ let
         from = "$voxtype-cancel";
         to = "voxtype record cancel";
       }
+      {
+        from = "$voxtype-stop";
+        to = "voxtype record stop";
+      }
     ];
 
   replaceCommandVars =
@@ -940,7 +944,8 @@ in
                 (mkExecBind "" "F14" "$voxtype-cancel")
                 (mkExecBind "CTRL_ALT_SHIFT" "D" "$voxtype-cancel")
                 (mkExecBind "" "F12" "$voxtype-cancel")
-                (mkExecBind "" "escape" "$voxtype-cancel")
+                # Esc keeps the dictated text; cancel rewinds it.
+                (mkExecBind "" "escape" "$voxtype-stop")
                 # Reset directly so Esc exits the submap even when the
                 # daemon dies before its teardown reset runs.
                 (mkBind {
