@@ -1,0 +1,44 @@
+{
+	"aliases": {
+		"writing-nix": "nix-toolkit"
+	},
+	"installed_skill_roots": [
+		"\\.config/codex/skills",
+		"\\.codex/skills",
+		"\\.agents/skills",
+		"/skills/\\.system",
+		"\\.config/claude/skills"
+	],
+	"skills": {
+		"github-toolkit": {
+			"prompt": "github\\.com/[\\w.-]+/[\\w.-]+/(pull|issues)/\\d+|\\bpull request\\b|\\bgh pr\\b|\\bpr (review|comments?|body|description)\\b|\\breview (comments?|threads?)\\b|\\bpending review\\b|\\bci (checks?|failures?)\\b"
+		},
+		"git-toolkit": {
+			"prompt": "\\b(rebase|fixup|autosquash|squash|cherry-pick|bisect|merge conflict|atomic commits?|split (the )?commits?|amend|reword|commit (history|stack|message))\\b"
+		},
+		"nix-toolkit": {
+			"prompt": "\\b(nix|nixpkgs|nixos|flake|flakes|home-manager|derivation|overlay|mkDerivation|nix-darwin|nixvim)\\b",
+			"edit_suffixes": [".nix"]
+		},
+		"lua-toolkit": {
+			"prompt": "\\b(neovim plugin|lua plugin|busted|luarocks|lazy\\.nvim)\\b"
+		},
+		"rust-toolkit": {
+			"prompt": "\\b(rust|cargo|crate|clippy|rustc)\\b",
+			"edit_suffixes": [".rs"]
+		},
+		"typescript-best-practices": {
+			"prompt": "\\b(typescript|tsx?|tsconfig)\\b",
+			"edit_suffixes": [".ts", ".tsx"]
+		},
+		"diagnosing-bugs": {
+			"prompt": "\\b(error|errors|failing|fails|failed|broken|crash(es|ed)?|traceback|exception|segfault|not working|doesn'?t work|stopped working|regression)\\b"
+		},
+		"how": {
+			"prompt": "^\\s*(how (does|do|is|are)\\b|walk me through|explain how)"
+		},
+		"why": {
+			"prompt": "^\\s*why (does|do|is|are|did|was|were)\\b|\\bwhy (we|was this|did we)\\b"
+		}
+	}
+}
