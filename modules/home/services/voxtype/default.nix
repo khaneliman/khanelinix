@@ -14,6 +14,24 @@ let
     else
       config.wayland.windowManager.hyprland.package;
   isLinux = pkgs.stdenv.hostPlatform.isLinux;
+
+  # Voxtype only registers the multilingual Nemotron export, which misheard
+  # about twice as much technical vocabulary as this English-only one.
+  nemotronModel = pkgs.linkFarm "nemotron-speech-streaming-en-0.6b-int8" (
+    lib.mapAttrs
+      (
+        name: hash:
+        pkgs.fetchurl {
+          url = "https://huggingface.co/lokkju/nemotron-speech-streaming-en-0.6b-int8/resolve/95df6c82aa796a3fc793f87633dcdb017ac12c07/${name}";
+          inherit hash;
+        }
+      )
+      {
+        "encoder.onnx" = "sha256-0kvkr/GN2dKqNDPLicWkV99QFav3ngamPd52sc1jhrs=";
+        "decoder_joint.onnx" = "sha256-yG1SfkriclGnQWCerd1EKbpcMgUOL1Ms6hBS2eIfTwk=";
+        "tokenizer.model" = "sha256-B9TlpjhApTqy1NEG0odHaBQ/s/vdR5OLORDS2gW/sKk=";
+      }
+  );
 in
 {
   options.khanelinix.services.voxtype = {
@@ -35,7 +53,6 @@ in
         enable = true;
 
         package = pkgs.voxtype-onnx;
-        loadModels = [ config.services.voxtype.settings.parakeet.model ];
         environment = {
           DOTOOL_PIPE = "%t/voxtype-dotool-pipe";
           PATH = lib.makeBinPath (
@@ -65,11 +82,12 @@ in
             };
             audio.max_duration_secs = 300;
             parakeet = {
-              model = "parakeet-unified-en-0.6b";
+              # Cache-aware streaming encodes each 560 ms chunk once, instead
+              # of re-encoding seconds of left context per chunk.
+              model = "${nemotronModel}";
+              # Store paths carry no name Voxtype can detect the type from.
+              model_type = "nemotron";
               streaming = true;
-              streaming_chunk_secs = 0.32;
-              streaming_left_context_secs = 5.6;
-              streaming_right_context_secs = 0.32;
             };
             whisper = {
               model = "base.en";
