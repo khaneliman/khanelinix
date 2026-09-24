@@ -7,11 +7,13 @@ import argparse
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
 import tempfile
 import textwrap
+import urllib.request
 from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -25,12 +27,20 @@ BRANCH_PACKAGES = {
     "tokyonight-gtk-theme",
 }
 
+ANTIGRAVITY_REGISTRY_URL = (
+    "https://raw.githubusercontent.com/agentclientprotocol/registry/"
+    "main/antigravity-acp/agent.json"
+)
+ANTIGRAVITY_PLATFORMS = {
+    "x86_64-linux": ("linux-x86_64", "linux", "linux-x86_64"),
+    "aarch64-linux": ("linux-aarch64", "linux", "linux-arm64"),
+    "aarch64-darwin": ("darwin-aarch64", "macos", "darwin-arm64"),
+}
+
 SKIP_PACKAGES = {
     "adv360-firmware": "source is managed by the adv360-zmk flake input",
-    "antigravity-acp": "three platform-specific binary hashes require a custom updater",
     "avrogen": "nix-update cannot update buildDotnetGlobalTool version bindings",
     "bevy-brp-mcp": "the source update requires porting a local upstream patch",
-    "blender-mcp": "the server, add-on, and upstream Git source must update together",
     "cliproxyapi": "the source update also requires commit and build-date ldflags",
     "codexbar-cli": "four platform-specific release hashes require a custom updater",
     "playwright-cli": "the CLI update requires matching Chromium revision pins",
@@ -38,6 +48,8 @@ SKIP_PACKAGES = {
 
 NIX_UPDATE_SUBJECT = re.compile(r"^(?P<package>[^:]+): (?P<old>.+) -> (?P<new>.+)$")
 SOURCE_REVISION = re.compile(r'^\s*rev = "([0-9a-f]{40})";', re.MULTILINE)
+PACKAGE_VERSION = re.compile(r'^\s*version = "([0-9]+\.[0-9]+\.[0-9]+)";', re.MULTILINE)
+SEMVER = re.compile(r"[0-9]+\.[0-9]+\.[0-9]+")
 
 
 @dataclass(frozen=True)
@@ -261,9 +273,94 @@ def nix_update_environment() -> dict[str, str]:
     return env
 
 
+def antigravity_release() -> str:
+    with urllib.request.urlopen(ANTIGRAVITY_REGISTRY_URL, timeout=30) as response:
+        release = json.load(response)
+    version = release["version"]
+    if not isinstance(version, str) or not SEMVER.fullmatch(version):
+        raise ValueError(f"unexpected Antigravity ACP version: {version!r}")
+    archives = release["distribution"]["binary"]
+    for registry_platform, platform, archive_platform in ANTIGRAVITY_PLATFORMS.values():
+        expected = (
+            "https://dl.google.com/agy-extensions/releases/"
+            f"{platform}/agy-acp-server-{version}-{archive_platform}.zip"
+        )
+        actual = archives[registry_platform]["archive"]
+        if actual != expected:
+            raise ValueError(
+                f"Antigravity ACP archive changed for {registry_platform}: {actual}"
+            )
+    return version
+
+
+def update_antigravity(repo: Path, log_dir: Path) -> UpdateResult:
+    package = "antigravity-acp"
+    target = package_path(repo, package)
+    if target_changed(repo, target):
+        return UpdateResult(
+            package, "skipped", "package directory has existing changes"
+        )
+
+    log_path = log_dir / f"{package}.log"
+    log: list[str] = []
+    try:
+        version = antigravity_release()
+        current_match = PACKAGE_VERSION.search((target / "package.nix").read_text())
+        if current_match is None:
+            raise ValueError("cannot read Antigravity ACP package version")
+        current_version = current_match.group(1)
+        if tuple(map(int, version.split("."))) <= tuple(
+            map(int, current_version.split("."))
+        ):
+            return UpdateResult(package, "current", "no update available", log_path)
+
+        updater_file = repo / "flake/apps/scripts/antigravity-acp.nix"
+        for index, system in enumerate(ANTIGRAVITY_PLATFORMS):
+            command = (
+                "nix-update",
+                "--file",
+                str(updater_file),
+                "--system",
+                system,
+                "--version",
+                version if index == 0 else "skip",
+                "--src-only",
+                package,
+            )
+            result = run(command, cwd=repo)
+            log.append(f"$ {shlex.join(command)}\n{result.stdout}{result.stderr}")
+            if result.returncode != 0:
+                raise RuntimeError(f"nix-update failed for {system}")
+
+        command = ("nix", "build", f".#{package}", "--no-link")
+        result = run(command, cwd=repo)
+        log.append(f"$ {shlex.join(command)}\n{result.stdout}{result.stderr}")
+        if result.returncode != 0:
+            raise RuntimeError("updated package build failed")
+
+        unstage_repository(repo)
+        git(repo, "add", "--", str(target.relative_to(repo)))
+        subject, body = commit_message(
+            package, f"{package}: {current_version} -> {version}"
+        )
+        result = run(("git", "commit", "-m", subject, "-m", body), cwd=repo)
+        log.append(f"$ git commit\n{result.stdout}{result.stderr}")
+        if result.returncode != 0:
+            raise RuntimeError("commit failed")
+        committed = git(repo, "rev-parse", "HEAD").stdout.strip()
+        log_path.write_text("\n".join(log))
+        return UpdateResult(package, "updated", committed[:12], log_path)
+    except (KeyError, ValueError, RuntimeError, OSError) as error:
+        rollback_failed_update(repo, target)
+        log_path.write_text("\n".join(log) + f"\n{error}\n")
+        return UpdateResult(package, "failed", str(error), log_path)
+
+
 def update_package(repo: Path, package: str, log_dir: Path) -> UpdateResult:
     if reason := SKIP_PACKAGES.get(package):
         return UpdateResult(package, "skipped", reason)
+    if package == "antigravity-acp":
+        return update_antigravity(repo, log_dir)
 
     target = package_path(repo, package)
     if target_changed(repo, target):
@@ -275,6 +372,10 @@ def update_package(repo: Path, package: str, log_dir: Path) -> UpdateResult:
     command = ["nix-update", "--flake", "--build", "--commit"]
     if package in BRANCH_PACKAGES:
         command.extend(("--version", "branch"))
+    elif package == "blender-mcp":
+        command.extend(
+            ("--version", "stable", "--version-regex", r"^v([0-9]+\.[0-9]+\.[0-9]+)$")
+        )
     elif package == "swarmui":
         command.extend(("--version", "unstable"))
     command.append(package)

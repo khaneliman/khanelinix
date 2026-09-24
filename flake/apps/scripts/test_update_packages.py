@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import importlib.util
+import io
+import json
 import subprocess
 import sys
 import tempfile
@@ -70,14 +72,119 @@ class UpdatePackagesTests(unittest.TestCase):
 
     def test_coupled_packages_are_explicitly_skipped(self) -> None:
         for package in (
-            "antigravity-acp",
             "bevy-brp-mcp",
-            "blender-mcp",
             "cliproxyapi",
             "codexbar-cli",
             "playwright-cli",
         ):
             self.assertIn(package, update_packages.SKIP_PACKAGES)
+
+    def test_blender_uses_release_tag_filter(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo = Path(temp_dir)
+            target = self.init_repository(repo)
+            target.rename(target.parent / "blender-mcp")
+            subprocess.run(("git", "add", ":/"), cwd=repo, check=True)
+            subprocess.run(
+                ("git", "commit", "--quiet", "-m", "test: rename package"),
+                cwd=repo,
+                check=True,
+            )
+            original_run = update_packages.run
+            commands = []
+
+            def simulate_nix_update(command, **kwargs):
+                if command[0] == "nix-update":
+                    commands.append(command)
+                    return subprocess.CompletedProcess(command, 0, "", "")
+                return original_run(command, **kwargs)
+
+            with patch.object(update_packages, "run", side_effect=simulate_nix_update):
+                result = update_packages.update_package(repo, "blender-mcp", repo)
+            self.assertEqual("current", result.status)
+            self.assertEqual(1, len(commands))
+            command = commands[0]
+            self.assertEqual(
+                r"^v([0-9]+\.[0-9]+\.[0-9]+)$",
+                command[command.index("--version-regex") + 1],
+            )
+
+    def test_antigravity_release_validates_all_archive_urls(self) -> None:
+        version = "1.2.2"
+        archives = {}
+        for (
+            registry_platform,
+            platform,
+            archive_platform,
+        ) in update_packages.ANTIGRAVITY_PLATFORMS.values():
+            archives[registry_platform] = {
+                "archive": (
+                    "https://dl.google.com/agy-extensions/releases/"
+                    f"{platform}/agy-acp-server-{version}-{archive_platform}.zip"
+                )
+            }
+        release = {"version": version, "distribution": {"binary": archives}}
+        response = io.BytesIO(json.dumps(release).encode())
+        with patch.object(
+            update_packages.urllib.request, "urlopen", return_value=response
+        ):
+            self.assertEqual(version, update_packages.antigravity_release())
+
+        archives["linux-aarch64"]["archive"] = "https://example.invalid/other.zip"
+        response = io.BytesIO(json.dumps(release).encode())
+        with (
+            patch.object(
+                update_packages.urllib.request, "urlopen", return_value=response
+            ),
+            self.assertRaisesRegex(ValueError, "archive changed for linux-aarch64"),
+        ):
+            update_packages.antigravity_release()
+
+    def test_antigravity_updates_all_platforms_before_commit(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo = Path(temp_dir)
+            target = self.init_repository(repo)
+            target.rename(target.parent / "antigravity-acp")
+            package_file = target.parent / "antigravity-acp" / "package.nix"
+            package_file.write_text('version = "1.2.1";\n')
+            subprocess.run(("git", "add", ":/"), cwd=repo, check=True)
+            subprocess.run(
+                ("git", "commit", "--quiet", "-m", "test: add acp"),
+                cwd=repo,
+                check=True,
+            )
+            original_run = update_packages.run
+            commands = []
+
+            def simulate_update(command, **kwargs):
+                if command[0] == "nix-update":
+                    commands.append(command)
+                    if len(commands) == 1:
+                        package_file.write_text('version = "1.2.2";\n')
+                    return subprocess.CompletedProcess(command, 0, "", "")
+                if command[:2] == ("nix", "build"):
+                    return subprocess.CompletedProcess(command, 0, "", "")
+                return original_run(command, **kwargs)
+
+            with (
+                patch.object(
+                    update_packages, "antigravity_release", return_value="1.2.2"
+                ),
+                patch.object(update_packages, "run", side_effect=simulate_update),
+                tempfile.TemporaryDirectory() as log_dir,
+            ):
+                result = update_packages.update_antigravity(repo, Path(log_dir))
+
+            self.assertEqual("updated", result.status)
+            self.assertEqual(3, len(commands))
+            self.assertEqual(
+                list(update_packages.ANTIGRAVITY_PLATFORMS),
+                [command[command.index("--system") + 1] for command in commands],
+            )
+            self.assertEqual(
+                ["1.2.2", "skip", "skip"],
+                [command[command.index("--version") + 1] for command in commands],
+            )
 
     def test_null_update_script_packages_are_excluded(self) -> None:
         self.assertIn(
