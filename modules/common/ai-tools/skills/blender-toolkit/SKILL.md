@@ -68,9 +68,10 @@ structure:
 - inspect the actual image and runtime import. File freshness, object names,
   node existence, and hashes do not prove visual correctness.
 
-For artwork matching or repeated visual corrections, use the
-[visual iteration loop](references/visual-iteration.md). It owns comparable
-views, bounded edits, and visual acceptance before broader render batches.
+For artwork matching, character likeness, or repeated visual corrections, read
+the [visual iteration loop](references/visual-iteration.md) before the first
+edit. It owns inspection renders, registered comparisons, correction order,
+variant review, and visual acceptance.
 
 ## Rig, pose, and weights
 
