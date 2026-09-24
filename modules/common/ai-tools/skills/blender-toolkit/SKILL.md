@@ -7,55 +7,49 @@ metadata:
 
 # Blender Toolkit
 
-Treat Blender as an authoring tool. The main result is a checked, editable
-source asset. Add a runtime candidate and re-import check for engine/export
-tasks. A script, named node, or saved file is not quality evidence by itself.
+Blender is the authoring tool. The deliverable is a checked, editable source
+asset, plus a runtime candidate and re-import check for engine or export tasks.
+A script, named node, or saved file is not quality evidence by itself.
 
 ## Review-only branch
 
-For review-only tasks with supplied images, compare visible evidence, state what
-the images cannot establish, and recommend the next correction. Do not execute
-Blender, model, render, or export for an image-review-only task. A review within
-an already authorized modeling task does not cancel that task's remaining work.
+For review-only tasks with supplied images, compare the visible evidence, state
+what the images cannot establish, and recommend the next correction without
+running Blender. A review inside an authorized modeling task does not end that
+task.
 
 ## Establish authority and the target
 
-1. Identify the source scene, current art authority, target runtime/importer,
-   coordinate convention, scale convention, and required output format. If
-   dimensions are not stated by an authoritative source, label them as inferred
-   and keep them editable; do not invent universal units, topology counts, or
-   pose/view quotas.
-2. Separate visual fidelity from topology and runtime acceptance. Record which
-   checks are about likeness or composition and which are about manifoldness,
-   normals, material support, skinning, file size, or importer behavior.
-3. If operating Blender, discover the installed executable and API version, then
-   choose the available interactive, control, or headless workflow. A
-   version-matched headless script is valid without MCP/control only when the
-   task permits it. When MCP is requested, establish and verify the live MCP
-   path before modeling; do not silently fall back. Never assume an executable
-   path, socket protocol, or `bpy` version. Read
-   [automation](references/automation.md) before scripted or live control.
+1. Identify the source scene, art authority, target runtime or importer,
+   coordinate and scale conventions, and output format. Label dimensions and
+   camera choices no authoritative source states as inferred and keep them
+   editable; do not invent units, topology counts, or pose or view quotas.
+2. Keep visual checks, such as likeness and composition, separate from topology
+   and runtime checks, such as normals, skinning, material support, file size,
+   and importer behavior.
+3. Discover the installed executable and API version; never assume a path,
+   socket protocol, or `bpy` version. When MCP is requested, verify the live
+   path before modeling and report a blocker instead of silently falling back;
+   otherwise headless Blender is valid when the task permits it and its checks
+   can run. Read [automation](references/automation.md) before scripted or live
+   control.
 
 ## Choose a modeling route deliberately
 
-- Choose sculpting, direct topology, or a hybrid from the required editability,
-  silhouette, deformation, and runtime constraints. Keep a coherent route for
-  the asset instead of endlessly remeshing disconnected primitives.
-- For humanoid characters, prefer a licensed base mesh with production eye and
-  mouth loops over hand-built regions. Read
+- Choose sculpting, direct topology, or a hybrid from the editability,
+  silhouette, deformation, and runtime needs, and keep one coherent route
+  instead of endlessly remeshing disconnected primitives.
+- For humanoid characters, start from a licensed base mesh with production eye
+  and mouth loops. Read
   [character construction](references/character-construction.md) before building
-  or reshaping character or creature anatomy, eyes, hair, or junctions.
-- For a union, boolean, voxel, or remesh operation, inspect the construction and
-  winding of every input first. Establish normals, caps, and ordered
-  correspondence for cavity or boundary loops before union or subdivision.
-  Recalculating normals after a bad pre-union construction cannot restore lost
-  surface intent.
-
-For loops around eyes, mouths, cavities, or joints, preserve ordered boundary
-correspondence before subdivision. Unordered or mismatched loops can create
-subdivision artifacts that hide or distort existing features. Read
-[mesh surgery](references/mesh-surgery.md) before bridging boundaries, cutting
-openings, or solving vertex positions in code.
+  or reshaping anatomy, eyes, hair, or part junctions.
+- Before a union, boolean, voxel, remesh, or subdivision, inspect each input's
+  construction and winding, and establish normals, caps, and ordered
+  correspondence for boundary loops around eyes, mouths, cavities, and joints.
+  Mismatched loops hide or distort features under subdivision, and recalculating
+  normals afterwards cannot restore lost surface intent. Read
+  [mesh surgery](references/mesh-surgery.md) before bridging boundaries, cutting
+  openings, or solving vertex positions in code.
 
 ## Inspect effective scene state
 
@@ -65,22 +59,19 @@ structure:
 - evaluate the modifier stack and check the resulting mesh, face orientation,
   caps, seams, UVs, materials, and object transforms;
 - census every visible object type, including curves, separate eye or lid
-  meshes, and fur, before attributing a feature to one mesh. Mesh-only
-  inventories and object-name lists miss feature owners;
-- trace material outputs from input to the active surface output. A named shader
-  node or broad noise texture that is not connected cannot affect the render;
-- render the source scene or an isolated inspection scene after explicitly
-  loading the intended `.blend`, selecting the intended collection, and checking
-  camera, light, world, visibility, compositor, and render engine state. Treat a
-  blank render as invalid evidence, then diagnose scene loading, camera framing,
-  visibility, lighting, compositing, and render settings;
-- inspect the actual image and runtime import. File freshness, object names,
+  meshes, and fur, before attributing a feature to one mesh;
+- trace materials to the active surface output; an unconnected node cannot
+  affect the render;
+- render only after explicitly loading the intended `.blend` and collection and
+  checking camera, lights, world, visibility, compositor, and engine; a blank
+  render is a setup fault to diagnose, not evidence;
+- inspect the actual image and runtime import; file freshness, object names,
   node existence, and hashes do not prove visual correctness.
 
-For artwork matching, character likeness, or repeated visual corrections, read
-the [visual iteration loop](references/visual-iteration.md) before the first
-edit. It owns inspection renders, registered comparisons, correction order,
-variant review, and visual acceptance.
+Before the first edit for artwork matching, character likeness, or repeated
+visual corrections, read the
+[visual iteration loop](references/visual-iteration.md), which owns inspection
+renders, comparisons, correction order, and visual acceptance.
 
 ## Rig, pose, and weights
 
@@ -89,11 +80,9 @@ For skinning, pose correction, or retargeting, read
 
 ## Preserve checkpoints and export candidates
 
-Maintain editable checkpoints for source construction, topology/material
-cleanup, rigging, and approved presentation. When exporting, write a separate
-candidate; keep authoring, candidate, and runtime-imported artifacts
-distinguishable by path or manifest rather than flattening the only source.
-
-For glTF/GLB, FBX, or other runtime candidates, read
-[export acceptance](references/export.md). A successful command is not proof of
-a usable asset; retain re-import and direct visual/runtime inspection.
+Keep editable checkpoints for construction, cleanup, rigging, and approved
+presentation, and export to a separate candidate so source, candidate, and
+re-imported artifacts stay distinguishable by path or manifest. For glTF/GLB,
+FBX, or other runtime candidates, read
+[export acceptance](references/export.md); a successful export command is not
+proof of a usable asset.
