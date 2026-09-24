@@ -221,6 +221,8 @@ in
 
           misc = {
             allow_session_lock_restore = true;
+            # Each missed ping is 1.5 seconds; allow brief stalls up to 30 seconds.
+            anr_missed_pings = 20;
             disable_hyprland_logo = true;
             enable_swallow = true;
             focus_on_activate = false;
