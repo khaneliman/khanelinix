@@ -32,7 +32,8 @@ task.
    path before modeling and report a blocker instead of silently falling back;
    otherwise headless Blender is valid when the task permits it and its checks
    can run. Read [automation](references/automation.md) before scripted or live
-   control.
+   control, and [live sessions](references/live-sessions.md) before launching
+   Blender for MCP, reusing an occupied endpoint, or running parallel sessions.
 
 ## Choose a modeling route deliberately
 
