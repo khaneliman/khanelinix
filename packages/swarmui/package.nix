@@ -13,7 +13,7 @@ let
 in
 buildDotnetModule (finalAttrs: {
   pname = "swarmui";
-  version = "0.9.8-beta";
+  version = "0.9.8-Beta";
 
   src = fetchFromGitHub {
     owner = "mcmonkeyprojects";
