@@ -7,7 +7,7 @@
 
 python3Packages.buildPythonApplication {
   pname = "freecad-mcp";
-  version = "0.1.24-unstable-2026-09-18";
+  version = "0.1.24";
 
   src = fetchFromGitHub {
     owner = "neka-nat";
