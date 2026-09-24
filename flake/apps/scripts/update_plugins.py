@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
+import json
 import os
-import shutil
 import subprocess
 import sys
+import tempfile
 import threading
 import time
+import uuid
 from pathlib import Path
 from typing import Any
 
@@ -142,35 +144,51 @@ def run_command(command, cwd=BASE_DIR, capture_output=False):
         return None
 
 
+worktrees: dict[str, dict[str, str]] = {}
+
+
 def setup_full_worktree(worktree_name: str):
-    """Prepares a full worktree for a task."""
-    branch_name = f"{BRANCH_PREFIX}/{worktree_name}"
-    worktree_dir = Path(f"/tmp/{worktree_name}-worktree")
+    """Create a fresh worktree without replacing existing branches or files."""
+    refs = subprocess.check_output(
+        ["git", "for-each-ref", "--format=%(refname:strip=2)", "refs/heads/"],
+        cwd=BASE_DIR,
+        text=True,
+    ).splitlines()
 
-    run_command(f"git branch -D {branch_name}")
-
-    if worktree_dir.exists():
-        shutil.rmtree(worktree_dir)
-
-    run_command("git worktree prune")
-
-    result = run_command(
-        f"git worktree add {worktree_dir} -B {branch_name}", capture_output=True
-    )
-
-    if result and result.returncode != 0:
-        raise RuntimeError(
-            f"Failed to create worktree {worktree_name}: {result.stderr}"
+    def conflicts(candidate):
+        return any(
+            candidate == ref
+            or candidate.startswith(ref + "/")
+            or ref.startswith(candidate + "/")
+            for ref in refs
         )
 
-    if not worktree_dir.exists():
-        raise RuntimeError(f"Worktree directory {worktree_dir} was not created")
+    branch_name = f"{BRANCH_PREFIX}/{worktree_name}"
+    while conflicts(branch_name):
+        branch_name = f"{BRANCH_PREFIX}-{worktree_name}-{uuid.uuid4().hex[:12]}"
+
+    root = Path(os.environ.get("NIXPKGS_UPDATE_WORKTREE_ROOT", "/tmp"))
+    root.mkdir(parents=True, exist_ok=True)
+    worktree_dir = root / f"{worktree_name}-worktree"
+    if worktree_dir.exists():
+        worktree_dir = Path(
+            tempfile.mkdtemp(prefix=f"{worktree_name}-worktree-", dir=root)
+        )
+    subprocess.run(
+        ["git", "worktree", "add", "-b", branch_name, str(worktree_dir), "HEAD"],
+        cwd=BASE_DIR,
+        check=True,
+    )
+    worktrees[worktree_name] = {"branch": branch_name, "path": str(worktree_dir)}
+    manifest = os.environ.get("NIXPKGS_UPDATE_WORKTREE_MANIFEST")
+    if manifest:
+        Path(manifest).write_text(json.dumps(worktrees, indent=2) + "\n")
 
 
 def run_update_in_worktree(task_name: str, task_details: dict, task_events: dict):
     """Runs the update script within its prepared worktree and commits the result."""
     worktree_name = task_details["worktree"]
-    worktree_dir = Path(f"/tmp/{worktree_name}-worktree")
+    worktree_dir = Path(worktrees[worktree_name]["path"])
     command = task_details["command"]
     self_committing = task_details["self_committing"]
     depends_on = task_details["depends_on"]
@@ -308,8 +326,8 @@ def main():
 
         # Display each worktree with its tasks
         for worktree_name, task_names in worktree_tasks.items():
-            branch_name = f"{BRANCH_PREFIX}/{worktree_name}"
-            worktree_dir = Path(f"/tmp/{worktree_name}-worktree")
+            branch_name = worktrees[worktree_name]["branch"]
+            worktree_dir = Path(worktrees[worktree_name]["path"])
 
             # Check if any task had an error
             has_error = any(
