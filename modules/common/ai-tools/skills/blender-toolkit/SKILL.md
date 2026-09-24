@@ -41,6 +41,10 @@ an already authorized modeling task does not cancel that task's remaining work.
 - Choose sculpting, direct topology, or a hybrid from the required editability,
   silhouette, deformation, and runtime constraints. Keep a coherent route for
   the asset instead of endlessly remeshing disconnected primitives.
+- For humanoid characters, prefer a licensed base mesh with production eye and
+  mouth loops over hand-built regions. Read
+  [character construction](references/character-construction.md) before building
+  or reshaping character or creature anatomy, eyes, hair, or junctions.
 - For a union, boolean, voxel, or remesh operation, inspect the construction and
   winding of every input first. Establish normals, caps, and ordered
   correspondence for cavity or boundary loops before union or subdivision.
