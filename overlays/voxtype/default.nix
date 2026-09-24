@@ -17,13 +17,13 @@ _: final: prev: {
       ];
     in
     {
-      version = "1.1.0-rc5";
+      version = "1.1.0";
 
       src = final.fetchFromGitHub {
         owner = "peteonrails";
         repo = "voxtype";
         tag = "v${finalAttrs.version}";
-        hash = "sha256-A4c11s1qu660F74IeFjchjvp58/PqOh59R25t48mukU=";
+        hash = "sha256-zw7Up84IdNv6p8Ae7VnBDuCC/smYHCpMB7C2aN1ZXyc=";
       };
 
       patches =
@@ -60,11 +60,6 @@ _: final: prev: {
           "openvino-sys-0.11.0"
         ] (_: "sha256-nQWeHNdLlRk+owh3B6VpArAG2dr66HeBI2RHfDhyvvU=");
       };
-
-      # Release candidates report the bare crate version.
-      preVersionCheck = ''
-        version=${final.lib.head (final.lib.splitString "-" finalAttrs.version)}
-      '';
     }
   );
 }
