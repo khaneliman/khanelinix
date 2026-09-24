@@ -71,7 +71,7 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
              Ok(())
          }
          LearnDiff::TooDifferent { ratio } => {
-@@ -63,18 +74,40 @@
+@@ -63,18 +74,45 @@
                   (similarity {ratio:.2} < {:.2}). Refusing to learn.",
                  learn::MIN_SIMILARITY
              );
@@ -79,14 +79,19 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
 +            std::process::exit(1);
 +        }
 +        LearnDiff::Unaligned => {
-+            eprintln!(
-+                "error: could not place the selection in the last transcript. Select the \
-+                 fix with an unchanged word on each side, or the whole dictation."
-+            );
-+            notify_nothing_learned(
-+                "Select the fix with an unchanged word on each side, or the whole dictation.",
-+            )
-+            .await;
++            let reason = match learn::unaligned_reason(&transcript, &corrected) {
++                learn::UnalignedReason::NeedsContext => {
++                    "Copy the fix with an unchanged word on each side, or the whole dictation."
++                        .to_string()
++                }
++                learn::UnalignedReason::Unrelated => format!(
++                    "Nothing copied matches your last dictation (\"{}\"). Copy the corrected \
++                     text, then try again.",
++                    preview(&transcript)
++                ),
++            };
++            eprintln!("error: {reason}");
++            notify_nothing_learned(&reason).await;
              std::process::exit(1);
          }
          LearnDiff::NoReplacements => {
@@ -115,7 +120,7 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
                      std::process::exit(1);
                  }
              };
-@@ -82,42 +115,52 @@
+@@ -82,42 +120,52 @@
              for (from, to) in &pairs {
                  println!("Learned \"{from}\" = \"{to}\"");
              }
@@ -190,7 +195,7 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
  }
  
  fn read_clipboard() -> Option<String> {
-@@ -134,35 +177,9 @@
+@@ -134,37 +182,21 @@
      String::from_utf8(output.stdout).ok()
  }
  
@@ -222,13 +227,24 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
 -    #[cfg(not(target_os = "linux"))]
 -    {
 -        println!("Restart voxtype to apply the new replacements.");
--    }
++/// The first few words of a dictation, to show which one was compared.
++fn preview(text: &str) -> String {
++    let words: Vec<&str> = text.split_whitespace().collect();
++    if words.len() <= 6 {
++        words.join(" ")
++    } else {
++        format!("{}...", words[..6].join(" "))
+     }
+ }
+ 
 +/// Keybinding runs have no terminal, so say why nothing was learned.
 +async fn notify_nothing_learned(reason: &str) {
 +    notification::send("Voxtype learned nothing", reason).await;
- }
- 
++}
++
  async fn notify_learned(pairs: &[(String, String)]) {
+     let body = pairs
+         .iter()
 diff --git a/src/daemon.rs b/src/daemon.rs
 --- a/src/daemon.rs
 +++ b/src/daemon.rs
@@ -385,7 +401,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
  //! ignored so a compositor selection that only adds or drops words does not
  //! poison `[text.replacements]`.
  
-+use std::collections::{BTreeMap, HashMap};
++use std::collections::{BTreeMap, HashMap, HashSet};
  use std::path::{Path, PathBuf};
  
  /// Full-string similarity below this refuses to learn (random selection guard).
@@ -399,7 +415,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
      /// One or more replace-opcode phrases to merge into config.
      Replacements(Vec<(String, String)>),
  }
-@@ -47,6 +51,64 @@
+@@ -47,6 +51,108 @@
      }
  }
  
@@ -447,6 +463,50 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
 +    best.map(|(i, j, score)| (words[i..=j].join(" "), score))
 +}
 +
++/// Why a selection could not be placed in the transcript.
++#[derive(Debug, Clone, Copy, PartialEq)]
++pub enum UnalignedReason {
++    /// It resembles the dictation, but a changed word sits at its edge or it
++    /// is a lone phrase, so its position is ambiguous.
++    NeedsContext,
++    /// It does not resemble the dictation: usually a clipboard left over from
++    /// before the correction was copied.
++    Unrelated,
++}
++
++/// Classify a selection [`diff_selection`] could not place, so the message
++/// names the actual fix.
++pub fn unaligned_reason(transcript: &str, corrected: &str) -> UnalignedReason {
++    let spoken: HashSet<String> = transcript
++        .split_whitespace()
++        .map(anchor_token)
++        .filter(|w| !w.is_empty())
++        .collect();
++    let selected: Vec<String> = corrected
++        .split_whitespace()
++        .map(anchor_token)
++        .filter(|w| !w.is_empty())
++        .collect();
++    let shared = selected.iter().filter(|w| spoken.contains(*w)).count();
++    if !selected.is_empty() && shared * 2 >= selected.len() {
++        return UnalignedReason::NeedsContext;
++    }
++    // A lone corrected phrase shares no words but sounds like part of the
++    // dictation.
++    if (1..=MAX_LEARNED_WORDS).contains(&selected.len()) {
++        let words: Vec<&str> = transcript.split_whitespace().collect();
++        for n in 1..=MAX_LEARNED_WORDS.min(words.len()) {
++            if words
++                .windows(n)
++                .any(|window| looks_misheard(&window.join(" "), corrected))
++            {
++                return UnalignedReason::NeedsContext;
++            }
++        }
++    }
++    UnalignedReason::Unrelated
++}
++
 +/// How well a candidate selection lines up with the transcript, for picking
 +/// between the primary selection and the clipboard.
 +pub fn selection_score(transcript: &str, corrected: &str) -> f64 {
@@ -464,7 +524,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
  /// Path of the last-transcript file the daemon writes after each dictation.
  pub fn last_transcript_path() -> PathBuf {
      crate::config::Config::runtime_dir().join("last-transcript")
-@@ -177,6 +239,25 @@
+@@ -177,6 +283,25 @@
      2.0 * matches as f64 / (a.len() + b.len()) as f64
  }
  
@@ -490,7 +550,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
  fn replace_pairs(old_tokens: &[&str], new_tokens: &[&str]) -> Vec<(String, String)> {
      let mut pairs = Vec::new();
      for op in opcodes(old_tokens, new_tokens) {
-@@ -185,13 +266,15 @@
+@@ -185,13 +310,15 @@
          }
          let a_len = op.a_end - op.a_start;
          let b_len = op.b_end - op.b_start;
@@ -511,7 +571,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
              pairs.push((old_phrase, new_phrase));
          }
      }
-@@ -309,10 +392,195 @@
+@@ -309,10 +436,208 @@
      (best_i, best_j, best_size)
  }
  
@@ -698,6 +758,19 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
 +    }
 +
 +    #[test]
++    fn unaligned_reason_separates_stale_clipboards_from_ambiguous_fixes() {
++        let transcript = "Can you help me fix Nick's packages, it seems broken";
++        let reason = |corrected: &str| unaligned_reason(transcript, corrected);
++        assert_eq!(reason("0d6dd9fb-9a62-4b0e-8b76-5aa08cf9a71a"), UnalignedReason::Unrelated);
++        assert_eq!(
++            reason("# Brother head likeness, round 5: colour, hair, expression, lighting notes"),
++            UnalignedReason::Unrelated
++        );
++        assert_eq!(reason("nixpkgs"), UnalignedReason::NeedsContext);
++        assert_eq!(reason("nixpkgs, it seems broken"), UnalignedReason::NeedsContext);
++    }
++
++    #[test]
 +    fn long_rewrites_are_not_learned() {
 +        let transcript = "we should ship the build before lunch today";
 +        let corrected = "we should wait until the review finishes before shipping today";
@@ -707,7 +780,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
      #[test]
      fn example_omaar_gielen() {
          let transcript = "Het omaar gielen nu, doet het niet.";
-@@ -321,7 +589,7 @@
+@@ -321,7 +646,7 @@
              LearnDiff::Replacements(pairs) => {
                  assert_eq!(
                      pairs,
