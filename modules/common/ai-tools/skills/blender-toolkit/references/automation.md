@@ -102,6 +102,21 @@ update only owned data. A retry must not duplicate objects, actions, or
 materials. After a bridge timeout, query the resulting state before replaying a
 mutation: a lost reply does not establish that the command failed.
 
+Keep helper and generator code on disk. Code and state held only in the live
+session, including `bpy.app.driver_namespace`, are lost when a file reloads. A
+helper module imported into the live session keeps running its old code after
+its file changes; reload it with `importlib.reload` before the next call.
+
+Blender 5 actions are layered and have no `Action.fcurves`. Walk
+`action.layers[].strips[].channelbags[].fcurves`, and guard the legacy attribute
+with `hasattr` only in scripts that must also run on older releases.
+
+Viewport-disabled objects can report an identity `matrix_world` after a reload.
+After revealing a collection, call `view_layer.update()` and update the
+evaluated depsgraph before any world-space edit. Compare source and candidate
+under identical collection, view-layer, and object visibility at the same frame
+and subframe.
+
 For headless jobs, pass absolute source, script, and output paths. Blender
 handles arguments in order: load the intended source before running the script,
 and set Python failure handling before the script. A typical existing-file
@@ -122,7 +137,27 @@ record source path, Blender version, export settings, output paths, and
 inspection results outside the installed skill. Do not swallow exceptions that
 should fail a batch. Validate one representative asset before processing the
 full batch; report per-asset failures without treating partial completion as
-full success.
+full success. Surface stderr from every headless run; a script that raises while
+stderr is discarded looks like an empty result.
+
+Wrapped launchers can rename the process. A Nix-wrapped Blender appears as
+`.blender-wrappe`, so `ps -C blender` misses a running job. Track the PID that
+the launch returned, or match command lines that contain `--background` or
+`--python`, excluding the live MCP session, whose bootstrap also passes
+`--python` and is not a disposable job.
+
+## Save and verify checkpoints
+
+Before saving through MCP, run `bpy.ops.file.make_paths_relative()` so the file
+opens from any checkout, then save each step to its own path with
+`bpy.ops.wm.save_mainfile(filepath=step_path, compress=True)`; without a
+`filepath`, the save overwrites the open step. An uncompressed resave grew one
+file from 22 MB to 79 MB and left a `.blend1` backup; remove that backup when
+the task keeps its own step checkpoints. Hash protected data before and after a
+resave or local edit, such as vertex coordinates, (group, weight) pairs, bone
+rest heads and tails, and keyframe points, to prove that only the intended data
+changed. Reopen each saved checkpoint headless and confirm its objects and
+visibility before reporting it.
 
 ## External assets and previews
 
