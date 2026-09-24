@@ -10,22 +10,22 @@
   ...
 }:
 let
-  version = "1.1.1";
+  version = "1.2.1";
   sources = {
     x86_64-linux = {
       platform = "linux";
       archivePlatform = "linux-x86_64";
-      hash = "sha256-OPYtAbMt6wkHs9OacewwH9Njafb/0c8mLUrzhRd/ed8=";
+      hash = "sha256-n78L1YSiZHgWH2N8q9dRE/clQchC0Uj1eO8aap7cuEM=";
     };
     aarch64-linux = {
       platform = "linux";
       archivePlatform = "linux-arm64";
-      hash = "sha256-7WnmSzCPyxI6tUvzJ3v5yw1lEGT4hepaqw/1IMcXU5g=";
+      hash = "sha256-fn70CIvBheGvQgQCng9OxCEK8gck8/8mIYasC86mqg4=";
     };
     aarch64-darwin = {
       platform = "macos";
       archivePlatform = "darwin-arm64";
-      hash = "sha256-/fqRVlLNt7qAhcyP/+0HLL4AklGqLJUaq92geowooYk=";
+      hash = "sha256-D6uZOIEuazKztUPmXk86ACXO73VUE9sTVC2am4HqgDw=";
     };
   };
   source = sources.${stdenv.hostPlatform.system};
@@ -35,7 +35,7 @@ stdenv.mkDerivation {
   inherit version;
 
   src = fetchurl {
-    url = "https://dl.google.com/agy-extensions/releases/${source.platform}/agy-acp-server-agy_acp_server_${version}-${source.archivePlatform}.zip";
+    url = "https://dl.google.com/agy-extensions/releases/${source.platform}/agy-acp-server-${version}-${source.archivePlatform}.zip";
     inherit (source) hash;
   };
 
