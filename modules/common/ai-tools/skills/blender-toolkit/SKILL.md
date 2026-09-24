@@ -64,6 +64,9 @@ structure:
 
 - evaluate the modifier stack and check the resulting mesh, face orientation,
   caps, seams, UVs, materials, and object transforms;
+- census every visible object type, including curves, separate eye or lid
+  meshes, and fur, before attributing a feature to one mesh. Mesh-only
+  inventories and object-name lists miss feature owners;
 - trace material outputs from input to the active surface output. A named shader
   node or broad noise texture that is not connected cannot affect the render;
 - render the source scene or an isolated inspection scene after explicitly
