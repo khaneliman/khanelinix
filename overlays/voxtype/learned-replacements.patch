@@ -1,7 +1,7 @@
 diff --git a/src/app/learn.rs b/src/app/learn.rs
 --- a/src/app/learn.rs
 +++ b/src/app/learn.rs
-@@ -4,12 +4,9 @@
+@@ -4,22 +4,19 @@
  use std::path::PathBuf;
  use std::process::Command;
  
@@ -13,8 +13,11 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
 -
  #[derive(Clone, Copy)]
  pub(crate) enum LearnSource {
-     /// Wayland primary selection, falling back to the clipboard.
-@@ -19,7 +16,7 @@
+-    /// Wayland primary selection, falling back to the clipboard.
++    /// Primary selection or clipboard, whichever matches the last dictation.
+     Selection,
+     Clipboard,
+     Stdin,
  }
  
  pub(crate) async fn run_learn(
@@ -23,11 +26,17 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
      from_clipboard: bool,
      from_stdin: bool,
  ) -> anyhow::Result<()> {
-@@ -36,10 +33,12 @@
-         Ok(text) if !text.trim().is_empty() => text,
+@@ -32,14 +29,16 @@
+         LearnSource::Selection
+     };
+ 
+-    let corrected = match read_corrected(source) {
+-        Ok(text) if !text.trim().is_empty() => text,
++    let candidates = match read_candidates(source) {
++        Ok(found) if !found.is_empty() => found,
          Ok(_) => {
              eprintln!("error: corrected text is empty");
-+            notify_nothing_learned("Select the corrected text first.").await;
++            notify_nothing_learned("Select or copy the corrected text first.").await;
              std::process::exit(1);
          }
          Err(e) => {
@@ -36,7 +45,7 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
              std::process::exit(1);
          }
      };
-@@ -49,12 +48,14 @@
+@@ -49,12 +48,24 @@
              "error: no last transcript found.\n  \
               Dictate something first, or check that the voxtype daemon is logging."
          );
@@ -44,18 +53,40 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
          std::process::exit(1);
      };
  
-     match learn::diff_replacements(&transcript, &corrected) {
+-    match learn::diff_replacements(&transcript, &corrected) {
++    // The primary selection and the clipboard can both hold stale text; use
++    // whichever lines up with the last dictation.
++    let corrected = candidates
++        .into_iter()
++        .max_by(|a, b| {
++            learn::selection_score(&transcript, a)
++                .total_cmp(&learn::selection_score(&transcript, b))
++        })
++        .expect("candidates are non-empty");
++
++    match learn::diff_selection(&transcript, &corrected) {
          LearnDiff::Identical => {
              println!("Nothing to learn: text matches the last transcript.");
 +            notify_nothing_learned("The selection matches the last dictation.").await;
              Ok(())
          }
          LearnDiff::TooDifferent { ratio } => {
-@@ -63,18 +64,29 @@
+@@ -63,18 +74,40 @@
                   (similarity {ratio:.2} < {:.2}). Refusing to learn.",
                  learn::MIN_SIMILARITY
              );
 +            notify_nothing_learned("The selection does not match the last dictation.").await;
++            std::process::exit(1);
++        }
++        LearnDiff::Unaligned => {
++            eprintln!(
++                "error: could not place the selection in the last transcript. Select the \
++                 fix with an unchanged word on each side, or the whole dictation."
++            );
++            notify_nothing_learned(
++                "Select the fix with an unchanged word on each side, or the whole dictation.",
++            )
++            .await;
              std::process::exit(1);
          }
          LearnDiff::NoReplacements => {
@@ -84,7 +115,7 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
                      std::process::exit(1);
                  }
              };
-@@ -82,9 +94,13 @@
+@@ -82,42 +115,52 @@
              for (from, to) in &pairs {
                  println!("Learned \"{from}\" = \"{to}\"");
              }
@@ -100,7 +131,66 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
              notify_learned(&pairs).await;
              Ok(())
          }
-@@ -134,35 +150,9 @@
+     }
+ }
+ 
+-fn read_corrected(source: LearnSource) -> anyhow::Result<String> {
+-    match source {
++/// Non-empty texts that may hold the correction.
++fn read_candidates(source: LearnSource) -> anyhow::Result<Vec<String>> {
++    let found = match source {
+         LearnSource::Stdin => {
+             let mut buf = String::new();
+             std::io::stdin().read_to_string(&mut buf)?;
+-            Ok(buf)
++            vec![buf]
+         }
+-        LearnSource::Clipboard => read_clipboard().ok_or_else(|| {
++        LearnSource::Clipboard => vec![read_clipboard().ok_or_else(|| {
+             anyhow::anyhow!("could not read clipboard (need wl-paste, xclip, or pbpaste)")
+-        }),
+-        LearnSource::Selection => read_primary_then_clipboard().ok_or_else(|| {
+-            anyhow::anyhow!(
+-                "could not read primary selection or clipboard (need wl-paste or xclip)"
+-            )
+-        }),
+-    }
++        })?],
++        LearnSource::Selection => {
++            let found: Vec<String> = [read_primary(), read_clipboard()]
++                .into_iter()
++                .flatten()
++                .collect();
++            if found.is_empty() {
++                anyhow::bail!(
++                    "could not read primary selection or clipboard (need wl-paste or xclip)"
++                );
++            }
++            found
++        }
++    };
++    Ok(found
++        .into_iter()
++        .filter(|text| !text.trim().is_empty())
++        .collect())
+ }
+ 
+-fn read_primary_then_clipboard() -> Option<String> {
+-    let primary = run_stdout("wl-paste", &["--primary"])
+-        .or_else(|| run_stdout("xclip", &["-selection", "primary", "-o"]));
+-    if let Some(text) = primary {
+-        if !text.trim().is_empty() {
+-            return Some(text);
+-        }
+-    }
+-    read_clipboard()
++fn read_primary() -> Option<String> {
++    run_stdout("wl-paste", &["--primary"])
++        .or_else(|| run_stdout("xclip", &["-selection", "primary", "-o"]))
+ }
+ 
+ fn read_clipboard() -> Option<String> {
+@@ -134,35 +177,9 @@
      String::from_utf8(output.stdout).ok()
  }
  
@@ -299,7 +389,82 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
  use std::path::{Path, PathBuf};
  
  /// Full-string similarity below this refuses to learn (random selection guard).
-@@ -177,6 +178,25 @@
+@@ -19,6 +20,9 @@
+     TooDifferent { ratio: f64 },
+     /// Texts are similar but every change is an insert or delete.
+     NoReplacements,
++    /// The selection's edge words were changed, so it cannot be placed in
++    /// the transcript.
++    Unaligned,
+     /// One or more replace-opcode phrases to merge into config.
+     Replacements(Vec<(String, String)>),
+ }
+@@ -47,6 +51,64 @@
+     }
+ }
+ 
++/// Word as it counts for anchoring: lowercase, without edge punctuation.
++fn anchor_token(word: &str) -> String {
++    word.trim_matches(|c: char| !c.is_alphanumeric()).to_lowercase()
++}
++
++/// Locate the transcript span a corrected selection covers, so the user can
++/// select a fix with an unchanged word on each side instead of the whole
++/// dictation. The selection's first and last words anchor the span; a
++/// selection whose edge word was changed only places as the whole
++/// transcript. Returns the span and its word-level similarity.
++pub fn aligned_span(transcript: &str, corrected: &str) -> Option<(String, f64)> {
++    let words: Vec<&str> = transcript.split_whitespace().collect();
++    let selected: Vec<String> = corrected.split_whitespace().map(anchor_token).collect();
++    if words.is_empty() || selected.is_empty() {
++        return None;
++    }
++    let spoken: Vec<String> = words.iter().map(|w| anchor_token(w)).collect();
++    let (first, last) = (&selected[0], &selected[selected.len() - 1]);
++    let starts = (0..words.len()).filter(|&i| &spoken[i] == first);
++    let mut spans: Vec<(usize, usize)> = starts
++        .flat_map(|i| {
++            (i..words.len())
++                .filter(|&j| &spoken[j] == last)
++                .map(move |j| (i, j))
++                .collect::<Vec<_>>()
++        })
++        .collect();
++    spans.push((0, words.len() - 1));
++
++    let mut best: Option<(usize, usize, f64)> = None;
++    for (i, j) in spans {
++        // A fix changes at most MAX_LEARNED_WORDS words per phrase.
++        let len = j - i + 1;
++        if len + MAX_LEARNED_WORDS < selected.len() || len > selected.len() + MAX_LEARNED_WORDS {
++            continue;
++        }
++        let score = sequence_ratio(spoken[i..=j].iter(), selected.iter());
++        if best.is_none_or(|(_, _, top)| score > top) {
++            best = Some((i, j, score));
++        }
++    }
++    best.map(|(i, j, score)| (words[i..=j].join(" "), score))
++}
++
++/// How well a candidate selection lines up with the transcript, for picking
++/// between the primary selection and the clipboard.
++pub fn selection_score(transcript: &str, corrected: &str) -> f64 {
++    aligned_span(transcript, corrected).map_or(0.0, |(_, score)| score)
++}
++
++/// Compare a corrected selection with the transcript span it covers.
++pub fn diff_selection(transcript: &str, corrected: &str) -> LearnDiff {
++    match aligned_span(transcript, corrected.trim()) {
++        Some((span, _)) => diff_replacements(&span, corrected),
++        None => LearnDiff::Unaligned,
++    }
++}
++
+ /// Path of the last-transcript file the daemon writes after each dictation.
+ pub fn last_transcript_path() -> PathBuf {
+     crate::config::Config::runtime_dir().join("last-transcript")
+@@ -177,6 +239,25 @@
      2.0 * matches as f64 / (a.len() + b.len()) as f64
  }
  
@@ -310,7 +475,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
 +/// Letter similarity a learned pair needs. Misheard terms sound alike and
 +/// share most letters ("hyper end" and "Hyprland"); reworded text does not
 +/// ("ship" and "wait until").
-+const MIN_PAIR_SIMILARITY: f64 = 0.4;
++const MIN_PAIR_SIMILARITY: f64 = 0.35;
 +
 +fn looks_misheard(old: &str, new: &str) -> bool {
 +    let letters = |s: &str| -> Vec<char> {
@@ -325,7 +490,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
  fn replace_pairs(old_tokens: &[&str], new_tokens: &[&str]) -> Vec<(String, String)> {
      let mut pairs = Vec::new();
      for op in opcodes(old_tokens, new_tokens) {
-@@ -185,13 +205,15 @@
+@@ -185,13 +266,15 @@
          }
          let a_len = op.a_end - op.a_start;
          let b_len = op.b_end - op.b_start;
@@ -346,7 +511,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
              pairs.push((old_phrase, new_phrase));
          }
      }
-@@ -309,10 +331,159 @@
+@@ -309,10 +392,195 @@
      (best_i, best_j, best_size)
  }
  
@@ -497,6 +662,42 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
 +    }
 +
 +    #[test]
++    fn selection_anchors_on_unchanged_neighbors() {
++        let transcript = "Can you help me fix Nick's packages, it seems broken";
++        assert_eq!(
++            aligned_span(transcript, "fix nixpkgs, it").unwrap().0,
++            "fix Nick's packages, it"
++        );
++        match diff_selection(transcript, "fix nixpkgs, it") {
++            LearnDiff::Replacements(pairs) => {
++                let learned: Vec<_> = pairs
++                    .iter()
++                    .filter_map(|(from, to)| normalize_learned_pair(from, to))
++                    .collect();
++                assert_eq!(learned, vec![("Nick's packages".to_string(), "nixpkgs".to_string())]);
++            }
++            other => panic!("expected replacements, got {other:?}"),
++        }
++        // The whole corrected passage still places as the whole transcript.
++        assert!(matches!(
++            diff_selection(transcript, "Can you help me fix nixpkgs, it seems broken"),
++            LearnDiff::Replacements(_)
++        ));
++    }
++
++    #[test]
++    fn selection_without_anchors_is_refused() {
++        let transcript = "Can you help me fix Nick's packages, it seems broken";
++        assert_eq!(diff_selection(transcript, "nixpkgs"), LearnDiff::Unaligned);
++        assert_eq!(selection_score(transcript, "nixpkgs"), 0.0);
++        // Unrelated clipboard text scores below the real selection.
++        assert!(
++            selection_score(transcript, "fix nixpkgs, it")
++                > selection_score(transcript, "# notes about something else entirely")
++        );
++    }
++
++    #[test]
 +    fn long_rewrites_are_not_learned() {
 +        let transcript = "we should ship the build before lunch today";
 +        let corrected = "we should wait until the review finishes before shipping today";
@@ -506,7 +707,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
      #[test]
      fn example_omaar_gielen() {
          let transcript = "Het omaar gielen nu, doet het niet.";
-@@ -321,7 +492,7 @@
+@@ -321,7 +589,7 @@
              LearnDiff::Replacements(pairs) => {
                  assert_eq!(
                      pairs,
