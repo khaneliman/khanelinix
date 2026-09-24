@@ -61,15 +61,18 @@ class UpdatePackagesTests(unittest.TestCase):
         self.assertNotIn("nix-update", body)
 
     def test_long_package_name_keeps_subject_bounded(self) -> None:
-        subject, _ = update_packages.commit_message(
+        subject, body = update_packages.commit_message(
             "codex-browser-use-linux-chromium",
-            "codex-browser-use-linux-chromium: 1 -> 2",
+            "codex-browser-use-linux-chromium: 0.1.0-unstable-2026-06-24 -> 0-unstable-2026-06-24",
         )
         self.assertLessEqual(len(subject), 50)
+        self.assertTrue(all(len(line) <= 72 for line in body.splitlines()))
 
     def test_coupled_packages_are_explicitly_skipped(self) -> None:
         for package in (
+            "antigravity-acp",
             "bevy-brp-mcp",
+            "blender-mcp",
             "cliproxyapi",
             "codexbar-cli",
             "playwright-cli",
@@ -198,6 +201,63 @@ class UpdatePackagesTests(unittest.TestCase):
                 ).stdout.strip(),
             )
             self.assertEqual("version = old;\n", (target / "package.nix").read_text())
+
+    def test_branch_update_with_unchanged_revision_is_current(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo = Path(temp_dir)
+            target = self.init_repository(repo)
+            package_file = target / "package.nix"
+            revision = "a" * 40
+            package_file.write_text(f'version = "1";\nrev = "{revision}";\n')
+            subprocess.run(("git", "add", ":/"), cwd=repo, check=True)
+            subprocess.run(
+                ("git", "commit", "--quiet", "-m", "test: add revision"),
+                cwd=repo,
+                check=True,
+            )
+            before = subprocess.run(
+                ("git", "rev-parse", "HEAD"),
+                cwd=repo,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            original_run = update_packages.run
+
+            def simulate_nix_update(command, **kwargs):
+                if command[0] != "nix-update":
+                    return original_run(command, **kwargs)
+                package_file.write_text(f'version = "2";\nrev = "{revision}";\n')
+                subprocess.run(("git", "add", ":/"), cwd=repo, check=True)
+                subprocess.run(
+                    ("git", "commit", "--quiet", "-m", "example: 1 -> 2"),
+                    cwd=repo,
+                    check=True,
+                )
+                return subprocess.CompletedProcess(command, 0, "", "")
+
+            with (
+                tempfile.TemporaryDirectory() as log_dir,
+                patch.object(update_packages, "run", side_effect=simulate_nix_update),
+                patch.object(update_packages, "BRANCH_PACKAGES", {"example"}),
+            ):
+                result = update_packages.update_package(repo, "example", Path(log_dir))
+
+            self.assertEqual("current", result.status)
+            self.assertEqual("upstream revision is unchanged", result.detail)
+            self.assertEqual(
+                before,
+                subprocess.run(
+                    ("git", "rev-parse", "HEAD"),
+                    cwd=repo,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                ).stdout.strip(),
+            )
+            self.assertEqual(
+                f'version = "1";\nrev = "{revision}";\n', package_file.read_text()
+            )
 
     def test_batch_continues_after_package_failure(self) -> None:
         failed = update_packages.UpdateResult("first", "failed", "test failure")

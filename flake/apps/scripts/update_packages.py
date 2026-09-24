@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import textwrap
 from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -26,14 +27,17 @@ BRANCH_PACKAGES = {
 
 SKIP_PACKAGES = {
     "adv360-firmware": "source is managed by the adv360-zmk flake input",
+    "antigravity-acp": "three platform-specific binary hashes require a custom updater",
     "avrogen": "nix-update cannot update buildDotnetGlobalTool version bindings",
     "bevy-brp-mcp": "the source update requires porting a local upstream patch",
+    "blender-mcp": "the server, add-on, and upstream Git source must update together",
     "cliproxyapi": "the source update also requires commit and build-date ldflags",
     "codexbar-cli": "four platform-specific release hashes require a custom updater",
     "playwright-cli": "the CLI update requires matching Chromium revision pins",
 }
 
 NIX_UPDATE_SUBJECT = re.compile(r"^(?P<package>[^:]+): (?P<old>.+) -> (?P<new>.+)$")
+SOURCE_REVISION = re.compile(r'^\s*rev = "([0-9a-f]{40})";', re.MULTILINE)
 
 
 @dataclass(frozen=True)
@@ -213,6 +217,20 @@ def commit_is_scoped_to(repo: Path, commit: str, target: Path) -> bool:
     )
 
 
+def source_revision_unchanged(
+    repo: Path, before: str, after: str, target: Path
+) -> bool:
+    package_file = str((target / "package.nix").relative_to(repo))
+    revisions = []
+    for commit in (before, after):
+        source = git(repo, "show", f"{commit}:{package_file}").stdout
+        match = SOURCE_REVISION.search(source)
+        if not match:
+            return False
+        revisions.append(match.group(1))
+    return revisions[0] == revisions[1]
+
+
 def commit_message(package: str, original_subject: str) -> tuple[str, str]:
     versions = parse_nix_update_subject(original_subject)
     if versions:
@@ -223,7 +241,9 @@ def commit_message(package: str, original_subject: str) -> tuple[str, str]:
         )
         if len(subject) > 50:
             subject = "chore(packages): update local package"
-        body = f"Update {package} from {old_version} to {new_version}."
+        body = textwrap.fill(
+            f"Update {package} from {old_version} to {new_version}.", width=72
+        )
     else:
         subject = f"chore({package}): update package"
         if len(subject) > 50:
@@ -255,6 +275,8 @@ def update_package(repo: Path, package: str, log_dir: Path) -> UpdateResult:
     command = ["nix-update", "--flake", "--build", "--commit"]
     if package in BRANCH_PACKAGES:
         command.extend(("--version", "branch"))
+    elif package == "swarmui":
+        command.extend(("--version", "unstable"))
     command.append(package)
 
     result = run(command, cwd=repo, env=nix_update_environment())
@@ -292,6 +314,14 @@ def update_package(repo: Path, package: str, log_dir: Path) -> UpdateResult:
             "failed",
             "nix-update committed changes outside the package directory",
             log_path,
+        )
+
+    if package in BRANCH_PACKAGES and source_revision_unchanged(
+        repo, before, after, target
+    ):
+        discard_generated_commit(repo, before, after, target)
+        return UpdateResult(
+            package, "current", "upstream revision is unchanged", log_path
         )
 
     original_subject = git(repo, "show", "-s", "--format=%s", after).stdout.strip()
