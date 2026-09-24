@@ -9,13 +9,13 @@
 let
   upstreamSrc = fetchgit {
     url = "https://projects.blender.org/lab/blender_mcp.git";
-    rev = "4309a39646e644261624bfcd2bca669b343b7621";
-    hash = "sha256-uLD2p8kEWYUeH1c2SxSfvKn6kcPDXkXp7lxUQKcpHFI=";
+    rev = "ff54e4d8f6b09502f2f466189cca0e52b4a91643";
+    hash = "sha256-RiTR8XlBiAuJ7SgD8vGGMrp55BPiYIrObs09RwykfM8=";
   };
 in
 python3Packages.buildPythonApplication {
   pname = "blender-mcp";
-  version = "1.0.0";
+  version = "1.0.2";
 
   src = "${upstreamSrc}/mcp";
   pyproject = true;
@@ -35,7 +35,7 @@ python3Packages.buildPythonApplication {
     addonDir="$out/share/blender-mcp/addon"
     install -d "$addonDir"
     cp -r "${upstreamSrc}/addon/blender_mcp_addon" "$addonDir/"
-    (cd "$addonDir/blender_mcp_addon" && zip -qr "$addonDir/blender_mcp_addon-1.0.0.zip" .)
+    (cd "$addonDir/blender_mcp_addon" && zip -qr "$addonDir/blender_mcp_addon-1.0.2.zip" .)
   '';
 
   installCheckPhase = ''
