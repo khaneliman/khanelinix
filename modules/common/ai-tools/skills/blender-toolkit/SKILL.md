@@ -53,7 +53,9 @@ an already authorized modeling task does not cancel that task's remaining work.
 
 For loops around eyes, mouths, cavities, or joints, preserve ordered boundary
 correspondence before subdivision. Unordered or mismatched loops can create
-subdivision artifacts that hide or distort existing features.
+subdivision artifacts that hide or distort existing features. Read
+[mesh surgery](references/mesh-surgery.md) before bridging boundaries, cutting
+openings, or solving vertex positions in code.
 
 ## Inspect effective scene state
 
