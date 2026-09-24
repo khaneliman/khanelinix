@@ -13,6 +13,13 @@ Do not accept a successful export command as proof. The bar is the source
 checkpoint, exported candidate, successful re-import, and direct inspection of
 resulting visual/runtime behavior.
 
+Blender's glTF importer places helper meshes, such as a bone-display
+`Icosphere`, in a `glTF_not_exported` collection and hides the collection, not
+the objects, so object visibility flags and scene membership still include them.
+Measure bounds from authored meshes only, using the file's mesh-node names as
+the whitelist. Imported mesh data names can differ from node names, so map nodes
+to meshes explicitly.
+
 ## Build a target-specific candidate
 
 Treat transform application as a compatibility decision, not a universal cleanup
@@ -27,6 +34,16 @@ applying topology-changing operations. Shape keys and skinning can constrain
 which modifiers the exporter can apply; inspect the installed exporter's options
 and warnings rather than forcing a remembered preset.
 
+Applying Subdivision Surface can push vertex weights just above 1.0, and a later
+Solidify duplicates the overshoot. `Mesh.validate()` returns true when it
+repaired something, so inspect its diagnostics and the weight ranges before and
+after each modifier, then revalidate the saved preparation.
+
+Before clearing mesh material slots, snapshot every polygon's material index.
+Re-append the materials in order, restore the indices, and assert equality;
+clearing first lost face assignments that re-appending did not restore. Recheck
+slot coverage after topology-changing modifiers.
+
 For glTF, verify that connected materials use exporter-supported inputs. Bake
 unsupported procedural detail into textures when required by the target, then
 check UVs, texture color-space interpretation, normal-map convention, alpha
@@ -34,6 +51,19 @@ mode, and dependency paths after import. UV seams and hard normals can split
 exported vertices, so compare runtime vertex counts against the actual budget,
 not only Blender's source mesh count. Apply FBX-specific settings only to FBX
 candidates.
+
+When extracting bake or export inputs, resolve the shader connected to the
+active Material Output rather than the first Principled node, and keep every
+input that drives appearance. Compare the original source against the prepared
+copy as well as the prepared copy against the re-import; the second comparison
+cannot catch a preparation regression.
+
+The Blender 5.2 glTF exporter drops weights at or below 0.0001, then keeps the
+strongest influences up to Bone Influences, 4 by default. Some runtimes, such as
+Bevy 0.19, read only `JOINTS_0` and `WEIGHTS_0`. Apply the same cutoff and limit
+to the export-prepared skin and normalize it before authoring corrective shape
+keys or comparing deformation. Predict the resulting skin delta and compare it
+with the observed clean-import error before blaming the runtime.
 
 ## Animation acceptance
 
