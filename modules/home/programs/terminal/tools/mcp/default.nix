@@ -49,7 +49,7 @@ in
           --online-mode \
           --background \
           --command extension install-file \
-          "${blenderMcpPackage}/share/blender-mcp/addon/blender_mcp_addon-1.0.0.zip" \
+          "${blenderMcpPackage}/share/blender-mcp/addon/blender_mcp_addon-${blenderMcpPackage.version}.zip" \
           --repo user_default \
           --enable
       ''
