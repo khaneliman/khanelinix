@@ -2,82 +2,76 @@
 
 1. Export from the intended scene or collection with explicit object,
    visibility, modifier, material, skinning, and animation settings.
-2. Re-import into a clean inspection scene or the target runtime. Check
+2. Re-import into a clean inspection scene or the target runtime and check
    transforms, scale, winding, normals, UVs, materials, hierarchy, skeleton,
    weights, animation, and missing dependencies.
-3. Compare a fixed-view render or runtime capture with the source and inspect
-   the imported asset. Record Blender and runtime versions when behavior is
-   version-sensitive.
+3. Compare a fixed-view render or runtime capture with the source, and record
+   Blender and runtime versions when behavior is version-sensitive.
 
-Do not accept a successful export command as proof. The bar is the source
-checkpoint, exported candidate, successful re-import, and direct inspection of
-resulting visual/runtime behavior.
+Acceptance needs the source checkpoint, the exported candidate, a successful
+re-import, and direct inspection of the result.
 
-Blender's glTF importer places helper meshes, such as a bone-display
-`Icosphere`, in a `glTF_not_exported` collection and hides the collection, not
-the objects, so object visibility flags and scene membership still include them.
-Measure bounds from authored meshes only, using the file's mesh-node names as
-the whitelist. Imported mesh data names can differ from node names, so map nodes
-to meshes explicitly.
+Blender's glTF importer puts helper meshes, such as a bone-display `Icosphere`,
+in a `glTF_not_exported` collection and hides the collection, not the objects,
+so object visibility and scene membership still include them. Measure bounds
+from authored meshes only, whitelisting the file's mesh-node names, and map
+nodes to meshes explicitly because imported mesh data names can differ.
 
 ## Build a target-specific candidate
 
-Treat transform application as a compatibility decision, not a universal cleanup
-step. Check units, local/world transforms, parent inverses, origin, and negative
-or non-uniform scale. Avoid changing a bound rig's rest relationship merely to
-make transforms look clean. Verify axis conversion in the importer rather than
-adding an extra rotation because Blender and the runtime name their axes
-differently.
+Treat transform application as a compatibility decision, not routine cleanup.
+Check units, local and world transforms, parent inverses, origin, and negative
+or non-uniform scale, and do not change a bound rig's rest relationship to make
+transforms look clean. Verify the importer's axis conversion instead of adding a
+rotation because Blender and the runtime name axes differently.
 
-Inspect modifier order on evaluated geometry. Preserve an editable source before
-applying topology-changing operations. Shape keys and skinning can constrain
-which modifiers the exporter can apply; inspect the installed exporter's options
-and warnings rather than forcing a remembered preset.
+Inspect modifier order on evaluated geometry and keep an editable source before
+applying topology-changing modifiers. Shape keys and skinning limit which
+modifiers the exporter can apply; read the installed exporter's options and
+warnings rather than a remembered preset.
 
 Applying Subdivision Surface can push vertex weights just above 1.0, and a later
 Solidify duplicates the overshoot. `Mesh.validate()` returns true when it
-repaired something, so inspect its diagnostics and the weight ranges before and
-after each modifier, then revalidate the saved preparation.
+repaired something, so check its diagnostics and the weight ranges around each
+modifier, then revalidate the saved preparation.
 
-Before clearing mesh material slots, snapshot every polygon's material index.
-Re-append the materials in order, restore the indices, and assert equality;
-clearing first lost face assignments that re-appending did not restore. Recheck
-slot coverage after topology-changing modifiers.
+Snapshot every polygon's material index before clearing slots, then re-append
+the materials in order, restore the indices, and assert equality; clearing first
+lost face assignments that re-appending did not restore. Recheck slot coverage
+after topology-changing modifiers.
 
-For glTF, verify that connected materials use exporter-supported inputs. Bake
-unsupported procedural detail into textures when required by the target, then
-check UVs, texture color-space interpretation, normal-map convention, alpha
-mode, and dependency paths after import. UV seams and hard normals can split
-exported vertices, so compare runtime vertex counts against the actual budget,
-not only Blender's source mesh count. Apply FBX-specific settings only to FBX
-candidates.
+For glTF, check that materials use exporter-supported inputs, and bake
+unsupported procedural detail when the target requires it. After import, check
+UVs, texture color space, normal-map convention, alpha mode, and dependency
+paths. UV seams and hard normals split exported vertices, so budget against the
+runtime vertex count, not Blender's source count. Apply FBX-specific settings
+only to FBX candidates.
 
 When extracting bake or export inputs, resolve the shader connected to the
-active Material Output rather than the first Principled node, and keep every
-input that drives appearance. Compare the original source against the prepared
-copy as well as the prepared copy against the re-import; the second comparison
-cannot catch a preparation regression.
+active Material Output, not the first Principled node, and keep every input that
+drives appearance. Compare the original source with the prepared copy as well as
+the prepared copy with the re-import; only the first catches a preparation
+regression.
 
 The Blender 5.2 glTF exporter drops weights at or below 0.0001, then keeps the
-strongest influences up to Bone Influences, 4 by default. Some runtimes, such as
-Bevy 0.19, read only `JOINTS_0` and `WEIGHTS_0`. Apply the same cutoff and limit
-to the export-prepared skin and normalize it before authoring corrective shape
-keys or comparing deformation. Predict the resulting skin delta and compare it
-with the observed clean-import error before blaming the runtime.
+strongest influences up to Bone Influences, 4 by default, and some runtimes,
+such as Bevy 0.19, read only `JOINTS_0` and `WEIGHTS_0`. Apply the same cutoff
+and limit to the export-prepared skin and normalize it before authoring
+corrective shape keys or comparing deformation, and predict the resulting skin
+delta before blaming the runtime for a clean-import error.
 
 ## Animation acceptance
 
-Identify intended clips and their owners: actions/action slots, NLA tracks,
-armatures, and shape keys. Inspect the installed exporter's animation modes; do
-not assume every action is exported, or that NLA is required in every mode.
-Record clip names, frame range, frame rate, sampling, loop behavior, and root
-motion.
+Identify intended clips and their owners: actions and slots, NLA tracks,
+armatures, and shape keys. Check the installed exporter's animation modes rather
+than assuming every action exports or that NLA is always required. Record clip
+names, frame range, frame rate, sampling, loop behavior, and root motion.
 
 Constraints, drivers, simulations, and animated shader graphs need explicit
 compatibility checks. Bake supported evaluated motion into exportable channels
-when necessary; baking does not make an unsupported channel representable. Check
-representative motion and transitions after import, including root trajectory,
-joint extremes, foot contacts, shape keys, and clip boundaries.
+when necessary; baking cannot represent an unsupported channel. After import,
+check root trajectory, joint extremes, foot contacts, shape keys, and clip
+boundaries.
 
 ## Sources
 
