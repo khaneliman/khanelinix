@@ -26,7 +26,7 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
      from_clipboard: bool,
      from_stdin: bool,
  ) -> anyhow::Result<()> {
-@@ -32,14 +29,16 @@
+@@ -32,14 +29,17 @@
          LearnSource::Selection
      };
  
@@ -35,8 +35,10 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
 +    let candidates = match read_candidates(source) {
 +        Ok(found) if !found.is_empty() => found,
          Ok(_) => {
-             eprintln!("error: corrected text is empty");
-+            notify_nothing_learned("Select or copy the corrected text first.").await;
+-            eprintln!("error: corrected text is empty");
++            eprintln!("error: nothing is copied; copy the corrected text, then try again");
++            notify_nothing_learned("Nothing is copied. Copy the corrected text, then try again.")
++                .await;
              std::process::exit(1);
          }
          Err(e) => {
@@ -45,7 +47,7 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
              std::process::exit(1);
          }
      };
-@@ -49,12 +48,24 @@
+@@ -49,12 +49,27 @@
              "error: no last transcript found.\n  \
               Dictate something first, or check that the voxtype daemon is logging."
          );
@@ -66,12 +68,16 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
 +
 +    match learn::diff_selection(&transcript, &corrected) {
          LearnDiff::Identical => {
-             println!("Nothing to learn: text matches the last transcript.");
-+            notify_nothing_learned("The selection matches the last dictation.").await;
+-            println!("Nothing to learn: text matches the last transcript.");
++            println!("Nothing to learn: the copied text matches your last dictation.");
++            notify_nothing_learned(
++                "The copied text matches your last dictation. Fix it first, then copy the fixed text.",
++            )
++            .await;
              Ok(())
          }
          LearnDiff::TooDifferent { ratio } => {
-@@ -63,18 +74,45 @@
+@@ -63,18 +78,39 @@
                   (similarity {ratio:.2} < {:.2}). Refusing to learn.",
                  learn::MIN_SIMILARITY
              );
@@ -79,17 +85,11 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
 +            std::process::exit(1);
 +        }
 +        LearnDiff::Unaligned => {
-+            let reason = match learn::unaligned_reason(&transcript, &corrected) {
-+                learn::UnalignedReason::NeedsContext => {
-+                    "Copy the fix with an unchanged word on each side, or the whole dictation."
-+                        .to_string()
-+                }
-+                learn::UnalignedReason::Unrelated => format!(
-+                    "Nothing copied matches your last dictation (\"{}\"). Copy the corrected \
-+                     text, then try again.",
-+                    preview(&transcript)
-+                ),
-+            };
++            let reason = format!(
++                "Nothing copied matches your last dictation (\"{}\"). Copy the corrected text, \
++                 then try again.",
++                preview(&transcript)
++            );
 +            eprintln!("error: {reason}");
 +            notify_nothing_learned(&reason).await;
              std::process::exit(1);
@@ -97,7 +97,7 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
          LearnDiff::NoReplacements => {
 -            println!("Nothing to learn: no word replacements found (inserts/deletes only).");
 +            println!("Nothing to learn: no misheard words found.");
-+            notify_nothing_learned("No misheard words found in the selection.").await;
++            notify_nothing_learned("No misheard words found in what you copied.").await;
              Ok(())
          }
          LearnDiff::Replacements(pairs) => {
@@ -108,8 +108,8 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
 +                .filter_map(|(from, to)| learn::normalize_learned_pair(from, to))
 +                .collect();
 +            if pairs.is_empty() {
-+                println!("Nothing to learn: only punctuation changed.");
-+                notify_nothing_learned("Only punctuation changed.").await;
++                println!("Nothing to learn: only punctuation or a short common word changed.");
++                notify_nothing_learned("Only punctuation or a short common word changed.").await;
 +                return Ok(());
 +            }
 +            let written = match learn::merge_learned_replacements(&pairs) {
@@ -120,7 +120,7 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
                      std::process::exit(1);
                  }
              };
-@@ -82,42 +120,52 @@
+@@ -82,42 +118,52 @@
              for (from, to) in &pairs {
                  println!("Learned \"{from}\" = \"{to}\"");
              }
@@ -195,7 +195,7 @@ diff --git a/src/app/learn.rs b/src/app/learn.rs
  }
  
  fn read_clipboard() -> Option<String> {
-@@ -134,37 +182,21 @@
+@@ -134,37 +180,21 @@
      String::from_utf8(output.stdout).ok()
  }
  
@@ -401,7 +401,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
  //! ignored so a compositor selection that only adds or drops words does not
  //! poison `[text.replacements]`.
  
-+use std::collections::{BTreeMap, HashMap, HashSet};
++use std::collections::{BTreeMap, HashMap};
  use std::path::{Path, PathBuf};
  
  /// Full-string similarity below this refuses to learn (random selection guard).
@@ -409,114 +409,141 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
      TooDifferent { ratio: f64 },
      /// Texts are similar but every change is an insert or delete.
      NoReplacements,
-+    /// The selection's edge words were changed, so it cannot be placed in
-+    /// the transcript.
++    /// Nothing in the selection sounds like part of the transcript: usually
++    /// a clipboard left over from before the correction was copied.
 +    Unaligned,
      /// One or more replace-opcode phrases to merge into config.
      Replacements(Vec<(String, String)>),
  }
-@@ -47,6 +51,108 @@
+@@ -37,7 +41,11 @@
+         return LearnDiff::TooDifferent { ratio };
+     }
+ 
+-    let old_tokens: Vec<&str> = transcript.split_whitespace().collect();
++    pairs_between(transcript, corrected)
++}
++
++fn pairs_between(spoken: &str, corrected: &str) -> LearnDiff {
++    let old_tokens: Vec<&str> = spoken.split_whitespace().collect();
+     let new_tokens: Vec<&str> = corrected.split_whitespace().collect();
+     let pairs = replace_pairs(&old_tokens, &new_tokens);
+     if pairs.is_empty() {
+@@ -47,6 +55,122 @@
      }
  }
  
-+/// Word as it counts for anchoring: lowercase, without edge punctuation.
-+fn anchor_token(word: &str) -> String {
-+    word.trim_matches(|c: char| !c.is_alphanumeric()).to_lowercase()
++/// Soundex consonant class of a letter; vowels, h, w, and y have none.
++fn sound_class(c: char) -> Option<u8> {
++    match c.to_ascii_lowercase() {
++        'b' | 'f' | 'p' | 'v' => Some(1),
++        'c' | 'g' | 'j' | 'k' | 'q' | 's' | 'x' | 'z' => Some(2),
++        'd' | 't' => Some(3),
++        'l' => Some(4),
++        'm' | 'n' => Some(5),
++        'r' => Some(6),
++        _ => None,
++    }
 +}
 +
-+/// Locate the transcript span a corrected selection covers, so the user can
-+/// select a fix with an unchanged word on each side instead of the whole
-+/// dictation. The selection's first and last words anchor the span; a
-+/// selection whose edge word was changed only places as the whole
-+/// transcript. Returns the span and its word-level similarity.
-+pub fn aligned_span(transcript: &str, corrected: &str) -> Option<(String, f64)> {
-+    let words: Vec<&str> = transcript.split_whitespace().collect();
-+    let selected: Vec<String> = corrected.split_whitespace().map(anchor_token).collect();
-+    if words.is_empty() || selected.is_empty() {
++/// How a phrase sounds, ignoring spelling and word breaks: its consonant
++/// classes with repeats collapsed, so "Nick's packages" and "nixpkgs" share
++/// one key.
++fn sound_key(text: &str) -> Vec<u8> {
++    let mut key: Vec<u8> = Vec::new();
++    for class in text.chars().filter_map(sound_class) {
++        if key.last() != Some(&class) {
++            key.push(class);
++        }
++    }
++    key
++}
++
++fn sound_similarity(a: &str, b: &str) -> f64 {
++    let (a, b) = (sound_key(a), sound_key(b));
++    if a.is_empty() || b.is_empty() {
++        return 0.0;
++    }
++    sequence_ratio(a, b)
++}
++
++/// Sound similarity a selection needs to count as covering part of the
++/// transcript.
++const MIN_PLACEMENT_SOUND: f64 = 0.6;
++
++/// A corrected selection matched to the transcript text it replaces.
++struct Placement {
++    spoken: String,
++    copied: String,
++    sound: f64,
++    letters: f64,
++    words: usize,
++}
++
++/// Find the transcript words a corrected selection covers. Misheard text
++/// sounds like its correction, so the best window is the one whose sound key
++/// matches the selection's most closely, with letters and then fewer words
++/// as tiebreaks. That places a lone fixed word, a fix at the edge of the
++/// selection, or the whole corrected dictation. A selection much longer than
++/// the transcript is searched the other way, for the part that covers it.
++fn place_selection(transcript: &str, corrected: &str) -> Option<Placement> {
++    let spoken: Vec<&str> = transcript.split_whitespace().collect();
++    let copied: Vec<&str> = corrected.split_whitespace().collect();
++    let (n, m) = (spoken.len(), copied.len());
++    if n == 0 || m == 0 {
 +        return None;
 +    }
-+    let spoken: Vec<String> = words.iter().map(|w| anchor_token(w)).collect();
-+    let (first, last) = (&selected[0], &selected[selected.len() - 1]);
-+    let starts = (0..words.len()).filter(|&i| &spoken[i] == first);
-+    let mut spans: Vec<(usize, usize)> = starts
-+        .flat_map(|i| {
-+            (i..words.len())
-+                .filter(|&j| &spoken[j] == last)
-+                .map(move |j| (i, j))
-+                .collect::<Vec<_>>()
-+        })
-+        .collect();
-+    spans.push((0, words.len() - 1));
++    // One misheard phrase of up to MAX_LEARNED_WORDS may differ in length
++    // from its correction.
++    let windows = |words: &[&str], target: usize| -> Vec<String> {
++        let shortest = target.saturating_sub(MAX_LEARNED_WORDS).max(1);
++        let longest = (target + MAX_LEARNED_WORDS).min(words.len());
++        (shortest..=longest)
++            .flat_map(|len| words.windows(len).map(|w| w.join(" ")).collect::<Vec<_>>())
++            .collect()
++    };
++    let candidates: Vec<(String, String)> = if m <= n + MAX_LEARNED_WORDS {
++        windows(&spoken, m)
++            .into_iter()
++            .map(|w| (w, copied.join(" ")))
++            .collect()
++    } else {
++        windows(&copied, n)
++            .into_iter()
++            .map(|w| (spoken.join(" "), w))
++            .collect()
++    };
 +
-+    let mut best: Option<(usize, usize, f64)> = None;
-+    for (i, j) in spans {
-+        // A fix changes at most MAX_LEARNED_WORDS words per phrase.
-+        let len = j - i + 1;
-+        if len + MAX_LEARNED_WORDS < selected.len() || len > selected.len() + MAX_LEARNED_WORDS {
-+            continue;
-+        }
-+        let score = sequence_ratio(spoken[i..=j].iter(), selected.iter());
-+        if best.is_none_or(|(_, _, top)| score > top) {
-+            best = Some((i, j, score));
-+        }
-+    }
-+    best.map(|(i, j, score)| (words[i..=j].join(" "), score))
-+}
-+
-+/// Why a selection could not be placed in the transcript.
-+#[derive(Debug, Clone, Copy, PartialEq)]
-+pub enum UnalignedReason {
-+    /// It resembles the dictation, but a changed word sits at its edge or it
-+    /// is a lone phrase, so its position is ambiguous.
-+    NeedsContext,
-+    /// It does not resemble the dictation: usually a clipboard left over from
-+    /// before the correction was copied.
-+    Unrelated,
-+}
-+
-+/// Classify a selection [`diff_selection`] could not place, so the message
-+/// names the actual fix.
-+pub fn unaligned_reason(transcript: &str, corrected: &str) -> UnalignedReason {
-+    let spoken: HashSet<String> = transcript
-+        .split_whitespace()
-+        .map(anchor_token)
-+        .filter(|w| !w.is_empty())
-+        .collect();
-+    let selected: Vec<String> = corrected
-+        .split_whitespace()
-+        .map(anchor_token)
-+        .filter(|w| !w.is_empty())
-+        .collect();
-+    let shared = selected.iter().filter(|w| spoken.contains(*w)).count();
-+    if !selected.is_empty() && shared * 2 >= selected.len() {
-+        return UnalignedReason::NeedsContext;
-+    }
-+    // A lone corrected phrase shares no words but sounds like part of the
-+    // dictation.
-+    if (1..=MAX_LEARNED_WORDS).contains(&selected.len()) {
-+        let words: Vec<&str> = transcript.split_whitespace().collect();
-+        for n in 1..=MAX_LEARNED_WORDS.min(words.len()) {
-+            if words
-+                .windows(n)
-+                .any(|window| looks_misheard(&window.join(" "), corrected))
-+            {
-+                return UnalignedReason::NeedsContext;
-+            }
++    let mut best: Option<Placement> = None;
++    for (spoken, copied) in candidates {
++        let placement = Placement {
++            sound: sound_similarity(&spoken, &copied),
++            letters: sequence_ratio(letter_chars(&spoken), letter_chars(&copied)),
++            words: spoken.split_whitespace().count() + copied.split_whitespace().count(),
++            spoken,
++            copied,
++        };
++        let rank = |p: &Placement| (p.sound, p.letters, std::cmp::Reverse(p.words));
++        if best.as_ref().is_none_or(|top| rank(&placement) > rank(top)) {
++            best = Some(placement);
 +        }
 +    }
-+    UnalignedReason::Unrelated
++    best.filter(|p| p.sound >= MIN_PLACEMENT_SOUND && p.letters >= MIN_PAIR_SIMILARITY)
 +}
 +
 +/// How well a candidate selection lines up with the transcript, for picking
 +/// between the primary selection and the clipboard.
 +pub fn selection_score(transcript: &str, corrected: &str) -> f64 {
-+    aligned_span(transcript, corrected).map_or(0.0, |(_, score)| score)
++    place_selection(transcript, corrected).map_or(0.0, |p| p.sound)
 +}
 +
-+/// Compare a corrected selection with the transcript span it covers.
++/// Compare a corrected selection with the transcript text it covers.
 +pub fn diff_selection(transcript: &str, corrected: &str) -> LearnDiff {
-+    match aligned_span(transcript, corrected.trim()) {
-+        Some((span, _)) => diff_replacements(&span, corrected),
++    match place_selection(transcript, corrected.trim()) {
++        Some(p) if p.spoken.trim() == p.copied.trim() => LearnDiff::Identical,
++        // Placement already required the selection to sound and read like
++        // the spoken text, case-insensitively, so the raw character check in
++        // diff_replacements would only reject case fixes and short forms.
++        Some(p) => pairs_between(&p.spoken, &p.copied),
 +        None => LearnDiff::Unaligned,
 +    }
 +}
@@ -524,7 +551,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
  /// Path of the last-transcript file the daemon writes after each dictation.
  pub fn last_transcript_path() -> PathBuf {
      crate::config::Config::runtime_dir().join("last-transcript")
-@@ -177,6 +283,25 @@
+@@ -177,6 +301,26 @@
      2.0 * matches as f64 / (a.len() + b.len()) as f64
  }
  
@@ -537,20 +564,21 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
 +/// ("ship" and "wait until").
 +const MIN_PAIR_SIMILARITY: f64 = 0.35;
 +
++fn letter_chars(s: &str) -> Vec<char> {
++    s.chars()
++        .filter(|c| c.is_alphanumeric())
++        .flat_map(char::to_lowercase)
++        .collect()
++}
++
 +fn looks_misheard(old: &str, new: &str) -> bool {
-+    let letters = |s: &str| -> Vec<char> {
-+        s.chars()
-+            .filter(|c| c.is_alphanumeric())
-+            .flat_map(char::to_lowercase)
-+            .collect()
-+    };
-+    sequence_ratio(letters(old), letters(new)) >= MIN_PAIR_SIMILARITY
++    sequence_ratio(letter_chars(old), letter_chars(new)) >= MIN_PAIR_SIMILARITY
 +}
 +
  fn replace_pairs(old_tokens: &[&str], new_tokens: &[&str]) -> Vec<(String, String)> {
      let mut pairs = Vec::new();
      for op in opcodes(old_tokens, new_tokens) {
-@@ -185,13 +310,15 @@
+@@ -185,13 +329,15 @@
          }
          let a_len = op.a_end - op.a_start;
          let b_len = op.b_end - op.b_start;
@@ -571,7 +599,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
              pairs.push((old_phrase, new_phrase));
          }
      }
-@@ -309,10 +436,208 @@
+@@ -309,10 +455,246 @@
      (best_i, best_j, best_size)
  }
  
@@ -641,12 +669,17 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
 +/// boundaries, which a trailing comma or period never satisfies. Edge
 +/// punctuation on the spoken side is dropped; the same punctuation on the
 +/// corrected side is dropped with it. Returns `None` when nothing remains
-+/// to replace.
++/// to replace, or when the spoken side is one short word.
 +pub fn normalize_learned_pair(from: &str, to: &str) -> Option<(String, String)> {
 +    let is_edge = |c: char| !c.is_alphanumeric();
 +    let key = from.trim_matches(is_edge);
 +    // Nothing spoken, or only punctuation around the same words changed.
 +    if key.is_empty() || to.trim_matches(is_edge) == key {
++        return None;
++    }
++    // Replacing a word such as "to" in every dictation is never a fix.
++    if !key.contains(char::is_whitespace) && key.chars().filter(|c| c.is_alphanumeric()).count() <= 3
++    {
 +        return None;
 +    }
 +    let lead = &from[..from.len() - from.trim_start_matches(is_edge).len()];
@@ -693,7 +726,9 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
 +            pair("omaar gielen nu,", "Omarchy menu"),
 +            Some(("omaar gielen nu".into(), "Omarchy menu".into()))
 +        );
-+        assert_eq!(pair("(foo)", "(bar)"), Some(("foo".into(), "bar".into())));
++        assert_eq!(pair("(nixos)", "(NixOS)"), Some(("nixos".into(), "NixOS".into())));
++        // One short word would be replaced in every dictation.
++        assert_eq!(pair("to", "too"), None);
 +        assert_eq!(pair(",", "and"), None);
 +        assert_eq!(pair("same.", "same."), None);
 +        // Punctuation-only edits teach nothing.
@@ -721,53 +756,84 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
 +        }
 +    }
 +
-+    #[test]
-+    fn selection_anchors_on_unchanged_neighbors() {
-+        let transcript = "Can you help me fix Nick's packages, it seems broken";
-+        assert_eq!(
-+            aligned_span(transcript, "fix nixpkgs, it").unwrap().0,
-+            "fix Nick's packages, it"
-+        );
-+        match diff_selection(transcript, "fix nixpkgs, it") {
-+            LearnDiff::Replacements(pairs) => {
-+                let learned: Vec<_> = pairs
-+                    .iter()
-+                    .filter_map(|(from, to)| normalize_learned_pair(from, to))
-+                    .collect();
-+                assert_eq!(learned, vec![("Nick's packages".to_string(), "nixpkgs".to_string())]);
-+            }
-+            other => panic!("expected replacements, got {other:?}"),
++    fn learned(transcript: &str, copied: &str) -> Vec<(String, String)> {
++        match diff_selection(transcript, copied) {
++            LearnDiff::Replacements(pairs) => pairs
++                .iter()
++                .filter_map(|(from, to)| normalize_learned_pair(from, to))
++                .collect(),
++            other => panic!("expected replacements for {copied:?}, got {other:?}"),
 +        }
-+        // The whole corrected passage still places as the whole transcript.
-+        assert!(matches!(
-+            diff_selection(transcript, "Can you help me fix nixpkgs, it seems broken"),
-+            LearnDiff::Replacements(_)
-+        ));
++    }
++
++    fn one(from: &str, to: &str) -> Vec<(String, String)> {
++        vec![(from.to_string(), to.to_string())]
 +    }
 +
 +    #[test]
-+    fn selection_without_anchors_is_refused() {
++    fn copied_fix_places_with_or_without_context() {
 +        let transcript = "Can you help me fix Nick's packages, it seems broken";
-+        assert_eq!(diff_selection(transcript, "nixpkgs"), LearnDiff::Unaligned);
-+        assert_eq!(selection_score(transcript, "nixpkgs"), 0.0);
-+        // Unrelated clipboard text scores below the real selection.
-+        assert!(
-+            selection_score(transcript, "fix nixpkgs, it")
-+                > selection_score(transcript, "# notes about something else entirely")
-+        );
-+    }
-+
-+    #[test]
-+    fn unaligned_reason_separates_stale_clipboards_from_ambiguous_fixes() {
-+        let transcript = "Can you help me fix Nick's packages, it seems broken";
-+        let reason = |corrected: &str| unaligned_reason(transcript, corrected);
-+        assert_eq!(reason("0d6dd9fb-9a62-4b0e-8b76-5aa08cf9a71a"), UnalignedReason::Unrelated);
++        let expected = one("Nick's packages", "nixpkgs");
++        assert_eq!(learned(transcript, "fix nixpkgs, it"), expected);
++        assert_eq!(learned(transcript, "nixpkgs"), expected);
++        assert_eq!(learned(transcript, "Can you help me fix nixpkgs, it seems broken"), expected);
 +        assert_eq!(
-+            reason("# Brother head likeness, round 5: colour, hair, expression, lighting notes"),
-+            UnalignedReason::Unrelated
++            learned(transcript, "Hello there. Can you help me fix nixpkgs, it seems broken"),
++            expected
 +        );
-+        assert_eq!(reason("nixpkgs"), UnalignedReason::NeedsContext);
-+        assert_eq!(reason("nixpkgs, it seems broken"), UnalignedReason::NeedsContext);
++    }
++
++    #[test]
++    fn fix_at_the_edge_of_the_copy_places() {
++        let transcript = "For MPD Empress I'd rather merge the two services into one";
++        assert_eq!(learned(transcript, "For mpd-mpris"), one("MPD Empress", "mpd-mpris"));
++        assert_eq!(learned(transcript, "MPRIS"), one("Empress", "MPRIS"));
++        assert_eq!(
++            learned("pipe cube cuddle get pods into jq", "kubectl"),
++            one("cube cuddle", "kubectl")
++        );
++        assert_eq!(
++            learned("open the hyper end keybinds", "Hyprland"),
++            one("hyper end", "Hyprland")
++        );
++    }
++
++    #[test]
++    fn longer_copy_containing_the_dictation_places() {
++        let transcript = "Can you help me fix Nick's packages, it seems broken";
++        let copied = format!(
++            "{}Can you help me fix nixpkgs, it seems broken {}",
++            "earlier text ".repeat(15),
++            "later ".repeat(8)
++        );
++        assert_eq!(learned(transcript, &copied), one("Nick's packages", "nixpkgs"));
++    }
++
++    #[test]
++    fn uncorrected_copy_is_identical() {
++        let transcript = "check the Hyperlin logs for errors";
++        assert_eq!(diff_selection(transcript, "the Hyperlin logs"), LearnDiff::Identical);
++        assert_eq!(learned(transcript, "the Hyprland logs"), one("Hyperlin", "Hyprland"));
++    }
++
++    #[test]
++    fn unrelated_clipboard_is_refused() {
++        let transcript = "Can you help me fix Nick's packages, it seems broken";
++        for copied in [
++            "0d6dd9fb-9a62-4b0e-8b76-5aa08cf9a71a",
++            "# Brother head likeness, round 5: colour, hair, expression, lighting notes",
++        ] {
++            assert_eq!(diff_selection(transcript, copied), LearnDiff::Unaligned, "{copied}");
++            assert_eq!(selection_score(transcript, copied), 0.0, "{copied}");
++        }
++        assert!(selection_score(transcript, "fix nixpkgs, it") > 0.0);
++    }
++
++    #[test]
++    fn short_common_words_are_not_learned() {
++        let transcript = "I am going to far with this";
++        assert!(learned(transcript, "too").is_empty());
++        assert!(learned(transcript, "going too far").is_empty());
 +    }
 +
 +    #[test]
@@ -780,7 +846,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
      #[test]
      fn example_omaar_gielen() {
          let transcript = "Het omaar gielen nu, doet het niet.";
-@@ -321,7 +646,7 @@
+@@ -321,7 +703,7 @@
              LearnDiff::Replacements(pairs) => {
                  assert_eq!(
                      pairs,
