@@ -1,8 +1,8 @@
 # Task Shapes
 
-Pick one shape in the shape phase. The shape sets ground depth, verification
-target, and the done signal. It does not replace the domain skill that owns the
-method.
+Pick one shape before the first edit and follow its section. The shape sets
+ground depth, verification target, and the done signal. It does not replace the
+domain skill that owns the method.
 
 Investigation is a phase inside every shape, not a shape of its own. When the
 user wants an explanation and no mutation, leave this skill and use `how` or
@@ -35,6 +35,20 @@ user wants an explanation and no mutation, leave this skill and use `how` or
   check covers the observable behavior. Create only what the caller's authorized scope needs.
 - Done: the new behavior works on the real surface, and existing callers still
   work.
+
+## Configuration
+
+- Goal: change settings, options, dependency versions, or pins so the system
+  behaves as intended.
+- Ground: read the file or module that owns the value and the default it
+  inherits, including the upstream default when a framework or package supplies
+  one. Find every consumer of the value.
+- Shape: change only the intended delta at the owning layer. Do not restate
+  inherited defaults or add indirection for a value that never varies.
+- Verify: evaluate, render, or build the affected output and check the
+  effective value, then run the nearest check that exercises it.
+- Done: the effective value is the intended one in the real output, and nothing
+  that consumed the old value regressed.
 
 ## Refactor
 

@@ -117,6 +117,19 @@ class PlaybookContract(unittest.TestCase):
         for capability in ("push", "merge", "publish", "deploy", "pull request"):
             self.assertIn(capability, authority)
 
+    def test_routes_to_references_before_the_first_edit(self) -> None:
+        self.assertLess(
+            self.body.index("## Route First"), self.body.index("## Scope and Authority")
+        )
+        route = self.body.split("## Route First", maxsplit=1)[1].split(
+            "## Scope and Authority", maxsplit=1
+        )[0]
+        self.assertIn("Before the first edit", route)
+        self.assertIn("read both files", route)
+        for name in ("task-shapes.md", "gates.md", "delegation.md"):
+            self.assertIn(f"(references/{name})", route)
+        self.assertNotIn("when needed", self.body.lower())
+
     def test_parent_retains_final_authority(self) -> None:
         lowered = self.body.lower()
         self.assertIn("final judgment", lowered)
@@ -357,7 +370,7 @@ class TaskShapesContract(unittest.TestCase):
     def setUp(self) -> None:
         self.content = read(REFERENCES / "task-shapes.md")
 
-    def test_declares_six_shapes(self) -> None:
+    def test_declares_seven_shapes(self) -> None:
         headings = re.findall(r"^##\s+(.+)$", self.content, re.MULTILINE)
         shapes = [heading.strip() for heading in headings if heading != "Attribution"]
         self.assertEqual(
@@ -365,6 +378,7 @@ class TaskShapesContract(unittest.TestCase):
             [
                 "Bug Fix",
                 "Feature",
+                "Configuration",
                 "Refactor",
                 "Modernization",
                 "Prototype",

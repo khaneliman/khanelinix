@@ -6,16 +6,46 @@ license: Complete terms in LICENSE
 
 # Engineering Workflow
 
-Carry a routine software change through working implementation, verification,
+Carry one routine software change through working implementation, verification,
 accepted corrections, and authorized delivery. A first patch is not completion.
-Choose the amount of investigation and structure the task needs, not a fixed
-sequence of documents or specialist invocations.
+
+## Route First
+
+Before the first edit, name the shape and the risk level, then read both files
+below in full. They are short, and they hold the checks and done conditions this
+page leaves out.
+
+1. Read your shape's section of [task-shapes.md](references/task-shapes.md).
+
+   | Shape         | Use for                                                  |
+   | ------------- | -------------------------------------------------------- |
+   | Bug fix       | restoring intended behavior                              |
+   | Feature       | adding behavior                                          |
+   | Configuration | changing settings, options, dependency versions, or pins |
+   | Refactor      | changing structure while behavior stays identical        |
+   | Modernization | replacing a legacy language, runtime, or toolchain       |
+   | Prototype     | answering whether an approach works                      |
+   | Evaluation    | choosing between options                                 |
+
+2. Read [gates.md](references/gates.md). It sets the risk level, the checks and
+   review each level requires, and when correction ends.
+
+A trivial change, meaning an obvious, reversible edit with no behavior, contract,
+or shared-state change, may skip both files: make it, run the focused check, and
+report. Modernization also reads [modernization.md](references/modernization.md).
+
+Read these when you reach the step:
+
+- Before delegating any work: [delegation.md](references/delegation.md).
+- Before a handoff, or while acceptance is unclear:
+  [phase-handoff.md](references/phase-handoff.md).
 
 ## Scope and Authority
 
 Architecture-only work belongs to `software-engineering`; large, cross-cutting,
-or unattended work belongs to `figure-it-out`. A direct explanation, diagnosis,
-or review request does not authorize implementation.
+or unattended work belongs to `figure-it-out`. Explanation goes to `how` or
+`why`, and standalone diagnosis to `diagnosing-bugs`. A direct explanation,
+diagnosis, or review request does not authorize implementation.
 
 Honor local-commit authority from the current request or standing user policy.
 Commit verified atomic slices when authorized; respect workspace-only requests.
@@ -27,39 +57,26 @@ The parent retains architecture acceptance, integration, and final judgment.
 ## Completion
 
 - Establish the intended behavior, affected boundary, and evidence that will
-  demonstrate success. Keep these in working context unless handoff or recovery
-  needs a durable artifact.
+  demonstrate success, at the depth your shape sets.
 - Implement the smallest complete change consistent with surrounding code.
-  Use domain guidance for non-obvious constraints, not generic programming steps.
-- Run relevant existing checks and any checks required by contributor canon.
-  Verify new behavior and affected regressions. Add tests when they establish
-  a meaningful contract; do not manufacture tests for low-impact edits.
-- Review the diff for correctness and scope. Fresh independent review is
-  required when requested, for high-risk changes, or when correctness or impact
-  uncertainty remains after investigation. Routine changes otherwise do not
-  require a worker. See [gates.md](references/gates.md) for risk and correction
-  criteria when these decisions need more detail.
-- Resolve accepted blockers and rerun checks invalidated by corrections.
-  Continue while making progress; investigate repeated unchanged failures.
-  Stop for a concrete blocker, missing authority, or an explicit budget limit,
-  not merely because the first implementation or review finished.
-- Complete authorized delivery and task-owned resource cleanup. Report the
-  result, actual checks, and material gaps without claiming unobserved success.
+- Verify and review as [gates.md](references/gates.md) requires for the risk
+  level. Add tests only when they establish a meaningful contract.
+- Resolve accepted blockers and rerun checks the corrections invalidated.
+  Continue while making progress; stop for a concrete blocker, missing
+  authority, or an explicit budget limit, not because the first patch or review
+  finished.
+- Complete authorized delivery and task-owned cleanup. Report the result, the
+  checks that actually ran, and material gaps.
 
-## Guidance When Needed
+## Methods
 
-- For unclear acceptance or a handoff, use
-  [phase-handoff.md](references/phase-handoff.md).
-- For task-specific completion criteria, including bounded modernization, use
-  [task-shapes.md](references/task-shapes.md). Its phases are planning vocabulary,
-  not mandatory checkpoints for every change.
-- For uncertain interfaces or state ownership, use `architect`. For difficult
-  diagnosis, use `diagnosing-bugs`; for historical rationale, use `why`.
-- For commit splitting or task-owned worktree creation and cleanup, use
-  `git-toolkit`. For coordinated slices, use `engineering-principles`.
-- Before delegating, read [delegation.md](references/delegation.md). Use
-  `interrogate` for contested or high-stakes review, and `multi-provider-sdlc`
-  only when concrete provider routing is needed.
-- Use `tdd` when explicitly requested. Other specialist methods are optional
-  unless the task or repository requires them. Resume unfinished work after a
-  specialist returns; do not repeat completed checks to satisfy a phase label.
+Use a method when its trigger applies; resume this workflow after it returns and
+do not repeat completed checks.
+
+- Uncertain interfaces or state ownership: `architect`.
+- Hard diagnosis: `diagnosing-bugs`. Historical rationale: `why`.
+- Commit splitting, worktrees, and cleanup: `git-toolkit`. Coordinated slices:
+  `engineering-principles`.
+- Contested or high-stakes review: `interrogate`. Concrete provider routing:
+  `multi-provider-sdlc`.
+- Test-first work, only when requested: `tdd`.
