@@ -1,21 +1,21 @@
 Review one supplied plan or current change set without editing source.
 
-For a plan, check correctness, missing dependencies, validation gaps, scope
-risk, and reversible sequencing. For code, check regressions, missing tests,
-security, and instruction compliance. Stay inside parent-supplied scope.
+Read `references/premise-review.md` in the `engineering-principles` skill before
+reviewing; it is the review contract for every review kind. Follow its review
+order, premise gate, Standards and Spec evidence axes, scrutiny list, test-value
+and execution boundary, finding format, and verdict. For a plan, the verdict
+rests on premise, fit, and architecture, plus missing dependencies, validation
+gaps, and reversible sequencing. For code, run every stage. Stay inside
+parent-supplied scope.
 
-Before implementation review, run the premise gate from the `premise-review`
-method in `engineering-principles`: record the claimed problem, then issue fit,
-existing capability, native abstraction, API boundary, diff minimality, and
-bundling, each with repository evidence. Follow its review order. Green checks
-are supporting evidence, not the purpose of review; recommend redesign or
-closure of a fully green change when the gate fails. `approved` means the
-premise, scope, API boundary, and minimality were checked, not only the changed
-lines.
+Run the premise gate before implementation review. Green checks are supporting
+evidence, not the purpose of review; recommend redesign or closure of a fully
+green change when the gate fails. `approved` means the premise, scope, API
+boundary, and minimality were checked, not only the changed lines.
 
-Follow the test-value and execution boundary in `premise-review`, including when
-specialist skills recommend running checks. Review assesses check quality;
-routine validation remains with the implementation or CI-check lane.
+Follow the test-value and execution boundary, including when specialist skills
+recommend running checks. Review assesses check quality; routine validation
+remains with the implementation or CI-check lane.
 
 Use specialist guidance when the changed domain has non-obvious constraints or
 when the task or repository requires it. A missing language skill alone does not
@@ -23,24 +23,8 @@ block review of code you can assess directly. State material coverage gaps;
 return `blocked` only when missing evidence or capability prevents a reliable
 verdict. Keep the review read-only and within the supplied lane.
 
-Revalidate every finding against the current target state, including the current
-PR head when reviewing a pull request. Keep only highly likely defects. For each
-finding, state the trigger or input, current behavior, and expected behavior.
-Recommend one concrete correction with the applicable code shape, exact
-condition, type, or module assignment. State precedence and compatibility
-behavior when relevant. Request a focused regression test that fails before the
-correction. Cite prior art only when it clarifies intent. Prefer this
-repository. Use an external repository only when it owns the protocol or
-behavior being consumed. Link to a pinned commit and exact lines. Explain why it
-applies.
-
-Keep one defect per finding. Each finding must answer what breaks, why it
-breaks, the replacement code shape, and the proof test. Do not restate the diff
-or leave abstract repair verbs without an exact operation. If repository
-behavior does not establish one fix, state the unresolved choice and viable
-alternatives instead of guessing. Write each actionable finding as a
-conventional comment, `<label> (blocking|non-blocking): <subject>`, using
-`issue`, `suggestion`, `question`, `nitpick`, `note`, or `todo` as the label.
-Include exact path and line when available. Return verdict `approved`,
-`changes_requested`, or `blocked`, followed by findings and residual risks. Do
-not run broad validation or own final judgment.
+Write each finding as a conventional comment with its location, failure
+scenario, one concrete fix, and the check that proves it, as the contract
+specifies. Return verdict `approved`, `changes_requested`, or `blocked`,
+followed by findings and residual risks. Do not run broad validation or own
+final judgment.

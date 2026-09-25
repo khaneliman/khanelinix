@@ -19,6 +19,9 @@ SWARM_ROOT = SKILL_ROOT.parent / "swarm"
 CATALOG = AI_TOOLS_ROOT / "marketplace" / "catalog.json"
 GENERAL_AGENTS = AI_TOOLS_ROOT / "agents" / "general"
 SHARED_WORKER_CORE = AI_TOOLS_ROOT / "agents" / "shared" / "worker-core.md"
+REVIEW_CONTRACT = (
+    SKILL_ROOT.parent / "engineering-principles" / "references" / "premise-review.md"
+)
 
 LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 SUPPORTED_FRONTMATTER_FIELDS = {"description", "license", "metadata", "name"}
@@ -255,10 +258,15 @@ class RepositoryWorkerLaneContract(unittest.TestCase):
             self.assertIn(marker, text, name)
             self.assertNotIn("Never invoke lifecycle skills", text, name)
 
-    def test_reviewer_prompt_requires_implementation_ready_findings(self) -> None:
+    def test_reviewer_prompt_defers_to_the_review_contract(self) -> None:
         text = normalized(GENERAL_AGENTS / "reviewer.md").lower()
+        self.assertIn("premise-review", text)
+        self.assertIn("return `blocked`", text)
+
+    def test_review_contract_requires_implementation_ready_findings(self) -> None:
+        text = normalized(REVIEW_CONTRACT).lower()
         for requirement in (
-            "return `blocked`",
+            "**evidence:**",
             "revalidate every finding against the current target state",
             "current pr head when reviewing a pull request",
             "trigger or input",
