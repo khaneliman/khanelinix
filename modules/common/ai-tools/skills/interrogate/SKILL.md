@@ -11,6 +11,11 @@ rubric, and code-quality lens. Agreement across models is high-confidence signal
 only when the agreeing reviewers did not inherit one premise from the packet;
 lone-model findings provide exploratory context.
 
+Every seat follows the review contract in the `premise-review` method of
+`engineering-principles`: its packet, premise gate, evidence axes, finding
+format, and verdict. This skill adds seat selection, the adversarial rubric and
+code-quality lens, and lead synthesis.
+
 The deliverable is a synthesized lead verdict. Do NOT auto-apply changes.
 
 ## Workflow
@@ -37,8 +42,9 @@ Launch parallel reviewers using distinct model families or subagents.
 
 Each reviewer receives:
 
-1. Problem statement and repository context. At least one reviewer is blind:
-   it receives no author claims, chosen solution, or extraction rationale.
+1. The contract packet: problem, requirements, repository context, and target.
+   At least one reviewer is blind: it receives no author claims, chosen
+   solution, or extraction rationale.
 2. Changeset diff and surrounding context.
 3. Review rubric from [rubric.md](references/rubric.md).
 4. Code-quality lens from
@@ -78,3 +84,5 @@ Present the synthesized verdict:
 - **Noted**: Low-priority observations.
 - **Dismissed**: Filtered findings with rejection reasons.
 - **Agreement Map**: Consensus and divergence summary across models.
+- **Verdict**: One contract verdict, `approved`, `changes_requested`, or
+  `blocked`, for the synthesized result.

@@ -223,7 +223,7 @@
 			},
 			"displayName": "Interrogate",
 			"description": "Multi-model adversarial review from independent angles.",
-			"version": "0.1.9",
+			"version": "0.1.10",
 			"category": "Developer Tools"
 		},
 		{

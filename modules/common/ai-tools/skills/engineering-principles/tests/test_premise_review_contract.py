@@ -316,6 +316,7 @@ class ReviewEntryPointsReferenceTheContract(unittest.TestCase):
         self.assertNotIn("do not question the intent", prompt)
         self.assertNotIn("assume the goal is correct", prompt)
         self.assertIn("should exist in this form", prompt)
+        self.assertIn("review order through verdict", prompt)
         self.assertIn("blind", playbook)
         self.assertIn("one unchallenged premise", judgment)
 
