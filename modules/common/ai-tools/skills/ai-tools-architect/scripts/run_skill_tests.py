@@ -48,8 +48,15 @@ def bounded_failure_output(output: str) -> str:
 
 
 def run_suite(root: Path, tests: Path) -> tuple[int, int, str]:
-    env = os.environ.copy()
-    env["PYTHONDONTWRITEBYTECODE"] = "1"
+    # Hook repository selectors and config overrides must not reach fixture Git calls.
+    env = {
+        key: value for key, value in os.environ.items() if not key.startswith("GIT_")
+    }
+    env.update(
+        GIT_CONFIG_GLOBAL=os.devnull,
+        GIT_CONFIG_NOSYSTEM="1",
+        PYTHONDONTWRITEBYTECODE="1",
+    )
     result = subprocess.run(
         [
             sys.executable,
