@@ -26,7 +26,8 @@ FORBIDDEN_PATTERNS = (
         "phrase-03",
         re.compile(r"\bbelt[- ]and[- ]suspenders\b", re.IGNORECASE),
     ),
-    ("phrase-04", re.compile(r"\bblast[- ]radius\b", re.IGNORECASE)),
+    # Hyphenated `blast-radius` is a skill name, so only the prose phrase blocks.
+    ("phrase-04", re.compile(r"\bblast\s+radius\b", re.IGNORECASE)),
     ("phrase-05", re.compile(r"\bdelv(?:e|es|ed|ing)\b", re.IGNORECASE)),
     ("phrase-06", re.compile(r"\btapestry\b", re.IGNORECASE)),
     ("phrase-07", re.compile(r"\bgame[- ]changer\b", re.IGNORECASE)),

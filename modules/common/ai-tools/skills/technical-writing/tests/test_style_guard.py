@@ -62,6 +62,18 @@ class StyleGuardTests(unittest.TestCase):
         text = "Route risky diffs through `blast-radius`.\n\n```md\nhonestly\n```\n"
         self.assertEqual(STYLE_GUARD.style_violations(text), [])
 
+    def test_skill_name_is_not_the_blocked_phrase(self) -> None:
+        self.assertEqual(
+            STYLE_GUARD.style_violations("Run blast-radius before merging."), []
+        )
+        self.assertEqual(
+            [
+                item["policy_id"]
+                for item in STYLE_GUARD.style_violations("blast\nradius")
+            ],
+            ["phrase-04"],
+        )
+
     def test_blocked_phrase_outside_code_region_still_blocks(self) -> None:
         violations = STYLE_GUARD.style_violations(
             "The `plan` must name the blast radius."
