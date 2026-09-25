@@ -168,6 +168,7 @@ in
         inherit hooks;
 
         model = "claude-opus-5-5";
+        autoMemoryEnabled = !aiTools.claudeCode.okfMemoryEnabled;
         outputStyle = "concise";
         theme = "dark";
         # Usage credits
