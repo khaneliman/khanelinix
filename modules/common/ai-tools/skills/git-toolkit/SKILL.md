@@ -20,8 +20,8 @@ When invoked, route to one mode:
    [bisect.md](references/bisect.md).
 4. **change-stack**: shape or review multi-commit branches and PR stacks. Read
    [change-stack.md](references/change-stack.md).
-5. **adversarial-review**: independently review a commit, PR, or diff against
-   falsifiable design premises and repository-wide constraints. Read
+5. **adversarial-review**: independently review a commit, branch, or diff
+   against falsifiable design premises and repository-wide constraints. Read
    [adversarial-review.md](references/adversarial-review.md).
 6. **cleanup**: before creating task branches/worktrees, after integrating
    parallel work, or after a PR merges. Read

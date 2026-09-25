@@ -324,7 +324,7 @@ class ReviewEntryPointsReferenceTheContract(unittest.TestCase):
         github = normalized(CONSUMERS["github-toolkit pr review"])
 
         self.assertIn("blind brief", git)
-        self.assertLess(git.index("premise gate"), git.index("## evidence axes"))
+        self.assertIn("apply unchanged", git)
         self.assertIn("premise, scope, api boundary, and diff minimality", github)
         self.assertLess(github.index("premise gate"), github.index("high-signal review policy"))
 

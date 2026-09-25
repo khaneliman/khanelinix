@@ -139,7 +139,7 @@
 		{
 			"name": "git-toolkit",
 			"description": "Git history and change-stack workflows.",
-			"version": "0.1.10",
+			"version": "0.1.11",
 			"author": {
 				"name": "khaneliman"
 			},

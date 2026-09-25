@@ -9,17 +9,14 @@ LICENSE = REFERENCE.parents[1] / "LICENSES" / "LICENSE-matt-pocock.txt"
 
 
 class ReviewContractTests(unittest.TestCase):
-    def test_standards_and_spec_feed_one_local_verdict(self) -> None:
-        text = REFERENCE.read_text(encoding="utf-8")
-        lowered = " ".join(text.lower().split())
+    def test_git_review_defers_to_the_shared_contract(self) -> None:
+        lowered = " ".join(REFERENCE.read_text(encoding="utf-8").lower().split())
 
-        self.assertIn("**Standards:**", text)
-        self.assertIn("**Spec:**", text)
-        self.assertIn("scope creep", lowered)
-        self.assertIn("cite the owning rule", lowered)
-        self.assertIn("one verdict", lowered)
-        self.assertIn("separate workers are optional", lowered)
-        self.assertIn("do not add a generic smell baseline", lowered)
+        self.assertIn("`premise-review` method in `engineering-principles`", lowered)
+        self.assertIn("standards and spec evidence axes", lowered)
+        self.assertIn("blind brief", lowered)
+        self.assertIn("read-only command", lowered)
+        self.assertIn("do not invent requirements", lowered)
         self.assertEqual(
             hashlib.sha256(LICENSE.read_bytes()).hexdigest(),
             "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",

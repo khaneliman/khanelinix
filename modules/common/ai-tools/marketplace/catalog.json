@@ -180,12 +180,12 @@
 		{
 			"name": "git-toolkit",
 			"dependencies": {
-				"required": [],
+				"required": ["engineering-principles"],
 				"optional": ["github-toolkit"]
 			},
 			"displayName": "Git Toolkit",
 			"description": "Git history and change-stack workflows.",
-			"version": "0.1.10",
+			"version": "0.1.11",
 			"category": "Developer Tools"
 		},
 		{
