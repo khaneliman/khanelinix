@@ -150,9 +150,9 @@ completion or authority from their caller.
 
 ## Durable Memory
 
-- Let provider auto-memory capture useful local learnings. Use OKF for
-  deliberate durable project or user knowledge; use planning-with-files when
-  transient task state must survive compaction or sessions.
+- When the OKF skill is available, keep durable project and user knowledge in
+  OKF and do not duplicate it in provider-native memory. Use planning-with-files
+  when transient task state must survive compaction or sessions.
 - Do not persist routine progress, raw transcripts, speculation, secrets, or
   content already owned by contributor documentation.
 
