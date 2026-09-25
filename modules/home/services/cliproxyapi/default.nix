@@ -39,7 +39,11 @@ let
     ws-auth = true;
     codex.optimize-multi-agent-v2 = true;
     oauth-excluded-models = cfg.oauthExcludedModels;
-    oauth-model-alias = lib.mapAttrs (
+    oauth-model-alias = {
+      # Suppress the fork's duplicate dot-to-hyphen Copilot aliases.
+      github-copilot = [ ];
+    }
+    // lib.mapAttrs (
       _: models:
       map (model: {
         name = model.model;
@@ -206,6 +210,26 @@ in
           "claude-sonnet-4-20250514"
           "claude-sonnet-4-5-20250929"
           "claude-sonnet-4-6"
+        ];
+        github-copilot = [
+          "claude-opus-4*"
+          "claude-opus-5"
+          "claude-sonnet-4*"
+          "gemini-3.5-flash"
+          "gemini-3.6-flash"
+          "gemini-3.7-flash"
+          "gpt-3*"
+          "gpt-4*"
+          "gpt-5-mini"
+          "gpt-5.4"
+          "gpt-5.5"
+          "gpt-5.6-luna"
+          "gpt-5.6-sol"
+          "gpt-5.6-terra"
+          "grok-4.5"
+          "grok-4.6"
+          "text-embedding-*"
+          "trajectory-compaction"
         ];
       };
       description = ''
