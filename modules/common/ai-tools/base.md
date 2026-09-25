@@ -19,8 +19,8 @@ findings, default to one or two short sentences plus an exact code suggestion
 and one line naming the focused check and observed result. Cut ceremony,
 repeated context, and speculative alternatives; keep evidence needed to
 understand or apply the fix. Unless the change concerns agent tooling itself,
-keep agents, models, skills, and local helpers such as `t3code-build` out of
-public prose and commit history.
+keep agents, models, skills, and local helper scripts out of public prose and
+commit history.
 
 For code-change suggestions, understand the affected path and validate the exact
 replacement before recommending it. Prefer an applicable suggestion block or a
