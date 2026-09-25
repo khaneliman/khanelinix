@@ -2,8 +2,10 @@
 
 Use for a design proposal or ADR before implementation and outside review of a
 commit, PR, or diff. Use repository evaluation for existing architecture. Git
-artifacts always use `$git-toolkit` adversarial review; that workflow may import
-these lenses while retaining its clean-room, finding, and verdict contracts.
+artifacts use `$git-toolkit` adversarial review, which may import these lenses.
+Both follow the review contract in the `premise-review` method of
+`engineering-principles`; this procedure adds architecture lenses, not another
+finding format or verdict.
 
 ## Procedure
 
@@ -31,26 +33,27 @@ these lenses while retaining its clean-room, finding, and verdict contracts.
 ## Finding Standard
 
 Report finding only when evidence shows plausible failure, violated requirement,
-uncontained risk, or material maintenance/operation cost. Each finding includes:
+uncontained risk, or material maintenance/operation cost. Write each finding in
+the contract's conventional-comment format. For a design, its location is the
+design premise or section, and its failure names:
 
-- severity and confidence;
-- concrete design premise or current location;
+- confidence in the conclusion;
 - triggering scenario;
 - observable impact and affected stakeholder;
 - why proposed or existing guard does not contain it;
 - smallest viable correction or decision needed.
 
-Rank severity from impact, reach, likelihood, detectability, and recovery. Do
-not rank findings based only on pattern labels. A code smell, SOLID violation,
-mutable state, missing abstraction, or absent approval gate is not a finding
-without demonstrated consequence.
+Decide blocking status from impact, reach, likelihood, detectability, and
+recovery. Do not rank findings based only on pattern labels. A code smell, SOLID
+violation, mutable state, missing abstraction, or absent approval gate is not a
+finding without demonstrated consequence.
 
 ## Output
 
-1. Findings first, highest severity first.
+1. Findings first, blocking findings first.
 2. Open questions or assumptions that could change verdict.
-3. Short architecture verdict: requirement fit, change readiness, and
-   operational risk.
+3. The contract verdict with a short architecture summary: requirement fit,
+   change readiness, and operational risk.
 4. Verification performed and gaps.
 
 If no findings survive validation, say so directly and state residual risks or

@@ -42,10 +42,11 @@ cross-cutting engineering principles.
 
 For secondary Git-review support, do not select a primary mode or produce a
 separate verdict. Apply root lenses to supplied architecture premises and return
-them to `$git-toolkit`; its clean-room, finding, and verdict contracts remain
-authoritative. Use `$planning-with-files` only when task state should persist
-across sessions or compaction. Use `$ai-tools-architect` for AI configuration.
-Use security skills for explicit security audits or threat models.
+them to `$git-toolkit`; the review contract in the `premise-review` method of
+`engineering-principles` keeps the finding format and verdict. Use
+`$planning-with-files` only when task state should persist across sessions or
+compaction. Use `$ai-tools-architect` for AI configuration. Use security skills
+for explicit security audits or threat models.
 
 ## Apply Engineering Lenses Proportionally
 
