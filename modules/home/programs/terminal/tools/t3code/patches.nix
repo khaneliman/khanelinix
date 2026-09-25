@@ -47,4 +47,7 @@
     '';
     hash = "sha256-AyQQnF3RNzuHYlAIqG2jql6eebZVFWtpZqVfh+FPa18=";
   })
+  # Effect ignores the "preserve" decode mode #10881 relies on, which cut
+  # Claude transcript records down to their type and emptied their history.
+  ./fix-claude-agent-history-transcript-fields.patch
 ]

@@ -1,0 +1,18 @@
+diff --git a/apps/server/src/provider/Layers/claudeAgentHistory.ts b/apps/server/src/provider/Layers/claudeAgentHistory.ts
+index 0d553945..8851ef26 100644
+--- a/apps/server/src/provider/Layers/claudeAgentHistory.ts
++++ b/apps/server/src/provider/Layers/claudeAgentHistory.ts
+@@ -15,8 +15,11 @@ const isAgentId = Schema.is(Schema.String.check(Schema.isPattern(/^[a-zA-Z0-9_-]
+ const isSessionId = Schema.is(Schema.String.check(Schema.isPattern(/^[a-zA-Z0-9-]+$/)));
+ 
+ const decodeTranscriptEntry = Schema.decodeUnknownSync(
+-  Schema.fromJsonString(Schema.Struct({ type: Schema.String })),
+-  { onExcessProperty: "preserve" },
++  Schema.fromJsonString(
++    Schema.StructWithRest(Schema.Struct({ type: Schema.String }), [
++      Schema.Record(Schema.String, Schema.Unknown),
++    ]),
++  ),
+ );
+ const ContentBlock = Schema.Struct({
+   type: Schema.String,
