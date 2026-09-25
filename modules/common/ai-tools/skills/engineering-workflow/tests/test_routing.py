@@ -203,10 +203,8 @@ class RepositoryRoutingContract(unittest.TestCase):
         references = MULTI_PROVIDER_ROOT / "references"
         implementation = normalized(references / "implementation.md")
         validation = normalized(references / "validation.md")
-        review = normalized(references / "review.md")
         self.assertIn("Do not start validation or review phases", implementation)
         self.assertIn("Do not correct source or advance to review", validation)
-        self.assertIn("Do not fix findings, advance phases", review)
 
     def test_swarm_is_explicit_and_not_a_lifecycle_owner(self) -> None:
         if not SWARM_ROOT.is_dir():

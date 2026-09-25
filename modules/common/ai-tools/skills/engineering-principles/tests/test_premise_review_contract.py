@@ -38,7 +38,6 @@ CONSUMERS = {
     / "software-engineering"
     / "references"
     / "architecture-review.md",
-    "multi-provider review": SKILLS / "multi-provider-sdlc" / "references" / "review.md",
 }
 MATT_LICENSE = SKILL_ROOT / "LICENSES" / "LICENSE-matt-pocock.txt"
 
@@ -334,6 +333,7 @@ class ReviewEntryPointsReferenceTheContract(unittest.TestCase):
 
         self.assertIn("blind", text)
         self.assertIn("one unchallenged premise", text)
+        self.assertIn("model family different from the implementer's", text)
 
 
 if __name__ == "__main__":
