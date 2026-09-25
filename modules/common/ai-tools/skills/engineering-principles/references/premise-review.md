@@ -1,9 +1,9 @@
 # Premise Review
 
 This is the review contract for every review kind. Plan, local change, pull
-request, multi-model, and reach reviews share its packet, review order, premise
-gate, evidence axes, test-value boundary, finding format, and verdict. Each kind
-adds only its target, extra inputs, and output destination.
+request, and multi-model reviews share its packet, review order, premise gate,
+evidence axes, test-value boundary, finding format, and verdict. Each kind adds
+only its target, extra inputs, and output destination.
 
 Use this method at the start of every plan, diff, or pull-request review.
 Decide whether the change should exist in this form before checking whether

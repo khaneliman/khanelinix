@@ -145,6 +145,7 @@ class PremiseReviewReferenceTests(unittest.TestCase):
             self.assertIn(verdict, text)
         self.assertNotIn("not-ready", text)
         self.assertIn("- lenses:", text)
+        self.assertNotIn("and reach reviews", text)
         self.assertIn("a finding without evidence is a residual risk", text)
 
     def test_regression_case_is_recorded_without_ecosystem_lock_in(self) -> None:
