@@ -45,7 +45,7 @@ LABELS = {
 }
 DECORATIONS = {"blocking", "non-blocking", "if-minor"}
 NEEDS_DECORATION = {"issue", "todo"}
-APPROVING_VERDICTS = {"approved", "ready"}
+APPROVING_VERDICTS = {"approved"}
 
 HEADING = re.compile(r"^##\s+", re.MULTILINE)
 GATE_HEADING = re.compile(r"^##\s+premise gate\s*$", re.IGNORECASE | re.MULTILINE)
@@ -55,7 +55,7 @@ COMMENT = re.compile(
     re.IGNORECASE,
 )
 FINAL_VERDICT = re.compile(
-    r"^\**verdict\**:\s*`?(approved|changes_requested|blocked|ready|not-ready)`?",
+    r"^\**verdict\**:\s*`?(approved|changes_requested|blocked)`?",
     re.IGNORECASE | re.MULTILINE,
 )
 PACKET_FIELD = re.compile(r"^-\s*([A-Za-z][A-Za-z ]*?):\s*(.*\S)\s*$", re.MULTILINE)

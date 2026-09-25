@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import subprocess
 import sys
@@ -39,6 +40,7 @@ CONSUMERS = {
     / "architecture-review.md",
     "multi-provider review": SKILLS / "multi-provider-sdlc" / "references" / "review.md",
 }
+MATT_LICENSE = SKILL_ROOT / "LICENSES" / "LICENSE-matt-pocock.txt"
 
 
 def normalized(path: Path) -> str:
@@ -119,6 +121,33 @@ class PremiseReviewReferenceTests(unittest.TestCase):
         self.assertIn("reviewers that share one unchallenged premise are one reviewer", text)
         self.assertIn("outranks implementation consensus", text)
 
+    def test_standards_and_spec_feed_one_verdict(self) -> None:
+        raw = REFERENCE.read_text(encoding="utf-8")
+        text = normalized(REFERENCE)
+
+        self.assertIn("**Standards:**", raw)
+        self.assertIn("**Spec:**", raw)
+        self.assertIn("scope creep", text)
+        self.assertIn("cite the owning rule", text)
+        self.assertIn("one verdict", text)
+        self.assertIn("separate workers are optional", text)
+        self.assertIn("do not add a generic smell baseline", text)
+        self.assertIn("license-matt-pocock.txt", text)
+        self.assertEqual(
+            hashlib.sha256(MATT_LICENSE.read_bytes()).hexdigest(),
+            "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+        )
+
+    def test_review_kinds_share_one_contract(self) -> None:
+        text = normalized(REFERENCE)
+
+        self.assertIn("a kind never redefines the packet, finding format, or verdict", text)
+        for verdict in ("`approved`", "`changes_requested`", "`blocked`"):
+            self.assertIn(verdict, text)
+        self.assertNotIn("not-ready", text)
+        self.assertIn("- lenses:", text)
+        self.assertIn("a finding without evidence is a residual risk", text)
+
     def test_regression_case_is_recorded_without_ecosystem_lock_in(self) -> None:
         text = normalized(REFERENCE)
 
@@ -150,6 +179,18 @@ class PremiseGateCheckerTests(unittest.TestCase):
 
         self.assertEqual(code, 1)
         self.assertEqual(rules(report), {"verdict_contradicts_gate"})
+
+    def test_retired_verdict_words_fail(self) -> None:
+        source = (FIXTURES / "review-clean-approve.md").read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as scratch:
+            path = Path(scratch) / "review.md"
+            path.write_text(
+                source.replace("Verdict: approved", "Verdict: ready"), encoding="utf-8"
+            )
+            code, report = run_check("review", path)
+
+        self.assertEqual(code, 1)
+        self.assertIn("missing_final_verdict", rules(report))
 
     def test_clean_gate_may_approve(self) -> None:
         code, report = run_check("review", FIXTURES / "review-clean-approve.md")
