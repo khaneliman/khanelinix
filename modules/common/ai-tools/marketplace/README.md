@@ -121,13 +121,15 @@ interfaces or state ownership remain uncertain.
 
 ## Choose the task shape
 
-Consult task shapes when their completion criteria help. Each shape describes
-useful evidence, a verification target, and a completion signal.
+Before the first edit, `engineering-workflow` picks one task shape and reads its
+section plus the risk gates. Each shape describes useful evidence, a
+verification target, and a completion signal.
 
 | Shape         | Required emphasis                                                            |
 | ------------- | ---------------------------------------------------------------------------- |
 | Bug fix       | Reproduce first, fix the cause, and rerun the failing signal.                |
 | Feature       | Read contracts, shape types and placement, then test new and shared paths.   |
+| Configuration | Read the owning layer and inherited default, change only the delta, verify.  |
 | Refactor      | Find callers, pin behavior, subtract first, and prove behavior parity.       |
 | Modernization | Freeze compatibility, migrate in green slices, then remove the legacy path.  |
 | Prototype     | State one question, build the smallest probe, and mark throwaway work.       |
