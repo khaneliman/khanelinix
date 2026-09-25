@@ -8,19 +8,19 @@
 
 buildGoModule (finalAttrs: {
   pname = "cliproxyapi";
-  version = "7.3.13";
+  version = "7.3.12-1";
 
   src = fetchFromGitHub {
-    owner = "router-for-me";
-    repo = "CLIProxyAPI";
+    owner = "kaitranntt";
+    repo = "CLIProxyAPIPlus";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-9ZiYPBEoxTcZaomY0Be4Q5hwQf5FCfdbvcJzYEGI+So=";
+    hash = "sha256-ux5WhKCApQDcxcnDsKGoBNy5dnTHinNxC8Jdh5rU0JI=";
   };
 
   # Agent SDK requests must not inherit the proxy's older CLI version.
   patches = [ ./agent-sdk-client-version.patch ];
 
-  vendorHash = "sha256-r3yWkdMcM40G9jV7MxW/qNv3E9WrHavFilW24quEf+8=";
+  vendorHash = "sha256-P+0dbN+eKoOSBpJfo4hq86ZbWKUel+5biCBGgePm88k=";
 
   subPackages = [ "cmd/server" ];
 
@@ -28,17 +28,17 @@ buildGoModule (finalAttrs: {
     "-s"
     "-w"
     "-X main.Version=${finalAttrs.version}"
-    "-X main.Commit=2430354"
-    "-X main.BuildDate=2026-09-22T18:41:31Z"
+    "-X main.Commit=04048d8"
+    "-X main.BuildDate=2026-09-23T00:18:15Z"
   ];
 
   preCheck = ''
     ${lib.optionalString stdenv.hostPlatform.isDarwin ''
       go test -run '^TestClaudeRequestVersion$' ./internal/runtime/executor/helps
-      go test -run '^$' ./internal/runtime/executor
+      go test -run '^$' ./internal/auth/copilot ./internal/runtime/executor
     ''}
     ${lib.optionalString (!stdenv.hostPlatform.isDarwin) ''
-      go test ./internal/runtime/executor/helps ./internal/runtime/executor
+      go test ./internal/auth/copilot ./internal/runtime/executor/helps ./internal/runtime/executor
     ''}
   '';
 
@@ -56,9 +56,9 @@ buildGoModule (finalAttrs: {
   '';
 
   meta = {
-    description = "OpenAI, Gemini, Claude, and Codex compatible proxy for CLI models";
-    homepage = "https://github.com/router-for-me/CLIProxyAPI";
-    changelog = "https://github.com/router-for-me/CLIProxyAPI/releases/tag/v${finalAttrs.version}";
+    description = "OpenAI, Gemini, Claude, and Codex compatible proxy with GitHub Copilot support";
+    homepage = "https://github.com/kaitranntt/CLIProxyAPIPlus";
+    changelog = "https://github.com/kaitranntt/CLIProxyAPIPlus/releases/tag/v${finalAttrs.version}";
     license = lib.licenses.mit;
     maintainers = [ lib.maintainers.khaneliman ];
     mainProgram = "cli-proxy-api";
