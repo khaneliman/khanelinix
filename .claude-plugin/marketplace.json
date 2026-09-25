@@ -429,7 +429,7 @@
 		{
 			"name": "why",
 			"description": "Investigate motivation and design rationale behind code.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"author": {
 				"name": "khaneliman"
 			},

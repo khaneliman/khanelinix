@@ -38,27 +38,19 @@ Record file paths, line ranges, symbols, commit SHAs, and linked ticket numbers.
 ### 2. Query Evidence Categories in Parallel
 
 Query available evidence systems in parallel using
-[investigator-prompt.md](references/investigator-prompt.md) and
-[source-playbook.md](references/source-playbook.md):
+[investigator-prompt.md](references/investigator-prompt.md):
 
-1. **Source control**: Commits, PR descriptions, review comments, tests.
-2. **Issue trackers**: Linear, Jira, GitHub Issues
-   ([linear.md](references/sources/linear.md)).
-3. **Long-form documents**: PRDs, RFCs, ADRs, Notion
-   ([notion.md](references/sources/notion.md)).
-4. **Team chat**: Deliberation and incident discussions
-   ([slack.md](references/sources/slack.md)).
-5. **Observability**: Metrics, dashboards, monitors
-   ([datadog.md](references/sources/datadog.md)).
-6. **Error tracking**: Sentry issues and stack traces
-   ([sentry.md](references/sources/sentry.md)).
-7. **Analytics warehouse**: Product usage and schema logs
-   ([databricks.md](references/sources/databricks.md)).
-8. **Defensive code**: Consult
+1. **Source control**: Commits, PR descriptions, review comments, tests
+   ([code-archaeology.md](references/sources/code-archaeology.md)).
+2. **Connected systems**: Issue trackers, design documents, team chat,
+   observability, error tracking, and product analytics, when the session has a
+   tool for them. Use that tool's own search and filters.
+3. **Defensive code**: Consult
    [incident-postmortem.md](references/sources/incident-postmortem.md) when
    investigating defensive checks.
 
-Only skip unavailable MCPs and record them explicitly in sources consulted.
+Skip only systems without an available tool, and record each one in sources
+consulted.
 
 ### 3. Synthesize and Present
 
