@@ -19,13 +19,14 @@
   (fetchpatch2 {
     name = "t3code-pr-11594-chat-width.patch";
     url = "https://github.com/pingdotgg/t3code/pull/11594.patch";
-    hash = "sha256-syM7uEsYLPBmeWOlP2M5VJKYR/uU4yBqU8aUxT79mtY=";
+    hash = "sha256-mGvl1w2syfIw2z4ZtC6RcZ/gO0xZTT30K5u4QqeOiDI=";
   })
   (fetchpatch2 {
     name = "t3code-pr-10881-agent-history.patch";
     # Use the combined diff so normalization preserves new-file amendments.
     url = "https://github.com/pingdotgg/t3code/pull/10881.diff";
-    # Reanchor the Grok tests and Claude imports after upstream context drift.
+    # Reanchor the Grok tests, Claude imports, and agent panel text sizes
+    # after upstream context drift.
     postFetch = ''
       substituteInPlace "$out" --replace-fail \
         $'@@ -212,6 +212,123 @@\n });\n \n it.layer(grokAdapterTestLayer)("GrokAdapterLive", (it) => {\n' \
@@ -36,7 +37,14 @@
       substituteInPlace "$out" --replace-fail \
         $'@@ -6,6 +6,9 @@\n  *\n  * @module ClaudeAdapterLive\n  */\n' \
         $'@@ -7,8 +7,11 @@\n  *\n  * @module ClaudeAdapterLive\n  */\n \n import * as NodeUtil from "node:util";\n'
+      # Match only removed and context lines; the PR's added lines keep their sizes.
+      substituteInPlace "$out" \
+        --replace-fail 'text-[.6rem]' 'text-3xs' \
+        --replace-fail 'text-[.7rem]' 'text-2xs' \
+        --replace-fail 'text-[.65rem] font-medium uppercase' 'text-3xs font-medium uppercase' \
+        --replace-fail 'font-mono text-[.65rem]",' 'font-mono text-3xs",' \
+        --replace-fail 'font-mono text-[.65rem] text-muted-foreground">' 'font-mono text-3xs text-muted-foreground">'
     '';
-    hash = "sha256-MOnsUKYXkEv1v3qSrx02BoltIyRYMncAZwyDkB+fAtQ=";
+    hash = "sha256-AyQQnF3RNzuHYlAIqG2jql6eebZVFWtpZqVfh+FPa18=";
   })
 ]
