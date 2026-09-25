@@ -22,19 +22,18 @@ comments.
    with no reviewable code.
 3. Read contributor guidance, PR template, root and changed-path instructions,
    and directly relevant documentation.
-4. Before reviewing code, load every corresponding specialist skill for each
-   changed language or domain, such as `rust-toolkit`,
-   `typescript-best-practices`, or `nix-toolkit`. This is a hard precondition.
-   If any changed code lacks a matching skill in the supplied lane, state the
-   coverage limitation. Return a blocked review.
+4. Load the available specialist skill for each changed language or domain, such
+   as `rust-toolkit`, `typescript-best-practices`, or `nix-toolkit`. A missing
+   skill does not block review of code you can assess directly. State a material
+   coverage gap, and return a blocked review only when missing evidence or
+   capability prevents a reliable verdict.
 5. Run the premise gate from the `premise-review` method in
    `engineering-principles` before reading the diff for defects. Record each
    premise concern as a conventional comment with evidence from the issue, the
    PR body, and the repository. When the gate fails, draft a review that
    recommends redesign or closure with the native abstraction or existing
    capability named, even when every check is green.
-6. Review only diff plus necessary local context after the specialist skill is
-   loaded.
+6. Review only diff plus necessary local context.
 7. Revalidate each finding against the current PR head, changed code, and
    repository policy before drafting or revising it.
 8. Return draft findings by default. Inspect, create, update, or delete a review

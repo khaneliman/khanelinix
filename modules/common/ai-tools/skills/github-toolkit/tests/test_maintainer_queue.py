@@ -145,9 +145,9 @@ class PullRequestReviewContract(unittest.TestCase):
 
     def test_findings_are_current_head_and_implementation_ready(self) -> None:
         for requirement in (
-            "load every corresponding specialist skill",
             "each changed language or domain",
-            "return a blocked review",
+            "missing skill does not block review",
+            "only when missing evidence or capability prevents a reliable verdict",
             "revalidate each finding against the current pr head",
             "pinned commit and exact lines",
         ):
