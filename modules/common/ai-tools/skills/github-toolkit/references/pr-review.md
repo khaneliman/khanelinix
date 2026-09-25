@@ -4,6 +4,11 @@ Use for high-signal review and explicit inspection or mutation of GitHub reviews
 owned by current actor. Use [pr-feedback.md](pr-feedback.md) for existing review
 comments.
 
+The `premise-review` method in `engineering-principles` is the review contract:
+its packet, premise gate, evidence axes, finding format, and verdict apply here.
+This mode adds GitHub history, duplicate handling, contributor conversation,
+review operations, and the public comment format.
+
 ## Workflow
 
 1. Resolve one target and capture bounded metadata:
