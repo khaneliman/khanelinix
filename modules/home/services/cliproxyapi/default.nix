@@ -285,6 +285,7 @@ in
         cfg.package
         (loginCommand "claude" "--claude-login")
         (loginCommand "codex" "--codex-login")
+        (loginCommand "copilot" "--github-copilot-login")
         (loginCommand "gemini" "--antigravity-login")
       ]
       ++ lib.optional claudeCodeEnabled claudeDirect;
