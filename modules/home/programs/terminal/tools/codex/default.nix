@@ -59,6 +59,15 @@ let
       "${config.xdg.configHome}/codex"
     else
       "${config.home.homeDirectory}/.codex";
+  codexConfigFile =
+    if config.home.preferXdgDirectories then
+      "${lib.removePrefix config.home.homeDirectory config.xdg.configHome}/codex/config.toml"
+    else
+      ".codex/config.toml";
+  syncConfig = pkgs.writers.writePython3Bin "codex-sync-config" {
+    libraries = [ pkgs.python3Packages.tomlkit ];
+    flakeIgnore = [ "E501" ];
+  } (builtins.readFile ./sync-config.py);
   codexBasePackage =
     if pkgs.stdenv.hostPlatform.isDarwin && config.home.preferXdgDirectories then
       pkgs.symlinkJoin {
@@ -177,13 +186,27 @@ in
 
   config = mkIf cfg.enable {
     home = {
-      # Codex plugin caches are mutable content downloaded at runtime, so
-      # patching them cannot be declared; re-patch on every switch instead.
-      # Non-fatal so a fresh machine (no plugin cache yet) or an unsupported
-      # codex bump does not block activation. The native-messaging manifest and
-      # node_repl MCP server are managed declaratively below, so the installer's
-      # manifest writes are redirected to a scratch root it may own.
-      activation = lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+      # Codex writes model selections and project trust into its user config.
+      file.${codexConfigFile}.target =
+        "${lib.removePrefix "${config.home.homeDirectory}/" codexConfigPath}/config.declarative.toml";
+      activation = {
+        codexConfig = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+          run ${lib.getExe syncConfig} ${
+            lib.escapeShellArgs [
+              (toString config.home.file.${codexConfigFile}.source)
+              "${codexConfigPath}/config.toml"
+              "${config.xdg.stateHome}/codex/declarative-config.toml"
+            ]
+          }
+        '';
+      }
+      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+        # Codex plugin caches are mutable content downloaded at runtime, so
+        # patching them cannot be declared; re-patch on every switch instead.
+        # Non-fatal so a fresh machine (no plugin cache yet) or an unsupported
+        # codex bump does not block activation. The native-messaging manifest and
+        # node_repl MCP server are managed declaratively below, so the installer's
+        # manifest writes are redirected to a scratch root it may own.
         codexBrowserUseInstall = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           run ${lib.getExe pkgs.khanelinix.codex-browser-use-linux-chromium} install \
             --codex-home ${codexConfigPath} \
