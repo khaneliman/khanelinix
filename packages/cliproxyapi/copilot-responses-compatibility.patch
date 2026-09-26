@@ -1,0 +1,279 @@
+--- a/internal/auth/copilot/copilot_auth.go
++++ b/internal/auth/copilot/copilot_auth.go
+@@ -226,13 +226,14 @@
+ 
+ // CopilotModelEntry represents a single model entry returned by the Copilot /models API.
+ type CopilotModelEntry struct {
+-	ID           string         `json:"id"`
+-	Object       string         `json:"object"`
+-	Created      int64          `json:"created"`
+-	OwnedBy      string         `json:"owned_by"`
+-	Name         string         `json:"name,omitempty"`
+-	Version      string         `json:"version,omitempty"`
+-	Capabilities map[string]any `json:"capabilities,omitempty"`
++	ID                 string         `json:"id"`
++	Object             string         `json:"object"`
++	Created            int64          `json:"created"`
++	OwnedBy            string         `json:"owned_by"`
++	Name               string         `json:"name,omitempty"`
++	Version            string         `json:"version,omitempty"`
++	Capabilities       map[string]any `json:"capabilities,omitempty"`
++	SupportedEndpoints []string       `json:"supported_endpoints,omitempty"`
+ }
+ 
+ // CopilotModelLimits holds the token limits returned by the Copilot /models API
+--- a/internal/runtime/executor/github_copilot_executor.go
++++ b/internal/runtime/executor/github_copilot_executor.go
+@@ -375,9 +375,12 @@
+ 			if bytes.HasPrefix(line, dataTag) {
+ 				data := bytes.TrimSpace(line[5:])
+ 				if bytes.Equal(data, []byte("[DONE]")) {
+-					continue
+-				}
+-				if useResponses {
++					if useResponses || from.String() != "openai-response" {
++						continue
++					}
++					terminalResponse = true
++					reporter.ensurePublished(ctx)
++				} else if useResponses {
+ 					if gjson.ValidBytes(data) {
+ 						switch gjson.GetBytes(data, "type").String() {
+ 						case "response.completed", "response.incomplete":
+@@ -820,17 +823,21 @@
+ }
+ 
+ func useGitHubCopilotResponsesEndpoint(sourceFormat sdktranslator.Format, model string) bool {
+-	if sourceFormat.String() == "openai-response" {
+-		return true
+-	}
+ 	baseModel := strings.ToLower(thinking.ParseSuffix(model).ModelName)
++	var endpoints []string
+ 	if info := registry.GetGlobalRegistry().GetModelInfo(baseModel, githubCopilotAuthType); info != nil {
+-		return len(info.SupportedEndpoints) > 0 && !containsEndpoint(info.SupportedEndpoints, githubCopilotChatPath) && containsEndpoint(info.SupportedEndpoints, githubCopilotResponsesPath)
++		endpoints = info.SupportedEndpoints
++	}
++	if len(endpoints) == 0 {
++		if info := lookupGitHubCopilotStaticModelInfo(baseModel); info != nil {
++			endpoints = info.SupportedEndpoints
++		}
+ 	}
+-	if info := lookupGitHubCopilotStaticModelInfo(baseModel); info != nil {
+-		return len(info.SupportedEndpoints) > 0 && !containsEndpoint(info.SupportedEndpoints, githubCopilotChatPath) && containsEndpoint(info.SupportedEndpoints, githubCopilotResponsesPath)
++	if len(endpoints) > 0 {
++		return containsEndpoint(endpoints, githubCopilotResponsesPath) &&
++			(sourceFormat.String() == "openai-response" || !containsEndpoint(endpoints, githubCopilotChatPath))
+ 	}
+-	return strings.Contains(baseModel, "codex")
++	return sourceFormat.String() == "openai-response" || strings.Contains(baseModel, "codex")
+ }
+ 
+ func lookupGitHubCopilotStaticModelInfo(model string) *registry.ModelInfo {
+@@ -1602,7 +1609,12 @@
+ 		log.Debug("github-copilot: API returned no models, using static models")
+ 		return registry.GetGitHubCopilotModels()
+ 	}
++	models := buildGitHubCopilotModelInfos(entries)
++	log.Infof("github-copilot: fetched %d models from API", len(models))
++	return models
++}
+ 
++func buildGitHubCopilotModelInfos(entries []copilotauth.CopilotModelEntry) []*registry.ModelInfo {
+ 	// Build a lookup from the static definitions so we can enrich dynamic entries
+ 	// with known context lengths, thinking support, etc.
+ 	staticMap := make(map[string]*registry.ModelInfo)
+@@ -1654,6 +1666,9 @@
+ 			m.ContextLength = defaultCopilotContextLength
+ 			m.MaxCompletionTokens = defaultCopilotMaxCompletionTokens
+ 		}
++		if len(entry.SupportedEndpoints) > 0 {
++			m.SupportedEndpoints = append([]string(nil), entry.SupportedEndpoints...)
++		}
+ 
+ 		// Prefer per-account API limits over static defaults. max_prompt_tokens
+ 		// is the enforced prompt limit, so use it as ContextLength.
+@@ -1669,6 +1684,5 @@
+ 		models = append(models, m)
+ 	}
+ 
+-	log.Infof("github-copilot: fetched %d models from API", len(models))
+ 	return models
+ }
+--- a/internal/runtime/executor/github_copilot_executor_test.go
++++ b/internal/runtime/executor/github_copilot_executor_test.go
+@@ -2,6 +2,7 @@
+ 
+ import (
+ 	"context"
++	"encoding/json"
+ 	"errors"
+ 	"fmt"
+ 	"io"
+@@ -107,6 +108,10 @@
+ 			ID:                 "gpt-5.4-mini",
+ 			SupportedEndpoints: []string{"/chat/completions", "/responses"},
+ 		},
++		{
++			ID:                 "gpt-4.1",
++			SupportedEndpoints: []string{githubCopilotChatPath},
++		},
+ 	})
+ 	defer reg.UnregisterClient(clientID)
+ 
+@@ -117,6 +122,156 @@
+ 	if useGitHubCopilotResponsesEndpoint(sdktranslator.FromString("openai"), "gpt-5.4-mini") {
+ 		t.Fatal("expected dynamic registry definition to take precedence over static fallback")
+ 	}
++	if !useGitHubCopilotResponsesEndpoint(sdktranslator.FromString("openai-response"), "gpt-5.4") {
++		t.Fatal("expected responses source to prefer advertised /responses")
++	}
++	if useGitHubCopilotResponsesEndpoint(sdktranslator.FromString("openai-response"), "gpt-4.1") {
++		t.Fatal("expected dynamic chat-only metadata to override static dual-endpoint metadata")
++	}
++}
++
++func TestUseGitHubCopilotResponsesEndpoint_AdvertisedEndpoints(t *testing.T) {
++	reg := registry.GetGlobalRegistry()
++	clientID := "github-copilot-endpoint-test"
++	reg.RegisterClient(clientID, githubCopilotAuthType, []*registry.ModelInfo{
++		{ID: "gemini-3.8-flash", SupportedEndpoints: []string{githubCopilotChatPath}},
++		{ID: "endpoint-test-responses-only", SupportedEndpoints: []string{githubCopilotResponsesPath}},
++		{ID: "endpoint-test-missing", SupportedEndpoints: []string{"/messages"}},
++	})
++	defer reg.UnregisterClient(clientID)
++
++	for _, tc := range []struct {
++		name, source, model string
++		want                bool
++	}{
++		{"dynamic chat only from responses", "openai-response", "gemini-3.8-flash", false},
++		{"dynamic responses only from chat", "openai", "endpoint-test-responses-only", true},
++		{"dynamic responses only from responses", "openai-response", "endpoint-test-responses-only", true},
++		{"dynamic missing responses", "openai-response", "endpoint-test-missing", false},
++		{"static chat only from responses", "openai-response", "claude-opus-4.6", false},
++		{"static responses only from chat", "openai", "gpt-5.4", true},
++		{"static dual from responses", "openai-response", "gpt-4.1", true},
++		{"static dual from chat", "openai", "gpt-4.1", false},
++		{"unknown responses fallback", "openai-response", "endpoint-test-unknown", true},
++		{"unknown chat fallback", "openai", "endpoint-test-unknown", false},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			if got := useGitHubCopilotResponsesEndpoint(sdktranslator.FromString(tc.source), tc.model); got != tc.want {
++				t.Fatalf("useGitHubCopilotResponsesEndpoint(%q, %q) = %t, want %t", tc.source, tc.model, got, tc.want)
++			}
++		})
++	}
++}
++
++func TestGitHubCopilotResponsesSourceUsesAdvertisedChatEndpoint(t *testing.T) {
++	const model = "gemini-3.8-flash"
++	var decoded copilotauth.CopilotModelsResponse
++	fixture := `{"data":[
++		{"id":"gemini-3.8-flash","supported_endpoints":["/chat/completions"]},
++		{"id":"gpt-6-astra","supported_endpoints":["/responses","ws:/responses"]},
++		{"id":"claude-opus-5.5","supported_endpoints":["/v1/messages","/chat/completions"]},
++		{"id":"gpt-5"}
++	]}`
++	if err := json.Unmarshal([]byte(fixture), &decoded); err != nil {
++		t.Fatal(err)
++	}
++	models := buildGitHubCopilotModelInfos(decoded.Data)
++	reg := registry.GetGlobalRegistry()
++	clientID := "github-copilot-chat-route-test"
++	reg.RegisterClient(clientID, githubCopilotAuthType, models)
++	defer reg.UnregisterClient(clientID)
++	if info := reg.GetModelInfo(model, githubCopilotAuthType); info == nil || !containsEndpoint(info.SupportedEndpoints, githubCopilotChatPath) {
++		t.Fatalf("decoded dynamic chat endpoints not registered: %+v", info)
++	}
++	if useGitHubCopilotResponsesEndpoint(sdktranslator.FromString("openai-response"), "claude-opus-5.5") {
++		t.Fatal("advertised Claude chat endpoint must not select /responses")
++	}
++	if !useGitHubCopilotResponsesEndpoint(sdktranslator.FromString("openai"), "gpt-6-astra") {
++		t.Fatal("decoded responses-only endpoints must select /responses")
++	}
++	if !useGitHubCopilotResponsesEndpoint(sdktranslator.FromString("openai-response"), "gpt-5") {
++		t.Fatal("absent dynamic endpoints must retain static /responses support")
++	}
++
++	for _, tc := range []struct {
++		name      string
++		streaming bool
++		done      bool
++	}{
++		{name: "nonstream"},
++		{name: "stream", streaming: true, done: true},
++		{name: "stream without done", streaming: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				if r.URL.Path != githubCopilotChatPath {
++					t.Errorf("path = %q, want %q", r.URL.Path, githubCopilotChatPath)
++					http.Error(w, "wrong endpoint", http.StatusBadRequest)
++					return
++				}
++				body, err := io.ReadAll(r.Body)
++				if err != nil {
++					t.Error(err)
++					return
++				}
++				if !gjson.GetBytes(body, "messages").IsArray() || gjson.GetBytes(body, "input").Exists() {
++					t.Errorf("chat request not translated: %s", body)
++				}
++				if tc.streaming {
++					w.Header().Set("Content-Type", "text/event-stream")
++					wire := "data: {\"id\":\"chatcmpl_1\",\"object\":\"chat.completion.chunk\",\"model\":\"gemini-3.8-flash\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"hello\"},\"finish_reason\":null}]}\n\n" +
++						"data: {\"id\":\"chatcmpl_1\",\"object\":\"chat.completion.chunk\",\"model\":\"gemini-3.8-flash\",\"choices\":[{\"index\":0,\"delta\":{},\"finish_reason\":\"stop\"}]}\n\n" +
++						"data: {\"id\":\"chatcmpl_1\",\"object\":\"chat.completion.chunk\",\"model\":\"gemini-3.8-flash\",\"choices\":[],\"usage\":{\"prompt_tokens\":4,\"completion_tokens\":5,\"total_tokens\":9}}\n\n"
++					if tc.done {
++						wire += "data: [DONE]\n\n"
++					}
++					_, _ = io.WriteString(w, wire)
++				} else {
++					w.Header().Set("Content-Type", "application/json")
++					_, _ = io.WriteString(w, `{"id":"chatcmpl_1","object":"chat.completion","model":"gemini-3.8-flash","choices":[{"index":0,"message":{"role":"assistant","content":"hello"},"finish_reason":"stop"}]}`)
++				}
++			}))
++			defer server.Close()
++			e := NewGitHubCopilotExecutor(&config.Config{})
++			e.cache["test-token"] = &cachedAPIToken{token: "test-api-token", apiEndpoint: server.URL, expiresAt: time.Now().Add(time.Hour)}
++			auth := &cliproxyauth.Auth{Metadata: map[string]any{"access_token": "test-token"}}
++			payload := []byte(`{"model":"gemini-3.8-flash","input":"say hello"}`)
++			req := cliproxyexecutor.Request{Model: model, Payload: payload}
++			opts := cliproxyexecutor.Options{SourceFormat: sdktranslator.FromString("openai-response"), OriginalRequest: payload}
++			if tc.streaming {
++				result, err := e.ExecuteStream(context.Background(), auth, req, opts)
++				if err != nil {
++					t.Fatal(err)
++				}
++				var joined strings.Builder
++				for chunk := range result.Chunks {
++					if chunk.Err != nil {
++						t.Fatal(chunk.Err)
++					}
++					joined.Write(chunk.Payload)
++				}
++				if !strings.Contains(joined.String(), "response.output_text.delta") || !strings.Contains(joined.String(), "hello") {
++					t.Fatalf("stream not translated to Responses: %q", joined.String())
++				}
++				completed := strings.Count(joined.String(), "event: response.completed")
++				if tc.done {
++					if completed != 1 || !strings.Contains(joined.String(), `"total_tokens":9`) {
++						t.Fatalf("terminal event count = %d or late usage missing: %q", completed, joined.String())
++					}
++				} else if completed != 0 {
++					t.Fatalf("stream without [DONE] emitted response.completed: %q", joined.String())
++				}
++			} else {
++				result, err := e.Execute(context.Background(), auth, req, opts)
++				if err != nil {
++					t.Fatal(err)
++				}
++				if gjson.GetBytes(result.Payload, "object").String() != "response" || !strings.Contains(string(result.Payload), "hello") {
++					t.Fatalf("nonstream not translated to Responses: %s", result.Payload)
++				}
++			}
++		})
++	}
+ }
+ 
+ func TestUseGitHubCopilotResponsesEndpoint_DefaultChat(t *testing.T) {

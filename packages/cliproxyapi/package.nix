@@ -18,7 +18,10 @@ buildGoModule (finalAttrs: {
   };
 
   # Agent SDK requests must not inherit the proxy's older CLI version.
-  patches = [ ./agent-sdk-client-version.patch ];
+  patches = [
+    ./agent-sdk-client-version.patch
+    ./copilot-responses-compatibility.patch
+  ];
 
   vendorHash = "sha256-P+0dbN+eKoOSBpJfo4hq86ZbWKUel+5biCBGgePm88k=";
 
