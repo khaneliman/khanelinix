@@ -13,6 +13,7 @@ let
     ;
 
   cfg = config.khanelinix.programs.terminal.tools.codex;
+  gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
   exoEnabled = config.services.exo.enable or false;
 
@@ -50,8 +51,7 @@ let
     }
   ) config.programs.mcp.servers;
   aiTools = import (lib.getFile "modules/common/ai-tools") {
-    gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
-    inherit lib pkgs;
+    inherit gatewayEnabled lib pkgs;
   };
   tomlFormat = pkgs.formats.toml { };
   codexConfigPath =
@@ -59,7 +59,7 @@ let
       "${config.xdg.configHome}/codex"
     else
       "${config.home.homeDirectory}/.codex";
-  codexPackage =
+  codexBasePackage =
     if pkgs.stdenv.hostPlatform.isDarwin && config.home.preferXdgDirectories then
       pkgs.symlinkJoin {
         name = pkgs.codex.name;
@@ -73,6 +73,16 @@ let
       }
     else
       pkgs.codex;
+  gateway = import ./gateway.nix {
+    inherit config lib pkgs;
+    package = codexBasePackage;
+  };
+  codexPackage = if gatewayEnabled then gateway.package else codexBasePackage;
+  defaultModel = if gatewayEnabled then gateway.defaultModel else "gpt-6-astra";
+  defaultWebSearch = if gatewayEnabled then "disabled" else "live";
+  localCatalogOverride = lib.optionalString gatewayEnabled (
+    " -c " + lib.escapeShellArg "model_catalog_json=${builtins.toJSON gateway.bundledCatalogPath}"
+  );
   codexRepairMessageIds = pkgs.writeShellApplication {
     name = "codex-repair-message-ids";
     runtimeInputs = with pkgs; [
@@ -114,30 +124,30 @@ let
     }) aiTools.codex.agents;
   codexSkills = aiTools.codex.skillSources;
   codexProfiles = {
-    # Deep analysis and live-research mode. Intentionally expensive.
+    # Deep analysis. Intentionally expensive.
     deep = {
-      model = "gpt-6-astra";
+      model = defaultModel;
       model_reasoning_effort = "xhigh";
       model_verbosity = "high";
       plan_mode_reasoning_effort = "xhigh";
-      web_search = "live";
+      web_search = defaultWebSearch;
     };
 
     # Large-context escape hatch. The alias passes context overrides directly
     # via CLI -c because those fields are top-level settings in the published
     # schema.
     long = {
-      model = "gpt-6-astra";
+      model = defaultModel;
       model_reasoning_effort = "xhigh";
       model_verbosity = "high";
       plan_mode_reasoning_effort = "xhigh";
-      web_search = "live";
+      web_search = defaultWebSearch;
     };
 
     # Faster implementation loop for routine coding tasks.
     quick = {
       model_reasoning_effort = "medium";
-      model = "gpt-6-luna";
+      model = if gatewayEnabled then gateway.modelAlias "gpt-6-luna" else "gpt-6-luna";
       model_reasoning_summary = "none";
       model_verbosity = "low";
       plan_mode_reasoning_effort = "medium";
@@ -186,6 +196,7 @@ in
       packages = [
         codexRepairMessageIds
       ]
+      ++ lib.optional gatewayEnabled gateway.direct
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         pkgs.khanelinix.codex-browser-use-linux-chromium
       ];
@@ -199,22 +210,22 @@ in
       }
       // lib.optionalAttrs swapEnabled (
         {
-          codex-local = ''f(){ model="$1"; shift; codex --strict-config -c model_provider='"llama-swap"' -m "$model" "$@"; }; f'';
+          codex-local = ''f(){ model="$1"; shift; codex --strict-config -c model_provider='"llama-swap"'${localCatalogOverride} -m "$model" "$@"; }; f'';
         }
         # One alias per served model, so the set follows the service rather than
         # a list repeated here.
         // lib.listToAttrs (
           map (model: {
             name = "codex-local-${model}";
-            value = ''codex --strict-config -c model_provider='"llama-swap"' -m ${model}'';
+            value = ''codex --strict-config -c model_provider='"llama-swap"'${localCatalogOverride} -m ${model}'';
           }) swapModels
         )
       )
       // lib.optionalAttrs exoEnabled {
-        codex-exo = ''f(){ model="$1"; shift; codex --strict-config -c model_provider='"exo"' -m "$model" "$@"; }; f'';
-        codex-exo-coder = ''codex --strict-config -c model_provider='"exo"' -m mlx-community/Qwen3-Coder-Next-4bit'';
-        codex-exo-gpt-oss = ''codex --strict-config -c model_provider='"exo"' -m mlx-community/gpt-oss-20b-MXFP4-Q8'';
-        codex-exo-qwen = ''codex --strict-config -c model_provider='"exo"' -m mlx-community/Qwen3.6-35B-A3B-5bit'';
+        codex-exo = ''f(){ model="$1"; shift; codex --strict-config -c model_provider='"exo"'${localCatalogOverride} -m "$model" "$@"; }; f'';
+        codex-exo-coder = ''codex --strict-config -c model_provider='"exo"'${localCatalogOverride} -m mlx-community/Qwen3-Coder-Next-4bit'';
+        codex-exo-gpt-oss = ''codex --strict-config -c model_provider='"exo"'${localCatalogOverride} -m mlx-community/gpt-oss-20b-MXFP4-Q8'';
+        codex-exo-qwen = ''codex --strict-config -c model_provider='"exo"'${localCatalogOverride} -m mlx-community/Qwen3.6-35B-A3B-5bit'';
       }
       // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
         codex-browser-doctor = "codex-browser-use-linux-chromium doctor --codex-home ${codexConfigPath}";
@@ -291,10 +302,12 @@ in
         notice.hide_rate_limit_model_nudge = true;
 
         # No service_tier: Astra is costly enough on the default tier.
-        model = "gpt-6-astra";
+        model = defaultModel;
+        model_provider = mkIf gatewayEnabled "cliproxyapi";
+        model_catalog_json = mkIf gatewayEnabled gateway.catalogPath;
         model_reasoning_effort = "low";
         plan_mode_reasoning_effort = "low";
-        web_search = "live";
+        web_search = defaultWebSearch;
 
         # Browser-side counterpart lives in the chromium native-messaging
         # manifest; together they let codex drive Chromium without the

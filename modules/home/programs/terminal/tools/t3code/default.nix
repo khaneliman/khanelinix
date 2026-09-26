@@ -286,7 +286,10 @@ in
 
           providers =
             lib.optionalAttrs (config.programs.codex.enable or false) {
-              codex.binaryPath = lib.getExe config.programs.codex.package;
+              # Existing native model IDs and histories must not switch accounts.
+              codex.binaryPath = lib.getExe (
+                config.programs.codex.package.direct or config.programs.codex.package
+              );
             }
             // lib.optionalAttrs claudeCodeEnabled {
               claudeAgent = claudeProviderSettings;
