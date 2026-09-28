@@ -35,6 +35,8 @@
 - `planning-with-files/`: vendored provider adapters and explicit planning
   commands; `skills/planning-with-files/` owns the canonical optional workflow
 - `okf-memory/`: deterministic cross-provider durable-memory hooks
+- `authority-gate/`: deterministic tool-boundary checks for standing "ask me
+  first" rules, granted only by the user's own prompts
 
 ## Change Boundaries
 
