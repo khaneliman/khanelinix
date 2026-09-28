@@ -120,6 +120,21 @@ let
     hook = skillRoutingDir + "/hooks/skill_routing_hook.py";
   };
 
+  authorityGateDir = ./authority-gate;
+  authorityGate = {
+    # The gate imports its package and the style guard from its own directory.
+    package =
+      if pkgs == null then
+        null
+      else
+        pkgs.runCommand "authority-gate" { } ''
+          mkdir -p $out
+          cp ${authorityGateDir + "/hooks/authority_gate.py"} $out/authority_gate.py
+          cp -r ${authorityGateDir + "/hooks/authority"} $out/authority
+          cp ${technicalWriting.guard} $out/style_guard.py
+        '';
+  };
+
   antigravityOkfMemoryPlugin =
     if pkgs == null then
       null
@@ -355,6 +370,7 @@ in
 {
   inherit
     agents
+    authorityGate
     base
     claudeContextOverride
     codexContext
