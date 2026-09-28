@@ -216,6 +216,55 @@ class SkillRoutingHookTests(unittest.TestCase):
                 )
             )
 
+    def test_task_notifications_neither_arm_nor_clear_routes(self) -> None:
+        notification = (
+            "<task-notification>\n<task-id>abc</task-id>\n<result>Does "
+            "https://github.com/example/project/pull/123 look ready? Review it."
+            "</result>\n</task-notification>"
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            skill_routing_hook.handle(
+                "claude",
+                "user-prompt",
+                {"session_id": "one", "prompt": notification},
+                root,
+            )
+            self.assertIsNone(
+                skill_routing_hook.handle(
+                    "claude",
+                    "pre-tool",
+                    {"session_id": "one", "tool_name": "Bash", "tool_input": {}},
+                    root,
+                )
+            )
+            skill_routing_hook.handle(
+                "claude",
+                "user-prompt",
+                {
+                    "session_id": "one",
+                    "prompt": "Review https://github.com/example/project/pull/123",
+                },
+                root,
+            )
+            skill_routing_hook.handle(
+                "claude",
+                "user-prompt",
+                {
+                    "session_id": "one",
+                    "prompt": "[SYSTEM NOTIFICATION] " + notification,
+                },
+                root,
+            )
+            self.assertIsNotNone(
+                skill_routing_hook.handle(
+                    "claude",
+                    "pre-tool",
+                    {"session_id": "one", "tool_name": "Bash", "tool_input": {}},
+                    root,
+                )
+            )
+
     def test_negative_intent_and_invalid_urls_do_not_arm(self) -> None:
         prompts = (
             "Do not review https://github.com/example/project/pull/123",

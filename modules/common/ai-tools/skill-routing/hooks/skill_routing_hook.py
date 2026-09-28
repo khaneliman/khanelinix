@@ -33,6 +33,12 @@ NEGATED_REVIEW = re.compile(
 )
 PR_REVIEW_SKILL = "github-toolkit"
 STATE_ERROR = "Skill-routing state is unavailable. Retry the prompt after fixing it."
+# Background task results reach UserPromptSubmit too; their text is worker
+# output, not a request.
+NOTIFICATION = re.compile(
+    r"^\s*(?:\[SYSTEM NOTIFICATION|<task-notification>|Stop hook feedback:)|"
+    r"<task-notification>\s*<task-id>"
+)
 
 
 def load_payload(stream: Any) -> dict[str, Any] | None:
@@ -188,6 +194,13 @@ def handle(
     if provider != PROVIDER or event not in EVENTS or not payload:
         return None
     if payload.get("agent_id") is not None:
+        return None
+    prompt = payload.get("prompt")
+    if (
+        event == "user-prompt"
+        and isinstance(prompt, str)
+        and NOTIFICATION.search(prompt[:400])
+    ):
         return None
 
     path = state_path(payload, root)
