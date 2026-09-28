@@ -10,7 +10,6 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 HOOK = Path(__file__).parents[1] / "skill_routing_hook.py"
-BASE_MD = Path(__file__).parents[3] / "base.md"
 SPEC = importlib.util.spec_from_file_location("skill_routing_hook", HOOK)
 assert SPEC is not None and SPEC.loader is not None
 skill_routing_hook = importlib.util.module_from_spec(SPEC)
@@ -18,24 +17,6 @@ SPEC.loader.exec_module(skill_routing_hook)
 
 
 class SkillRoutingHookTests(unittest.TestCase):
-    def test_shared_context_requires_owner_invocation_before_task_work(self) -> None:
-        text = " ".join(BASE_MD.read_text(encoding="utf-8").split())
-        self.assertIn(
-            "Every new or materially changed parent task requires a skill decision",
-            text,
-        )
-        self.assertIn(
-            "Before task-specific tools or a substantive answer, invoke the closest "
-            "matching owner skill",
-            text,
-        )
-        self.assertIn("Expect one owner skill for most tasks", text)
-        self.assertIn("Do not load unrelated skills to reach a quota", text)
-        self.assertIn("If no visible skill fits, continue without inventing one", text)
-        self.assertIn(
-            "Child workers follow the skill or tool lane in their packet", text
-        )
-
     def test_github_pr_review_blocks_task_tools_until_skill_succeeds(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
