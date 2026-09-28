@@ -133,6 +133,7 @@ let
           cp -r ${authorityGateDir + "/hooks/authority"} $out/authority
           cp ${technicalWriting.guard} $out/style_guard.py
         '';
+    codex.requirements = import (authorityGateDir + "/codex/requirements.nix");
   };
 
   antigravityOkfMemoryPlugin =
@@ -203,6 +204,7 @@ let
       (name: values: if name == "managed_dir" then lib.last values else lib.concatLists values)
       [
         codexManagedRequirements.hooks
+        authorityGate.codex.requirements
         okfMemory.codex.requirements
         planningWithFiles.codex.requirements
         programOrchestration.codex.requirements
@@ -227,6 +229,7 @@ let
         cp ${programOrchestration.canonicalSkill}/scripts/program_state.py $out/program-orchestration/
         mkdir -p $out/technical-writing
         cp ${technicalWriting.guard} $out/technical-writing/style_guard.py
+        cp -r ${authorityGate.package} $out/authority-gate
       '';
 
   isSkillDirectory =

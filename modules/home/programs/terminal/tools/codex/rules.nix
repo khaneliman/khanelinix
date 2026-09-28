@@ -11,8 +11,9 @@ in
 {
   "read-only" = ''
     # Read-only shell commands that should not require repeated approvals.
-    # Mutating commands intentionally stay off this allowlist so Codex falls
-    # back to approval_policy = "on-request" in default.nix.
+    # Unlisted commands do not prompt under the full-access sandbox or
+    # approval_policy = "never"; the managed authority gate hook is what holds
+    # publishing, pushing, and merging to the user's request.
     ${lib.concatStringsSep "\n" (map renderPrefix permissions.readOnlyShellCommands)}
   '';
 }
