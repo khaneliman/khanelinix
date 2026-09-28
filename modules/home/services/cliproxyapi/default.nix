@@ -38,6 +38,12 @@ let
     usage-statistics-enabled = false;
     ws-auth = true;
     codex.optimize-multi-agent-v2 = true;
+    # Non-Claude clients such as Codex are cloaked as this CLI version, and
+    # Anthropic gates new models on a minimum version. Track the installed
+    # release; the proxy's built-in baseline lags behind.
+    claude-header-defaults = lib.optionalAttrs (config.programs.claude-code.package != null) {
+      user-agent = "claude-cli/${lib.getVersion config.programs.claude-code.package} (external, cli)";
+    };
     oauth-excluded-models = cfg.oauthExcludedModels;
     oauth-model-alias = {
       # Suppress the fork's duplicate dot-to-hyphen Copilot aliases.
