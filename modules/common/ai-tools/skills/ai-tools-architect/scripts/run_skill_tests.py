@@ -30,7 +30,9 @@ def build_parser() -> argparse.ArgumentParser:
 def discover_test_dirs(root: Path) -> list[Path]:
     test_files = list(root.glob("*/tests/test_*.py"))
     if root.name == "skills":
-        test_files.extend(root.parent.glob("planning-with-files/*/tests/test_*.py"))
+        # Hook, harness-adapter, and catalog suites live beside the skills tree.
+        test_files.extend(root.parent.glob("*/tests/test_*.py"))
+        test_files.extend(root.parent.glob("*/*/tests/test_*.py"))
     return sorted(
         {test_file.parent.resolve() for test_file in test_files if test_file.is_file()},
         key=lambda path: path.as_posix(),

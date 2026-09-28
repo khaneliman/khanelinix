@@ -87,9 +87,9 @@
           };
           skill-tests = {
             enable = true;
-            description = "Canonical skill and harness-adapter unit tests";
+            description = "Canonical skill, hook, and harness-adapter unit tests";
             entry = "${lib.getExe pkgs.python3} -B modules/common/ai-tools/skills/ai-tools-architect/scripts/run_skill_tests.py modules/common/ai-tools/skills";
-            files = "^modules/(common/ai-tools/(skills/|planning-with-files/)|home/programs/terminal/tools/claude-code/hooks/planning-with-files\\.nix$)";
+            files = "^modules/(common/ai-tools/(skills/|planning-with-files/|marketplace/|[^/]+/hooks/)|home/programs/terminal/tools/claude-code/hooks/[^/]+\\.nix$)";
             language = "system";
             pass_filenames = false;
           };
