@@ -18,6 +18,7 @@ from typing import Any
 
 from authority.classify import TRIGGER, analyze, fallback_actions
 from authority.grants import (
+    ACTIVATE,
     DISCLOSE,
     GRANTS_ENV,
     NEEDS,
@@ -76,10 +77,11 @@ def gate_delegation(
 ) -> dict[str, Any] | None:
     requested = delegated_grants(text)
     path = state_path(payload, root)
-    if requested is None or path is None:
+    if requested is None or path is None or payload.get("agent_id") is not None:
         log_decision(provider, payload, ["delegate grants"], "deny-delegate")
         return deny(
-            f"Set {GRANTS_ENV} only to literal grant names the user gave this session."
+            f"Set {GRANTS_ENV} only to literal grant names the user gave this session, "
+            "and only from the parent agent."
         )
     with locked_state(path):
         state = read_state(path)
@@ -125,6 +127,21 @@ def gate_tool(
     if not actions:
         return None
     labels = sorted({action.label for action in actions})
+
+    if payload.get("agent_id") is not None:
+        blocked = sorted(
+            {
+                a.label
+                for a in actions
+                if a.publishes or a.history or ACTIVATE in a.grants
+            }
+        )
+        if blocked:
+            log_decision(provider, payload, blocked, "deny-worker")
+            return deny(
+                f"Workers do not publish, push, activate, or change git history ({', '.join(blocked)}). "
+                "Return the draft or diff to the parent instead."
+            )
 
     required = set().union(*(action.grants for action in actions))
     if not required:

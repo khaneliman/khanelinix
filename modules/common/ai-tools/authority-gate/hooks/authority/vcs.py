@@ -20,6 +20,27 @@ GIT_VALUE_GLOBALS = {
     "--namespace",
     "--exec-path",
 }
+GIT_HISTORY = {
+    "add",
+    "am",
+    "checkout",
+    "cherry-pick",
+    "clean",
+    "commit",
+    "filter-branch",
+    "filter-repo",
+    "merge",
+    "mv",
+    "pull",
+    "rebase",
+    "replace",
+    "reset",
+    "restore",
+    "revert",
+    "rm",
+    "switch",
+    "update-ref",
+}
 JJ_VALUE_GLOBALS = {
     "-R",
     "--repository",
@@ -28,6 +49,34 @@ JJ_VALUE_GLOBALS = {
     "--config",
     "--config-file",
     "--color",
+}
+JJ_HISTORY = {
+    "abandon",
+    "absorb",
+    "backout",
+    "ci",
+    "commit",
+    "desc",
+    "describe",
+    "diffedit",
+    "duplicate",
+    "edit",
+    "fix",
+    "metaedit",
+    "new",
+    "next",
+    "parallelize",
+    "prev",
+    "rebase",
+    "redo",
+    "resolve",
+    "restore",
+    "revert",
+    "simplify-parents",
+    "split",
+    "squash",
+    "undo",
+    "unsquash",
 }
 
 
@@ -71,8 +120,34 @@ def classify_git(args: list[str], context: Context) -> list[Action]:
             target.startswith(":") for target in targets[1:]
         ):
             grants.add(DELETE)
-        return [Action("git push", frozenset(grants), publishes=True)]
-    return []
+        return [Action("git push", frozenset(grants), publishes=True, history=True)]
+    history = sub in GIT_HISTORY
+    if sub == "stash":
+        history = not rest or rest[0] not in {"list", "show"}
+    elif sub == "branch":
+        history = has_option(
+            rest, {"-d", "-D", "--delete", "-m", "-M", "--move", "-f", "--force"}
+        )
+    elif sub == "tag":
+        history = bool(positionals(rest, {"-m", "-F", "-u"})) and not has_option(
+            rest, {"-l", "--list", "-v", "--verify"}
+        )
+    elif sub == "worktree":
+        history = bool(rest) and rest[0] in {"remove", "prune", "move"}
+    elif sub in {"notes", "reflog"}:
+        history = bool(rest) and rest[0] in {
+            "add",
+            "append",
+            "copy",
+            "edit",
+            "remove",
+            "prune",
+            "expire",
+            "delete",
+        }
+    if not history:
+        return []
+    return [Action(f"git {sub}", history=True)]
 
 
 def classify_jj(args: list[str], context: Context) -> list[Action]:
@@ -87,6 +162,19 @@ def classify_jj(args: list[str], context: Context) -> list[Action]:
             if has_option(rest, {"--dry-run"}):
                 return []
             grants = {PUSH} | ({DELETE} if has_option(rest, {"--deleted"}) else set())
-            return [Action("jj git push", frozenset(grants), publishes=True)]
+            return [
+                Action("jj git push", frozenset(grants), publishes=True, history=True)
+            ]
+        if rest[:1] in (["import"], ["export"]):
+            return [Action(f"jj git {rest[0]}", history=True)]
         return []
-    return []
+    history = sub in JJ_HISTORY
+    if sub in {"bookmark", "b"}:
+        history = bool(rest) and rest[0] not in {"list", "l"}
+    elif sub in {"op", "operation"}:
+        history = bool(rest) and rest[0] in {"restore", "revert", "abandon", "undo"}
+    elif sub == "workspace":
+        history = bool(rest) and rest[0] in {"add", "forget", "rename", "update-stale"}
+    if not history:
+        return []
+    return [Action(f"jj {sub}", history=True)]

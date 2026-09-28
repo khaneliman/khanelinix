@@ -24,6 +24,7 @@ class LauncherGrantTests(GateCase):
             )
             self.assert_allowed("nixpkgs-review pr 12 --post-result")
             self.assert_denied("gh pr merge 12", "merge")
+            self.assert_denied("git push origin fix", "Workers", agent_id="child")
 
     def test_agents_pass_on_only_grants_they_hold(self) -> None:
         launch = (
@@ -35,6 +36,7 @@ class LauncherGrantTests(GateCase):
         self.assert_allowed(launch)
         self.assert_denied(f"{grants.GRANTS_ENV}=merge codex exec 'merge it'", "merge")
         self.assert_denied(f'export {grants.GRANTS_ENV}="$GRANTS"; ./run.sh', "literal")
+        self.assert_denied(launch, "parent agent", agent_id="child")
 
     def test_file_writes_that_set_grants_are_checked(self) -> None:
         script = f"#!/usr/bin/env bash\nexport {grants.GRANTS_ENV}='publish push'\ncodex exec -"

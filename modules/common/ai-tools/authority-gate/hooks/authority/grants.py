@@ -52,11 +52,13 @@ class Action:
         grants: frozenset[str] = frozenset(),
         *,
         publishes: bool = False,
+        history: bool = False,
         unresolved_text: bool = False,
     ) -> None:
         self.label = label
         self.grants = grants
         self.publishes = publishes
+        self.history = history
         self.unresolved_text = unresolved_text
         self.public_texts: list[str] = []
 

@@ -195,6 +195,7 @@ def fallback_actions(command: str) -> list[Action]:
             "unparsed command",
             grants,
             publishes=True,
+            history=PUSH in grants,
             unresolved_text=True,
         )
         for pattern, grants in FALLBACK
