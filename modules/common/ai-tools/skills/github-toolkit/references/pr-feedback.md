@@ -27,7 +27,10 @@ Use when inspecting or addressing existing review comments. Use
    focused changes and report each thread as fixed, declined, or blocked.
 
 Reply or resolve only when explicitly requested. Both commands dry-run unless
-`--apply` is present and require current `--expected-head-sha`:
+`--apply` is present and require current `--expected-head-sha`. A reply joins
+the current actor's pending review, created at the current head when absent, and
+stays a draft until that review is submitted. Add `--publish` only when the user
+asked to post the reply immediately:
 
 ```bash
 python "<path-to-skill>/scripts/review_threads.py" reply \

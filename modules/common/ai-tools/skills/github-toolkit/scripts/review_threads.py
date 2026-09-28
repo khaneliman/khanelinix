@@ -98,6 +98,61 @@ mutation($threadId: ID!, $body: String!) {
 """
 
 
+PENDING_REPLY_MUTATION = """
+mutation($threadId: ID!, $reviewId: ID!, $body: String!) {
+  addPullRequestReviewThreadReply(
+    input: {
+      pullRequestReviewThreadId: $threadId
+      pullRequestReviewId: $reviewId
+      body: $body
+    }
+  ) {
+    comment {
+      id databaseId body createdAt updatedAt url state author { login }
+      pullRequestReview { id state }
+    }
+  }
+}
+"""
+
+
+PENDING_REVIEW_QUERY = """
+query($owner: String!, $repo: String!, $number: Int!) {
+  viewer { login }
+  repository(owner: $owner, name: $repo) {
+    pullRequest(number: $number) {
+      id
+      reviews(first: 100, states: PENDING) {
+        nodes { id state author { login } }
+      }
+    }
+  }
+}
+"""
+
+
+CREATE_PENDING_REVIEW_MUTATION = """
+mutation($pullRequestId: ID!, $commitOid: GitObjectID!) {
+  addPullRequestReview(
+    input: {pullRequestId: $pullRequestId, commitOID: $commitOid}
+  ) {
+    pullRequestReview { id state author { login } }
+  }
+}
+"""
+
+
+REVIEW_COMMENT_QUERY = """
+query($id: ID!) {
+  node(id: $id) {
+    ... on PullRequestReviewComment {
+      id state body pullRequestReview { id state }
+    }
+  }
+}
+"""
+
+
 RESOLVE_MUTATION = """
 mutation($threadId: ID!) {
   resolveReviewThread(input: {threadId: $threadId}) {
@@ -172,6 +227,14 @@ def parse_args() -> argparse.Namespace:
     body.add_argument("--body", help="Reply body.")
     body.add_argument("--body-file", help="Reply body file, or - for stdin.")
     reply.add_argument("--apply", action="store_true", help="Apply planned reply.")
+    reply.add_argument(
+        "--publish",
+        action="store_true",
+        help=(
+            "Publish the reply immediately. By default the reply joins the "
+            "current actor's pending review, created when absent."
+        ),
+    )
 
     resolve = subparsers.add_parser("resolve", help="Plan or apply thread resolution.")
     add_target_arguments(resolve)
@@ -422,6 +485,67 @@ def verification(status: str, error: Exception | str | None = None) -> dict[str,
     return result
 
 
+def pending_review_id(
+    client: GhClient, target: Target, head_sha: str
+) -> tuple[str, bool]:
+    """Return the actor's pending review ID, creating one at head when absent."""
+    payload = client.graphql(
+        PENDING_REVIEW_QUERY,
+        {"owner": target.owner, "repo": target.name, "number": target.pull_request},
+    )
+    try:
+        viewer = payload["data"]["viewer"]["login"]
+        pull_request = payload["data"]["repository"]["pullRequest"]
+        nodes = pull_request["reviews"]["nodes"]
+    except (KeyError, TypeError) as error:
+        raise ToolkitError("GitHub response omitted pending review data") from error
+    owned = [
+        node["id"]
+        for node in nodes
+        if isinstance(node, dict)
+        and node.get("state") == "PENDING"
+        and isinstance(node.get("id"), str)
+        and isinstance(node.get("author"), dict)
+        and node["author"].get("login") == viewer
+    ]
+    if len(owned) > 1:
+        raise ToolkitError("current actor owns more than one pending review")
+    if owned:
+        return owned[0], False
+    if not isinstance(pull_request.get("id"), str):
+        raise ToolkitError("GitHub response omitted the pull request node ID")
+    created = client.graphql(
+        CREATE_PENDING_REVIEW_MUTATION,
+        {"pullRequestId": pull_request["id"], "commitOid": head_sha},
+    )
+    try:
+        review = created["data"]["addPullRequestReview"]["pullRequestReview"]
+    except (KeyError, TypeError) as error:
+        raise ToolkitError("pending review mutation omitted the review") from error
+    if (
+        not isinstance(review, dict)
+        or review.get("state") != "PENDING"
+        or not isinstance(review.get("id"), str)
+    ):
+        raise ToolkitError("pending review mutation did not return a pending review")
+    return review["id"], True
+
+
+def verify_pending_reply(
+    client: GhClient, comment_id: str, review_id: str, body: str
+) -> None:
+    payload = client.graphql(REVIEW_COMMENT_QUERY, {"id": comment_id})
+    try:
+        comment = payload["data"]["node"]
+        review = comment["pullRequestReview"]
+    except (KeyError, TypeError) as error:
+        raise ToolkitError("reply readback omitted the review comment") from error
+    if comment.get("state") != "PENDING" or review.get("state") != "PENDING":
+        raise ToolkitError("reply readback is not pending")
+    if review.get("id") != review_id or comment.get("body") != body:
+        raise ToolkitError("reply readback does not match the planned reply")
+
+
 def reply(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     target = resolve_target(client, args.repo, args.pr)
     pull_request, threads = fetch_threads(client, target)
@@ -432,6 +556,7 @@ def reply(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
         "action": "reply",
         "applied": False,
         "body": body,
+        "mode": "publish" if args.publish else "pending",
         "pull_request": pull_request,
         "thread": normalize_thread(thread, False, 240),
     }
@@ -442,7 +567,20 @@ def reply(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     thread = find_thread(latest_threads, args.thread)
     plan["thread"] = normalize_thread(thread, False, 240)
     verify_current_head_sha(client, target, args.expected_head_sha)
-    payload = client.graphql(REPLY_MUTATION, {"threadId": args.thread, "body": body})
+    review_id = None
+    if args.publish:
+        payload = client.graphql(
+            REPLY_MUTATION, {"threadId": args.thread, "body": body}
+        )
+    else:
+        review_id, created_review = pending_review_id(
+            client, target, latest_pull_request["head_sha"]
+        )
+        plan["pending_review"] = {"created": created_review, "id": review_id}
+        payload = client.graphql(
+            PENDING_REPLY_MUTATION,
+            {"threadId": args.thread, "reviewId": review_id, "body": body},
+        )
     try:
         created = payload["data"]["addPullRequestReviewThreadReply"]["comment"]
     except (KeyError, TypeError) as error:
@@ -452,6 +590,14 @@ def reply(args: argparse.Namespace, client: GhClient) -> dict[str, Any]:
     plan["applied"] = True
     plan["created_comment"] = created
     plan["verification"] = verification("unverified")
+    if review_id is not None:
+        try:
+            verify_pending_reply(client, created["id"], review_id, body)
+        except Exception as error:  # noqa: BLE001 - report readback as unverified
+            plan["verification"] = verification("unverified", error)
+            return plan
+        plan["verification"] = verification("verified")
+        return plan
     try:
         _, refreshed = fetch_threads(client, target)
         refreshed_thread = find_thread(refreshed, args.thread)

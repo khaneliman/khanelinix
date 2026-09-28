@@ -6,6 +6,7 @@ import subprocess
 import sys
 import unittest
 from pathlib import Path
+from typing import Any
 from unittest import mock
 
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
@@ -1185,6 +1186,7 @@ class ReviewThreadTests(unittest.TestCase):
             body="reply",
             body_file=None,
             apply=True,
+            publish=False,
         )
         client = RecordingClient()
         with (
@@ -1214,6 +1216,7 @@ class ReviewThreadTests(unittest.TestCase):
             body="reply",
             body_file=None,
             apply=True,
+            publish=False,
         )
         thread = {
             "id": "PRRT_1",
@@ -1279,6 +1282,7 @@ class ReviewThreadTests(unittest.TestCase):
             body="reply",
             body_file=None,
             apply=True,
+            publish=True,
         )
         thread = {
             "id": "PRRT_1",
@@ -1318,6 +1322,146 @@ class ReviewThreadTests(unittest.TestCase):
         self.assertTrue(result["applied"])
         self.assertEqual(result["created_comment"]["id"], "PRRC_2")
         self.assertEqual(result["verification"]["status"], "unverified")
+
+    def run_pending_reply(
+        self, graphql_responses: list[object], *, apply: bool = True
+    ) -> tuple[dict[str, Any], mock.Mock]:
+        args = argparse.Namespace(
+            repo="base/repo",
+            pr="7",
+            thread="PRRT_1",
+            expected_head_sha=HEAD_SHA,
+            body="reply",
+            body_file=None,
+            apply=apply,
+            publish=False,
+        )
+        thread = {
+            "id": "PRRT_1",
+            "isResolved": False,
+            "isOutdated": False,
+            "path": "src/example.py",
+            "line": 10,
+            "comments": [],
+        }
+        client = mock.Mock()
+        client.graphql.side_effect = graphql_responses
+        with (
+            mock.patch.object(
+                review_threads,
+                "resolve_target",
+                return_value=_github.Target("base/repo", 7),
+            ),
+            mock.patch.object(
+                review_threads,
+                "fetch_threads",
+                return_value=(pull_request(), [thread]),
+            ),
+            mock.patch.object(
+                review_threads,
+                "pull_request_oids",
+                return_value={"base_sha": "b" * 40, "head_sha": HEAD_SHA},
+            ),
+        ):
+            result = review_threads.reply(args, client)
+        return result, client
+
+    @staticmethod
+    def pending_lookup(reviews: list[dict[str, object]]) -> dict[str, object]:
+        return {
+            "data": {
+                "viewer": {"login": "me"},
+                "repository": {
+                    "pullRequest": {"id": "PR_NODE", "reviews": {"nodes": reviews}}
+                },
+            }
+        }
+
+    @staticmethod
+    def pending_comment(review_id: str, state: str = "PENDING") -> dict[str, object]:
+        return {
+            "id": "PRRC_2",
+            "body": "reply",
+            "state": state,
+            "pullRequestReview": {"id": review_id, "state": state},
+        }
+
+    def test_reply_joins_existing_pending_review_by_default(self) -> None:
+        comment = self.pending_comment("PRR_MINE")
+        result, client = self.run_pending_reply(
+            [
+                self.pending_lookup(
+                    [
+                        {
+                            "id": "PRR_OTHER",
+                            "state": "PENDING",
+                            "author": {"login": "x"},
+                        },
+                        {
+                            "id": "PRR_MINE",
+                            "state": "PENDING",
+                            "author": {"login": "me"},
+                        },
+                    ]
+                ),
+                {"data": {"addPullRequestReviewThreadReply": {"comment": comment}}},
+                {"data": {"node": comment}},
+            ]
+        )
+
+        self.assertEqual(result["mode"], "pending")
+        self.assertEqual(result["pending_review"], {"created": False, "id": "PRR_MINE"})
+        self.assertEqual(result["verification"]["status"], "verified")
+        reply_query, reply_variables = client.graphql.call_args_list[1].args
+        self.assertIn("pullRequestReviewId", reply_query)
+        self.assertEqual(reply_variables["reviewId"], "PRR_MINE")
+
+    def test_reply_creates_pending_review_when_absent(self) -> None:
+        comment = self.pending_comment("PRR_NEW")
+        result, client = self.run_pending_reply(
+            [
+                self.pending_lookup([]),
+                {
+                    "data": {
+                        "addPullRequestReview": {
+                            "pullRequestReview": {"id": "PRR_NEW", "state": "PENDING"}
+                        }
+                    }
+                },
+                {"data": {"addPullRequestReviewThreadReply": {"comment": comment}}},
+                {"data": {"node": comment}},
+            ]
+        )
+
+        self.assertEqual(result["pending_review"], {"created": True, "id": "PRR_NEW"})
+        create_query, create_variables = client.graphql.call_args_list[1].args
+        self.assertNotIn("event", create_query)
+        self.assertEqual(
+            create_variables, {"pullRequestId": "PR_NODE", "commitOid": HEAD_SHA}
+        )
+
+    def test_published_pending_reply_is_reported_unverified(self) -> None:
+        comment = self.pending_comment("PRR_MINE", state="SUBMITTED")
+        result, _ = self.run_pending_reply(
+            [
+                self.pending_lookup(
+                    [{"id": "PRR_MINE", "state": "PENDING", "author": {"login": "me"}}]
+                ),
+                {"data": {"addPullRequestReviewThreadReply": {"comment": comment}}},
+                {"data": {"node": comment}},
+            ]
+        )
+
+        self.assertTrue(result["applied"])
+        self.assertEqual(result["verification"]["status"], "unverified")
+        self.assertIn("not pending", result["verification"]["detail"])
+
+    def test_reply_plan_reports_mode_without_github_calls(self) -> None:
+        result, client = self.run_pending_reply([], apply=False)
+
+        self.assertFalse(result["applied"])
+        self.assertEqual(result["mode"], "pending")
+        client.graphql.assert_not_called()
 
     def test_resolve_preserves_applied_truth_when_readback_fails(self) -> None:
         args = argparse.Namespace(
