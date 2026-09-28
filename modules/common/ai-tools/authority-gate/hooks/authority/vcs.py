@@ -7,10 +7,18 @@ need "force push" in the user's words.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from .grants import DELETE, FORCE_PUSH, PUSH, Action
-from .shell import Context, has_option, positionals, resolve_path
+from .shell import (
+    Context,
+    has_option,
+    option_values,
+    positionals,
+    read_limited,
+    resolve_path,
+)
 
 GIT_VALUE_GLOBALS = {
     "-C",
@@ -99,7 +107,7 @@ def git_subcommand(
 
 
 def classify_git(args: list[str], context: Context) -> list[Action]:
-    sub, rest, _ = git_subcommand(args, context)
+    sub, rest, cwd = git_subcommand(args, context)
     if sub is None:
         return []
     if sub == "push":
@@ -147,7 +155,28 @@ def classify_git(args: list[str], context: Context) -> list[Action]:
         }
     if not history:
         return []
-    return [Action(f"git {sub}", history=True)]
+    action = Action(f"git {sub}", history=True)
+    if sub == "commit":
+        action.commit_texts.extend(option_values(rest, {"-m", "--message"}))
+        action.commit_texts.extend(
+            rest[index + 1]
+            for index, item in enumerate(rest[:-1])
+            if re.fullmatch(r"-[A-Za-z]+m", item)
+        )
+        action.commit_texts.extend(option_values(rest, {"--trailer"}))
+        for source in option_values(rest, {"-F", "--file"}):
+            if source == "-" and not context.heredocs:
+                # Piped message: its text is in the command, with printf escapes.
+                action.commit_texts.append(context.raw.replace("\\n", "\n"))
+            elif source == "-":
+                action.commit_texts.extend(body for _, body in context.heredocs)
+            elif (
+                text := read_limited(resolve_path(source, Context(cwd, "", [])))
+            ) is not None:
+                action.commit_texts.append(text)
+        if any("$(" in text for text in action.commit_texts):
+            action.commit_texts.extend(body for _, body in context.heredocs)
+    return [action]
 
 
 def classify_jj(args: list[str], context: Context) -> list[Action]:
@@ -177,4 +206,7 @@ def classify_jj(args: list[str], context: Context) -> list[Action]:
         history = bool(rest) and rest[0] in {"add", "forget", "rename", "update-stale"}
     if not history:
         return []
-    return [Action(f"jj {sub}", history=True)]
+    action = Action(f"jj {sub}", history=True)
+    if sub in {"commit", "ci", "describe", "desc", "new"}:
+        action.commit_texts.extend(option_values(rest, {"-m", "--message"}))
+    return [action]

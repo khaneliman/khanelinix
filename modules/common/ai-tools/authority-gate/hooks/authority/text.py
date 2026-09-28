@@ -50,6 +50,7 @@ DISCLOSURE_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
         ),
     ),
 )
+ATTRIBUTION_ONLY = (DISCLOSURE_PATTERNS[1],)
 
 _STYLE_GUARD: list[ModuleType | None] = []
 

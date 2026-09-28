@@ -37,7 +37,12 @@ from authority.state import (
     state_root,
     write_state,
 )
-from authority.text import DISCLOSURE_PATTERNS, fallback_texts, text_findings
+from authority.text import (
+    ATTRIBUTION_ONLY,
+    DISCLOSURE_PATTERNS,
+    fallback_texts,
+    text_findings,
+)
 
 PROVIDERS = {"claude", "codex"}
 EVENTS = {"user-prompt", "pre-tool", "session-end"}
@@ -142,6 +147,15 @@ def gate_tool(
                 f"Workers do not publish, push, activate, or change git history ({', '.join(blocked)}). "
                 "Return the draft or diff to the parent instead."
             )
+
+    commit_texts = [text for action in actions for text in action.commit_texts]
+    attribution = text_findings(commit_texts, ATTRIBUTION_ONLY, style=False)
+    if attribution:
+        log_decision(provider, payload, labels, "deny-attribution")
+        return deny(
+            f"The commit message carries agent attribution: {'; '.join(attribution)}. "
+            "Remove it; the user does not want agent trailers or footers in history."
+        )
 
     required = set().union(*(action.grants for action in actions))
     if not required:

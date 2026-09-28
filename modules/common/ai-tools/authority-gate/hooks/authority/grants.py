@@ -60,6 +60,7 @@ class Action:
         self.publishes = publishes
         self.history = history
         self.unresolved_text = unresolved_text
+        self.commit_texts: list[str] = []
         self.public_texts: list[str] = []
 
 
