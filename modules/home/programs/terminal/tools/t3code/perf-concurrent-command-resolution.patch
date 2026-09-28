@@ -30,9 +30,9 @@ index 2b7310051b894f71bf098f89154990aa725b024e..252d3951bbd34d0313efd35383f5fe81
 +        : resolveEditorCommand(editor, env).pipe(Effect.map(Option.isSome))
 +      ).pipe(Effect.map((available) => ({ id: editor.id, available }))),
 +    ),
-+    // Checking each editor is independent, and each check itself fans out
-+    // across PATH entries — sequentially this compounds badly on long PATHs
-+    // (e.g. Nix), so run every editor's check concurrently too.
++    // Checking each editor is independent, and each check walks the PATH
++    // entries in order; sequentially this compounds badly on long PATHs
++    // (e.g. Nix), so run every editor's check concurrently.
 +    { concurrency: "unbounded" },
 +  );
  
@@ -65,46 +65,3 @@ diff --git a/packages/shared/src/editor.ts b/packages/shared/src/editor.ts
  
    const platform = yield* HostProcess.HostProcessPlatform;
    const path = yield* Path.Path;
-diff --git a/packages/shared/src/shell.ts b/packages/shared/src/shell.ts
-index 07ac73f8c6a769af3a174381e2149ade15632ece..1b1d85119bb62c844dc4633aa82335268a42e527 100644
---- a/packages/shared/src/shell.ts
-+++ b/packages/shared/src/shell.ts
-@@ -603,17 +603,28 @@ const resolveCommandPathForPlatform = Effect.fn("shell.resolveCommandPathForPlat
-     pathEntries.push(pathEntry);
-   }
- 
--  for (const pathEntry of pathEntries) {
--    for (const candidate of commandCandidates) {
--      const candidatePath = path.join(pathEntry, candidate);
--      if (yield* isExecutableFile(candidatePath, platform, windowsPathExtensions)) {
--        cacheCommandResolution(cache, cacheKey, candidatePath, nowNanos);
--        return candidatePath;
--      }
--    }
-+  const candidatePaths = pathEntries.flatMap((pathEntry) =>
-+    commandCandidates.map((candidate) => path.join(pathEntry, candidate)),
-+  );
-+  const results = yield* Effect.all(
-+    candidatePaths.map((candidatePath) =>
-+      isExecutableFile(candidatePath, platform, windowsPathExtensions).pipe(
-+        Effect.map((executable) => ({ candidatePath, executable })),
-+      ),
-+    ),
-+    { concurrency: "unbounded" },
-+  );
-+  // `Effect.all` preserves input order regardless of completion order, so the
-+  // first match here is still the highest-priority PATH entry, same as the
-+  // sequential loop it replaces — just with all the stat() calls concurrent
-+  // instead of one at a time (PATH can be very long, e.g. under Nix).
-+  const match = results.find((result) => result.executable);
-+  if (match === undefined) {
-+    cacheCommandResolution(cache, cacheKey, null, nowNanos);
-+    return yield* new CommandResolutionError({ command, reason: "not-found" });
-   }
--  cacheCommandResolution(cache, cacheKey, null, nowNanos);
--  return yield* new CommandResolutionError({ command, reason: "not-found" });
-+  cacheCommandResolution(cache, cacheKey, match.candidatePath, nowNanos);
-+  return match.candidatePath;
- });
- 
- export const resolveCommandPath = Effect.fn("shell.resolveCommandPath")(function* (

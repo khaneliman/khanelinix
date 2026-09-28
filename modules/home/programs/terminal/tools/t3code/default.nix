@@ -82,7 +82,7 @@ in
                 pnpm config set fetch-retries 5
                 pnpm config set network-concurrency 8
               '';
-              hash = "sha256-RUJh4wO6bO37A+6IQ5axBCaZW7XSmzR7J4FgrasswRs=";
+              hash = "sha256-z30cDexO3mOTGGhTaPw0eQD8RETM4e15Djx/vALoH+0=";
             };
             # License generation otherwise downloads SPDX notices during the sandboxed build.
             preBuild = ''

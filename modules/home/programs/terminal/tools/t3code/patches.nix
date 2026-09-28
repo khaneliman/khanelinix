@@ -4,7 +4,8 @@
 [
   # Fork bf5a88adca, including both drawer entry points and vendor chunking.
   ./perf-lazy-load-terminal-drawer.patch
-  # Fork 9d8723a7ca, preserving upstream PATH cache and file-manager probing.
+  # Fork 9d8723a7ca, preserving upstream file-manager probing. Upstream #13669
+  # now owns the PATH walk, so only editor and command probes run concurrently.
   ./perf-concurrent-command-resolution.patch
   # Fork 883b413cd9, migrated to the current Effect error API.
   ./fix-codex-session-start-timeout.patch
@@ -16,11 +17,6 @@
   # Emit session exit on signals so the next turn can resume its saved thread.
   ./fix-codex-signal-exit-recovery.patch
   ./desktop-attach-existing-backend.patch
-  (fetchpatch2 {
-    name = "t3code-pr-11594-chat-width.patch";
-    url = "https://github.com/pingdotgg/t3code/pull/11594.patch";
-    hash = "sha256-mGvl1w2syfIw2z4ZtC6RcZ/gO0xZTT30K5u4QqeOiDI=";
-  })
   (fetchpatch2 {
     name = "t3code-pr-10881-agent-history.patch";
     # Use the combined diff so normalization preserves new-file amendments.
