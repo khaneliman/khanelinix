@@ -852,11 +852,11 @@ class ReviewDraftTests(unittest.TestCase):
 
     def test_update_comment_uses_explicit_id_without_diff_refresh(self) -> None:
         data = {
-            "comments": [{"id": "PRRC_1", "body": "new body"}],
+            "comments": [{"id": "PRRC_1", "body": "issue: new body"}],
             "review_id": "PRR_1",
         }
         original = pending_review(comments=[review_comment(body="old body")])
-        updated = pending_review(comments=[review_comment(body="new body")])
+        updated = pending_review(comments=[review_comment(body="issue: new body")])
         args = argparse.Namespace(
             input="review.json", repo="base/repo", pr="7", apply=True
         )
@@ -1170,6 +1170,35 @@ class ReviewDraftTests(unittest.TestCase):
             review_draft.require_pending_unless_allowed(
                 {"allow_submitted": "yes"}, {"state": "COMMENTED"}
             )
+
+    def test_inline_comments_need_conventional_labels(self) -> None:
+        comment = {"path": "src/example.py", "line": 10, "side": "RIGHT"}
+        for body in (
+            "issue (blocking): off by one",
+            "nitpick (non-blocking, style): trailing space",
+            "Suggestion: use lib.getExe",
+        ):
+            with self.subTest(body=body):
+                review_draft.normalize_create_comment({**comment, "body": body}, 0)
+        for body in ("Fix the off-by-one.", "**issue**: bold label", "issue - dash"):
+            with (
+                self.subTest(body=body),
+                self.assertRaisesRegex(_github.InputError, "conventional comment"),
+            ):
+                review_draft.normalize_create_comment({**comment, "body": body}, 0)
+
+    def test_updates_keep_labels_without_forcing_them(self) -> None:
+        def operations(current: str, requested: str) -> list[dict[str, Any]]:
+            review = pending_review(comments=[review_comment(body=current)])
+            data = {"comments": [{"id": "PRRC_1", "body": requested}]}
+            return review_draft.normalize_update_operations(data, review)
+
+        self.assertEqual(
+            operations("typo here", "Typo fixed here.")[0]["body"], "Typo fixed here."
+        )
+        self.assertEqual(len(operations("issue: old", "issue: new")), 1)
+        with self.assertRaisesRegex(_github.InputError, "conventional comment"):
+            operations("issue: old", "dropped the label")
 
     def test_unknown_event_field_is_always_rejected(self) -> None:
         with self.assertRaisesRegex(_github.InputError, "cannot submit"):

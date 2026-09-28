@@ -21,6 +21,11 @@ from _github import (
 )
 
 HUNK_HEADER = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@")
+CONVENTIONAL_COMMENT = re.compile(
+    r"^(?:praise|nitpick|suggestion|issue|todo|question|thought|chore|note|typo|"
+    r"polish|quibble)(?:\s*\([a-z-]+(?:,\s*[a-z-]+)*\))?:\s+\S",
+    re.IGNORECASE,
+)
 
 
 REVIEWS_QUERY = """
@@ -483,6 +488,16 @@ def _text(value: Any, field: str) -> str:
     return value
 
 
+def _labeled(value: Any, field: str) -> str:
+    body = _string(value, field)
+    if not CONVENTIONAL_COMMENT.match(body.lstrip()):
+        raise InputError(
+            f"{field} must open with a conventional comment label, such as "
+            "'issue (blocking): ' or 'nitpick: '"
+        )
+    return body
+
+
 def _only_keys(value: dict[str, Any], allowed: set[str], context: str) -> None:
     unknown = sorted(set(value) - allowed)
     if "event" in unknown:
@@ -539,7 +554,7 @@ def normalize_create_comment(value: Any, index: int) -> dict[str, Any]:
         f"comments[{index}]",
     )
     path = _string(value.get("path"), f"comments[{index}].path")
-    body = _string(value.get("body"), f"comments[{index}].body")
+    body = _labeled(value.get("body"), f"comments[{index}].body")
     line = _integer(value.get("line"), f"comments[{index}].line")
     side = _string(value.get("side"), f"comments[{index}].side").upper()
     if side not in {"LEFT", "RIGHT"}:
@@ -953,6 +968,10 @@ def normalize_update_operations(
         )
         body = _string(request.get("body"), f"comments[{index}].body")
         selected = select_comment(request, review.get("comments", []), index)
+        current = selected.get("body")
+        # Keep an existing label; do not force one onto a comment written without it.
+        if isinstance(current, str) and CONVENTIONAL_COMMENT.match(current.lstrip()):
+            _labeled(body, f"comments[{index}].body")
         if selected.get("body") != body:
             operations.append(
                 {
