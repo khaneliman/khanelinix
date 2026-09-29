@@ -55,12 +55,35 @@ in
   #
   # User-owned agent files may select configured providers. Project agents
   # retain the parent provider and authority boundary.
-  codex = inputs.llm-agents.packages.${system}.codex.overrideAttrs (old: {
-    patches = (old.patches or [ ]) ++ [
-      ./codex-force-multi-agent-v1.patch
-      ./codex-user-agent-provider.patch
-    ];
-  });
+  codex =
+    let
+      package = inputs.llm-agents.packages.${system}.codex;
+      # TODO: drop once llm-agents ships 0.159.0 (numtide/llm-agents.nix#10062).
+      # OpenAI rejects gpt-6.1-sol from older clients signed in with ChatGPT.
+      current =
+        if final.lib.versionOlder package.version "0.159.0" then
+          package.override {
+            version = "0.159.0";
+            hash = "sha256-rtYsWjG56SagT5cWt22//vyqvD0QBKSHRdRhzHQB4CQ=";
+            cargoVendor.cargoHash = "sha256-3X4gmzAZG10DDcI667k9Zf+r3IvzeAAWD1NbTdQZyGY=";
+          }
+        else
+          package;
+    in
+    current.overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [
+        ./codex-force-multi-agent-v1.patch
+        ./codex-user-agent-provider.patch
+        # openai/codex#49318 landed after 0.159.0; drop once a release has it.
+        (final.fetchpatch2 {
+          name = "codex-gpt-6.1-sol-catalog.patch";
+          url = "https://github.com/openai/codex/commit/b1e72963c3b71a9265a551e54beff078384efed9.patch?full_index=1";
+          relative = "codex-rs";
+          includes = [ "models-manager/models.json" ];
+          hash = "sha256-K2lIihDEkcItKhOLJGntLYLqzuSIXcov0DOM4dO1+sQ=";
+        })
+      ];
+    });
 
   claude-desktop =
     let
