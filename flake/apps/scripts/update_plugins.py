@@ -73,6 +73,47 @@ def update_task_state(
             task_state[task_name]["error"] = True
 
 
+def persist_task_outcome(task_name: str):
+    """Save each finished ecosystem before another updater can be interrupted."""
+    configured = os.environ.get("NIXPKGS_UPDATE_OUTCOME_DIR")
+    if not configured:
+        return
+    directory = Path(configured)
+    directory.mkdir(parents=True, exist_ok=True)
+    with state_lock:
+        state = dict(task_state[task_name])
+    worktree = worktrees[task_name]
+    head = subprocess.run(
+        ["git", "-C", worktree["path"], "rev-parse", "HEAD"],
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    dirty = subprocess.run(
+        ["git", "-C", worktree["path"], "status", "--porcelain"],
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    complete = state["status"] == "COMPLETE" and not state["error"] and not dirty
+    row = {
+        "ecosystem": task_name,
+        "status": "COMPLETE" if complete else "FAILED",
+        "run_dir": str(directory.parent.resolve()),
+        "base_sha": os.environ["NIXPKGS_UPDATE_BASE_SHA"],
+        "invocation_id": os.environ["NIXPKGS_UPDATE_INVOCATION_ID"],
+        "sha": head,
+        "path": worktree["path"],
+        "branch": worktree["branch"],
+    }
+    temporary = directory / f"{task_name}.tmp"
+    with temporary.open("w") as output:
+        json.dump(row, output)
+        output.flush()
+        os.fsync(output.fileno())
+    temporary.replace(directory / f"{task_name}.json")
+
+
 def generate_table() -> Table:
     """Generate a Rich table from current task state."""
     table = Table(
@@ -259,8 +300,13 @@ def run_update_in_worktree(task_name: str, task_details: dict, task_events: dict
     except Exception as e:  # noqa: BLE001 - thread boundary must mark task failures
         update_task_state(task_name, status="ERROR", output=str(e), error=True)
     finally:
-        # Signal completion so dependent tasks can proceed
-        task_events[task_name].set()
+        try:
+            persist_task_outcome(task_name)
+        except Exception as exc:  # noqa: BLE001 - checkpoint failure must fail closed
+            update_task_state(task_name, status="ERROR", output=str(exc), error=True)
+        finally:
+            # Signal completion even if checkpoint storage fails.
+            task_events[task_name].set()
 
 
 def main():
