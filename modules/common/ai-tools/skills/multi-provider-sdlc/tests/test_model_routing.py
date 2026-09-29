@@ -97,7 +97,7 @@ class ModelRoutingTests(unittest.TestCase):
         )
         self.assertEqual(
             routes["plan or code review"]["fallbacks"],
-            ["gpt-6-sol", "opus-5-5", "google-opus-4-6"],
+            ["gpt-6-1-sol", "opus-5-5", "google-opus-4-6"],
         )
         self.assertEqual(
             self.registry["semantic_roles"]["reviewer"]["gateway"]["claude"],
@@ -107,18 +107,18 @@ class ModelRoutingTests(unittest.TestCase):
         self.assertFalse(self.registry["models"]["fable-5-1"]["workspace_write"])
         self.assertEqual(
             routes["implementation"]["preferred"],
-            ["gpt-6-sol"],
+            ["gpt-6-1-sol"],
         )
         self.assertEqual(
             routes["difficult implementation"]["preferred"],
-            ["gpt-6-sol", "opus-5-5"],
+            ["gpt-6-1-sol", "opus-5-5"],
         )
         self.assertEqual(
             routes["difficult implementation"]["fallbacks"],
             ["gpt-6-luna", "gemini-3-8-flash"],
         )
         self.assertTrue(self.registry["models"]["gemini-3-8-flash"]["write"])
-        self.assertTrue(self.registry["models"]["gpt-6-sol"]["workspace_write"])
+        self.assertTrue(self.registry["models"]["gpt-6-1-sol"]["workspace_write"])
         self.assertFalse(self.registry["models"]["gpt-6-astra"]["write"])
 
     def test_astra_gateway_default_effort_is_low(self) -> None:
@@ -236,7 +236,7 @@ class ModelRoutingTests(unittest.TestCase):
             ),
             "rendered model ID": lambda value: value["semantic_roles"]["reviewer"][
                 "native"
-            ].__setitem__("codex", "gpt-6-sol\nname = injected"),
+            ].__setitem__("codex", "gpt-6.1-sol\nname = injected"),
         }
 
         for label, mutate in cases.items():
@@ -363,8 +363,8 @@ class ModelRoutingTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
-            False: "86d92fd5107b98b5129c84890eae924159b47f8be653baef5858729e1eead20a",
-            True: "9b88eeb250c310457e9edf279a166f683d8844a08c25c536d42679a27cfa92ac",
+            False: "8ac33d0f5b12bedd7b336abe9860eb488be8f97ca1508a678b0bc619188abc22",
+            True: "aa399ff0f2a003f862eeb14ffb94d303af5ee61320cb301b25cd8cda775ae34f",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():

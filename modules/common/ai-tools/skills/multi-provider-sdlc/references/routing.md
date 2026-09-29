@@ -15,7 +15,7 @@ by `route-model.py` and its JSON contract.
 
 | Subscription         | Model agents                                                                                 |
 | -------------------- | -------------------------------------------------------------------------------------------- |
-| OpenAI (Codex)       | `gpt-6-luna`, `gpt-5-6-terra`, `gpt-6-sol`, `gpt-6-astra`                                    |
+| OpenAI (Codex)       | `gpt-6-luna`, `gpt-5-6-terra`, `gpt-6-1-sol`, `gpt-6-astra`                                  |
 | Google (Antigravity) | `gpt-oss-120b`, `google-opus-4-6`, `google-sonnet-4-6`, `gemini-3-8-flash`, `gemini-3-1-pro` |
 | Anthropic            | `opus-5-5`, `fable-5-1`, `sonnet-5`                                                          |
 
@@ -33,17 +33,17 @@ authentication.
 
 <!-- BEGIN GENERATED ROUTES -->
 
-| Need                                       | Preferred                        | Fallback                                     | Semantic role  | Write policy                      |
-| ------------------------------------------ | -------------------------------- | -------------------------------------------- | -------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-6-luna`                     | `gemini-3-8-flash`                           | `mechanic`     | read-only unless edit is explicit |
-| repository discovery                       | `gpt-6-luna`, `gemini-3-8-flash` | `gpt-6-sol`                                  | `fact-finder`  | read-only                         |
-| bounded reproduction                       | `gpt-6-luna`                     | `gpt-6-sol`, `opus-5-5`, `gemini-3-8-flash`  | `probe-runner` | build artifacts only              |
-| focused validation                         | `gpt-6-luna`                     | `gemini-3-8-flash`                           | `checker`      | build artifacts only              |
-| noisy validation                           | `gpt-oss-120b`                   | `gpt-6-luna`, `gemini-3-8-flash`             | `test-runner`  | build artifacts only              |
-| implementation                             | `gpt-6-sol`                      | `gpt-6-luna`, `gemini-3-8-flash`, `opus-5-5` | `implementer`  | workspace write                   |
-| difficult implementation                   | `gpt-6-sol`, `opus-5-5`          | `gpt-6-luna`, `gemini-3-8-flash`             | `implementer`  | workspace write                   |
-| ambiguous diagnosis                        | `gpt-6-sol`                      | `opus-5-5`, `gemini-3-8-flash`               | `debugger`     | read-only                         |
-| plan or code review                        | `fable-5-1`, `gpt-6-astra`       | `gpt-6-sol`, `opus-5-5`, `google-opus-4-6`   | `reviewer`     | read-only                         |
+| Need                                       | Preferred                        | Fallback                                      | Semantic role  | Write policy                      |
+| ------------------------------------------ | -------------------------------- | --------------------------------------------- | -------------- | --------------------------------- |
+| obvious lookup or mechanical one-file edit | `gpt-6-luna`                     | `gemini-3-8-flash`                            | `mechanic`     | read-only unless edit is explicit |
+| repository discovery                       | `gpt-6-luna`, `gemini-3-8-flash` | `gpt-6-1-sol`                                 | `fact-finder`  | read-only                         |
+| bounded reproduction                       | `gpt-6-luna`                     | `gpt-6-1-sol`, `opus-5-5`, `gemini-3-8-flash` | `probe-runner` | build artifacts only              |
+| focused validation                         | `gpt-6-luna`                     | `gemini-3-8-flash`                            | `checker`      | build artifacts only              |
+| noisy validation                           | `gpt-oss-120b`                   | `gpt-6-luna`, `gemini-3-8-flash`              | `test-runner`  | build artifacts only              |
+| implementation                             | `gpt-6-1-sol`                    | `gpt-6-luna`, `gemini-3-8-flash`, `opus-5-5`  | `implementer`  | workspace write                   |
+| difficult implementation                   | `gpt-6-1-sol`, `opus-5-5`        | `gpt-6-luna`, `gemini-3-8-flash`              | `implementer`  | workspace write                   |
+| ambiguous diagnosis                        | `gpt-6-1-sol`                    | `opus-5-5`, `gemini-3-8-flash`                | `debugger`     | read-only                         |
+| plan or code review                        | `fable-5-1`, `gpt-6-astra`       | `gpt-6-1-sol`, `opus-5-5`, `google-opus-4-6`  | `reviewer`     | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5-5`, Google
 `gemini-3-8-flash` with `google-opus-4-6` fallback (degraded family diversity),

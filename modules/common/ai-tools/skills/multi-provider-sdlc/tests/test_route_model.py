@@ -41,8 +41,8 @@ class RouteModelTests(unittest.TestCase):
 
     def test_native_profiles_match_each_provider(self) -> None:
         expected = {
-            "codex": "gpt-6-sol",
-            "opencode": "openai/gpt-6-sol",
+            "codex": "gpt-6.1-sol",
+            "opencode": "openai/gpt-6.1-sol",
             "claude": "opus",
             "copilot": "claude-opus-4.6",
         }
@@ -56,10 +56,11 @@ class RouteModelTests(unittest.TestCase):
     def test_gateway_names_match_provider_projections(self) -> None:
         for provider in ("codex", "claude", "opencode"):
             result = resolver.resolve(self.request(provider=provider, gateway=True))
-            self.assertEqual(result["agent_type"], "gpt-6-sol")
+            self.assertEqual(result["agent_type"], "gpt-6-1-sol")
             self.assertEqual(
                 result["model"],
-                ("cliproxyapi/" if provider == "opencode" else "") + "claude-gpt-6-sol",
+                ("cliproxyapi/" if provider == "opencode" else "")
+                + "claude-gpt-6.1-sol",
             )
             self.assertEqual(
                 result["reasoning_effort"], "high" if provider == "codex" else None
@@ -141,7 +142,7 @@ class RouteModelTests(unittest.TestCase):
         claim = subprocess.run(
             result["claim_argv"], capture_output=True, text=True, check=True
         )
-        self.assertEqual(json.loads(claim.stdout)["model"], "gpt-6-sol")
+        self.assertEqual(json.loads(claim.stdout)["model"], "gpt-6-1-sol")
         blocked = resolver.resolve(request)
         self.assertEqual(blocked["status"], "blocked")
         self.assertEqual(blocked["reason"], "claim-conflict")
@@ -150,7 +151,7 @@ class RouteModelTests(unittest.TestCase):
         request = self.state_request()
         result = resolver.resolve(request)
         self.capability.claim_route(
-            self.state, "task-001", 0, "implementation", "gpt-6-sol"
+            self.state, "task-001", 0, "implementation", "gpt-6-1-sol"
         )
         attempt = subprocess.run(
             result["claim_argv"], capture_output=True, text=True, check=False
@@ -161,7 +162,7 @@ class RouteModelTests(unittest.TestCase):
     def test_quota_fallback_skips_every_model_in_open_pool(self) -> None:
         request = self.state_request()
         claim = self.capability.claim_route(
-            self.state, "task-001", 0, "implementation", "gpt-6-sol"
+            self.state, "task-001", 0, "implementation", "gpt-6-1-sol"
         )
         self.capability.record_outcome(
             self.state, "task-001", claim["claimId"], "quota-exhausted"
@@ -174,14 +175,14 @@ class RouteModelTests(unittest.TestCase):
     def test_named_surface_failure_returns_semantic_worker(self) -> None:
         request = self.state_request()
         claim = self.capability.claim_route(
-            self.state, "task-001", 0, "implementation", "gpt-6-sol"
+            self.state, "task-001", 0, "implementation", "gpt-6-1-sol"
         )
         self.capability.record_outcome(
             self.state, "task-001", claim["claimId"], "agent-type-unavailable"
         )
         result = resolver.resolve(request)
         self.assertEqual(result["agent_type"], "implementer")
-        self.assertEqual(result["model"], "gpt-6-sol")
+        self.assertEqual(result["model"], "gpt-6.1-sol")
         self.assertEqual(result["selection_basis"], "semantic-fallback")
         self.assertNotIn("claim_argv", result)
 
@@ -212,7 +213,7 @@ class RouteModelTests(unittest.TestCase):
             check=True,
         )
         self.assertEqual(process.stderr, "")
-        self.assertEqual(json.loads(process.stdout)["model"], "gpt-6-sol")
+        self.assertEqual(json.loads(process.stdout)["model"], "gpt-6.1-sol")
         self.assertLess(len(process.stdout), 1024)
 
     def test_skill_entry_point_is_script_only(self) -> None:
