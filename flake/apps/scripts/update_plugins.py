@@ -241,8 +241,10 @@ def run_update_in_worktree(task_name: str, task_details: dict, task_events: dict
         if not self_committing:
             update_task_state(task_name, output="Committing changes...")
             run_command("git add -A", cwd=worktree_dir)
+            package_set = {"vim": "vimPlugins", "lua": "luaPackages"}[task_name]
+            commit_message = f"{package_set}: update {time.strftime('%Y-%m-%d')}"
             commit_result = run_command(
-                f'git commit -m "feat({task_name}): update {task_name}"',
+                f'git commit -m "{commit_message}"',
                 cwd=worktree_dir,
                 capture_output=True,
             )
