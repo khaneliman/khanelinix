@@ -364,7 +364,7 @@ class ModelRoutingTests(unittest.TestCase):
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
             False: "8ac33d0f5b12bedd7b336abe9860eb488be8f97ca1508a678b0bc619188abc22",
-            True: "aa399ff0f2a003f862eeb14ffb94d303af5ee61320cb301b25cd8cda775ae34f",
+            True: "9816fed45ee2d70cfa87e3a59fba326f3abf15aa2c3f46fc18c39c8f928d4c7b",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():
@@ -562,7 +562,7 @@ class ModelRoutingTests(unittest.TestCase):
             aliases = modelRouting.cliproxyAliases;
             directDefault = modelRouting.directGatewayModelsFor {{}} "claude-opus-5-5";
             directFable = modelRouting.directGatewayModelsFor {{}} "claude-fable-5-1";
-            directSonnet = modelRouting.directGatewayModelsFor {{}} "claude-sonnet-5";
+            directSonnet = modelRouting.directGatewayModelsFor {{}} "claude-sonnet-5-5";
             directCustom = modelRouting.directGatewayModelsFor {{}} "claude-custom";
           }}
         """

@@ -23,7 +23,7 @@
 		},
 		"anthropic": {
 			"label": "Anthropic",
-			"model_agents": ["opus-5-5", "fable-5-1", "sonnet-5"]
+			"model_agents": ["opus-5-5", "fable-5-1", "sonnet-5-5"]
 		}
 	},
 	"models": {
@@ -181,15 +181,15 @@
 			"workspace_write": false,
 			"publish_alias": false
 		},
-		"sonnet-5": {
+		"sonnet-5-5": {
 			"subscription": "anthropic",
 			"model_family": "anthropic-claude",
 			"quota_pool": "general",
 			"upstream_provider": "claude",
-			"upstream_model": "claude-sonnet-5",
-			"gateway_alias": "claude-sonnet-5",
-			"display_name": "Anthropic · Sonnet 5",
-			"description": "Anthropic Sonnet 5 gateway worker for bounded implementation, correction batches, and focused validation.",
+			"upstream_model": "claude-sonnet-5-5",
+			"gateway_alias": "claude-sonnet-5-5",
+			"display_name": "Anthropic · Sonnet 5.5",
+			"description": "Anthropic Sonnet 5.5 gateway worker for bounded implementation, correction batches, and focused validation.",
 			"reasoning_effort": null,
 			"write": true,
 			"workspace_write": true,

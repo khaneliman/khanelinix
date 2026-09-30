@@ -17,7 +17,7 @@ by `route-model.py` and its JSON contract.
 | -------------------- | -------------------------------------------------------------------------------------------- |
 | OpenAI (Codex)       | `gpt-6-luna`, `gpt-5-6-terra`, `gpt-6-1-sol`, `gpt-6-astra`                                  |
 | Google (Antigravity) | `gpt-oss-120b`, `google-opus-4-6`, `google-sonnet-4-6`, `gemini-3-8-flash`, `gemini-3-1-pro` |
-| Anthropic            | `opus-5-5`, `fable-5-1`, `sonnet-5`                                                          |
+| Anthropic            | `opus-5-5`, `fable-5-1`, `sonnet-5-5`                                                        |
 
 <!-- END GENERATED SUBSCRIPTIONS -->
 
@@ -25,7 +25,7 @@ Prefer Sol for routine implementation and diagnosis; do not reserve it for
 difficult work. Luna remains the cheap default for repository discovery,
 reproduction, mechanical edits, and focused checks, with Gemini Flash and Sol as
 fallbacks. Use Sol and Opus for difficult implementation. Keep `fable-5-1` and
-`gpt-6-astra` as equal preferred review routes. Use `sonnet-5` only when
+`gpt-6-astra` as equal preferred review routes. Use `sonnet-5-5` only when
 explicitly requested. Every subscription requires a live route and current
 authentication.
 
