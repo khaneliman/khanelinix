@@ -63,7 +63,7 @@
 			"upstream_model": "gpt-6.1-sol",
 			"gateway_alias": "claude-gpt-6.1-sol",
 			"display_name": "OpenAI · GPT 6.1 Sol",
-			"description": "OpenAI GPT 6.1 Sol gateway worker for implementation and diagnosis.",
+			"description": "OpenAI GPT 6.1 Sol gateway worker for routine implementation, diagnosis, and code review.",
 			"reasoning_effort": "high",
 			"write": true,
 			"workspace_write": true,
@@ -91,7 +91,7 @@
 			"upstream_model": "gemini-3.8-flash-high",
 			"gateway_alias": "claude-gemini-3.8-flash",
 			"display_name": "Google · Gemini 3.8 Flash",
-			"description": "Google Gemini 3.8 Flash gateway worker for bounded implementation, repository discovery, ambiguous diagnosis, dependency reasoning, and noisy probes.",
+			"description": "Google Gemini 3.8 Flash gateway worker for multimodal analysis, bounded overflow work, and independent test ideas that require verification.",
 			"reasoning_effort": null,
 			"write": true,
 			"workspace_write": true,
@@ -175,7 +175,7 @@
 			"upstream_model": "claude-fable-5-1",
 			"gateway_alias": "claude-fable-5-1",
 			"display_name": "Anthropic · Fable 5.1",
-			"description": "Anthropic Fable 5.1 gateway worker for planning, architecture critique, and independent review.",
+			"description": "Anthropic Fable 5.1 gateway worker for escalated read-only planning and review when task evidence justifies it.",
 			"reasoning_effort": null,
 			"write": false,
 			"workspace_write": false,
@@ -189,7 +189,7 @@
 			"upstream_model": "claude-sonnet-5-5",
 			"gateway_alias": "claude-sonnet-5-5",
 			"display_name": "Anthropic · Sonnet 5.5",
-			"description": "Anthropic Sonnet 5.5 gateway worker for bounded implementation, correction batches, and focused validation.",
+			"description": "Anthropic Sonnet 5.5 gateway worker for provisional bounded implementation, UI iteration, and routine review trials.",
 			"reasoning_effort": null,
 			"write": true,
 			"workspace_write": true,
@@ -299,7 +299,7 @@
 				"codex": "gpt-6-luna"
 			},
 			"gateway": {
-				"claude": "gpt-oss-120b",
+				"claude": "gpt-6-luna",
 				"opencode": "gpt-6-luna"
 			},
 			"reasoning_effort": {}
@@ -312,7 +312,7 @@
 				"codex": "gpt-6-astra"
 			},
 			"gateway": {
-				"claude": "fable-5-1",
+				"claude": "opus-5-5",
 				"opencode": "gpt-6-astra"
 			},
 			"reasoning_effort": { "codex": "high" }
@@ -354,8 +354,8 @@
 		},
 		{
 			"need": "repository discovery",
-			"preferred": ["gpt-6-luna", "gemini-3-8-flash"],
-			"fallbacks": ["gpt-6-1-sol"],
+			"preferred": ["gpt-6-luna"],
+			"fallbacks": ["gpt-6-1-sol", "gemini-3-8-flash"],
 			"semantic_role": "fact-finder",
 			"write_policy": "read-only"
 		},
@@ -375,15 +375,15 @@
 		},
 		{
 			"need": "noisy validation",
-			"preferred": ["gpt-oss-120b"],
-			"fallbacks": ["gpt-6-luna", "gemini-3-8-flash"],
+			"preferred": ["gpt-6-luna"],
+			"fallbacks": ["gemini-3-8-flash", "gpt-oss-120b"],
 			"semantic_role": "test-runner",
 			"write_policy": "build artifacts only"
 		},
 		{
 			"need": "implementation",
 			"preferred": ["gpt-6-1-sol"],
-			"fallbacks": ["gpt-6-luna", "gemini-3-8-flash", "opus-5-5"],
+			"fallbacks": ["opus-5-5", "gpt-6-luna", "gemini-3-8-flash"],
 			"semantic_role": "implementer",
 			"write_policy": "workspace write"
 		},
@@ -403,9 +403,30 @@
 		},
 		{
 			"need": "plan or code review",
-			"preferred": ["fable-5-1", "gpt-6-astra"],
-			"fallbacks": ["gpt-6-1-sol", "opus-5-5", "google-opus-4-6"],
+			"preferred": ["opus-5-5", "gpt-6-astra"],
+			"fallbacks": ["gpt-6-1-sol", "fable-5-1", "google-opus-4-6"],
 			"semantic_role": "reviewer",
+			"write_policy": "read-only"
+		},
+		{
+			"need": "routine code review",
+			"preferred": ["gpt-6-1-sol"],
+			"fallbacks": ["opus-5-5", "gemini-3-8-flash"],
+			"semantic_role": "reviewer",
+			"write_policy": "read-only"
+		},
+		{
+			"need": "bounded Sonnet trial",
+			"preferred": ["sonnet-5-5"],
+			"fallbacks": ["gpt-6-1-sol", "opus-5-5"],
+			"semantic_role": "implementer",
+			"write_policy": "workspace write"
+		},
+		{
+			"need": "multimodal analysis",
+			"preferred": ["gemini-3-8-flash"],
+			"fallbacks": ["gpt-6-1-sol", "opus-5-5"],
+			"semantic_role": "fact-finder",
 			"write_policy": "read-only"
 		}
 	],

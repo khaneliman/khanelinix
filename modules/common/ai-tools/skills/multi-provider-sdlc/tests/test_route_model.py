@@ -101,7 +101,7 @@ class RouteModelTests(unittest.TestCase):
         request = self.request(task_type="plan or code review", gateway=True)
         result = resolver.resolve(request)
         self.assertEqual(result, resolver.resolve(request))
-        self.assertEqual(result["model_id"], "fable-5-1")
+        self.assertEqual(result["model_id"], "opus-5-5")
         self.assertEqual(result["write_policy"], "read-only")
 
     def test_subscription_constraint_selects_review_seat(self) -> None:
@@ -112,6 +112,20 @@ class RouteModelTests(unittest.TestCase):
         )
         self.assertEqual(result["model_id"], "gpt-6-astra")
         self.assertEqual(result["reasoning_effort"], "low")
+
+    def test_task_specific_routes_preserve_review_authority(self) -> None:
+        cases = {
+            "routine code review": ("gpt-6-1-sol", "read-only"),
+            "plan or code review": ("opus-5-5", "read-only"),
+            "bounded Sonnet trial": ("sonnet-5-5", "workspace write"),
+            "multimodal analysis": ("gemini-3-8-flash", "read-only"),
+            "noisy validation": ("gpt-6-luna", "build artifacts only"),
+        }
+        for task, (model, policy) in cases.items():
+            with self.subTest(task=task):
+                result = resolver.resolve(self.request(task_type=task, gateway=True))
+                self.assertEqual(result["model_id"], model)
+                self.assertEqual(result["write_policy"], policy)
 
     def test_unknown_input_fails_closed(self) -> None:
         requests = [
@@ -168,7 +182,7 @@ class RouteModelTests(unittest.TestCase):
             self.state, "task-001", claim["claimId"], "quota-exhausted"
         )
         result = resolver.resolve(request)
-        self.assertEqual(result["model_id"], "gemini-3-8-flash")
+        self.assertEqual(result["model_id"], "opus-5-5")
         blocked = resolver.resolve(request | {"subscription": "openai"})
         self.assertEqual(blocked["status"], "blocked")
 

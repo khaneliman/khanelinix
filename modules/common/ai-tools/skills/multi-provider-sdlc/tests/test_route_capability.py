@@ -200,7 +200,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.initialize()
         self.complete("gpt-6-1-sol", "quota-exhausted")
         plan = capability.plan_route(self.state, self.task_id, "implementation")
-        self.assertEqual(plan["selected"], "gemini-3-8-flash")
+        self.assertEqual(plan["selected"], "opus-5-5")
         self.assertEqual(
             {item["model"] for item in plan["blocked"]},
             {"gpt-6-1-sol", "gpt-6-luna"},
@@ -255,12 +255,12 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertTrue(plan["selectionRequired"])
         self.assertEqual(
             [candidate["model"] for candidate in plan["preferredCandidates"]],
-            ["fable-5-1", "gpt-6-astra"],
+            ["opus-5-5", "gpt-6-astra"],
         )
         self.assertEqual(plan["candidates"][0]["modelFamily"], "anthropic-claude")
         self.assertEqual(
             [candidate["model"] for candidate in plan["candidates"]],
-            ["fable-5-1", "gpt-6-astra", "gpt-6-1-sol", "opus-5-5", "google-opus-4-6"],
+            ["opus-5-5", "gpt-6-astra", "gpt-6-1-sol", "fable-5-1", "google-opus-4-6"],
         )
         self.assertTrue(all(candidate["probe"] for candidate in plan["candidates"]))
         self.assertEqual(plan["semanticFallback"], "reviewer")
@@ -381,8 +381,8 @@ class RouteCapabilityTests(unittest.TestCase):
         state = self.load_state()
 
         self.assertEqual(result["revision"], 2)
-        self.assertIsNone(plan["selected"])
-        self.assertTrue(plan["selectionRequired"])
+        self.assertEqual(plan["selected"], "gpt-6-astra")
+        self.assertFalse(plan["selectionRequired"])
         self.assertEqual(state["routes"]["opus-5-5"], "open")
         self.assertEqual(state["named_agents"], "unknown")
         self.assertEqual(state["claims"], {})
@@ -414,8 +414,8 @@ class RouteCapabilityTests(unittest.TestCase):
         plan = capability.plan_route(self.state, self.task_id, "plan or code review")
         state = self.load_state()
 
-        self.assertIsNone(plan["selected"])
-        self.assertTrue(plan["selectionRequired"])
+        self.assertEqual(plan["selected"], "gpt-6-astra")
+        self.assertFalse(plan["selectionRequired"])
         self.assertEqual(
             plan["blocked"], [{"model": "opus-5-5", "reason": "route:opus-5-5"}]
         )

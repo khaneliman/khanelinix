@@ -21,29 +21,48 @@ by `route-model.py` and its JSON contract.
 
 <!-- END GENERATED SUBSCRIPTIONS -->
 
-Prefer Sol for routine implementation and diagnosis; do not reserve it for
-difficult work. Luna remains the cheap default for repository discovery,
-reproduction, mechanical edits, and focused checks, with Gemini Flash and Sol as
-fallbacks. Use Sol and Opus for difficult implementation. Keep `fable-5-1` and
-`gpt-6-astra` as equal preferred review routes. Use `sonnet-5-5` only when
-explicitly requested. Every subscription requires a live route and current
-authentication.
+Favor the existing Codex and Claude subscriptions for ordinary coding work.
+Google AI Pro is secondary: use Gemini for supported multimodal inputs, bounded
+overflow, or a useful independent perspective. Compare accepted work, rework,
+elapsed time, and actual subscription usage, not API prices alone.
+
+Use Luna for bounded discovery, reproduction, mechanical edits, and checks; Sol
+for routine implementation and review; Opus or Astra for serious review and
+sustained judgment. Keep Fable as an evidence-driven escalation, not the first
+reviewer for every change. For architecture or high-risk review, use
+`plan or code review`; for an ordinary diff, use `routine code review`.
+
+Sonnet 5.5 is a provisional candidate, not a blanket replacement for Opus. Use
+`bounded Sonnet trial` for an intentional implementation or UI experiment; keep
+review trials read-only even when the selected model can write. Compare against
+the current default on representative local tasks before promotion. Sol 6.1 also
+has limited independent evidence at this snapshot date. See the
+[September 2026 evidence and adoption criteria](routing-evidence-2026-09.md).
+
+The named task preferences below apply to gateway selection. Native dispatch
+uses provider-specific semantic-role profiles, not the named-model ranking: for
+example, both review needs use the native `reviewer` profile. Do not claim a
+trial or multimodal route ran unless the actual model and harness support it.
+Every subscription requires a live route and current authentication.
 
 ## Preferred routes
 
 <!-- BEGIN GENERATED ROUTES -->
 
-| Need                                       | Preferred                        | Fallback                                      | Semantic role  | Write policy                      |
-| ------------------------------------------ | -------------------------------- | --------------------------------------------- | -------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-6-luna`                     | `gemini-3-8-flash`                            | `mechanic`     | read-only unless edit is explicit |
-| repository discovery                       | `gpt-6-luna`, `gemini-3-8-flash` | `gpt-6-1-sol`                                 | `fact-finder`  | read-only                         |
-| bounded reproduction                       | `gpt-6-luna`                     | `gpt-6-1-sol`, `opus-5-5`, `gemini-3-8-flash` | `probe-runner` | build artifacts only              |
-| focused validation                         | `gpt-6-luna`                     | `gemini-3-8-flash`                            | `checker`      | build artifacts only              |
-| noisy validation                           | `gpt-oss-120b`                   | `gpt-6-luna`, `gemini-3-8-flash`              | `test-runner`  | build artifacts only              |
-| implementation                             | `gpt-6-1-sol`                    | `gpt-6-luna`, `gemini-3-8-flash`, `opus-5-5`  | `implementer`  | workspace write                   |
-| difficult implementation                   | `gpt-6-1-sol`, `opus-5-5`        | `gpt-6-luna`, `gemini-3-8-flash`              | `implementer`  | workspace write                   |
-| ambiguous diagnosis                        | `gpt-6-1-sol`                    | `opus-5-5`, `gemini-3-8-flash`                | `debugger`     | read-only                         |
-| plan or code review                        | `fable-5-1`, `gpt-6-astra`       | `gpt-6-1-sol`, `opus-5-5`, `google-opus-4-6`  | `reviewer`     | read-only                         |
+| Need                                       | Preferred                 | Fallback                                      | Semantic role  | Write policy                      |
+| ------------------------------------------ | ------------------------- | --------------------------------------------- | -------------- | --------------------------------- |
+| obvious lookup or mechanical one-file edit | `gpt-6-luna`              | `gemini-3-8-flash`                            | `mechanic`     | read-only unless edit is explicit |
+| repository discovery                       | `gpt-6-luna`              | `gpt-6-1-sol`, `gemini-3-8-flash`             | `fact-finder`  | read-only                         |
+| bounded reproduction                       | `gpt-6-luna`              | `gpt-6-1-sol`, `opus-5-5`, `gemini-3-8-flash` | `probe-runner` | build artifacts only              |
+| focused validation                         | `gpt-6-luna`              | `gemini-3-8-flash`                            | `checker`      | build artifacts only              |
+| noisy validation                           | `gpt-6-luna`              | `gemini-3-8-flash`, `gpt-oss-120b`            | `test-runner`  | build artifacts only              |
+| implementation                             | `gpt-6-1-sol`             | `opus-5-5`, `gpt-6-luna`, `gemini-3-8-flash`  | `implementer`  | workspace write                   |
+| difficult implementation                   | `gpt-6-1-sol`, `opus-5-5` | `gpt-6-luna`, `gemini-3-8-flash`              | `implementer`  | workspace write                   |
+| ambiguous diagnosis                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-3-8-flash`                | `debugger`     | read-only                         |
+| plan or code review                        | `opus-5-5`, `gpt-6-astra` | `gpt-6-1-sol`, `fable-5-1`, `google-opus-4-6` | `reviewer`     | read-only                         |
+| routine code review                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-3-8-flash`                | `reviewer`     | read-only                         |
+| bounded Sonnet trial                       | `sonnet-5-5`              | `gpt-6-1-sol`, `opus-5-5`                     | `implementer`  | workspace write                   |
+| multimodal analysis                        | `gemini-3-8-flash`        | `gpt-6-1-sol`, `opus-5-5`                     | `fact-finder`  | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5-5`, Google
 `gemini-3-8-flash` with `google-opus-4-6` fallback (degraded family diversity),
@@ -59,6 +78,13 @@ Escalate for a documented capability gap, repeated evidenced failure, or risk
 that the default cannot cover. Return the actual model, subscription, family,
 effort, outcome, and fallback reason when observable. Mark unavailable fields
 unknown; do not infer runtime dispatch from the configured route.
+
+Do not default to max effort. More reasoning can add scope drift, false
+positives, and timeouts rather than quality. Keep the current role effort unless
+task evidence justifies high or xhigh; use max only for a concrete unresolved
+problem. Keep Standard speed for background work unless latency justifies the
+extra subscription usage. Never broaden a write policy to gain access to a
+stronger model: Astra and Fable gateway workers remain read-only.
 
 `model_family` identifies a shared model lineage, not the subscription paying
 for it. Distinct families provide different perspectives, not proof of
@@ -206,12 +232,14 @@ binding evidence.
   only after an explicit error, shutdown, route failure, or actual runtime
   limit. Never invent a shorter deadline from repeated poll expiry.
 
-Choose for capability and total retry cost. Among equal routes, prefer the
-independent quota pool with more headroom. Keep Luna first for obvious low-risk
-lookups, mechanical edits, focused checks, discovery, and reproduction. Use Sol
-for implementation and diagnosis. Use Luna for implementation fallback and broad
-tests. Keep Terra explicit-only. Prefer provider diversity only after capability
-and quota-pool fit. Do not duplicate work only to balance subscriptions.
+Choose for capability and total retry cost. Among capable routes, favor the
+primary subscriptions and then independent quota headroom. A quota fallback must
+still fit the task: Luna is suitable for a narrow mechanical packet, not a
+silent downgrade for an unresolved cross-cutting design. Rescope or let the
+parent continue if no capable route remains. Keep Terra explicit-only and
+GPT-OSS as a legacy validation fallback, not a preferred use of Google quota.
+Prefer a reviewer from another model family when available and useful; do not
+duplicate routine work merely to balance subscriptions or manufacture diversity.
 
 Confirm agent type before dispatch and omit model overrides. Unknown type means
 use its semantic role or one bounded native worker. If the host returns
