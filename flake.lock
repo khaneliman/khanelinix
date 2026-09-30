@@ -162,6 +162,22 @@
         "type": "github"
       }
     },
+    "claude-plugins-official": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1790717299,
+        "narHash": "sha256-JNUkda+v5LD9wDCg/R4c4zh5vACzBaxv6iIyZYYmvh0=",
+        "owner": "anthropics",
+        "repo": "claude-plugins-official",
+        "rev": "2a8ad9f74633d10e3d9bb0660a03bfc6e50584b1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anthropics",
+        "repo": "claude-plugins-official",
+        "type": "github"
+      }
+    },
     "codex-desktop-linux": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -1108,6 +1124,7 @@
         "adv360-zmk": "adv360-zmk",
         "anyrun-nixos-options": "anyrun-nixos-options",
         "catppuccin": "catppuccin",
+        "claude-plugins-official": "claude-plugins-official",
         "codex-desktop-linux": "codex-desktop-linux",
         "disko": "disko",
         "fast-nix-gc": "fast-nix-gc",

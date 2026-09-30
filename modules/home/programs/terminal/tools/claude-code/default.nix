@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -15,6 +16,7 @@ let
   aiTools = import (lib.getFile "modules/common/ai-tools") {
     gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
     inherit lib pkgs;
+    pluginSource = inputs.claude-plugins-official;
   };
   hooks = lib.zipAttrsWith (_: values: lib.concatLists values) (
     lib.importFiles ./hooks {
@@ -202,7 +204,7 @@ in
         };
       };
 
-      inherit (aiTools.claudeCode) agents commands;
+      inherit (aiTools.claudeCode) agents commands plugins;
       inherit (aiTools.claudeCode) skills;
       context = aiTools.claudeCode.contextOverride;
     };

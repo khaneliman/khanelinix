@@ -97,6 +97,10 @@
         systems.follows = "systems";
       };
     };
+    claude-plugins-official = {
+      url = "github:anthropics/claude-plugins-official";
+      flake = false;
+    };
     codex-desktop-linux = {
       url = "github:ilysenko/codex-desktop-linux";
       inputs = {

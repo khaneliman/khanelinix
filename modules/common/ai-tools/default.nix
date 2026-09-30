@@ -2,6 +2,7 @@
   gatewayEnabled ? false,
   lib,
   pkgs ? null,
+  pluginSource ? null,
   ...
 }:
 
@@ -21,6 +22,7 @@ let
     (builtins.readFile codexContext)
   ];
   skillsDir = ./skills;
+  frontendDesignPlugin = "frontend-design@claude-plugins-official";
   programOrchestrationDir = ./program-orchestration;
   programOrchestration = {
     canonicalSkill = skillsDir + "/program-orchestration";
@@ -238,6 +240,7 @@ let
   harnessSkillPolicy = {
     codex = {
       excludeLocal = [
+        "frontend-design"
         "mcp-builder"
         "security-toolkit"
       ];
@@ -254,6 +257,7 @@ let
 
     claudeCode = {
       excludeLocal = [
+        "frontend-design"
         "mcp-builder"
         "security-toolkit"
       ];
@@ -373,6 +377,9 @@ in
     ;
 
   claudeCode = {
+    plugins = lib.optionalAttrs (pluginSource != null) {
+      frontend-design = pluginSource + "/plugins/frontend-design";
+    };
     commands = planningWithFilesCommands;
     agents = aiAgents.toClaudeMarkdown;
     contextOverride = claudeContextOverride;
@@ -388,6 +395,15 @@ in
   };
 
   codex = {
+    marketplaces = lib.optionalAttrs (pluginSource != null) {
+      claude-plugins-official = {
+        source_type = "local";
+        source = toString pluginSource;
+      };
+    };
+    plugins = lib.optionalAttrs (pluginSource != null) {
+      ${frontendDesignPlugin}.enabled = true;
+    };
     disabledSystemSkills = disabledSystemSkillsForHarness "codex";
     agents = aiAgents.toCodexAgents;
     contextOverride = codexContextOverride;

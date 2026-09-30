@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
 
@@ -52,6 +53,7 @@ let
   ) config.programs.mcp.servers;
   aiTools = import (lib.getFile "modules/common/ai-tools") {
     inherit gatewayEnabled lib pkgs;
+    pluginSource = inputs.claude-plugins-official;
   };
   tomlFormat = pkgs.formats.toml { };
   codexConfigPath =
@@ -199,6 +201,13 @@ in
             ]
           }
         '';
+        codexPlugins = lib.hm.dag.entryAfter [ "codexConfig" ] (
+          lib.concatMapStringsSep "\n" (plugin: ''
+            run ${lib.getExe' pkgs.coreutils "env"} CODEX_HOME=${lib.escapeShellArg codexConfigPath} \
+              ${lib.getExe codexPackage} plugin add ${lib.escapeShellArg plugin} \
+              || echo "Codex plugin install failed: ${plugin}; retry codex plugin add ${plugin}" >&2
+          '') (lib.attrNames aiTools.codex.plugins)
+        );
       }
       // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
         # Codex plugin caches are mutable content downloaded at runtime, so
@@ -287,6 +296,7 @@ in
 
       # https://developers.openai.com/codex/config-schema.json
       settings = {
+        inherit (aiTools.codex) marketplaces plugins;
         apps._default.default_tools_approval_mode = "writes";
 
         # Nix rebuilds change the ad-hoc Mach-O CDHash. Keychain then treats
