@@ -102,8 +102,9 @@ in
         };
       };
 
-      # using nixos module
-      services.network-manager-applet.enable = mkDefault true;
+      services.network-manager-applet.enable = mkDefault (
+        osConfig.networking.networkmanager.enable or true
+      );
       services = {
         blueman-applet.enable = mkDefault (
           !(osConfig.services.blueman.enable or false) || !(osConfig.services.blueman.withApplet or true)

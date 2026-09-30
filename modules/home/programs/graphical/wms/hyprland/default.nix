@@ -100,7 +100,6 @@ in
           # NOTE: removed from nixpkgs
           # kdePackages.xwaylandvideobridge
           khanelinix.record_screen
-          networkmanagerapplet
           slurp
         ];
 

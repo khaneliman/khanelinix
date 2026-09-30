@@ -76,7 +76,6 @@ in
           # kdePackages.xwaylandvideobridge
           khanelinix.record_screen
           libnotify
-          networkmanagerapplet
           playerctl
           slurp
           smile

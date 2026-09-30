@@ -48,9 +48,6 @@ in
             ++ lib.optionals (osConfig.programs._1password-gui.enable or false) [
               { command = mkStartCommand { slice = "b"; } "1password --silent"; }
             ]
-            ++ lib.optionals (osConfig.networking.networkmanager.enable or false) [
-              { command = mkStartCommand { slice = "b"; } "nm-applet"; }
-            ]
           )
           ++ [
             { command = mkStartCommand { slice = "b"; } "$(wayvnc $(tailscale ip --4))"; }
