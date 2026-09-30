@@ -17,6 +17,10 @@ Do not combine routing, prompt, tool, model, and effort changes in one candidate
 unless the combined system is the actual unit under review. Record every
 candidate difference when isolation is not practical.
 
+Classify each change as product behavior (instructions, workflows, or routes) or
+evaluation-only (harness, rubric, evaluator, or data). Separate mixed changes so
+evaluation repairs are not credited as product improvements.
+
 ## Freeze the Corpus
 
 Create a scrubbed JSON corpus with `scripts/workflow_eval.py validate <corpus>`.
@@ -32,6 +36,11 @@ Include positive and negative cases for every changed trigger. Include explicit
 invocation cases when a skill is explicit-only. Remove secrets, live mutable
 identifiers, expected answers, and hints that exist only to help the evaluator.
 Freeze the corpus and source revision before running candidates.
+
+During repeated tuning, keep holdout tasks untouched and unavailable to tuners;
+use separate cases for tuning. Once holdout cases or their results inform a
+change, treat those cases as tuning evidence and use a fresh untouched holdout
+for the next promotion decision. Freeze and blind that holdout in the same way.
 
 The canonical routing corpus lives at
 `modules/common/ai-tools/eval/workflow-routing-baseline.json`. Keep every corpus
@@ -139,6 +148,11 @@ Freeze acceptance rules before reviewing candidate labels. Require:
 
 Have a reviewer judge ambiguous artifacts without candidate identity. Unblind
 only after deterministic scoring and human judgment are recorded.
+
+Report tuning evidence separately from untouched holdout results. Never credit
+relaxed grading or changed evaluation data as product improvement. When the
+harness, rubric, evaluator, or data changes, rerun baseline and candidate under
+the same frozen evaluation conditions before attributing a gain to the product.
 
 Promotion always needs a human decision. Change one semantic route at a time,
 retain the previous route, and define a rollback trigger. A provider outage,
