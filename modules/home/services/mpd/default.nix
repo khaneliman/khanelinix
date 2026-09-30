@@ -88,12 +88,11 @@ in
         '';
       };
 
-      mpd-mpris.enable = true;
       mpris-proxy.enable = true;
       # TODO: move to nixos service?
       # playerctld.enable = true;
 
-      # MPRIS 2 support to mpd
+      # Only one MPD bridge can own org.mpris.MediaPlayer2.mpd.
       mpdris2 = {
         enable = true;
         settings = {
