@@ -34,6 +34,18 @@ in
   };
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion =
+          !(
+            config.services.mpdris2.enable
+            && config.services.mpd-mpris.enable
+            && config.services.mpd-mpris.settings.instance-name == null
+          );
+        message = "services.mpdris2 and services.mpd-mpris both own org.mpris.MediaPlayer2.mpd; enable only one bridge.";
+      }
+    ];
+
     home.packages =
       with pkgs;
       [
@@ -94,7 +106,7 @@ in
 
       # Only one MPD bridge can own org.mpris.MediaPlayer2.mpd.
       mpdris2 = {
-        enable = true;
+        enable = lib.mkDefault (!config.services.mpd-mpris.enable);
         settings = {
           Bling = {
             notify = true;
