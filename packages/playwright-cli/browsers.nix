@@ -50,13 +50,13 @@
 }:
 
 let
-  # Pins for @playwright/cli 0.1.19 -> playwright-core 1.63.0-alpha-2026-08-31.
-  chromiumRevision = "1243";
-  headlessShellRevision = "1243";
-  browserVersion = "153.0.8010.12";
+  # Pins for @playwright/cli 0.1.22 -> playwright-core 1.64.0-alpha-1790635538000.
+  chromiumRevision = "1247";
+  headlessShellRevision = "1247";
+  browserVersion = "155.0.8059.12";
 
-  chromiumHash = "sha256-ORdMu1e4Peolr8rdfvzgeaFhC8RgBipaOsAm7e3ZeqE=";
-  headlessShellHash = "sha256-GLqqZOwtnJig+ZCIT8FYsIxZGSFTmRwLbqNXeSOdJXA=";
+  chromiumHash = "sha256-w90ze/7xfsSlR2TYOK8SBpdjXvZ7hGsozdIgTqt2c9Y=";
+  headlessShellHash = "sha256-P9veFZJxNZLxMjrqRZrxoQzVkqYY9j6tct3WqFOa9RY=";
 
   fontconfig_file = makeFontsConf { fontDirectories = [ ]; };
 
