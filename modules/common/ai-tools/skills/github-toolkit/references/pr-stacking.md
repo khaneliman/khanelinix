@@ -55,6 +55,10 @@ non-interactive agent. Prefer the non-interactive path:
 | Merge        | `gh stack merge <pr> --squash --yes`                                   | bare `gh stack merge` prompts              |
 | Restructure  | none                                                                   | `gh stack modify` is TUI-only              |
 
+Preserve each existing PR's draft or ready state unless the request authorizes
+changing it. Both `gh stack submit --open` and `gh stack link --open` mark
+existing PRs ready for review too, not just new ones.
+
 For restructuring, report the intended layer changes and the `gh stack modify`
 keys to the user rather than attempting it: drop `x`, fold down `d`, fold up
 `u`, insert below `i`, insert above `I`, rename `r`, reorder Shift+arrow, undo
@@ -66,7 +70,20 @@ session. Follow any modify session with `gh stack submit`.
 `gh stack view --json` is the deterministic collector for a checked-out stack.
 Do not reconstruct layer order from branch names or base refs by hand.
 
-`gh pr view --json stack` does not exist. The field is GraphQL-only:
+`gh pr view --json stack` does not exist, but REST PR resources expose native
+stack membership without requiring a locally tracked stack:
+
+```bash
+gh api "repos/OWNER/REPO/pulls/N" \
+  --jq '{number, base: .base.ref, head: .head.ref, state, draft, stack}'
+```
+
+After `submit` or `link`, re-read each PR's `stack.number`, `stack.position`,
+`stack.size`, base, and head. Check the bottom-to-top order and every adjacent
+base/head pair. Correct branch bases alone do not prove native membership;
+`stack: null` means the PR is not registered in a native stack.
+
+GraphQL also exposes stack membership:
 
 ```bash
 gh api graphql -f query='
@@ -114,15 +131,22 @@ with `--downstack` (trunk up to current), `--upstack` (current up to top), or
 `--force-with-lease` per branch and is non-atomic: passing branches update even
 when another is rejected. It never creates or updates PRs.
 
+Review bottom-up when dependencies affect the review. After propagating a
+lower-layer change, re-read upper-layer checks and reassess prior approvals when
+dependent behavior or assumptions changed, even if the layer diffs look
+unchanged. This does not imply GitHub automatically dismisses every approval.
+
 `gh stack init` enables `git rerere`, so conflict resolutions persist across the
 repeated rebases a stack requires.
 
 ## Merging
 
-Stacks merge bottom-up. Selecting a PR merges it plus every unmerged PR below it
-as one all-or-nothing operation; isolating a middle PR is impossible. PRs above
-stay open and are automatically rebased to target the stack base, moving the
-next one to the bottom.
+Stacks merge bottom-up. Selecting a PR includes it plus every unmerged PR below
+it; isolating a middle PR is impossible. A direct merge is all-or-nothing for
+that selected range. With a merge queue, the range is enqueued together but can
+land in separate groups. After landing, PRs above stay open and the next
+unmerged PR is automatically rebased to target the stack base, moving it to the
+bottom.
 
 - Merge commit, squash, and rebase methods all work. Resulting history matches
   merging each PR individually from the bottom.
@@ -142,16 +166,17 @@ merged layer. Keep open dependents and queued layers outside cleanup scope.
 
 ## Failure Modes
 
-| Symptom                           | Cause                                                                   | Remedy                                                                                                                                                           |
-| --------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Merge box blocks merge            | non-linear history after a push to a lower branch or trunk moving ahead | `gh stack rebase` then `gh stack push`, or the **Rebase stack** button                                                                                           |
-| Rebase or sync stops              | conflict                                                                | resolve, `git add`, then `gh stack rebase --continue`; `--abort` restores prior state. Interrupted sync restores all branches; recover with `rebase` then `push` |
-| Merge stops partway               | unexpected conflict or intermittent failure                             | PRs below stay landed; fix the failing PR and retry the remainder                                                                                                |
-| Ejected from merge queue          | a lower PR left the queue                                               | everything above is ejected; re-add the stack once resolved                                                                                                      |
-| Unsigned commits appear           | server-side rebase commits are not signed                               | rebase locally with `gh stack rebase`, then `gh stack push`                                                                                                      |
-| Mid-stack PR closed               | closed layer blocks everything above                                    | unstack on the web or restructure with `gh stack modify`, then rebuild                                                                                           |
-| Modify will not start             | dirty tree, rebase underway, queued PR, or non-linear history           | clean the state; run `gh stack rebase` first                                                                                                                     |
-| Stack creation fails across forks | cross-fork stacks are unsupported                                       | no workaround; move branches into one repository                                                                                                                 |
+| Symptom                            | Cause                                                                   | Remedy                                                                                                                                                           |
+| ---------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Merge box blocks merge             | non-linear history after a push to a lower branch or trunk moving ahead | `gh stack rebase` then `gh stack push`, or the **Rebase stack** button                                                                                           |
+| Rebase or sync stops               | conflict                                                                | resolve, `git add`, then `gh stack rebase --continue`; `--abort` restores prior state. Interrupted sync restores all branches; recover with `rebase` then `push` |
+| Direct stack merge fails           | a selected PR cannot merge                                              | none of the selected range lands; requery state, fix the blocker, then retry                                                                                     |
+| Queue stops after some layers land | selected layers processed in separate merge groups                      | requery every selected PR; preserve confirmed landings and queued layers, then address blockers on the remaining open layers                                     |
+| Ejected from merge queue           | a lower PR left the queue                                               | everything above is ejected; re-add the stack once resolved                                                                                                      |
+| Unsigned commits appear            | server-side rebase commits are not signed                               | rebase locally with `gh stack rebase`, then `gh stack push`                                                                                                      |
+| Mid-stack PR closed                | closed layer blocks everything above                                    | unstack on the web or restructure with `gh stack modify`, then rebuild                                                                                           |
+| Modify will not start              | dirty tree, rebase underway, queued PR, or non-linear history           | clean the state; run `gh stack rebase` first                                                                                                                     |
+| Stack creation fails across forks  | cross-fork stacks are unsupported                                       | no workaround; move branches into one repository                                                                                                                 |
 
 Unstacking removes open, draft, and closed PRs; merged and queued PRs stay
 stacked, so a stack containing either never fully dissolves.
@@ -177,3 +202,23 @@ several PRs, or merge several PRs. Treat each as a separate authority.
   CI. Call out that risk first.
 - Unsupported surfaces: cross-fork stacks and GitHub Desktop. The feature is in
   public preview and subject to change.
+
+## Completion Evidence
+
+After a remote mutation, requery GitHub rather than relying on command success
+or local tracking alone. Before reporting a stack clean, verify:
+
+- the trunk, native stack number, size, and bottom-to-top PR order;
+- every PR's base, head, state, draft state, and native position, including
+  adjacent base/head chaining;
+- current branch ancestry, no merge commits between layers, focused layer diffs,
+  required checks, and any review requirements;
+- any remaining conflicts, draft PRs, review or CI blockers, or pending queue
+  entries. A queued PR is not a confirmed merge.
+
+Report the stack identity, ordered PRs, and outstanding blockers. For merges,
+confirm each selected PR's remote state before running closeout.
+
+References:
+[Stack APIs and webhooks](https://docs.github.com/en/pull-requests/reference/stacked-pull-requests-apis-and-webhooks),
+[Stack CLI commands](https://docs.github.com/en/pull-requests/reference/stacked-prs-cli-commands).
