@@ -17,24 +17,24 @@
 }:
 
 let
-  version = "0.56.5";
+  version = "0.69.0";
 
   sources = {
     x86_64-linux = {
       url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-linux-x86_64.tar.gz";
-      hash = "sha256-8HtyhYTn6d76aaMhhHMrcTJCxEBCHUrENSmkWUvZImI=";
+      hash = "sha256-YjuJTGmpbqNdt4qTJbsJf6u+dOX8PqkKu2B7ycK4gwE=";
     };
     aarch64-linux = {
       url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-linux-aarch64.tar.gz";
-      hash = "sha256-QTVIrRt48YXB4bHAifBQlllI2pG4oRhC89yptlETxNs=";
+      hash = "sha256-/c9MhfrQHkk8LaPVZtQ2spGm3kg4vR6HbAFUvR3hvls=";
     };
     aarch64-darwin = {
       url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-macos-arm64.tar.gz";
-      hash = "sha256-inwik+qkvpIn911jk6DW3sQvX94eAeLYN3LOjesAVU8=";
+      hash = "sha256-CBa/19pW2BEmVyA0FnzITtrhJCnPlRkkg7V3XSKnx7g=";
     };
     x86_64-darwin = {
       url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-macos-x86_64.tar.gz";
-      hash = "sha256-/BMl3XGhBMsEF5SZxfV1nCYwvBNwAoiuaBozLmFYkOs=";
+      hash = "sha256-ClEsI5ORJvseYjeaN32HrO8yLwlkIPAaEu996RAW0Ss=";
     };
   };
 
@@ -68,10 +68,11 @@ stdenv.mkDerivation {
 
     install -Dm0755 CodexBarCLI $out/bin/.codexbar-wrapped
     install -Dm0644 VERSION $out/share/codexbar-cli/VERSION
+    ln -s ../share/codexbar-cli/VERSION $out/bin/VERSION
 
     ${lib.optionalString stdenv.hostPlatform.isLinux ''
       # agy renders login and keyring status while it restores a valid token.
-      # CodexBar 0.56.5 treats those transient lines as terminal auth failures
+      # CodexBar treats those transient lines as terminal auth failures
       # and kills agy before its local quota server is ready. Disable the early
       # PTY auth classification; CodexBar's existing 15-second readiness
       # timeout still bounds a genuinely unauthenticated session.
