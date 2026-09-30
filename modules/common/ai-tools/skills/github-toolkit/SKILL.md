@@ -1,6 +1,6 @@
 ---
 name: github-toolkit
-description: GitHub maintainer queues, issue discovery, triage, and creation, pull-request creation and stacking, review authoring and feedback, CI check-fix workflows using gh CLI. Use for read or write work on GitHub issues, PRs, stacks, reviews, or checks.
+description: GitHub maintainer queues; issue discovery, triage, and creation; PR creation, walkthroughs, and stacking; review authoring and feedback; CI checks and fixes using gh CLI. Use for read or write work on GitHub issues, PRs, stacks, reviews, or checks.
 ---
 
 # GitHub Toolkit
@@ -30,6 +30,8 @@ Route to one mode and load only named reference:
 10. **pr-merge**: merge an authorized PR or finish post-merge closeout. Read
     [pr-merge.md](references/pr-merge.md). Use its closeout after stack merges
     too.
+11. **pr-walkthrough**: explain a PR or prepare a reviewer guide. Read
+    [pr-walkthrough.md](references/pr-walkthrough.md).
 
 If intent is unclear, ask for mode before GitHub writes or source edits.
 

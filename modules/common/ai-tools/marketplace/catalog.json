@@ -186,11 +186,11 @@
 					"figure-it-out",
 					"git-toolkit"
 				],
-				"optional": []
+				"optional": ["how"]
 			},
 			"displayName": "GitHub Toolkit",
 			"description": "Manage GitHub queues, issues, pull requests, reviews, and CI.",
-			"version": "0.1.22",
+			"version": "0.1.23",
 			"category": "Developer Tools"
 		},
 		{
