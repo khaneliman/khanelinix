@@ -60,7 +60,7 @@ npx skills add khaneliman/khanelinix \
 
 # web: frontend, browser-game, and TypeScript work
 npx skills add khaneliman/khanelinix \
-  --skill develop-web-game frontend-design typescript-best-practices \
+  --skill develop-web-game typescript-best-practices \
   --global --copy --yes
 
 # game-development: game runtimes and Blender asset authoring
@@ -72,6 +72,35 @@ npx skills add khaneliman/khanelinix \
 npx skills add khaneliman/khanelinix \
   --skill technical-writing unslop --global --copy --yes
 ```
+
+## Use upstream frontend design
+
+Install Anthropic's official `frontend-design` plugin alongside the `web`
+bundle. This marketplace does not publish a local design fork.
+
+```sh
+claude plugin install frontend-design@claude-plugins-official
+
+codex plugin marketplace add anthropics/claude-plugins-official
+codex plugin add frontend-design@claude-plugins-official
+```
+
+The Nix-managed setup uses one locked `claude-plugins-official` flake input for
+both providers. Claude loads the plugin with Home Manager's native
+`programs.claude-code.plugins` option. Codex uses that source as a local
+marketplace and installs the selected plugin into its native cache during
+activation. The managed Codex plugin is re-enabled on activation; change its Nix
+declaration to remove it from the managed selection.
+
+Update the shared source with `nix flake update claude-plugins-official`, then
+rebuild and activate through the normal configuration workflow. Neither provider
+installs the whole upstream catalog. Other Agent Skills-compatible providers can
+install the skill from
+[Anthropic's upstream skill repository](https://github.com/anthropics/skills/tree/main/skills/frontend-design).
+
+`engineering-workflow` owns the local UI verification and screenshot iteration
+method. It calls the installed design skill without duplicating aesthetic
+guidance or adding a separate iteration skill.
 
 ## Start with the workflow
 

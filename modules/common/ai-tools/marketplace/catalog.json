@@ -80,7 +80,7 @@
 			"name": "develop-web-game",
 			"dependencies": {
 				"required": [],
-				"optional": ["frontend-design", "playwright"]
+				"optional": ["playwright"]
 			},
 			"displayName": "Develop Web Game",
 			"description": "Build and debug playable HTML and JavaScript games.",
@@ -148,7 +148,7 @@
 			},
 			"displayName": "Engineering Workflow",
 			"description": "Run routine software changes through a complete lifecycle.",
-			"version": "0.1.24",
+			"version": "0.1.25",
 			"category": "Developer Tools"
 		},
 		{
@@ -164,17 +164,6 @@
 			"displayName": "Figure It Out",
 			"description": "Design an auditable playbook when no narrower one fits.",
 			"version": "0.1.9",
-			"category": "Developer Tools"
-		},
-		{
-			"name": "frontend-design",
-			"dependencies": {
-				"required": [],
-				"optional": []
-			},
-			"displayName": "Frontend Design",
-			"description": "Create distinctive production-grade frontend interfaces.",
-			"version": "0.1.5",
 			"category": "Developer Tools"
 		},
 		{
@@ -544,11 +533,7 @@
 		},
 		"web": {
 			"description": "Frontend, browser-game, and TypeScript work.",
-			"plugins": [
-				"develop-web-game",
-				"frontend-design",
-				"typescript-best-practices"
-			]
+			"plugins": ["develop-web-game", "typescript-best-practices"]
 		},
 		"workflow-core": {
 			"description": "Engineering workflow system; the skills call each other by name.",

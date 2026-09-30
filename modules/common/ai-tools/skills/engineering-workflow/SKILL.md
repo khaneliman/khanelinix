@@ -80,3 +80,6 @@ do not repeat completed checks.
 - Contested or high-stakes review: `interrogate`. Concrete provider routing:
   `multi-provider-sdlc`.
 - Test-first work, only when requested: `tdd`.
+- New or redesigned UI: use the installed `frontend-design` skill, including
+  namespaced plugin variants. For UI changes, read
+  [Frontend verification](references/frontend-verification.md) during Verify.

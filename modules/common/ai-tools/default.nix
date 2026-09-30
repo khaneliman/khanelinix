@@ -240,7 +240,6 @@ let
   harnessSkillPolicy = {
     codex = {
       excludeLocal = [
-        "frontend-design"
         "mcp-builder"
         "security-toolkit"
       ];
@@ -257,7 +256,6 @@ let
 
     claudeCode = {
       excludeLocal = [
-        "frontend-design"
         "mcp-builder"
         "security-toolkit"
       ];

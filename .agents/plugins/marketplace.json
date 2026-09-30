@@ -149,18 +149,6 @@
 			"category": "Developer Tools"
 		},
 		{
-			"name": "frontend-design",
-			"source": {
-				"source": "local",
-				"path": "./modules/common/ai-tools/skills/frontend-design"
-			},
-			"policy": {
-				"installation": "AVAILABLE",
-				"authentication": "ON_INSTALL"
-			},
-			"category": "Developer Tools"
-		},
-		{
 			"name": "git-toolkit",
 			"source": {
 				"source": "local",
