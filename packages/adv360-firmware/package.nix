@@ -31,7 +31,7 @@ buildSplitKeyboard {
 
   nativeBuildInputs = [ python3Packages.standard-pkg-resources ];
 
-  zephyrDepsHash = "sha256-c4wNOAIFKwBc+QxSQx7iuomp0pdVy7PFXSMsa6XMEiA=";
+  zephyrDepsHash = "sha256-tj8A83bnnFUh09+MfJ7SddDREja5xxVO/CIE+QXDoBw=";
 
   meta = {
     description = "Kinesis Advantage360 Pro firmware with Khanelinix keymap";
