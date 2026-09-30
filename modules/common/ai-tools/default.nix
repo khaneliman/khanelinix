@@ -120,22 +120,6 @@ let
     hook = skillRoutingDir + "/hooks/skill_routing_hook.py";
   };
 
-  authorityGateDir = ./authority-gate;
-  authorityGate = {
-    # The gate imports its package and the style guard from its own directory.
-    package =
-      if pkgs == null then
-        null
-      else
-        pkgs.runCommand "authority-gate" { } ''
-          mkdir -p $out
-          cp ${authorityGateDir + "/hooks/authority_gate.py"} $out/authority_gate.py
-          cp -r ${authorityGateDir + "/hooks/authority"} $out/authority
-          cp ${technicalWriting.guard} $out/style_guard.py
-        '';
-    codex.requirements = import (authorityGateDir + "/codex/requirements.nix");
-  };
-
   antigravityOkfMemoryPlugin =
     if pkgs == null then
       null
@@ -204,7 +188,6 @@ let
       (name: values: if name == "managed_dir" then lib.last values else lib.concatLists values)
       [
         codexManagedRequirements.hooks
-        authorityGate.codex.requirements
         okfMemory.codex.requirements
         planningWithFiles.codex.requirements
         programOrchestration.codex.requirements
@@ -229,7 +212,6 @@ let
         cp ${programOrchestration.canonicalSkill}/scripts/program_state.py $out/program-orchestration/
         mkdir -p $out/technical-writing
         cp ${technicalWriting.guard} $out/technical-writing/style_guard.py
-        cp -r ${authorityGate.package} $out/authority-gate
       '';
 
   isSkillDirectory =
@@ -373,7 +355,6 @@ in
 {
   inherit
     agents
-    authorityGate
     base
     claudeContextOverride
     codexContext
