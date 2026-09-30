@@ -23,12 +23,14 @@ in
           "connection.mdns" = lib.mkIf (!config.services.avahi.enable) "2";
         };
 
-        plugins = with pkgs; [
-          networkmanager-l2tp
-          networkmanager-openvpn
-          networkmanager-sstp
-          networkmanager-vpnc
-        ];
+        plugins = lib.mkDefault (
+          with pkgs;
+          [
+            networkmanager-l2tp
+            networkmanager-openvpn
+            networkmanager-libreswan
+          ]
+        );
 
         unmanaged = [
           "interface-name:br-*"
