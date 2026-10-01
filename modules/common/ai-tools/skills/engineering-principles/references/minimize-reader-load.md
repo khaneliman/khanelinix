@@ -5,7 +5,9 @@ Measure maintainability on two axes:
 1. Layers a reader must trace between a question and its answer.
 2. Hidden or mutable state a reader must hold while tracing it.
 
-- Collapse wrappers with one caller and adapters with no distinct policy.
+- Collapse pass-through wrappers and adapters with no distinct policy. A helper
+  can still be useful with one caller when generic implementation details obscure
+  the module's purpose or when it hides meaningful complexity.
 - Make adjacent layers change abstraction. Remove pass-through methods that
   repeat the same arguments and operations.
 - Keep a boundary only when it hides meaningful decisions or complexity.

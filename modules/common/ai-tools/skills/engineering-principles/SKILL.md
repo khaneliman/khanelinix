@@ -1,6 +1,6 @@
 ---
 name: engineering-principles
-description: "Methods inside a caller-owned lifecycle: diff sizing, work sequencing, refactoring, debugging, commit stacks, verification, context pressure, recurring corrections, and tool choice."
+description: "Methods for an active engineering task: diff sizing, work sequencing, refactoring, debugging, commit stacks, verification, context pressure, recurring corrections, and tool choice."
 license: Complete terms in LICENSE
 ---
 
@@ -20,7 +20,7 @@ reference in full before applying it. Each reference is short.
 | [subtract-before-you-add](references/subtract-before-you-add.md)                                   | Sequencing an addition, refactor, or rewrite. Remove dead weight first.                  |
 | [migrate-callers-then-delete-legacy-apis](references/migrate-callers-then-delete-legacy-apis.md)   | Replacing an API or call path. Migrate callers and delete the old path together.         |
 | [minimize-reader-load](references/minimize-reader-load.md)                                         | Code that requires too many layers or too much hidden state to understand.               |
-| [fix-root-causes](references/fix-root-causes.md)                                                   | Debugging. Trace each symptom to its root cause; reproduce first.                        |
+| [fix-root-causes](references/fix-root-causes.md)                                                   | Debugging. Establish the failure and fix it where the behavior belongs.                  |
 | [sequence-verifiable-units](references/sequence-verifiable-units.md)                               | Multi-step work and commit or PR stacking. Verify each unit before the next.             |
 | [verified-slice](references/verified-slice.md)                                                     | Implementing one reviewable, reversible unit with evidence and commit authority.        |
 | [prove-it-works](references/prove-it-works.md)                                                     | After completing a task, before declaring done. Check the real artifact.                 |

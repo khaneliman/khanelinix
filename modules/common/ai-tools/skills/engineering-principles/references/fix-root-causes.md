@@ -9,14 +9,17 @@ reduce total debugging time.
 
 **Pattern:**
 
-- Reproduce first (if you can't reproduce it, you can't verify your fix)
+- For complicated issues, exhaust practical reproduction methods before
+  changing code. For an obvious source, documentation, or input/output mismatch,
+  direct evidence can establish the defect without runtime reproduction. State
+  which evidence you have and verify the fix against that contract.
 - Ask "why" until you hit the root cause
-- Resist the urge to add guards (adding a nil check to silence a crash is a
-  symptom fix)
-- If a workaround needs a paragraph-long comment to justify it, the code is
-  wrong (fix the code, not the comment)
-- Check for the pattern, not just the instance (grep for the same pattern, fix
-  all instances)
+- Validate at the boundary that owns the input. A nil check can be appropriate
+  there; adding one only to silence a crash can conceal a broken invariant.
+- When a workaround needs a long explanation, investigate whether a simpler
+  fix removes the cause. A comment can still be necessary for a real constraint.
+- Search for the same cause in other callers and fix confirmed instances within
+  scope. Do not turn an isolated bug into unrelated cleanup.
 - When stuck, instrument. Don't guess (add logging, read the actual error)
 
 **Restart bugs: suspect state before code**

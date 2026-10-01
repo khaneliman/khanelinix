@@ -18,12 +18,18 @@ Check the real thing, not a proxy:
 - When verification fails, suspect the observation method before suspecting the
   system
 
-Code and features:
+Choose checks that can expose the failure at the affected boundary. Build and
+exercise the actual feature path when that establishes meaningful behavior;
+for an integration, check the communication path rather than a disconnected
+component. Direct inspection can establish trivial edits and obvious source or
+contract mismatches. Describe inspection accurately instead of claiming a build
+or runtime check passed.
 
-1. Build it (necessary but not sufficient)
-2. Run it and exercise the actual feature path
-3. Check the full chain: does data flow from input to output?
-4. For integrations, test the full communication path end-to-end
+Add tests for meaningful behavior and plausible failures, using existing
+coverage first. A focused manual check or temporary reproduction is acceptable
+when a permanent automated check would require disproportionate maintenance.
+State the actual result and automation gap rather than adding custom machinery
+solely to make the validation permanent.
 
 Delegation: trust artifacts, not self-reports. When verifying delegated work,
 inspect the actual output artifact (git diff, file contents, runtime behavior),
