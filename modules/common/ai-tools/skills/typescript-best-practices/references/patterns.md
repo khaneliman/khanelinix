@@ -146,10 +146,13 @@ function handle(input: unknown) {
 External sources include RPC payloads, `JSON.parse`, `postMessage`, IPC, file
 contents, environment variables, database results.
 
-## No `as` casts
+## Avoid unchecked assertions
 
-Every `as` is a potential runtime crash. Cast only after the type system has
-verified the claim.
+TypeScript removes type assertions at compile time; they perform no runtime
+validation. An unsupported assertion can hide invalid data from the compiler,
+but an assertion is not itself a crash. Prefer narrowing and assert only when
+validation or another established invariant supports the claimed type. See the
+[TypeScript handbook](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions).
 
 ```ts
 // Don't
