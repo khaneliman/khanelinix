@@ -11,15 +11,20 @@ user wants an explanation and no mutation, leave this skill and use `how` or
 ## Bug Fix
 
 - Goal: restore intended behavior at the true cause.
-- Ground: reproduce the failure first. Capture the failing signal before any
-  edit. Use `diagnosing-bugs` when the cause needs a minimal reproduction and
-  falsifiable probes. Use `why` when the code looks deliberate or the
-  regression has history.
+- Ground: for complicated issues, exhaust practical ways to reproduce the
+  failure before changing code. Capture the failing signal when available. An
+  obvious mismatch demonstrated by source, documentation, or an input/output
+  contract can justify a direct fix; state that evidence and any reproduction
+  gap. Use `diagnosing-bugs` when the cause needs a minimal reproduction and
+  falsifiable probes. Use `why` when the code looks deliberate or the regression
+  has history.
 - Shape: fix the cause, not the symptom. Keep the diff at the smallest scope
   that removes the cause. Apply `fix-root-causes` from `engineering-principles`.
-- Verify: rerun the original failing signal, then the nearest regression
-  surface.
-- Done: the captured failure now passes, and no adjacent behavior changed.
+- Verify: rerun the original failing signal when captured, or check the contract
+  that demonstrated the defect. Use the nearest meaningful regression surface
+  under [gates.md](gates.md).
+- Done: evidence establishes that the defect is corrected and relevant adjacent
+  behavior is preserved. Report what was inspected or exercised and any gap.
 
 ## Feature
 

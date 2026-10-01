@@ -3,6 +3,13 @@
 Delegate bounded work. Keep planning, integration, and final judgment in the
 parent thread.
 
+Do trivial work directly when assigning and integrating a worker would take more
+time than the task. Favor parallel workers for useful independent slices, but
+judge total verified completion time, including retries and repair, not worker
+speed alone. A worker that repeatedly needs substantial correction is not a
+cheaper route merely because it answers quickly. Keep required review separate
+from the implementation; the author's own checks are not independent review.
+
 ## Worker Packet
 
 Give every worker exactly these fields. Omit conversational context.

@@ -33,7 +33,9 @@ Map acceptance criteria to observed results. Reuse current checks rather than
 rerunning them for another phase's ceremony. Record meaningful gaps without
 claiming unexecuted checks passed.
 
-Review correctness and requirements fit; resolve accepted blockers within scope.
+Review correctness, requirements fit, unnecessary complexity, maintenance cost,
+and whether tests justify their ongoing CI cost; resolve accepted blockers within
+scope.
 Update only the design, assumptions, and checks invalidated by new evidence.
 Record each verified slice's commit SHA under local-commit authority, or its
 preserved patch when workspace-only. Keep remote delivery separately authorized.

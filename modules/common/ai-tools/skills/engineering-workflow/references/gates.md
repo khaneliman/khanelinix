@@ -9,25 +9,36 @@ proxy that cannot fail.
   contract change and no shared-state risk. File count alone does not raise risk.
 - **Normal**: substantive implementation or caller-visible behavior changes
   within a known boundary.
-- **High**: cross-module reach, data or migration risk, security or permissions,
-  public contract, or unclear reach.
+- **High**: consequential changes across modules, data or migration risk,
+  security or permissions, breaking public contracts, or unresolved uncertainty
+  about what the change can affect.
 
-Choose the higher level when the change sits between two levels.
+Investigate uncertainty before raising the risk level. Touching a shared helper
+or several files alone does not make a change high risk.
 
 ## Verification Gate
 
-Focused verification is the minimum at every risk level. Run the narrow check
-that would fail if the change were wrong.
+Focused verification is the minimum at every risk level. Choose evidence that
+can expose a wrong result, using existing checks before adding new ones.
 
 - Trivial: the focused check on the touched surface.
 - Normal: the focused check plus the nearest regression surface.
 - High: the focused check, the regression surface, and a reach check. Use
   `blast-radius` when reach past the diff is unclear.
 
-Run the real command, build, or test. Do not infer a pass from reading code. Use
-`verification-harness` to audit or propose when the required real surface is
-missing, slow, or unreliable. Limit creation or repair to the caller's authorized
-scope; reuse existing checks before adding infrastructure.
+Run the relevant command, build, or test when it provides meaningful evidence.
+Direct inspection can establish a trivial edit or an obvious source,
+documentation, or input/output contract mismatch. Describe that evidence as
+inspection, not as an executed check. For complicated behavior, make serious
+attempts to reproduce the issue and exercise the affected path.
+
+Add regression coverage for meaningful behavior and plausible failures, not
+every equivalent permutation or a test that mirrors a trivial edit. A focused
+manual check or temporary reproduction can suffice when permanent coverage
+would need disproportionate machinery; report what was checked and the remaining
+automation gap. Use `verification-harness` to audit or propose when the needed
+surface is missing, slow, or unreliable. Create or repair only what the
+authorized task needs, using repository tools and conventions first.
 When installed, use `performance-forensics` when completion depends on a
 measured performance claim.
 
@@ -42,8 +53,8 @@ and review summaries. The Verification Gate belongs to implementation and
 correction, not a second mechanical validation pass by the reviewer.
 
 - Trivial: optional unless requested.
-- Normal: optional unless requested or correctness or impact uncertainty
-  remains after investigation.
+- Normal: one fresh independent reviewer. Check intended behavior, correctness,
+  unnecessary complexity, maintenance burden, and the value and CI cost of tests.
 - High: required. Use `interrogate` when the change is contested or high stakes.
 
 ## Correction Gate
