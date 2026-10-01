@@ -5,31 +5,37 @@ description: Cut AI tells, puffery, promotional language, boilerplate patterns, 
 
 # Unslop
 
-Edit text to remove AI patterns and add human voice.
+Remove canned language while preserving the writer's meaning and voice.
 
 ## Process
 
 1. Scan for the patterns below.
 2. Rewrite. Preserve meaning and match intended tone.
-3. Add soul (see next section).
-4. Self-audit: "What makes this obviously AI generated?" Fix remaining tells.
+3. Check the voice against the supplied text and established preferences.
+4. Read the result in context. Remove remaining filler without manufacturing
+   personality or making the writing mechanically uniform.
 
-## Adding Soul
+## Preserve the Writer's Voice
 
-Removing patterns is half the job. Sterile, voiceless writing is just as
-obvious.
-
-- **Have opinions.** React to facts instead of neutrally listing pros and cons.
-- **Vary rhythm.** Short sentences. Then longer ones that take their time. Mix
-  it up.
-- **Acknowledge complexity.** "Impressive but also kind of unsettling" beats
-  "impressive."
-- **Use "I" when it fits.** First person is not unprofessional.
-- **Let some mess in.** Perfect structure looks machine-made.
-- **Be specific.** Not "this is concerning" but "there is something unsettling
-  about agents churning away at 3am."
+- Preserve the writer's stance. Do not invent opinions, emotional reactions,
+  enthusiasm, frustration, humor, or deliberate messiness.
+- Let sentence length follow the thought. Do not force short sentences or
+  artificial variation to make text seem human.
+- Keep first person and collaborative phrasing when they express the writer's
+  reasoning. "I think" and "could we" are not automatically filler.
+- Keep genuine acknowledgment, appreciation of effort, and apologies for
+  avoidable inconvenience. Remove generic praise that says nothing about the
+  actual exchange.
+- Public conversations can use the writer's personal voice. Documentation and
+  instructions should use their vocabulary and judgment without copying speech
+  habits that make the text harder to follow.
+- Explain unfamiliar concepts in plain language. Keep necessary technical terms
+  and specific evidence; do not replace precision with a personal reaction.
 
 ## Patterns to Detect and Fix
+
+These are contextual warning signs, not a word blacklist. Keep wording that
+serves the subject and intended reader. Judge the sentence before replacing it.
 
 ### Content
 
@@ -51,10 +57,10 @@ obvious.
 
 ### Language
 
-7. **AI vocabulary.** Additionally, crucial, delve, enduring, enhance,
+7. **Inflated vocabulary.** Additionally, crucial, delve, enduring, enhance,
    fostering, garner, interplay, intricate, landscape (abstract), pivotal,
    showcase, tapestry (abstract), testament, underscore, vibrant. Replace with
-   plain words.
+   plain words when they express the same meaning more clearly.
 8. **Fancy ways to say "is".** "serves as", "stands as", "boasts", "features".
    Just say "is" or "has".
 9. **"Not just X, but Y."** State the point directly instead.

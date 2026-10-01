@@ -399,7 +399,7 @@
 		{
 			"name": "unslop",
 			"description": "Remove AI writing patterns from prose.",
-			"version": "0.1.6",
+			"version": "0.1.7",
 			"author": {
 				"name": "khaneliman"
 			},
