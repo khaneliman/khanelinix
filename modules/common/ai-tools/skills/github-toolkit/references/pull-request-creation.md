@@ -10,8 +10,9 @@ planned work summaries.
    `scripts/pr_snapshot.py` instead of rebuilding API queries.
 2. Detect mandatory PR template. Read `CONTRIBUTING.md`, root and changed-path
    instructions, and directly relevant docs.
-3. Apply one template verbatim and fill required fields with concise,
-   repository-relevant detail.
+3. Preserve the repository's required template and fill its fields with concise,
+   relevant detail. Without a required template, use the short description
+   guidance below.
 4. Note contribution gaps: missing tests/docs/issue links, atomic-history
    concerns, licensing/secrets risk, dirty tree, or unpushed commits.
 5. Return title/body ready for `gh pr create`.
@@ -30,33 +31,20 @@ when user asks for draft state.
    - `.github/PULL_REQUEST_TEMPLATE.md`
    - `.github/pull_request_template.md`
    - `.github/PULL_REQUEST_TEMPLATE/` (directory)
-2. If none found, report "no PR template detected" and use the base template
-   below.
+2. If none is found, use the short description guidance below. Template
+   discovery details do not belong in the public PR body.
 3. If exactly one template exists, apply it.
 4. If multiple templates exist, ask the user to choose before drafting.
 5. Preserve required sections and branch-protection labels exactly; only add
    content within template placeholders.
 
-## Base Template (no repo template found)
+## Description without a required template
 
-```markdown
-## Summary
+Default to one or two sentences explaining the change's intent in the user's
+voice. Include a related issue link or closing reference when relevant.
 
-[One-line summary]
-
-## Why
-
-[Reason for the change]
-
-## What changed
-
-- [Change item]
-
-## Testing
-
-- [Tests run and results]
-
-## Related Issue(s)
-
-- [Issue links]
-```
+Do not add generic headings, a changed-files list, or a testing checklist. Keep
+mechanism, tradeoffs, and validation detail in the commits unless the reader
+needs them in the PR body. Include an upstream reference when it supports a
+decision the reader needs to understand. Expand when requested or when the
+repository requires more detail.

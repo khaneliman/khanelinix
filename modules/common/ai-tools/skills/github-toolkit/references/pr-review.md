@@ -74,7 +74,9 @@ genuinely new issues separate in private review notes.
   trigger. Ask a short clarifying question only when a needed fact is missing.
 - Explain the disputed behavior plainly and offer the smallest validated code
   example or fix. Own unclear wording or a mistaken finding, acknowledge the
-  correction, and withdraw concerns that no longer hold.
+  correction, and withdraw concerns that no longer hold. Appreciate the
+  contributor's effort and apologize for avoidable rework when appropriate; do
+  not invent emotional reactions or add canned praise.
 - Reply in the existing thread using its context, not the initial-finding
   template. A clarification need not repeat the code block or test evidence
   already visible; include new code when that is what the contributor needs.
@@ -176,7 +178,7 @@ request changes, comment-submit, or dismiss reviews.
 
 ## High-Signal Review Policy
 
-Flag only highly likely defects:
+Report defects and required changes only when supported by concrete evidence:
 
 - a failed premise gate: no demonstrated problem, inaccurate issue fit, an
   existing capability, a parallel option or data model where a native
@@ -193,6 +195,11 @@ Do not flag style, subjective quality, pre-existing problems, speculative edge
 cases, duplicates, or normal linter findings unless repo instructions require.
 Validate each issue against diff and relevant local instructions.
 
+Design ideas and architectural questions can still be useful when they move the
+work forward. Present them as proposals, distinguish them from demonstrated
+defects, and say when they have not been validated. Do not turn an untested idea
+into a prescribed code replacement.
+
 Apply the test-value and execution boundary from `premise-review`, including in
 delegated packets. Assess whether assertions and fixtures detect realistic
 defects and cover the changed behavior, not whether checks currently pass.
@@ -203,12 +210,13 @@ Missing coverage can be a finding when repository policy or risk requires it.
 - Keep the public review body to a short outcome. Do not repeat inline findings
   or publish cleared premise concerns, confidence scores, and investigation
   logs.
-- Write one inline comment per actionable issue. Default to one or two short
-  sentences explaining the trigger and consequence, followed by the exact fix
-  and one line of validation evidence. Add detail only when needed to apply the
-  fix safely. Keep the full reasoning in internal review notes.
-- Use direct, collegial language: name what breaks and show what works. Avoid
-  rhetorical questions, abstract repair requests, and unsolicited tutorials.
+- Write one inline comment per actionable issue. Explain the trigger and
+  consequence, offer the validated fix when available, and describe relevant
+  checks conversationally. Include enough detail to apply the fix safely; keep
+  investigation logs in internal review notes.
+- Invite the contributor into the reasoning. "I think" and "could we" can
+  express a collaborative proposal; distinguish expected benefits from observed
+  results. Avoid rhetorical questions and vague requests to improve the code.
 - Understand callers, relevant contracts, and edge behavior before recommending
   replacement code. Validate that exact replacement with a focused check in an
   isolated scratch copy or worktree; leave the reviewed checkout unchanged. Use
@@ -216,13 +224,17 @@ Missing coverage can be a finding when repository policy or risk requires it.
   tests the proposed fix, not the unchanged PR's CI status.
 - For a bug fix, reproduce the relevant failure and check the replacement on
   that case. Reuse an existing check when adequate; do not automatically ask the
-  author to add a new regression test. State the command or probe and observed
-  result briefly. Static inspection alone is not a claim that code was tested.
-- If validation is unavailable, do not publish an optional code suggestion. A
+  author to add a new regression test. Explain what was checked and what
+  happened in natural prose; include the command when useful for reproduction.
+  Static inspection alone is not a claim that code was tested.
+- If validation is unavailable, do not prescribe an optional code replacement. A
   confirmed defect may still warrant a short finding: give the evidence and
-  state that a fix has not been validated. Ask only for a concrete missing fact.
-- Cite local instructions for compliance findings. Link prior art only when it
-  is needed to understand the correction, using a pinned commit and exact lines.
+  state that a fix has not been validated. An architectural question or design
+  proposal may help resolve it without claiming a tested solution.
+- For repository conventions, link contributor documentation or an existing
+  example and briefly explain why it applies. Do not repeat the documentation or
+  present a personal preference as repository policy. Use a pinned commit and
+  exact lines for code examples.
 
 ### Suggestion blocks
 
@@ -243,7 +255,8 @@ Missing coverage can be a finding when repository policy or risk requires it.
 - Cite local instructions for compliance findings and concrete commit SHAs for
   code links.
 
-Format inline comments as:
+For a validated code fix, an inline comment can follow this structure. Adapt the
+wording to the conversation:
 
 ````markdown
 issue: <trigger and consequence>. <why this replacement fixes it, if needed>
@@ -252,11 +265,13 @@ issue: <trigger and consequence>. <why this replacement fixes it, if needed>
 <exact replacement for the selected lines>
 ```
 
-Checked: `<focused command or probe>`; <observed result>.
+I tested <relevant case> with `<focused command or probe>`, and
+<observed result>.
 ````
 
 This is a code-fix template, not a requirement to invent code for policy
-findings, missing facts, or a confirmed defect without a validated fix.
+findings, design discussions, missing facts, or a confirmed defect without a
+validated fix. Do not invent validation details to fill the example.
 
 Use `issue`, `suggestion`, `question`, `nitpick`, `note`, `praise`, or `todo`.
 Use `(blocking)` only for high-signal defects; otherwise use `(non-blocking)` or
