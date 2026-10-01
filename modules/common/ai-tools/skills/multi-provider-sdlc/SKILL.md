@@ -5,18 +5,19 @@ metadata:
   disable-model-selection: "true"
 ---
 
-# Model routing
-
 Call `python3 <skill-root>/scripts/route-model.py` with JSON on stdin. Use
 `--schema` for accepted values and constraints. Do not read routing tables.
 
-```json
-{ "task_type": "implementation", "provider": "codex", "gateway": false }
-```
+`{ "task_type": "implementation", "provider": "codex", "gateway": false }`
 
 Set `provider` and `gateway` from the actual harness configuration. Optional
 `subscription` restricts gateway selection; optional `state` reuses task-local
 quota evidence. Never omit existing state to bypass a blocked route.
+
+For optional quota advice:
+`python3 <skill-root>/scripts/quota-advice.py --provider <codex|claude|antigravity>`.
+Match its account to the route; add `--user-requested` for more workers or a
+swarm. Missing CodexBar never blocks dispatch.
 
 Follow the returned `next_action`. Dispatch `agent_type` without a model
 override; pass non-null `reasoning_effort` when supported. Preserve

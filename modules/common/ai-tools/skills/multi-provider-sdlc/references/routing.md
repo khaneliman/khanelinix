@@ -99,6 +99,50 @@ model or replace canonical semantic-role defaults and live task evidence.
 
 Use scripted preflight only when telemetry identifies every relevant pool.
 
+### Quota pace and delegation
+
+Use [`quota-advice.py`](../scripts/quota-advice.py) before substantial batches
+when usage data could help choose how much work to delegate. Match the queried
+subscription and account to the route actually running the workers; native CLI
+usage does not establish the budget of an unrelated gateway account.
+
+```console
+python3 <skill-root>/scripts/quota-advice.py --provider codex
+python3 <skill-root>/scripts/quota-advice.py --provider codex --user-requested
+```
+
+Use `claude` or `antigravity` for their corresponding CodexBar sources.
+`--from-stdin` accepts an existing CodexBar usage JSON response without another
+fetch. The helper reads reported windows, ages their exhaustion estimates, and
+returns a forecast, window evidence, and an advisory `next_action`:
+
+- `use-normal-delegation`: reported windows are on track through reset. Favor
+  useful independent work, not additional work merely to consume quota.
+- `conserve-optional-workers`: a window may run out before reset. Favor smaller
+  batches and leave capacity for finishing, independent review, and corrections.
+- `use-normal-judgment`: usage data is missing, stale, incomplete, or cannot be
+  attributed to one provider account. Continue without a quota-based decision.
+- `follow-user-request`: explicit requests for more workers or a swarm override
+  forecast-based conservation. This flag skips the quota fetch, so your request
+  does not wait for information that cannot change the decision.
+
+CodexBar is optional. It publishes macOS and Linux CLI builds; a missing CLI on
+Windows or any other platform returns unavailable advice, not a blocked route.
+The helper uses standard Python without shell tools or OS-specific commands. Run
+it with Python 3; on Windows, `py -3` or `python` may be the installed command
+instead of `python3`. If its prerequisites are unavailable, skip quota advice
+and continue the task. It defaults to a five-minute freshness window, adjustable
+with `--max-age-seconds`, and a bounded fetch without retries. Do not add quota
+queries to trivial work.
+
+Advice never sets an exact worker count, dispatches workers, or changes quota
+circuits. More workers can change the pace; rerun the helper before expanding a
+substantial batch. The user may deliberately spend quota before a reset or use
+an available usage reset. Honor that direction without repeated confirmation.
+Actual provider exhaustion and host limits still apply; use a capable available
+route when the requested route cannot run. Do not bypass recorded quota failures
+or assume a forecast reset time proves capacity returned.
+
 ### Task-local capability state
 
 Use [`route-capability.py`](../scripts/route-capability.py) when one task can
