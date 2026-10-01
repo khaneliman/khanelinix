@@ -65,6 +65,13 @@ parent. Give every worker one bounded packet: task, paths, verified context,
 constraints, write policy, skill or tool lane, required evidence, and exit
 criteria. Omit conversation history.
 
+Use fresh quota pace and reset estimates, when available, to inform default
+delegation. Favor useful parallel work when usage is projected to last through
+reset; reduce optional fan-out when it is not. Forecasts are advisory, not
+worker caps. Honor requests for more workers or a swarm even when the forecast
+suggests conserving quota; the user may intend to spend quota before a reset or
+use an available usage reset. Actual provider and host limits still apply.
+
 Delegate by semantic role (`reviewer`, `implementer`, `explorer`, and so on).
 Let provider adapters or `multi-provider-sdlc` select concrete models,
 fallbacks, and quota circuits. A named model requires explicit user intent or a
