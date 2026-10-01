@@ -145,6 +145,33 @@ jj edit <conflicted-change>
 a further descendant, you may create cascading conflicts that are harder to
 untangle.
 
+### Immutable ancestors
+
+Untracked `<bookmark>@<remote>` entries appear at top level in
+`jj bookmark list --all-remotes`; the default `immutable_heads()` protects them
+and their ancestors. After `jj edit <rev> --ignore-immutable`, file edits land
+in a new child, not `<rev>`. The next jj command warns: "Warning: The
+working-copy commit is immutable; a new commit has been created on top of it."
+
+```bash
+# Path 1: after jj edit <rev> --ignore-immutable, file edits, and the warning
+jj squash --from @ --into <rev> --ignore-immutable
+
+# Path 2 (alternative): mid-stack, without jj edit
+jj new <rev>                   # no flag needed
+# ... edit files ...
+jj squash --from @ --into <rev> --ignore-immutable
+
+jj log -r 'conflicts()'
+jj bookmark list --all-remotes # confirm descendant bookmarks followed the rewrite
+```
+
+`jj bookmark track <bookmark>@<remote>` removes this source of immutability. If
+no other immutable head protects `<rev>`, `immutable` becomes `false` and
+`jj edit <rev>` works without the flag; `jj git push --bookmark <bookmark>` can
+publish the rewritten descendants. Tracking does not remove trunk/tag
+protection.
+
 ## Tips
 
 - **Conflicts from formatting/clippy fixes** are usually simple: the `%%%%%%%`
