@@ -12,58 +12,10 @@ from collections.abc import Iterable, Sequence
 from pathlib import Path
 from typing import Any
 
-PROCEDURAL_WORD_LIMIT = 20
-DESCRIPTIVE_WORD_LIMIT = 25
 COMMIT_SUBJECT_LIMIT = 50
 COMMIT_BODY_LINE_LIMIT = 72
 COMMIT_BODY_CONTENT_LINES = 6
 MAX_TRANSCRIPT_BYTES = 4 * 1024 * 1024
-
-FORBIDDEN_PATTERNS = (
-    ("phrase-01", re.compile(r"\bhonest(?:ly|y)?\b", re.IGNORECASE)),
-    ("phrase-02", re.compile(r"\bload[- ]bearing\b", re.IGNORECASE)),
-    (
-        "phrase-03",
-        re.compile(r"\bbelt[- ]and[- ]suspenders\b", re.IGNORECASE),
-    ),
-    # Hyphenated `blast-radius` is a skill name, so only the prose phrase blocks.
-    ("phrase-04", re.compile(r"\bblast\s+radius\b", re.IGNORECASE)),
-    ("phrase-05", re.compile(r"\bdelv(?:e|es|ed|ing)\b", re.IGNORECASE)),
-    ("phrase-06", re.compile(r"\btapestry\b", re.IGNORECASE)),
-    ("phrase-07", re.compile(r"\bgame[- ]changer\b", re.IGNORECASE)),
-    ("phrase-08", re.compile(r"\bparadigm shift\b", re.IGNORECASE)),
-    ("phrase-09", re.compile(r"\bseamless(?:ly)?\b", re.IGNORECASE)),
-    ("phrase-10", re.compile(r"\bever[- ]evolving\b", re.IGNORECASE)),
-    (
-        "phrase-11",
-        re.compile(r"\bit(?:'s| is) (?:important|worth) to note\b", re.IGNORECASE),
-    ),
-    ("phrase-12", re.compile(r"\bat the end of the day\b", re.IGNORECASE)),
-    (
-        "phrase-13",
-        re.compile(
-            r"\bin today(?:'s|’s) (?:fast[- ]paced|rapidly evolving) world\b",
-            re.IGNORECASE,
-        ),
-    ),
-    ("phrase-14", re.compile(r"\ba testament to\b", re.IGNORECASE)),
-    ("phrase-15", re.compile(r"\bunwavering commitment\b", re.IGNORECASE)),
-    (
-        "phrase-16",
-        re.compile(r"\bunlock(?:s|ed|ing)? (?:the )?potential\b", re.IGNORECASE),
-    ),
-    (
-        "phrase-17",
-        re.compile(r"\bnavigat(?:e|es|ed|ing) the complexities\b", re.IGNORECASE),
-    ),
-    ("phrase-18", re.compile(r"\bgreat question\b", re.IGNORECASE)),
-    (
-        "phrase-19",
-        re.compile(r"\bthat makes a lot of sense\b", re.IGNORECASE),
-    ),
-    ("phrase-20", re.compile(r"\babsolutely\b", re.IGNORECASE)),
-    ("phrase-21", re.compile(r"\bdefinitely\b", re.IGNORECASE)),
-)
 
 # Generated from Unicode 17.0 Emoji_Presentation ranges. Explicit VS16 and
 # keycap sequences also request emoji rendering and are blocked separately.
@@ -168,11 +120,6 @@ def mask_code_regions(text: str) -> str:
 def style_violations(text: str) -> list[dict[str, int | str]]:
     prose = mask_code_regions(text)
     matches: list[tuple[int, str, str]] = []
-    for policy_id, pattern in FORBIDDEN_PATTERNS:
-        matches.extend(
-            (match.start(), "blocked-phrase", policy_id)
-            for match in pattern.finditer(prose)
-        )
     matches.extend(
         (match.start(), "emoji", "emoji") for match in EMOJI_RE.finditer(prose)
     )
@@ -580,15 +527,7 @@ def score_rewrite(
     minimum_retention: float,
     required_facts: Sequence[str],
 ) -> dict[str, Any]:
-    word_limit = (
-        PROCEDURAL_WORD_LIMIT if mode == "procedural" else DESCRIPTIVE_WORD_LIMIT
-    )
     sentences = markdown_sentences(candidate)
-    long_sentences = [
-        {"text": sentence[:160], "words": len(WORD_RE.findall(sentence))}
-        for sentence in sentences
-        if len(WORD_RE.findall(sentence)) > word_limit
-    ]
     source_tables = table_blocks(source)
     candidate_tables = table_blocks(candidate)
     missing_facts = [fact for fact in required_facts if fact not in candidate]
@@ -601,7 +540,7 @@ def score_rewrite(
         "lexical_retention": counter_retention(
             lexical_tokens(source), lexical_tokens(candidate)
         ),
-        "long_sentences": long_sentences,
+        "mode": mode,
         "missing_required_facts": missing_facts,
         "number_retention": counter_retention(
             NUMBER_RE.findall(source), NUMBER_RE.findall(candidate)
@@ -611,11 +550,9 @@ def score_rewrite(
         "url_retention": counter_retention(
             URL_RE.findall(source), URL_RE.findall(candidate)
         ),
-        "word_limit": word_limit,
     }
     metrics["passed"] = bool(
         not metrics["blocked_output_markers"]
-        and not long_sentences
         and not missing_facts
         and metrics["code_retention"] == 1.0
         and metrics["lexical_retention"] >= minimum_retention

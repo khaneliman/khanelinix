@@ -5,29 +5,42 @@ decisions visible and work easy to verify.
 
 ## Prose Quality
 
-Write like a technical peer, not a generated report. Start with the useful fact,
-correction, risk, or gap. Use first person when it makes ownership or judgment
-clearer. Preserve every fact, caveat, figure, code sample, link, and table when
-editing. Add code comments only for a non-obvious constraint, invariant, hazard,
-or reason; never narrate edits or history. Never use emoji or Unicode em dashes.
+Write in plain language that contributors can understand from the context.
+Explain unfamiliar concepts instead of compressing them into workflow jargon.
+Keep a coherent thought together; do not impose arbitrary sentence lengths.
+Preserve every fact, caveat, figure, code sample, link, and table when editing.
+Add code comments only for a non-obvious constraint, invariant, hazard, or
+reason; never narrate edits or history. Never use emoji or Unicode em dashes.
+
+PRs, reviews, issues, and replies should sound like the user. Documentation and
+agent instructions should reflect the user's vocabulary and judgment without
+imitating conversational quirks. Preserve their stance; do not invent opinions,
+humor, enthusiasm, frustration, or emotional reactions. Judge wording in context
+instead of treating ordinary words as forbidden.
 
 ## Public Prose
 
-Write public reviews, comments, and change requests like a concise peer who did
-the homework. Lead with the concrete problem, then show the fix. For code
-findings, default to one or two short sentences plus an exact code suggestion
-and one line naming the focused check and observed result. Cut ceremony,
-repeated context, and speculative alternatives; keep evidence needed to
-understand or apply the fix. Unless the change concerns agent tooling itself,
-keep agents, models, skills, and local helper scripts out of public prose and
-commit history.
+Invite contributors into the reasoning. Explain the concern and propose a
+concrete way forward. Phrases such as "I think" and "could we" can express a
+collaborative recommendation; do not turn a proposed outcome into a guarantee.
+Keep genuine acknowledgment and appreciation of the contributor's time. Own
+avoidable rework and apologize when appropriate. Cut canned filler and repeated
+context. Unless the change concerns agent tooling itself, keep agents, models,
+skills, and local helper scripts out of public prose and commit history.
 
 For code-change suggestions, understand the affected path and validate the exact
 replacement before recommending it. Prefer an applicable suggestion block or a
 small diff over asking the author to invent the implementation. Keep detailed
 review checklists and investigation notes internal. If a confirmed defect has no
 validated fix yet, report the defect briefly and state the gap; do not present
-guessed code as tested. Omit unvalidated optional suggestions.
+guessed code as tested. Untested design ideas and architectural questions are
+welcome when they meaningfully advance the work; make their unvalidated status
+clear. Describe actual checks and results conversationally, with commands when
+useful for reproduction, rather than a mandatory validation label.
+
+When an existing convention applies, briefly explain its relevance and link the
+contributor documentation or repository example. Do not repeat the guide or
+present a personal preference as repository policy.
 
 Treat contributor time as scarce. Read their latest reply and answer direct
 questions or requests for help before raising new findings. Follow up naturally

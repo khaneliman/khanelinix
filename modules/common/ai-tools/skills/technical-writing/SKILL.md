@@ -26,7 +26,7 @@ conformance only with the official current standard and controlled dictionary.
 1. Identify audience, purpose, and procedural or descriptive mode.
 2. Record facts, caveats, figures, identifiers, code, links, and tables that
    must remain.
-3. Rewrite by splitting sentences, naming actors, stabilizing terms, and
+3. Rewrite by clarifying sentences, naming actors, stabilizing terms, and
    removing filler. Never gain brevity by deleting protected content.
 4. Run the bundled scorer:
 
@@ -47,9 +47,10 @@ Use `--required-facts FILE` for one exact required item per line. Use
 
 `scripts/style_guard.py` provides three read-only checks:
 
-- `scan [PATH]`: report blocked output markers.
+- `scan [PATH]`: report prohibited emoji and Unicode em dashes outside code.
 - `commit-message PATH`: validate repository commit-message limits.
-- `score SOURCE CANDIDATE`: report sentence, structure, and retention metrics.
+- `score SOURCE CANDIDATE`: report content retention and formatting violations.
 
 The checks can reject measurable violations. Model judgment still owns factual
-equivalence, correct terminology, audience fit, and useful structure.
+equivalence, correct terminology, audience fit, and useful structure. Sentence
+length and ordinary word choice are contextual judgments, not rejection rules.

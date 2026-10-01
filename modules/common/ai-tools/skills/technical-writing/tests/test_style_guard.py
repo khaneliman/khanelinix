@@ -27,17 +27,18 @@ class StyleGuardTests(unittest.TestCase):
         )
         return json.loads(result.stdout)
 
-    def test_supplied_phrase_variants_are_blocked(self) -> None:
-        text = "Honestly load bearing belt-and-suspenders blast radius"
-        policy_ids = {item["policy_id"] for item in STYLE_GUARD.style_violations(text)}
-        self.assertEqual(
-            policy_ids, {"phrase-01", "phrase-02", "phrase-03", "phrase-04"}
+    def test_word_choice_is_not_a_format_violation(self) -> None:
+        text = (
+            "The report describes a load-bearing beam and its blast radius. "
+            "It asks whether the results were reported honestly. "
+            "The magnitude is definitely bounded, but not absolutely convergent."
         )
+        self.assertEqual(STYLE_GUARD.style_violations(text), [])
 
-    def test_canned_phrases_emoji_and_dash_are_blocked(self) -> None:
-        text = "A seamless tapestry \N{EM DASH} \N{ROCKET}"
+    def test_emoji_and_dash_are_blocked(self) -> None:
+        text = "Tests pass \N{EM DASH} \N{ROCKET}"
         kinds = {item["kind"] for item in STYLE_GUARD.style_violations(text)}
-        self.assertEqual(kinds, {"blocked-phrase", "emoji", "unicode-dash"})
+        self.assertEqual(kinds, {"emoji", "unicode-dash"})
 
     def test_emoji_presentation_does_not_block_plain_check_marks(self) -> None:
         plain_symbols = "Tests \u2713; lint \u2717; flags \U0001f3f3; desktop \U0001f5a5; weather \U0001f324."
@@ -47,40 +48,15 @@ class StyleGuardTests(unittest.TestCase):
                 kinds = {item["kind"] for item in STYLE_GUARD.style_violations(text)}
                 self.assertIn("emoji", kinds)
 
-    def test_sycophancy_phrases_are_blocked(self) -> None:
-        text = (
-            "Great question. That makes a lot of sense. "
-            "You are absolutely right. Definitely."
-        )
-        policy_ids = {item["policy_id"] for item in STYLE_GUARD.style_violations(text)}
-        self.assertEqual(
-            policy_ids,
-            {"phrase-18", "phrase-19", "phrase-20", "phrase-21"},
-        )
-
     def test_code_regions_are_exempt(self) -> None:
-        text = "Route risky diffs through `blast-radius`.\n\n```md\nhonestly\n```\n"
+        text = "Use `\N{EM DASH}`.\n\n```md\n\N{ROCKET}\n```\n"
         self.assertEqual(STYLE_GUARD.style_violations(text), [])
 
-    def test_skill_name_is_not_the_blocked_phrase(self) -> None:
-        self.assertEqual(
-            STYLE_GUARD.style_violations("Run blast-radius before merging."), []
-        )
-        self.assertEqual(
-            [
-                item["policy_id"]
-                for item in STYLE_GUARD.style_violations("blast\nradius")
-            ],
-            ["phrase-04"],
-        )
-
-    def test_blocked_phrase_outside_code_region_still_blocks(self) -> None:
-        violations = STYLE_GUARD.style_violations(
-            "The `plan` must name the blast radius."
-        )
+    def test_format_violation_outside_code_preserves_location(self) -> None:
+        violations = STYLE_GUARD.style_violations("The `plan` works.\n\N{EM DASH}")
         self.assertEqual(
             [(item["policy_id"], item["line"], item["column"]) for item in violations],
-            [("phrase-04", 1, 26)],
+            [("dash", 2, 1)],
         )
 
     def test_plain_technical_text_passes(self) -> None:
@@ -93,13 +69,18 @@ class StyleGuardTests(unittest.TestCase):
 
     def test_claude_hook_blocks_direct_message(self) -> None:
         output = self.run_hook(
-            "claude", {"last_assistant_message": "This is honestly complete."}
+            "claude", {"last_assistant_message": "Finished \N{EM DASH} tests pass."}
         )
         self.assertEqual(output["decision"], "block")
 
     def test_claude_hook_allows_clean_message(self) -> None:
         self.assertEqual(
-            self.run_hook("claude", {"last_assistant_message": "Tests pass."}),
+            self.run_hook(
+                "claude",
+                {
+                    "last_assistant_message": "That is definitely the documented behavior."
+                },
+            ),
             {},
         )
 
@@ -108,7 +89,7 @@ class StyleGuardTests(unittest.TestCase):
             self.run_hook(
                 "claude",
                 {
-                    "last_assistant_message": "A game changer.",
+                    "last_assistant_message": "Finished \N{EM DASH} tests pass.",
                     "stop_hook_active": True,
                 },
             ),
@@ -126,7 +107,10 @@ class StyleGuardTests(unittest.TestCase):
                             "type": "message",
                             "role": "assistant",
                             "content": [
-                                {"type": "output_text", "text": "A game changer."}
+                                {
+                                    "type": "output_text",
+                                    "text": "Finished \N{EM DASH} tests pass.",
+                                }
                             ],
                         },
                     }
@@ -142,7 +126,7 @@ class StyleGuardTests(unittest.TestCase):
             "codex",
             {
                 "source": {"subagent": {"thread_spawn": {}}},
-                "last_assistant_message": "A paradigm shift.",
+                "last_assistant_message": "Finished \N{EM DASH} tests pass.",
             },
         )
         self.assertEqual(output, {})
@@ -160,7 +144,7 @@ class StyleGuardTests(unittest.TestCase):
                     "type": "event_msg",
                     "payload": {
                         "type": "agent_message",
-                        "message": "A paradigm shift.",
+                        "message": "Finished \N{EM DASH} tests pass.",
                     },
                 },
             ]
@@ -194,7 +178,9 @@ class StyleGuardTests(unittest.TestCase):
                     "isSidechain": True,
                     "message": {
                         "role": "assistant",
-                        "content": [{"type": "text", "text": "A game changer."}],
+                        "content": [
+                            {"type": "text", "text": "Finished \N{EM DASH} tests pass."}
+                        ],
                     },
                 },
             ]
@@ -207,7 +193,8 @@ class StyleGuardTests(unittest.TestCase):
 
     def test_antigravity_uses_provider_decisions(self) -> None:
         blocked = self.run_hook(
-            "antigravity", {"last_assistant_message": "A testament to work."}
+            "antigravity",
+            {"last_assistant_message": "Finished \N{EM DASH} tests pass."},
         )
         self.assertEqual(blocked["decision"], "continue")
         allowed = self.run_hook(
@@ -247,7 +234,7 @@ class StyleGuardTests(unittest.TestCase):
             "feat(ai-tools): add style guard\n\n"
             "Reject measurable markers.\n"
             "# ------------------------ >8 ------------------------\n"
-            "+ definitely unrelated diff text\n"
+            "+ unrelated diff \N{EM DASH} text\n"
         )
         self.assertEqual(STYLE_GUARD.commit_errors(message), [])
 
@@ -304,6 +291,23 @@ class StyleGuardTests(unittest.TestCase):
             required_facts=[],
         )
         self.assertTrue(report["passed"])
+
+    def test_score_accepts_long_sentences_without_content_loss(self) -> None:
+        text = (
+            "I think this approach could solve the problem for both callers, "
+            "provided we keep their different input requirements in mind and "
+            "check the shared behavior before recommending the change."
+        )
+        for mode in ("procedural", "descriptive"):
+            with self.subTest(mode=mode):
+                report = STYLE_GUARD.score_rewrite(
+                    text,
+                    text,
+                    mode=mode,
+                    minimum_retention=0.85,
+                    required_facts=[],
+                )
+                self.assertTrue(report["passed"])
 
     def test_score_normalizes_number_unit_spelling(self) -> None:
         source = "Wait 30 seconds."
