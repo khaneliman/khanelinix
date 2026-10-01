@@ -25,8 +25,12 @@ This skill is host-only and stays outside marketplace publication.
    non-overlapping, and independently verifiable.
 3. Assign one write owner per path. Mark read-only slices separately. Never run
    concurrent writers against the same path.
-4. Cap worker concurrency at the smallest of the parent cap, explicit swarm cap,
-   and available host capacity. Do not increase the parent's cap.
+4. Cap worker concurrency at explicit user or host limits and any parent cap
+   required by task constraints. A parent recommendation to conserve quota
+   based on pace is advisory, not a hard cap. Requests for more workers or an
+   explicit swarm override that forecast-based reduction. Actual provider
+   exhaustion still requires a capable available route. If using quota advice
+   through `multi-provider-sdlc`, pass `--user-requested`.
 5. Give each worker only task, paths, verified context, constraints, write
    policy, skill or tool lane, required evidence, and exit criteria.
 6. Collect one evidence packet per worker with result, changed paths, commands,
