@@ -32,8 +32,11 @@ a follow-up. Committing without it leaves the Git branch behind and the work
 invisible to `git log`, `gh`, CI, and reviewers. This is the most common agent
 failure mode with jj. A commit with no bookmark on it is not on a branch.
 
-Before reporting any jj work done, confirm the bookmark sits on your stack tip
-and `@` is empty. Follow
+After creating or rewriting a commit stack in a git-colocated repository,
+confirm its bookmark sits on the intended stack tip and task-owned changes have
+been committed, leaving `@` empty when no unrelated work remains. Do not move
+bookmarks or empty the working copy for inspection, explanation, or diagnosis.
+Follow
 [references/git-interop.md](references/git-interop.md#bookmark-discipline-mandatory).
 Read it before your first commit, not after.
 

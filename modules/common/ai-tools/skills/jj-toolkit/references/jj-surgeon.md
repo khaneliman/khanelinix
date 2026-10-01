@@ -13,12 +13,13 @@ staging area. All file changes are immediately part of `@`.
 
 **"Clean" means an empty `@`.** When `@` has no diff vs its parent, the working
 copy is clean. You do NOT need to `jj abandon` an empty `@`. It is harmless, and
-jj creates a new empty `@` after operations that consume it. **Always finish
-your work with a clean `@`.** Use `jj commit -m "message"` (not `jj describe`)
-when you're done with a change. `jj commit` finalizes `@` and creates a new
-empty working copy on top. If you use `jj describe` instead, `@` still contains
-your changes and you're still "editing" it. This is the jj equivalent of leaving
-a dirty working copy in Git.
+jj creates a new empty `@` after operations that consume it. For authorized
+commit-stack changes, finalize only task-owned paths or hunks with `jj commit`
+rather than merely describing them. `jj commit` creates a new working copy on
+top; unrelated changes may remain there. Never commit them just to make `@`
+empty. Inspection, explanation, and diagnosis require no finalization. If you
+use `jj describe` instead, `@` still contains your changes and you're still
+"editing" it. This is the jj equivalent of leaving a dirty working copy in Git.
 
 **Change IDs vs commit IDs.** Every commit has two identifiers:
 
@@ -348,14 +349,16 @@ jj op restore <op-id>                   # restore to any point
 - **NEVER use bare `jj diffedit`.** It opens a diff editor. Use
   `jj-hunk-tool diffedit` with explicit hunk IDs.
 - Do NOT `jj abandon @` to "clean up" an empty working copy. It's normal.
-- **Always leave `@` empty when you're done working.** Use `jj commit -m "msg"`
-  to finalize a change. Do NOT use `jj describe`, which leaves your changes in
-  `@`.
-- **Never leave a colocated repo with the bookmark behind your commits.** A
+- **Finalize authorized task-owned changes, not unrelated work.** Use
+  `jj commit -m "msg"` for the intended paths or hunks rather than
+  `jj describe`, which leaves them in `@`. An unrelated remainder may stay in
+  `@`; inspection, explanation, and diagnosis do not require an empty working
+  copy.
+- **After an authorized stack change, keep its colocated bookmark current.** A
   commit with no bookmark on it is not on a branch, so git tooling cannot see
-  it. Move and verify the bookmark before reporting done, and never set it to a
-  dirty `@`. Procedure:
-  [git-interop.md](git-interop.md#bookmark-discipline-mandatory).
+  it. Move and verify that bookmark before reporting the stack change done, and
+  never set it to a dirty `@`. Do not move bookmarks for inspection-only work.
+  Procedure: [git-interop.md](git-interop.md#bookmark-discipline-mandatory).
 - Do NOT use `git` commands in a jj repo. Always use `jj`.
 - Always pass `--git --no-pager` when viewing diffs.
 - Always pass `--no-pager` to `jj log`, `jj op log`, `jj bookmark list`.

@@ -70,8 +70,10 @@ expected behavior.**
 
 ### Bookmark discipline (mandatory)
 
-Moving the bookmark is part of finishing a change. Do it every time, in this
-order:
+For authorized commit-stack changes in a git-colocated repository, moving the
+bookmark is part of finishing the change. These steps do not apply to
+inspection, explanation, or diagnosis, and never authorize committing unrelated
+work.
 
 1. **Identify the bookmark before touching history**: the nearest bookmarked
    ancestor of `@` is the branch you are working off:
@@ -80,12 +82,14 @@ order:
    jj log --no-pager -r 'heads(::@ & bookmarks())' -T 'bookmarks ++ "\n"'
    ```
 
-   Nothing returned means the stack is unnamed: create a bookmark or ask which
-   one to use. Do not leave it unnamed.
+   Nothing returned means the stack is unnamed: create a bookmark when
+   authorized or ask which one to use before changing history. Inspection can
+   leave it unnamed.
 
-2. **Finalize, then move the bookmark to the stack tip** (`@-` after a single
-   `jj commit`). Never move it to a dirty `@`, which would commit
-   work-in-progress to the branch with no description:
+2. **Finalize task-owned changes, then move the bookmark to the intended stack
+   tip** (`@-` after a single `jj commit`). Commit only the authorized paths or
+   hunks; leave unrelated changes in `@`. Never move it to a dirty `@`, which
+   would commit work-in-progress to the branch with no description:
 
    ```bash
    jj bookmark set <bookmark> -r @-
@@ -93,7 +97,8 @@ order:
 
    New branch: `jj bookmark create <name> -r @-`.
 
-3. **Verify before reporting done**: bookmark on the tip, `@` empty:
+3. **Verify before reporting done**: bookmark on the intended tip and task-owned
+   changes committed. Expect `@` empty only when no unrelated changes remain:
 
    ```bash
    jj log --no-pager -r '@ | @-'
