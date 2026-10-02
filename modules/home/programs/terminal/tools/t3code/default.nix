@@ -8,7 +8,7 @@
 }:
 let
   cfg = config.khanelinix.programs.terminal.tools.t3code;
-  t3codePatches = import ./patches.nix { inherit (pkgs) fetchpatch2; };
+  t3codePatches = import ./patches.nix;
 in
 {
   options.khanelinix.programs.terminal.tools.t3code.enable =
@@ -82,7 +82,7 @@ in
                 pnpm config set fetch-retries 5
                 pnpm config set network-concurrency 8
               '';
-              hash = "sha256-xdS9+PqIDULKIu3+lQRMabA23D0dxCEME96NhFggWPY=";
+              hash = "sha256-IvBYaCbOYy/5Sf5hziU9bCkrcm5SZJHwTQsXiYW7dMo=";
             };
             # License generation otherwise downloads SPDX notices during the sandboxed build.
             preBuild = ''

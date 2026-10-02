@@ -91,6 +91,10 @@ let
           mlx
           mlx-lm
         ];
+
+      # nixpkgs marks mlx-vlm 0.4.4 broken because it does not support the
+      # nixpkgs mlx 0.32.1. The Metal wheel above pins mlx 0.31.2, which it does.
+      meta = (old.meta or { }) // prev.lib.optionalAttrs useMetalWheel { broken = false; };
     })
   );
 
