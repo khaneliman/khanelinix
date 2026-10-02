@@ -38,21 +38,23 @@ record (what happened around the same code under other names).
 6. Verify against live state. A transcript or a stale ticket is history, not
    current truth. Check the PRs, branches, and tickets the mining and the sweep
    surfaced with `git` and `gh`.
-7. Write the brief to the contract below. Group by thread. Stay on the named
+7. Write the brief using the structure below. Group by thread. Stay on the named
    topic.
 
-## Output contract
+## Brief structure
 
 Lead with the capsule, then thread status, then problems, then the next move.
 Put deeper detail below or cut it.
 
-- **Capsule.** At most 5 bullets. What this work is and where it stands overall.
-- **Threads.** One line each, prefixed with exactly one status tag:
-  `[merged #N]`, `[open PR #N]`, `[in flight <branch>]`,
-  `[verified, uncommitted]`, `[reverted #N]`, or `[planned, not started]`. An
-  untagged thread is not done, so tag it.
-- **Problems.** At most 5, the recurring ones. Include the symptoms users keep
-  reporting and any fix that shipped and was reverted, so the next attempt
+- **Capsule.** A short summary of what this work is and where it stands overall.
+- **Threads.** Give each relevant thread a concise current status and its
+  artifact or branch when available. Tags such as `[merged #N]`, `[open PR #N]`,
+  `[in flight <branch>]`, `[verified, uncommitted]`, `[reverted #N]`, or
+  `[planned, not started]` are examples, not an exhaustive vocabulary. Describe
+  blocked, paused, partially verified, or uncertain work as it actually stands;
+  do not force it into a completion state the evidence does not support.
+- **Problems.** Include relevant blockers, recurring problems, symptoms users
+  keep reporting and any fix that shipped and was reverted, so the next attempt
   starts where the last one failed.
 - **Next move.** The single most useful next action, concrete.
 
@@ -62,4 +64,4 @@ Write the brief through the `unslop` skill. Cite chat findings by session ID and
 shared-record findings by their source (PR number, ticket ID, chat permalink,
 error-tracker issue). Sanitize private context before any public output.
 
-**Reply:** the brief, to the contract above.
+**Reply:** the concise, thread-oriented brief above.
