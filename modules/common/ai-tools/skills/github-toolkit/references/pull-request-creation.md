@@ -10,9 +10,8 @@ planned work summaries.
    `scripts/pr_snapshot.py` instead of rebuilding API queries.
 2. Detect mandatory PR template. Read `CONTRIBUTING.md`, root and changed-path
    instructions, and directly relevant docs.
-3. Preserve the repository's required template and fill its fields with concise,
-   relevant detail. Without a required template, use the short description
-   guidance below.
+3. Preserve the repository's required template and apply the description
+   guidance below, including inside template fields.
 4. Note contribution gaps: missing tests/docs/issue links, atomic-history
    concerns, licensing/secrets risk, dirty tree, or unpushed commits.
 5. Return title/body ready for `gh pr create`.
@@ -38,13 +37,20 @@ when user asks for draft state.
 5. Preserve required sections and branch-protection labels exactly; only add
    content within template placeholders.
 
-## Description without a required template
+## Description
 
-Default to one or two sentences explaining the change's intent in the user's
-voice. Include a related issue link or closing reference when relevant.
+Default to one short paragraph, usually one or two sentences, explaining what
+changes and why in the user's voice. This applies with or without a repository
+template. Include a related issue link or closing reference when relevant.
 
-Do not add generic headings, a changed-files list, or a testing checklist. Keep
-mechanism, tradeoffs, and validation detail in the commits unless the reader
-needs them in the PR body. Include an upstream reference when it supports a
-decision the reader needs to understand. Expand when requested or when the
-repository requires more detail.
+Add detail when it affects the reviewer's decision: a breaking change,
+migration, dependency, meaningful limitation, or specific question. Include an
+upstream reference when it supports that decision. Expand when requested or when
+the repository requires more detail.
+
+Keep required template sections, but do not add generic headings, a
+changed-files list, or a testing checklist. Leave investigation history,
+implementation walkthroughs, and test inventories out of the description; retain
+useful detail in commits or documentation. Do not repeat what the diff or
+checklist already shows. Keep the conversational voice by selecting fewer
+details, not by making sentences dense.
