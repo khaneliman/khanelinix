@@ -297,9 +297,9 @@ The marketplace excludes `swarm`. It requires the private worker registry and
 host delegation controls. An explicit `swarm this` request partitions
 independent coverage slices. The caller keeps integration and final judgment.
 
-The marketplace also excludes `reflect`. With approval, it routes accepted skill
-edits into the khanelinix canonical tree. Portable workflows treat it as an
-optional final phase.
+The marketplace also excludes `reflect`. Under existing skill-edit authority, it
+routes accepted edits into the khanelinix canonical tree; otherwise it prepares
+proposals for approval. Portable workflows treat it as an optional final phase.
 
 The marketplace excludes `ai-session-audit`. It reads T3 Code provider event
 logs and labels routes from the private khanelinix model-routing policy.
