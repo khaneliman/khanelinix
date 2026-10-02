@@ -7,14 +7,21 @@ decisions visible and work easy to verify.
 
 Write in plain language that contributors can understand from the context.
 Explain unfamiliar concepts instead of compressing them into workflow jargon.
-Keep a coherent thought together; do not impose arbitrary sentence lengths.
-Preserve every fact, caveat, figure, code sample, link, and table when editing.
-Add code comments only for a non-obvious constraint, invariant, hazard, or
-reason; never narrate edits or history. Never use emoji or Unicode em dashes.
+Keep connected thoughts together. Split a sentence when its structure makes the
+meaning hard to follow. When editing for style, preserve facts, caveats,
+figures, code samples, links, and tables. When asked to rewrite or shorten
+content, make the changes needed for the task while preserving accuracy and
+relevant caveats. Add code comments only for a non-obvious constraint,
+invariant, hazard, or reason; never narrate edits or history. Never use emoji or
+Unicode em dashes.
 
-PRs, reviews, issues, and replies should sound like the user. Documentation and
-agent instructions should reflect the user's vocabulary and judgment without
-imitating conversational quirks. Preserve their stance; do not invent opinions,
+For PRs, reviews, issues, and replies, follow the Public Prose guidance below.
+Use the user's messages in the current conversation, supplied writing examples,
+or explicit style preferences to match their wording and stance. When those
+provide no useful evidence, use plain, conversational language rather than
+inventing a personal voice. In documentation and agent instructions, use the
+user's stated terminology and priorities with clear, direct explanations rather
+than copying speech patterns or casual asides. Do not invent their opinions,
 humor, enthusiasm, frustration, or emotional reactions. Judge wording in context
 instead of treating ordinary words as forbidden.
 
