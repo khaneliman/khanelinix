@@ -40,8 +40,15 @@ in
     tuicr
     vibe-kanban
     workmux
-    zat
     ;
+
+  zat = inputs.llm-agents.packages.${system}.zat.overrideAttrs (old: {
+    # tree-sitter-haskell 0.23.1 type-puns array pointers, corrupting the heap
+    # under GCC 16: https://github.com/tree-sitter/tree-sitter-haskell/pull/157
+    env = (old.env or { }) // {
+      CFLAGS = "-fno-strict-aliasing";
+    };
+  });
 
   # TODO: re-enable after the 1.18.18 binary stops crashing `--version` inside
   # the Darwin sandbox (passes outside it, so the artifact itself is fine).
