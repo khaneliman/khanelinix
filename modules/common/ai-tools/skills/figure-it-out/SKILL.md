@@ -5,29 +5,31 @@ description: "Design and run an auditable playbook when no narrower one fits: sc
 
 # Figure It Out
 
-When no playbook matches, design one. First deliverable is a phase sequence that
-scales rigor, runs the scientific method, and leaves a decision trail a human can
-audit after stepping away. Bias toward rigor because wrong work costs more.
+When no playbook matches, design one. Reuse an adequate existing plan or adapt
+it into a phase sequence that scales rigor, tests hypotheses, and leaves a
+decision trail a human can audit after stepping away. Bias toward rigor because
+wrong work costs more.
 
 Route a focused single-unit task to its matching playbook instead. Use this
 skill for the large or cross-cutting version: a migration across many call
 sites, an ambitious multi-part change, or work the user reviews after stepping
 away.
 
-Open a todolist with the phases below as items.
+Track these phases in the existing plan or task list; create one only if needed.
 
 ## Phase A: Frame
 
 Do not start the run until you can state:
 
-- The definition of done as a falsifiable predicate (the prove-it-works
-  principle in `engineering-principles`).
-- Scope, quantified: rough units and effort, plus the blockers grounding
-  surfaced. Raise blockers before spending hours, not after fifty doomed
-  commits.
-- The rigor level, biased high. One-way doors and a wide breakage surface earn
-  more rigor. Reversible low-stakes steps earn less. Rigor means gates and
-  artifacts, not "try harder".
+- The definition of done as a checkable acceptance condition (the
+  prove-it-works principle in `engineering-principles`). Reuse an adequate
+  existing predicate; it need not be numerical.
+- Scope and known blockers. Estimate units and effort when they inform
+  sequencing or a decision; do not invent precision. Raise blockers before
+  spending hours on work they prevent.
+- The rigor level, biased high. Hard-to-reverse changes or changes affecting
+  many paths earn more rigor. Reversible low-stakes steps earn less. Rigor means checks and
+  reviewable evidence, not extra documents or "try harder".
 
 Present the framing and tradeoffs before committing to a long run. Reversible
 work proceeds within existing authority. Duration alone adds no approval gate;
@@ -35,9 +37,9 @@ honor requested checkpoints and surface material unresolved choices.
 
 ## Phase B: Design the workflow
 
-Decompose the task into atomic, independently landable units. Before writes,
-use `git-toolkit` to plan the stack and its rollback boundaries. Sequence the
-riskiest unknown first. Reuse the acceptance summary from
+Use independently landable units: verify and commit each separately.
+Before writes, use `git-toolkit` to plan the stack and its rollback boundaries.
+Sequence the riskiest unknown first. Reuse the acceptance summary from
 `engineering-workflow`'s phase-handoff method when it helps transfer work.
 
 - Choose existing checks or the narrowest missing verification surface. TDD is
@@ -45,16 +47,15 @@ riskiest unknown first. Reuse the acceptance summary from
 - Use `architect` as a design method when the shape has material uncertainty.
   It selects one sketch or competing candidates according to the decision risk.
   Skip design artifacts for mechanical work whose shape is already concrete.
-- Parallelize only across genuine seams. Give each parallel worker its own
+- Parallelize only across independent units. Give each parallel worker its own
   worktree so no two writers share mutable state. Use `git-toolkit` cleanup
   mode to record ownership and the integration target before allocation.
-- Keep the designed phase list visible for review. When the run
-  spans sessions or risks compaction, persist it and the findings through
-  `planning-with-files`.
+- Keep the plan visible for review. When the run spans sessions or risks
+  compaction, persist the plan and findings in existing task notes; use
+  `planning-with-files` when adequate durable notes are missing.
 
-Then add the design's steps to the todolist as concrete items, after the Phase C
-entry and before Phase D. Run each step under the Phase C loop and update the
-Phase D trail as each step lands.
+Update the task list with the concrete steps it does not already cover. Run each
+step under the Phase C loop and update the Phase D trail as each step lands.
 
 ## Phase C: Run the loop
 
@@ -62,13 +63,13 @@ This skill owns the program lifecycle, hypotheses, and audit trail.
 `verified-slice` stays a unit method and does not own program lifecycle,
 architecture, or audit trail.
 
-State the hypothesis and predicate. Then run each planned unit through the
-`verified-slice` method in `engineering-principles`. It handles baseline,
+Reuse a valid hypothesis and predicate or state new ones. Run each planned unit
+through the `verified-slice` method in `engineering-principles`. It handles baseline,
 implementation, proportional verification, review, correction, and exact
 candidate preparation. With `local-commit`, commit the candidate, then confirm
 occurrence. Without commit authority, preserve an exact patch or isolated
 worktree. Advance after verified evidence and a durable rollback boundary.
-Honor standing local-commit authority without asking again.
+Confirm the commit contains the verified change; honor standing commit authority.
 
 Inspect the real artifact, never a self-report. Apply the slice's proportional
 review gate; do not add a judge for every worker on top of slice review. Use
@@ -76,10 +77,12 @@ VERIFIED, NOT_VERIFIED, or INCONCLUSIVE. An inconclusive result does not pass.
 
 ## Phase D: Keep the audit trail
 
-Keep decisions, slice results, and evidence links in existing task notes. Use
-`show-me-your-work` only when the user requests its structured trail. Include
-the trail when needed to review the result: commit it with local-commit authority, otherwise preserve it
-with the workspace-only artifact. Prefer reproducible evidence.
+Keep consequential decisions, hypotheses, slice results, and evidence links in
+existing task notes. Record what changed the plan and why; do not duplicate
+adequate evidence in a separate log. Use `show-me-your-work`
+only when the user requests its structured trail. Preserve evidence needed to review the
+result with the delivered artifact: commit it with local-commit authority,
+otherwise keep it with the workspace-only artifact. Prefer reproducible evidence.
 
 ## Phase E: Verify and hand back
 
@@ -87,10 +90,10 @@ Complete `git-toolkit` cleanup mode after integrating worker results. Remove
 integrated task-owned resources, stop workers, and account for every retained
 path/ref with its reason and next action before claiming completion.
 
-Check the whole against the Phase A predicate on the real product, not only the
-harness. Encode any recurring correction as a gate, a lint rule, a check, or a
-script so the win cannot silently regress (the encode-lessons-in-structure
-principle in `engineering-principles`).
+Check the whole against Phase A on the real product, not only the harness.
+For recurring corrections, consider existing checks, lint, or scripts
+(encode-lessons-in-structure in `engineering-principles`). Add enforcement only
+when its reliability benefit justifies maintenance; clear guidance may be enough.
 
 **Reply:** the playbook you designed, the rigor level and why, the
 decision-trail path, what is verified against the predicate, and what is still
