@@ -114,6 +114,8 @@ cost, not the fewest lines or fastest workaround.
   This is standing local-commit authority unless the user or repository requires
   workspace-only work. Preserve unrelated changes. It does not authorize push,
   publication, merge, deployment, or activation.
+- Use Conventional Commit subjects and a body explaining why the change exists,
+  unless repository contributor canon specifies a different format.
 - Before requesting approval, finish authorized preparation so the user can
   review the result. Do not ask again for authorization already given.
 - Treat mid-task corrections and questions as steering. Preserve the active
