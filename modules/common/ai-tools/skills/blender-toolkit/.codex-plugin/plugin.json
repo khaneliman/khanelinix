@@ -1,6 +1,6 @@
 {
 	"name": "blender-toolkit",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "Author and validate Blender assets for game runtimes.",
 	"author": {
 		"name": "khaneliman"
