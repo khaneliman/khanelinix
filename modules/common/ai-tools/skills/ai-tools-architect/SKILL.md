@@ -5,9 +5,9 @@ description: Design and audit agent instructions, skills, prompts, hooks, and pr
 
 # AI Tools Architecture Playbook
 
-Enforce progressive disclosure and deterministic execution boundaries for this
-project's AI setup. Keep model context focused on judgment while routing exact,
-repeatable mechanics through tools or bundled scripts.
+Keep shared instructions, skills, and provider configuration focused on the
+decisions they own. Load detail when the task needs it, and use existing tools
+or bundled scripts for exact, repeated mechanics.
 
 For a tree-wide audit or changes to skill discovery and packaging, run the
 structural audit:
@@ -19,38 +19,38 @@ python3 <skill-dir>/scripts/audit_ai_tools.py <ai-tools-root> --format markdown
 The audit is read-only. Treat errors as objective structural failures and
 warnings as review candidates; architecture decisions remain with the agent.
 Review implicit and explicit-only skill counts before adding another automatic
-trigger. Treat the description budget as advisory because host limits vary.
-After changing canonical skills, run every bundled unit suite with:
+trigger. The audit enforces a repository description budget, not a universal
+host limit; it does not measure the full rendered skills list. After changing
+canonical skills, run every bundled unit suite with:
 
 ```bash
 python3 <skill-dir>/scripts/run_skill_tests.py <canonical-skills-root>
 ```
 
-Treat root `AGENTS.md` as registry and keep detailed workflow or domain guidance
-in gated leaf nodes.
+Keep root `AGENTS.md` focused on shared rules and source pointers. Put detailed
+workflow or domain guidance in scoped files and skills that load when needed.
 
-## Core Doctrine: Nudges, Not Documentation
+## What Belongs in Each File
 
 Apply these tests to every AGENTS.md, rule, skill, and agent file you design or
 review, in any repository:
 
-1. **Human docs are canon.** If the project documents a convention for all
-   contributors (`CONTRIBUTING.md`, `docs/`, style guides), agent files must
-   point there; never paraphrase or fork it. The root registry should instruct
-   reading the canon doc before making changes. Duplicating canon into agent
-   files costs little context (they rarely co-load) but guarantees drift.
-2. **Models know the technology.** Never spend agent-file lines teaching the
-   language, framework, OS, or tool itself (syntax, standard commands,
-   well-known APIs). The model already knows systemd units, flake syntax, git.
-   Cut any content a competent engineer new to _this repo_ would not need.
-3. **Keep only the nudges.** Agent files exist solely for what neither canon
-   docs nor model knowledge covers: project-specific layout and naming, policy
-   choices among valid alternatives, environment quirks, and corrections for
-   behaviors models repeatedly get wrong here.
-4. **Dedupe across co-loading files.** Duplication only costs tokens when both
-   copies load together (sibling path-gated rules, registry + rule). State
-   shared guidance once in the file with the widest matching gate.
-5. **Encode mechanics; explain judgment.** Prefer parameterized scripts or CLIs
+1. **Contributor docs own repository conventions.** Repository agent files
+   should point to `CONTRIBUTING.md`, `docs/`, or the applicable style guide
+   instead of maintaining another copy. The root instructions should require
+   reading those sources before changes.
+2. **Portable skills need their own useful knowledge.** Do not trim a skill
+   because one repository's instructions repeat it. Keep the recipes,
+   constraints, examples, and source links it needs outside that repository.
+   Declared skill dependencies can supply shared methods without copied text.
+3. **Explain what changes the decision.** Skip generic technology introductions
+   and ordinary syntax. Keep unfamiliar constraints, current API behavior,
+   environment quirks, choices among valid approaches, and lessons from observed
+   failures. Do not assume model knowledge is current or sufficient evidence.
+4. **Remove duplication where sources load together.** State shared guidance
+   once at the appropriate shared scope and link it from narrower files.
+   Preserve knowledge a separately installed skill needs to stand on its own.
+5. **Use tools for mechanics and prose for judgment.** Prefer scripts or CLIs
    for fragile or repeated queries, transformations, validation, and mutations.
    Keep selection, ambiguity resolution, and result interpretation in the
    playbook unless those decisions also have an exact contract.

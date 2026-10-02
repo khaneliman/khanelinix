@@ -1,8 +1,9 @@
 # Standards for Agent Skills
 
-Skills are reusable, multi-step workflows package-managed as directories
-containing a `SKILL.md` playbook, optionally supported by scripts, assets, and
-references.
+Skills supply task-specific guidance in a directory containing `SKILL.md`,
+optionally supported by scripts, assets, and references. A useful skill can be a
+short method; it does not need a multi-step workflow or a script to justify
+itself.
 
 ## Design Constraints
 
@@ -22,11 +23,11 @@ references.
    installed skill directory. Use explicit caller-selected paths or temporary
    directories.
 
-## Deterministic Execution Boundary
+## When to Use a Script
 
-Keep model responsible for intent, ambiguity, operation selection, and result
-interpretation. Prefer a script when operation has defined inputs and outputs
-and any of these apply:
+Keep the agent responsible for intent, ambiguity, choosing the operation, and
+interpreting its result. Prefer a script when an operation has defined inputs
+and outputs and any of these apply:
 
 - same query, transformation, validation, or mutation will recur
 - correctness depends on exact parsing, ordering, escaping, or API parameters
@@ -78,33 +79,38 @@ stable command unless the wrapper creates a useful contract.
 
 1. Collect concrete trigger and non-trigger requests, expected outputs, and
    important failure modes.
-2. Mark each workflow step as high-freedom model judgment, direct tool use, or
-   low-freedom deterministic script.
+2. Decide which steps need judgment, an existing tool, or a script for exact
+   repeated mechanics. Do not prescribe a fixed sequence when several approaches
+   can meet the task's constraints.
 3. Route detailed knowledge to references, reusable output material to assets,
    and exact repeated mechanics to scripts.
 4. Validate frontmatter, links, resource reachability, provider metadata, and
    every added script.
-5. Forward-test complex skills on realistic requests with fresh context. Pass
-   raw task artifacts, not intended answer or suspected defect.
+5. Evaluate complex skills on realistic requests with fresh context. Pass raw
+   task artifacts, not intended answer or suspected defect.
 
 ---
 
-## Claude-Specific Context Behaviors
+## Claude Code Context Behavior
 
-- **Compaction Re-injection & Limits:** Invoked skill bodies are automatically
-  re-injected after conversation compaction. However, they are capped at **5,000
-  tokens per skill** and **25,000 tokens total** for all skills. Oldest skills
-  are dropped once the total budget is exceeded.
-- **Truncation:** Since truncation keeps the start of the file, always put the
-  most important instructions near the top of `SKILL.md` and move detailed
-  payload to reference files. Progressive disclosure prevents truncation of
-  critical data.
+The
+[Claude Code skill documentation](https://code.claude.com/docs/en/skills#skill-content-lifecycle)
+describes reattaching the most recent invocation of each skill after compaction:
+the first **5,000 tokens per skill**, within a **25,000-token combined budget**,
+starting with the most recently invoked skill. Older skills can be omitted.
+These are post-compaction retention limits, not initial skill-loading caps or
+portable authoring requirements. Put essential guidance near the start and load
+supporting detail only when needed. Recheck provider behavior when a version
+change matters; a short entry point does not guarantee retained context.
 
 ---
 
 ## Codex Agent Skills
 
-Codex supports the open agent skills standard (agentskills.io).
+Codex supports the
+[Agent Skills standard](https://agentskills.io/specification). Use the
+[official skills documentation](https://learn.chatgpt.com/docs/build-skills) for
+current discovery locations and provider behavior.
 
 ### Structure & Layout
 
@@ -125,15 +131,19 @@ Codex supports the open agent skills standard (agentskills.io).
 - **`ADMIN`:** Shared system-wide skills under `/etc/codex/skills`.
 - **`SYSTEM`:** Bundled directly with Codex.
 
-### Implicit Match Budget
+### Discovery Budget and Repository Check
 
-- The initial list of all available skills in context is capped at **2% of the
-  context window** (approx. 8,000 characters when unknown).
-- This repository enforces a **7,800-character ceiling** to retain margin below
-  that approximate host cap.
-- If budget is exceeded, Codex shortens descriptions first, then omits skills.
-- **Design Rule:** Front-load key use cases and trigger words in the description
-  frontmatter so matching works even when truncated.
+- The official documentation gives the initial skills list **2% of the model's
+  context window**, or **8,000 characters when the window is unknown**. It
+  includes names, descriptions, and paths. Codex shortens descriptions first and
+  may omit skills when the list still does not fit. This does not cap the body
+  read after a skill is selected.
+- This repository's structural audit separately enforces a configurable
+  **7,800-character default ceiling for implicitly invocable descriptions**. It
+  exits nonzero on overflow. This is a conservative local check, not a
+  measurement of the full rendered list or a guarantee that every host fits.
+- Front-load the key use case and keep descriptions specific. Do not remove
+  useful routes or make skills explicit-only merely to reach a number.
 - Disable specific skills in `~/.codex/config.toml` using:
   ```toml
   [[skills.config]]
@@ -161,8 +171,7 @@ Codex supports the open agent skills standard (agentskills.io).
 - Validate canonical intent, native controls, and publication paths as one
   contract.
 
-**Actionable Advice Output:** Propose the directory structure, draft the
-`SKILL.md` frontmatter, draft any `agents/openai.yaml` dependencies, and suggest
-trigger words to keep under the 7,800-character repository ceiling. Identify
-each workflow step as model judgment, direct tool use, or bundled deterministic
-script, and define script input/output and mutation-safety contracts.
+When proposing a skill, show the smallest useful package and explain when it
+applies. Draft frontmatter, provider metadata, or script contracts only where
+the change needs them. Check the repository's description budget without
+treating it as a universal provider limit or creating unnecessary scaffolding.
