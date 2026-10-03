@@ -273,6 +273,7 @@ in
           continueThreadsAfterServerUpdate = true;
           # Disable automatic settlement so threads are settled manually.
           sidebarAutoSettleAfterDays = null;
+          sidebarAutoSettleOnMerge = false;
           textGenerationModelSelection = {
             instanceId = "codex";
             model = "gpt-6-luna";
@@ -324,6 +325,7 @@ in
         # Merge declared values on activation while preserving undeclared GUI
         # settings. Declared arrays, including favorites, replace GUI values.
         clientSettings = {
+          chatWidth = "wide";
           confirmThreadArchive = false;
           confirmThreadDelete = true;
           diffIgnoreWhitespace = true;
@@ -366,6 +368,7 @@ in
           fontSmoothing = true;
           glassOpacity = 80;
           legacySidebarEnabled = false;
+          loadBalancingEnabled = true;
           inAppNotificationsEnabled = true;
           notificationMode = "notifications";
           planModeEnabled = false;
