@@ -117,6 +117,10 @@ in
     theme.tokyonight = enabled;
   };
 
+  programs.t3code.clientSettings = lib.mkIf config.programs.t3code.enable {
+    loadBalancingWeights."9543d727-e5f3-416d-8b29-7b09efc9d529" = 100;
+  };
+
   programs.mcp.servers.filesystem.args = [
     config.home.homeDirectory
     "${config.home.homeDirectory}/Documents"
