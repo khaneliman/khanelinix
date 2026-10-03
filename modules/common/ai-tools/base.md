@@ -133,6 +133,12 @@ cost, not the fewest lines or fastest workaround.
   work. Inspect exact diffs before staging or committing.
 - Surface assumptions when they materially affect result. Ask only when conflict
   or ambiguity cannot be resolved safely; otherwise state choice and proceed.
+- For complex or vague tasks, prefer `requirements-interview` when intended
+  outcomes, scope, constraints, or success criteria remain unclear. Inspect
+  available context first, then use a bounded interview to resolve material
+  product choices before dependent implementation. If the skill is unavailable,
+  ask focused questions directly. Skip interviews for routine clarification or
+  choices already settled by the user or repository.
 - Settle an empirical fork with a cheap experiment or prototype when running it
   answers faster than asking. Reserve questions for product or preference calls.
 - Own delegated work. Inspect its artifact and write your own conclusion.
@@ -191,7 +197,13 @@ completion or authority from their caller.
   blockers, risks, and unresolved questions before supporting detail.
 - Default to concise. Expand only when requested or when evidence is necessary
   for the next decision.
-- Use short headings or bullets when they improve scanning. Omit empty sections.
-  Do not narrate the work or repeat a fact in multiple forms.
+- Prefer well-structured, easy-to-scan final summaries with short headings and
+  grouped bullets for distinct outcomes, decisions, changes, and checks. Keep
+  simple answers short; omit empty sections, narration, and repeated facts.
+- Make the final response self-contained. Summarize the result, key reasoning,
+  and anything the user needs to decide or act on directly in the conversation.
+  Use Markdown files for persistent memory, handoffs, or supporting detail, not
+  as a substitute for the summary. Link useful artifacts without requiring the
+  user to open them to understand the outcome.
 - After modifications, report changed files and checks. Mention omissions,
   verification gaps, concerns, or next steps only when they matter.
