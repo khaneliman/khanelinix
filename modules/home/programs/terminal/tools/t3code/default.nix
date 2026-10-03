@@ -271,6 +271,10 @@ in
           # so new model ids arrive with package updates instead.
           enableProviderUpdateChecks = false;
           continueThreadsAfterServerUpdate = true;
+          snoozeLimitedThreads = true;
+          autoResumeLimitedThreads = true;
+          branchNamingMode = "semantic";
+          storageCleanup.worktreeOnMerge = true;
           # Keep threads until their PR merges or they are settled manually.
           sidebarAutoSettleAfterDays = null;
           sidebarAutoSettleOnMerge = true;
@@ -371,12 +375,14 @@ in
           loadBalancingEnabled = true;
           inAppNotificationsEnabled = true;
           notificationMode = "notifications";
+          persistComposerContextStrip = true;
           planModeEnabled = false;
           providerModelPreferences = { };
           sidebarProjectGroupingMode = "repository";
           sidebarProjectSortOrder = "updated_at";
           sidebarThreadPreviewCount = 6;
           sidebarThreadSortOrder = "updated_at";
+          sidebarWorkingShelfEnabled = true;
           timestampFormat = "locale";
           wordWrap = true;
         };
