@@ -271,9 +271,9 @@ in
           # so new model ids arrive with package updates instead.
           enableProviderUpdateChecks = false;
           continueThreadsAfterServerUpdate = true;
-          # Disable automatic settlement so threads are settled manually.
+          # Keep threads until their PR merges or they are settled manually.
           sidebarAutoSettleAfterDays = null;
-          sidebarAutoSettleOnMerge = false;
+          sidebarAutoSettleOnMerge = true;
           textGenerationModelSelection = {
             instanceId = "codex";
             model = "gpt-6-luna";
