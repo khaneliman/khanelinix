@@ -496,13 +496,19 @@ in
     ]
   );
 
-  programs.mcp.servers.filesystem.args = [
-    config.home.homeDirectory
-    "${config.home.homeDirectory}/Documents"
-    "${config.home.homeDirectory}/khanelinix"
-    "${config.home.homeDirectory}/Documents/github"
-    "/nix/store"
-  ];
+  programs = {
+    t3code.clientSettings = lib.mkIf config.programs.t3code.enable {
+      loadBalancingWeights."9543d727-e5f3-416d-8b29-7b09efc9d529" = 100;
+    };
+
+    mcp.servers.filesystem.args = [
+      config.home.homeDirectory
+      "${config.home.homeDirectory}/Documents"
+      "${config.home.homeDirectory}/khanelinix"
+      "${config.home.homeDirectory}/Documents/github"
+      "/nix/store"
+    ];
+  };
 
   khanelinix.programs.terminal.tools.mcp.blender.enable = true;
   khanelinix.programs.terminal.tools.mcp.firefox.enable = true;
