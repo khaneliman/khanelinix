@@ -15,13 +15,6 @@ let
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
 
-  # Must match the userDir computed by home-manager's mkVscodeModule.
-  settingsFilePath =
-    if pkgs.stdenv.hostPlatform.isDarwin then
-      "${config.home.homeDirectory}/Library/Application Support/Antigravity/User/settings.json"
-    else
-      "${config.xdg.configHome}/Antigravity/User/settings.json";
-
   globalSettingsFile = pkgs.writeText "antigravity-global-settings.json" (
     builtins.toJSON {
       userSettings = {
@@ -83,9 +76,6 @@ in
         ".gemini/config/plugins/okf-memory".source = lib.mkDefault aiTools.antigravityCli.okfMemoryPlugin;
         ".gemini/config/plugins/technical-writing".source =
           lib.mkDefault aiTools.antigravityCli.technicalWritingPlugin;
-
-        # Antigravity rewrites this VS Code-compatible settings file.
-        "${settingsFilePath}".force = true;
       }
       // lib.mapAttrs' (
         name: source:
@@ -102,6 +92,7 @@ in
       package = lib.mkDefault null;
 
       profiles.default = {
+        mutableUserSettings = true;
         enableExtensionUpdateCheck = false;
         enableMcpIntegration = mkIf mcpModuleEnabled true;
         enableUpdateCheck = false;
