@@ -32,6 +32,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    khanelinix.system.networking.applicationFirewall.allowedApps = [ (lib.getExe pkgs.harmonia) ];
+
     launchd.daemons.harmonia = {
       serviceConfig = {
         ProgramArguments = [ (lib.getExe pkgs.harmonia) ];
