@@ -1,0 +1,142 @@
+--- a/crates/optimise/src/optimise.rs
++++ b/crates/optimise/src/optimise.rs
+@@ -33,6 +33,7 @@
+     pub store_dir: PathBuf,
+     pub state_dir: PathBuf,
+     pub dry_run: bool,
++    pub skip_executables: bool,
+     /// Skip files below this size; the extra .links inode costs more.
+     pub min_size: u64,
+     pub jobs: usize,
+@@ -44,6 +45,7 @@
+             store_dir: PathBuf::from("/nix/store"),
+             state_dir: PathBuf::from("/nix/var/nix"),
+             dry_run: false,
++            skip_executables: false,
+             min_size: 0,
+             jobs: std::thread::available_parallelism().map_or(4, |n| n.get()),
+         }
+@@ -203,6 +205,12 @@
+     // mutated by root); skip them like nix does.
+     if ft.is_file() && meta.mode() & 0o200 != 0 {
+         log::warn!("skipping suspicious writable file {}", path.display());
++        stats.files_skipped.fetch_add(1, Ordering::Relaxed);
++        return Ok(());
++    }
++    // ALF code-identity discovery can scan the entire .links directory
++    // when an executable has an alias there, before giving any flow a verdict.
++    if opts.skip_executables && ft.is_file() && meta.mode() & 0o111 != 0 {
+         stats.files_skipped.fetch_add(1, Ordering::Relaxed);
+         return Ok(());
+     }
+@@ -532,7 +540,7 @@
+     }
+     let skipped = stats.files_skipped.load(Ordering::Relaxed);
+     if skipped > 0 {
+-        log::info!("{skipped} file(s) skipped (writable or below --min-size)");
++        log::info!("{skipped} file(s) skipped (writable, executable, or below --min-size)");
+     }
+     let linked = stats.files_linked.load(Ordering::Relaxed);
+     let freed = stats.bytes_freed.load(Ordering::Relaxed);
+@@ -559,6 +567,7 @@
+         println!();
+         println!("Options:");
+         println!("      --dry-run             Show what would be done");
++        println!("      --skip-executables    Do not hard-link executable files");
+         println!("      --min-size BYTES      Skip files smaller than BYTES");
+         println!("  -j, --jobs N              Concurrency [default: num CPUs]");
+         println!("      --store-dir PATH      Nix store directory [default: /nix/store]");
+@@ -568,6 +577,7 @@
+ 
+     let mut opts = Options {
+         dry_run: p.contains("--dry-run"),
++        skip_executables: p.contains("--skip-executables"),
+         ..Options::default()
+     };
+     if let Some(v) = p.opt_value_from_str("--min-size")? {
+@@ -593,6 +603,7 @@
+         let arg = first.to_string_lossy();
+         const KNOWN: &[&str] = &[
+             "--dry-run",
++            "--skip-executables",
+             "--min-size",
+             "-j",
+             "--jobs",
+@@ -709,6 +720,77 @@
+             state_dir: state.to_path_buf(),
+             jobs: 1,
+             ..Options::default()
++        }
++    }
++
++    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++    async fn executable_exclusion_preserves_data_deduplication() {
++        for skip_executables in [false, true] {
++            for dry_run in [false, true] {
++                let tmp = tempdir().unwrap();
++                let store = tmp.path().join("store");
++                let state = tmp.path().join("state");
++                fs::create_dir_all(&store).unwrap();
++                let p1 = mk_store_path(&store, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-a", CONTENT);
++                let p2 = mk_store_path(&store, "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-b", CONTENT);
++                let program = b"#!/bin/sh\nexit 0\n";
++                for p in [&p1, &p2] {
++                    unlock(p);
++                    fs::write(p.join("program"), program).unwrap();
++                    fs::set_permissions(p.join("program"), fs::Permissions::from_mode(0o555))
++                        .unwrap();
++                    fs::set_permissions(p, fs::Permissions::from_mode(0o555)).unwrap();
++                }
++                mk_db(&state, &[&p1, &p2]);
++                let originals = [
++                    fs::metadata(p1.join("program")).unwrap().ino(),
++                    fs::metadata(p2.join("program")).unwrap().ino(),
++                ];
++                let hash = nar_hash_nix32(&p1.join("program")).await.unwrap();
++                let options = || Options {
++                    skip_executables,
++                    dry_run,
++                    ..run_opts(&store, &state)
++                };
++                let stats = optimise_store(options()).await.unwrap();
++                assert_eq!(stats.errors.load(Ordering::Relaxed), 0);
++                assert_eq!(
++                    stats.files_linked.load(Ordering::Relaxed),
++                    if skip_executables { 1 } else { 2 }
++                );
++                let inodes = [
++                    fs::metadata(p1.join("program")).unwrap().ino(),
++                    fs::metadata(p2.join("program")).unwrap().ino(),
++                ];
++                if skip_executables || dry_run {
++                    assert_eq!(inodes, originals);
++                    assert!(!store.join(".links").join(&hash).exists());
++                } else {
++                    assert_eq!(inodes[0], inodes[1]);
++                    assert!(store.join(".links").join(&hash).exists());
++                }
++                for p in [&p1, &p2] {
++                    assert_eq!(fs::read(p.join("program")).unwrap(), program);
++                    assert_eq!(
++                        fs::metadata(p.join("program")).unwrap().mode() & 0o777,
++                        0o555
++                    );
++                    assert_eq!(nar_hash_nix32(&p.join("program")).await.unwrap(), hash);
++                }
++                if dry_run {
++                    assert!(!store.join(".links").exists());
++                } else {
++                    assert_eq!(
++                        fs::metadata(p1.join("data")).unwrap().ino(),
++                        fs::metadata(p2.join("data")).unwrap().ino()
++                    );
++                    let again = optimise_store(options()).await.unwrap();
++                    assert_eq!(again.files_linked.load(Ordering::Relaxed), 0);
++                    assert_eq!(again.errors.load(Ordering::Relaxed), 0);
++                }
++                unlock(&p1);
++                unlock(&p2);
++            }
+         }
+     }
+ 
