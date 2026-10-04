@@ -216,7 +216,7 @@ in
             };
           };
         in
-        {
+        lib.mapAttrs (_: profile: profile // { mutableUserSettings = true; }) {
           default = {
             extensions = commonExtensions;
             enableUpdateCheck = lib.mkIf cfg.declarativeConfig false;
