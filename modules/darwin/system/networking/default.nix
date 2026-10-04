@@ -35,7 +35,9 @@ let
       # ALF tracks the real listening executable, not the qt wrapper script.
       "${moonlightPackage}/Applications/Moonlight.app/Contents/MacOS/.Moonlight-wrapped"
     ];
-  applicationFirewallAllowedAppsText = lib.concatStringsSep "\n" applicationFirewallAllowedApps;
+  applicationFirewallAllowedAppsFile = pkgs.writeText "khanelinix-alf-allowed-apps" (
+    lib.concatMapStrings (app: app + "\n") applicationFirewallAllowedApps
+  );
 in
 {
   options.khanelinix.system.networking = {
@@ -50,10 +52,6 @@ in
   config = lib.mkIf cfg.enable {
     networking = {
       applicationFirewall = {
-        # If socketfilterfw starts consuming high CPU or causes system stutters/WindowServer crashes, you can:
-        # 1. Temporarily disable the firewall: sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off
-        # 2. Kill the stuck process: sudo killall socketfilterfw
-        # 3. Nuke the corrupted database and restart: sudo rm /Library/Preferences/com.apple.alf.plist && sudo killall socketfilterfw
         enable = true;
 
         allowSigned = true;
@@ -88,10 +86,8 @@ in
         if [ ! -x "$alf" ]; then
           echo >&2 "Skipping Application Firewall audit: socketfilterfw is unavailable."
         else
-          applicationFirewallAllowedApps="$(/usr/bin/mktemp /tmp/khanelinix-alf-allowed.XXXXXX)"
-          /bin/cat > "$applicationFirewallAllowedApps" <<'KHANELINIX_ALLOWED_FIREWALL_APPS'
-        ${applicationFirewallAllowedAppsText}
-        KHANELINIX_ALLOWED_FIREWALL_APPS
+          applicationFirewallAllowedApps="${applicationFirewallAllowedAppsFile}"
+          backupDir="/var/backups/khanelinix-alf"
 
           "$alf" --listapps \
             | /usr/bin/sed -n 's/^[[:space:]]*[0-9][0-9]*[[:space:]]:[[:space:]]//p' \
@@ -111,13 +107,48 @@ in
 
                 case "$app" in
                   /nix/store/*|/nix/var/nix/*|/private/tmp/nix-build*)
-                    "$alf" --remove "$app" >/dev/null 2>&1 || true
+                    # Existing executables may have permissions managed outside
+                    # this allowlist, including services from older generations.
+                    if [ ! -e "$app" ]; then
+                      "$alf" --remove "$app" >/dev/null 2>&1 || true
+                    fi
                     ;;
                 esac
               done
 
           while IFS= read -r allowedApp; do
             if [ -e "$allowedApp" ]; then
+              resolvedApp="$(${lib.getExe' pkgs.coreutils "readlink"} -f "$allowedApp")"
+              case "$resolvedApp" in
+                /nix/store/*)
+                  if [ -f "$resolvedApp" ] && [ "$(/usr/bin/stat -f %l "$resolvedApp")" -gt 1 ]; then
+                    indexHash="$("${lib.getExe' config.nix.package "nix"}" hash path --type sha256 --base32 "$resolvedApp")"
+                    indexPath="/nix/store/.links/$indexHash"
+                    if [ -f "$indexPath" ] && [ ! -L "$indexPath" ] \
+                      && [ "$(/usr/bin/stat -f '%d:%i' "$resolvedApp")" = "$(/usr/bin/stat -f '%d:%i' "$indexPath")" ]; then
+                      # Remove only the optimiser's alias, not the store file.
+                      # ALF otherwise scans .links during code identity discovery.
+                      /usr/bin/install -d -m 0700 -o root -g wheel "$backupDir"
+                      if ! /usr/bin/cmp -s "$indexPath" "$backupDir/$indexHash"; then
+                        backupTmp="$(/usr/bin/mktemp "$backupDir/.$indexHash.XXXXXX")"
+                        if ! /bin/cp "$indexPath" "$backupTmp" \
+                          || ! /usr/bin/cmp -s "$indexPath" "$backupTmp"; then
+                          /bin/rm -f "$backupTmp"
+                          echo >&2 "Failed to back up optimiser index entry for $allowedApp"
+                          exit 1
+                        fi
+                        /bin/mv -f "$backupTmp" "$backupDir/$indexHash"
+                      fi
+                      /usr/bin/cmp "$indexPath" "$backupDir/$indexHash"
+                      # Persist the restart until it succeeds, even if activation
+                      # stops after unlinking or the firewall cannot be restarted.
+                      /usr/bin/touch "$backupDir/restart-needed"
+                      /bin/rm -f "$indexPath"
+                      echo >&2 "Removed backed-up optimiser index entry for $allowedApp"
+                    fi
+                  fi
+                  ;;
+              esac
               "$alf" --add "$allowedApp" >/dev/null 2>&1 || true
               "$alf" --unblockapp "$allowedApp" >/dev/null 2>&1 || true
             else
@@ -125,9 +156,12 @@ in
             fi
           done < "$applicationFirewallAllowedApps"
 
-          /bin/rm -f "$applicationFirewallAllowedApps"
+          if [ -e "$backupDir/restart-needed" ]; then
+            # A queued identity lookup can remain stuck after unlinking its alias.
+            /usr/bin/killall socketfilterfw
+            /bin/rm -f "$backupDir/restart-needed"
+          fi
         fi
-
 
         anchorName="khanelinix-exo"
         anchorFile="/etc/pf.anchors/$anchorName"
