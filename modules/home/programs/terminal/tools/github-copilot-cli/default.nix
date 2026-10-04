@@ -39,6 +39,7 @@ in
     programs = {
       github-copilot-cli = {
         enable = true;
+        mutableSettings = true;
 
         enableMcpIntegration = mkIf mcpModuleEnabled true;
 
