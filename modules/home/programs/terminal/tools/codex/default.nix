@@ -61,15 +61,6 @@ let
       "${config.xdg.configHome}/codex"
     else
       "${config.home.homeDirectory}/.codex";
-  codexConfigFile =
-    if config.home.preferXdgDirectories then
-      "${lib.removePrefix config.home.homeDirectory config.xdg.configHome}/codex/config.toml"
-    else
-      ".codex/config.toml";
-  syncConfig = pkgs.writers.writePython3Bin "codex-sync-config" {
-    libraries = [ pkgs.python3Packages.tomlkit ];
-    flakeIgnore = [ "E501" ];
-  } (builtins.readFile ./sync-config.py);
   codexBasePackage =
     if pkgs.stdenv.hostPlatform.isDarwin && config.home.preferXdgDirectories then
       pkgs.symlinkJoin {
@@ -188,20 +179,8 @@ in
 
   config = mkIf cfg.enable {
     home = {
-      # Codex writes model selections and project trust into its user config.
-      file.${codexConfigFile}.target =
-        "${lib.removePrefix "${config.home.homeDirectory}/" codexConfigPath}/config.declarative.toml";
       activation = {
-        codexConfig = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-          run ${lib.getExe syncConfig} ${
-            lib.escapeShellArgs [
-              (toString config.home.file.${codexConfigFile}.source)
-              "${codexConfigPath}/config.toml"
-              "${config.xdg.stateHome}/codex/declarative-config.toml"
-            ]
-          }
-        '';
-        codexPlugins = lib.hm.dag.entryAfter [ "codexConfig" ] (
+        codexPlugins = lib.hm.dag.entryAfter [ "codexMutableSettings" ] (
           lib.concatMapStringsSep "\n" (plugin: ''
             run ${lib.getExe' pkgs.coreutils "env"} CODEX_HOME=${lib.escapeShellArg codexConfigPath} \
               ${lib.getExe codexPackage} plugin add ${lib.escapeShellArg plugin} \
@@ -291,6 +270,7 @@ in
     programs.codex = {
       enable = true;
       enableMcpIntegration = mkIf mcpModuleEnabled true;
+      mutableSettings = true;
       package = codexPackage;
       profiles = codexProfiles;
 
