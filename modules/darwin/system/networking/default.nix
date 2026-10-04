@@ -14,8 +14,6 @@ let
   # Use the package instance from the user's Home Manager service so the
   # allowlisted path matches the binary the LaunchAgent launches.
   syncthingPackage = homeCfg.services.syncthing.package or pkgs.syncthing;
-  python3 = lib.getExe pkgs.python3;
-  localNetworkPrivilegesCleanup = ./local-network-privileges-cleanup.py;
   # Use the package instance from the user's home packages so the allowlisted
   # path matches what actually launches (overlays could diverge from pkgs here).
   moonlightPackage = lib.findFirst (p: lib.getName p == "moonlight-qt") null (
@@ -46,11 +44,6 @@ in
       type = lib.types.listOf lib.types.str;
       default = [ ];
       description = "Absolute paths to applications that should be allowed through the macOS Application Firewall during activation.";
-    };
-    pruneStaleLocalNetworkPermissions = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Whether to remove stale Local Network permission entries from NetworkExtension plists during activation.";
     };
   };
 
@@ -135,41 +128,6 @@ in
           /bin/rm -f "$applicationFirewallAllowedApps"
         fi
 
-        ${lib.optionalString cfg.pruneStaleLocalNetworkPermissions ''
-          networkExtensionPlist="/Library/Preferences/com.apple.networkextension.plist"
-
-          echo >&2 "Auditing Local Network permission entries..."
-
-          if [ ! -f "$networkExtensionPlist" ]; then
-            echo >&2 "Skipping Local Network permission audit: NetworkExtension plist is missing."
-          else
-            tempDir="$(/usr/bin/mktemp -d /tmp/khanelinix-local-network.XXXXXX)"
-
-            export KHANELINIX_NETWORK_EXTENSION_PLIST="$networkExtensionPlist"
-            export KHANELINIX_NETWORK_EXTENSION_PLIST_OUT="$tempDir/com.apple.networkextension.plist"
-            export KHANELINIX_NETWORK_EXTENSION_CHANGED="$tempDir/changed"
-            export KHANELINIX_NETWORK_EXTENSION_SUMMARY="$tempDir/summary"
-
-            "${python3}" "${localNetworkPrivilegesCleanup}"
-
-            summary="$(
-              /bin/cat "$KHANELINIX_NETWORK_EXTENSION_SUMMARY" 2>/dev/null \
-                || /bin/echo "Local Network permission audit completed without a summary."
-            )"
-
-            if [ "$(/bin/cat "$KHANELINIX_NETWORK_EXTENSION_CHANGED" 2>/dev/null || true)" != "1" ]; then
-              echo >&2 "$summary"
-            else
-              echo >&2 "Cleaning stale Local Network permission entries..."
-              /usr/bin/install -m 0644 -o root -g wheel \
-                "$KHANELINIX_NETWORK_EXTENSION_PLIST_OUT" \
-                "$networkExtensionPlist"
-              echo >&2 "$summary"
-            fi
-
-            /bin/rm -rf "$tempDir"
-          fi
-        ''}
 
         anchorName="khanelinix-exo"
         anchorFile="/etc/pf.anchors/$anchorName"

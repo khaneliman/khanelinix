@@ -62,7 +62,6 @@ in
     max-jobs = 2;
   };
 
-  khanelinix.system.networking.pruneStaleLocalNetworkPermissions = false;
   khanelinix.system.tcc.pruneStaleAccessibilityPermissions = false;
 
   users.users.${cfg.name} = {
