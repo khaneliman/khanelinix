@@ -8,6 +8,7 @@
 }:
 let
   cfg = config.khanelinix.nix;
+  applicationFirewallEnabled = config.networking.applicationFirewall.enable;
   fastNixGc = inputs.fast-nix-gc.packages.${pkgs.stdenv.hostPlatform.system}.default;
   gcInterval = [
     {
@@ -150,7 +151,7 @@ in
         system.newsyslog.files.nix-gc = nixLogRotationEntries.gc;
         system.newsyslog.files.nix-optimise = nixLogRotationEntries.optimise;
 
-        launchd.daemons.fast-nix-optimise = {
+        launchd.daemons.fast-nix-optimise = lib.mkIf config.services.fast-nix-optimise.automatic {
           serviceConfig = {
             ProgramArguments = lib.mkForce [ "${optimiseWrapper}" ];
             StandardOutPath = nixJobLogPaths.optimise.stdout;
@@ -174,7 +175,11 @@ in
           };
 
           optimise = {
-            automatic = lib.mkForce (!config.services.fast-nix-optimise.automatic);
+            # The native optimiser cannot exclude executables that can stall
+            # ALF code-identity discovery through the .links directory.
+            automatic = lib.mkForce (
+              !applicationFirewallEnabled && !config.services.fast-nix-optimise.automatic
+            );
             interval = lib.map (entry: entry // { Hour = entry.Hour + 1; }) gcInterval;
           };
 
@@ -220,7 +225,8 @@ in
           fast-nix-optimise = {
             enable = true;
             automatic = true;
-            package = fastNixGc;
+            package = if applicationFirewallEnabled then pkgs.fast-nix-optimise else fastNixGc;
+            extraArgs = lib.optional applicationFirewallEnabled "--skip-executables";
             startCalendarInterval = lib.map (entry: entry // { Hour = entry.Hour + 1; }) gcInterval;
           };
         };
