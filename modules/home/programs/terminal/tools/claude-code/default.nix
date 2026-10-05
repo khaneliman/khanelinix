@@ -162,6 +162,7 @@ in
 
     programs.claude-code = {
       enable = true;
+      mutableSettings = true;
       configDir = "${config.xdg.configHome}/claude";
 
       enableMcpIntegration = mkIf mcpModuleEnabled true;
