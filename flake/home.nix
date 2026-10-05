@@ -44,6 +44,8 @@ in
     };
 
     # Dynamically generated home configurations
-    homeConfigurations = lib.mapAttrs' generateHomeConfiguration allHomes;
+    homeConfigurations = lib.mapAttrs' generateHomeConfiguration (
+      self.lib.file.publicConfigurations "userAtHost" allHomes
+    );
   };
 }

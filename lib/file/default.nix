@@ -5,7 +5,6 @@
 let
   inherit (inputs.nixpkgs) lib;
   inherit (lib)
-    genAttrs
     filterAttrs
     hasPrefix
     hasSuffix
@@ -324,12 +323,31 @@ in
           systemPath = systemsPath + "/${system}";
           hosts = builtins.attrNames (builtins.readDir systemPath);
         in
-        genAttrs hosts (hostname: {
-          inherit system hostname;
-          path = systemPath + "/${hostname}";
-        });
+        lib.listToAttrs (
+          map (hostname: {
+            name = "${system}/${hostname}";
+            value = {
+              inherit system hostname;
+              path = systemPath + "/${hostname}";
+            };
+          }) (lib.filter (hostname: builtins.pathExists (systemPath + "/${hostname}/default.nix")) hosts)
+        );
     in
     mergeAttrs' (map generateSystemConfigs systemArchs);
+
+  publicConfigurations =
+    nameAttribute: configurations:
+    let
+      entries = lib.attrValues configurations;
+      names = map (entry: entry.${nameAttribute}) entries;
+      collisions = lib.filter (name: builtins.length (lib.filter (other: other == name) names) > 1) (
+        lib.unique names
+      );
+    in
+    if collisions != [ ] then
+      throw "Ambiguous configuration output names: ${lib.concatStringsSep ", " collisions}. Rename entries or select qualified identities explicitly."
+    else
+      lib.listToAttrs (map (entry: lib.nameValuePair entry.${nameAttribute} entry) entries);
 
   /**
     Filter systems for NixOS (Linux).
@@ -400,7 +418,16 @@ in
               path = systemPath + "/${userAtHost}";
             };
         in
-        genAttrs userAtHosts parseUserAtHost;
+        lib.listToAttrs (
+          map
+            (userAtHost: {
+              name = "${system}/${userAtHost}";
+              value = parseUserAtHost userAtHost;
+            })
+            (
+              lib.filter (userAtHost: builtins.pathExists (systemPath + "/${userAtHost}/default.nix")) userAtHosts
+            )
+        );
     in
     mergeAttrs' (map generateHomeConfigs systemArchs);
 }

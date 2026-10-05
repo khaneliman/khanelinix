@@ -286,4 +286,42 @@ in
     expr = module.uwsmApp { } "";
     expected = "run-as-service";
   };
+  testQualifiedSystemDiscovery = {
+    expr = builtins.attrNames (file.parseSystemConfigurations ./fixtures/systems);
+    expected = [
+      "aarch64-linux/shared"
+      "x86_64-linux/shared"
+    ];
+  };
+  testDiscoveryCollisionRejected = {
+    expr =
+      (builtins.tryEval (
+        file.publicConfigurations "hostname" (file.parseSystemConfigurations ./fixtures/systems)
+      )).success;
+    expected = false;
+  };
+  testPublicNamePreserved = {
+    expr = builtins.attrNames (
+      file.publicConfigurations "hostname" {
+        "x86_64-linux/host" = {
+          hostname = "host";
+        };
+      }
+    );
+    expected = [ "host" ];
+  };
+  testQualifiedHomeDiscovery = {
+    expr = builtins.attrNames (file.parseHomeConfigurations ./fixtures/homes);
+    expected = [
+      "aarch64-linux/neutral@shared"
+      "x86_64-linux/neutral@shared"
+    ];
+  };
+  testHomeCollisionRejected = {
+    expr =
+      (builtins.tryEval (
+        file.publicConfigurations "userAtHost" (file.parseHomeConfigurations ./fixtures/homes)
+      )).success;
+    expected = false;
+  };
 }

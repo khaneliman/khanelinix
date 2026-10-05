@@ -23,6 +23,7 @@
     "parseHomeConfigurations",
     "parseSystemConfigurations",
     "pathExists",
+    "publicConfigurations",
     "readFile",
     "safeImport",
     "scanDir"

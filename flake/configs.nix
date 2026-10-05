@@ -26,19 +26,26 @@ let
 in
 {
   flake = {
-    nixosConfigurations = lib.mapAttrs' (
-      _name:
-      { system, hostname, ... }:
-      {
-        name = hostname;
-        value = self.lib.system.mkSystem {
-          inherit inputs system hostname;
-          username = "khaneliman";
-          nixosModules = allNixosModules;
-          matchingHomes = matchingHomes system hostname;
-        };
-      }
-    ) (filterNixOSSystems allSystems);
+    nixosConfigurations =
+      lib.mapAttrs'
+        (
+          _name:
+          { system, hostname, ... }:
+          {
+            name = hostname;
+            value = self.lib.system.mkSystem {
+              inherit inputs system hostname;
+              username = "khaneliman";
+              nixosModules = allNixosModules;
+              matchingHomes = matchingHomes system hostname;
+            };
+          }
+        )
+        (
+          self.lib.file.publicConfigurations "hostname" (
+            lib.removeAttrs (filterNixOSSystems allSystems) [ "aarch64-linux/nixos" ]
+          )
+        );
 
     darwinConfigurations = lib.mapAttrs' (
       _name:
@@ -52,7 +59,7 @@ in
           matchingHomes = matchingHomes system hostname;
         };
       }
-    ) (filterDarwinSystems allSystems);
+    ) (self.lib.file.publicConfigurations "hostname" (filterDarwinSystems allSystems));
 
     # NOTE: Home Manager configurations are now handled by flake/home.nix
   };

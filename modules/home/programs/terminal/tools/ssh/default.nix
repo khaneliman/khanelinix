@@ -26,8 +26,10 @@ let
         let
           parsedHosts = inputs.self.lib.file.parseSystemConfigurations (inputs.self + "/systems");
         in
-        inputs.self.lib.file.filterNixOSSystems parsedHosts
-        // inputs.self.lib.file.filterDarwinSystems parsedHosts;
+        inputs.self.lib.file.publicConfigurations "hostname" (
+          lib.removeAttrs (inputs.self.lib.file.filterNixOSSystems parsedHosts) [ "aarch64-linux/nixos" ]
+          // inputs.self.lib.file.filterDarwinSystems parsedHosts
+        );
     in
     lib.mapAttrs (_name: host: {
       hostname = "${host.hostname}.local";
