@@ -15,21 +15,12 @@ let
 
   cfg = config.khanelinix.services.openssh;
 
-  hosts = import (lib.getFile "modules/common/programs/terminal/tools/ssh/hosts.nix");
-  hostUserPublicKeys = lib.mapAttrsToList (_: host: host.userPublicKey) (
-    lib.filterAttrs (_: host: host ? userPublicKey) hosts
-  );
-
-  authorizedKeys = hostUserPublicKeys ++ [
-    # `austinserver hermes`
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG1MjYs1zQ6dxFyNwUTR/1K0QI65nuJ6h1xINWnQEUdy hermes-agent@austinserver"
-  ];
 in
 {
   options.khanelinix.services.openssh = with types; {
     enable = lib.mkEnableOption "OpenSSH support";
     startAgent = lib.mkEnableOption "starting openssh agent";
-    authorizedKeys = mkOpt (listOf str) authorizedKeys "The public keys to apply.";
+    authorizedKeys = mkOpt (listOf str) [ ] "The public keys to apply.";
     extraConfig = mkOpt str "" "Extra configuration to apply.";
     port = mkOpt port 2222 "The port to listen on (in addition to 22).";
   };

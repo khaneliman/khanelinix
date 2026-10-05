@@ -10,7 +10,11 @@ let
   inherit (lib) mkDefault mkIf;
 
   cfg = config.khanelinix.nix;
-  homeCfg = config.home-manager.users.${config.khanelinix.user.name} or { };
+  homeCfg =
+    if config.khanelinix.user.name == null then
+      { }
+    else
+      config.home-manager.users.${config.khanelinix.user.name} or { };
   anyrunEnabled = homeCfg.khanelinix.programs.graphical.launchers.anyrun.enable or false;
 in
 {

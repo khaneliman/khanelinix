@@ -27,8 +27,9 @@ in
       xdg.configFile = lib.mkAliasDefinitions options.khanelinix.home.configFile;
     };
 
-    home-manager.users.${config.khanelinix.user.name} =
-      lib.mkAliasDefinitions options.khanelinix.home.extraOptions;
+    home-manager.users = lib.mkIf (config.khanelinix.user.name != null) {
+      ${config.khanelinix.user.name} = lib.mkAliasDefinitions options.khanelinix.home.extraOptions;
+    };
 
     home-manager = {
       # enables backing up existing files instead of erroring if conflicts exist

@@ -4,41 +4,38 @@
   lib,
   pkgs,
   self,
-
-  hostname,
   ...
 }:
 let
   inherit (lib.khanelinix) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.nix;
-  nhCleanEnabled = lib.attrByPath [
-    "home-manager"
-    "users"
-    config.khanelinix.user.name
-    "khanelinix"
-    "programs"
-    "terminal"
-    "tools"
-    "nh"
-    "enable"
-  ] false config;
-  homeCfg = config.home-manager.users.${config.khanelinix.user.name} or { };
-  aiDevelopmentEnabled = homeCfg.khanelinix.suites.development.aiEnable or false;
-  khanelivimEnabled = homeCfg.khanelinix.programs.terminal.editors.neovim.enable or false;
+  localCaches = lib.optionalAttrs (config.khanelinix.environments.home-network.enable or false) (
+    lib.filterAttrs (name: _: name != config.networking.hostName) cfg.localCaches
+  );
+  nhCleanEnabled =
+    config.khanelinix.user.name != null
+    && lib.attrByPath [
+      "home-manager"
+      "users"
+      config.khanelinix.user.name
+      "khanelinix"
+      "programs"
+      "terminal"
+      "tools"
+      "nh"
+      "enable"
+    ] false config;
+
 in
 {
   options.khanelinix.nix = {
-    enable = mkBoolOpt true "Whether or not to manage nix configuration.";
+    enable = mkBoolOpt false "Whether or not to manage nix configuration.";
     useLix = mkBoolOpt false "Whether or not to use Lix.";
     package = mkOpt lib.types.package pkgs.nixVersions.latest "Which nix package to use.";
-    # Hosts serving their store over khanelinix.services.harmonia, keyed by
-    # inventory name. Each host trusts every entry except its own. Private
-    # halves live in secrets/<host>/default.yaml as harmonia-signing-key.
-    localCaches = mkOpt (lib.types.attrsOf lib.types.str) {
-      khanelinix = "khanelinix.local-1:nIZrdCkkwLNueBa7lFeEaktr6zicYPyblSHy2YGnHKU=";
-      khanelimac = "khanelimac.local-1:4UhAD8PShI7Kb6Lwrsh/T9W52xI/IBtjg7qRFbJpNBA=";
-    } "Harmonia binary caches on the home LAN and their public keys.";
+    localCaches =
+      mkOpt (lib.types.attrsOf lib.types.str) { }
+        "Explicit LAN cache hostnames and public keys.";
   };
 
   config = lib.mkIf cfg.enable {
@@ -93,12 +90,6 @@ in
     nix =
       let
         isLix = cfg.useLix || (lib.getName cfg.package) == "lix";
-        hasRemoteBuilders =
-          config.khanelinix.security.sops.enable
-          && (config.khanelinix.environments.home-network.enable or false);
-        localCaches = lib.optionalAttrs (config.khanelinix.environments.home-network.enable or false) (
-          lib.filterAttrs (name: _: name != hostname) cfg.localCaches
-        );
         experimentalFeatures = [
           "nix-command"
           "flakes"
@@ -117,137 +108,8 @@ in
           else
             cfg.package;
 
-        buildMachines =
-          let
-            sshUser = "khaneliman";
-            protocol = "ssh-ng";
-            supportedFeatures = [
-              "benchmark"
-              "big-parallel"
-              "nixos-test"
-            ];
-          in
-          # Linux and Darwin builders are only reachable on the home network.
-          lib.optionals hasRemoteBuilders [
-            /*
-              NOTE: Disabled due to host being unreachable and causing build hangs
-              (
-                lib.mkIf (hostname != "bruddynix" && hostname != "khanelinix") {
-                  inherit sshUser;
-                  hostName = "bruddynix.local";
-                  systems = [
-                    "x86_64-linux"
-                  ];
-                  maxJobs = 2;
-                  speedFactor = 1;
-                  inherit protocol supportedFeatures;
-                }
-                // lib.optionalAttrs (hostname == "khanelimac") {
-                  sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
-                }
-              )
-            */
-            (lib.mkIf (hostname != "khanelinix") (
-              {
-                inherit protocol sshUser;
-                hostName = "khanelinix.local";
-                systems = [
-                  "x86_64-linux"
-                ];
-                maxJobs = 4;
-                speedFactor = 2;
-                supportedFeatures = supportedFeatures ++ [ "kvm" ];
-              }
-              // lib.optionalAttrs (hostname == "khanelimac") {
-                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
-              }
-            ))
-            (
-              {
-                inherit protocol sshUser;
-                hostName = "aarch64-build-box.nix-community.org";
-                maxJobs = 10;
-                speedFactor = 1;
-                systems = [
-                  "aarch64-linux"
-                ];
-                supportedFeatures = [
-                  "big-parallel"
-                  "kvm"
-                  "nixos-test"
-                ];
-              }
-              // lib.optionalAttrs (hostname == "khanelimac") {
-                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
-              }
-              // lib.optionalAttrs (hostname == "khanelinix") {
-                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
-              }
-            )
-            # Darwin builders
-            (lib.mkIf (hostname != "khanelimac") (
-              {
-                inherit protocol sshUser;
-                systems = [
-                  "aarch64-darwin"
-                  "x86_64-darwin"
-                ];
-                hostName = "khanelimac.local";
-                maxJobs = 4;
-                speedFactor = 10;
-                supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
-              }
-              // lib.optionalAttrs (hostname == "khanelinix") {
-                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
-              }
-            ))
-            (lib.mkIf (hostname != "khanelimac-m1") (
-              {
-                inherit protocol sshUser;
-                systems = [
-                  "aarch64-darwin"
-                  "x86_64-darwin"
-                ];
-                hostName = "khanelimac-m1.local";
-                maxJobs = 2;
-                speedFactor = 5;
-                supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
-              }
-              // lib.optionalAttrs (hostname == "khanelinix") {
-                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
-              }
-              // lib.optionalAttrs (hostname == "khanelimac") {
-                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
-                # Prefer local builds for personal usage
-                systems = [
-                  "x86_64-darwin"
-                ];
-              }
-            ))
-            (lib.mkIf (hostname != "khanelimac") (
-              # NOTE: git clone --reference /var/lib/nixpkgs.git https://github.com/NixOS/nixpkgs.git
-              {
-                inherit protocol sshUser;
-                systems = [
-                  "aarch64-darwin"
-                ];
-                hostName = "darwin-build-box.nix-community.org";
-                maxJobs = 3;
-                speedFactor = 3;
-                supportedFeatures = [ "big-parallel" ];
-                publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUtNSGhsY243ZlVwVXVpT0ZlSWhEcUJ6Qk5Gc2JOcXErTnB6dUdYM2U2enYgCg";
-              }
-              // lib.optionalAttrs (hostname == "khanelinix") {
-                sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
-              }
-              // lib.optionalAttrs (hostname == "khanelimac-m1") {
-                sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
-              }
-            ))
-          ];
-
         checkConfig = true;
-        distributedBuilds = hasRemoteBuilders;
+        distributedBuilds = lib.mkDefault (config.nix.buildMachines != [ ]);
         gc.automatic = lib.mkDefault (pkgs.stdenv.hostPlatform.isDarwin || !nhCleanEnabled);
 
         # This will additionally add your inputs to the system's legacy channels
@@ -273,7 +135,13 @@ in
         ];
 
         settings = {
-          allowed-users = [ config.khanelinix.user.name ];
+          substituters = lib.mkIf (localCaches != { }) (
+            lib.mapAttrsToList (name: _: "http://${name}.local:5020") localCaches
+          );
+          trusted-public-keys = lib.mkIf (localCaches != { }) (lib.attrValues localCaches);
+          allowed-users = lib.mkIf (config.khanelinix.user.name != null) [
+            config.khanelinix.user.name
+          ];
           auto-optimise-store = pkgs.stdenv.hostPlatform.isLinux;
           builders-use-substitutes = true;
           experimental-features = experimentalFeatures;
@@ -285,34 +153,10 @@ in
           flake-registry = "/etc/nix/registry.json";
           log-lines = 50;
           sandbox = true;
-          trusted-users = [ config.khanelinix.user.name ];
+          trusted-users = lib.optional (config.khanelinix.user.name != null) config.khanelinix.user.name;
           min-free = 1073741824; # 1GB
           max-free = 10737418240; # 10GB
           keep-going = true;
-
-          substituters =
-            lib.mapAttrsToList (name: _: "http://${name}.local:5020") localCaches
-            ++ [
-              "https://khanelinix.cachix.org"
-              "https://nix-community.cachix.org"
-              "https://nixpkgs-unfree.cachix.org"
-            ]
-            ++ lib.optionals khanelivimEnabled [ "https://khanelivim.cachix.org" ]
-            ++ lib.optionals aiDevelopmentEnabled [ "https://cache.numtide.com" ];
-
-          trusted-public-keys =
-            lib.attrValues localCaches
-            ++ [
-              "khanelinix.cachix.org-1:FTmbv7OqlMsmJEOFvAlz7PVkoGtstbwLC2OldAiJZ10="
-              "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-              "nixpkgs-unfree.cachix.org-1:hqvoInulhbV4nJ9yJOEr+4wxhDV4xq2d1DK7S6Nj6rs="
-            ]
-            ++ lib.optionals khanelivimEnabled [
-              "khanelivim.cachix.org-1:Tb0jsMlhXSJDtI2ISiGPBrvL1XIzQrWap80AiJuBGI0="
-            ]
-            ++ lib.optionals aiDevelopmentEnabled [
-              "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
-            ];
 
           use-xdg-base-directories = true;
         };

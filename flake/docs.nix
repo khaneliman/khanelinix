@@ -67,6 +67,7 @@
             modules = [
               (_: {
                 documentation.doc.enable = false;
+                khanelinix.user.name = "docs";
               })
               (_: {
                 nixpkgs.pkgs = pkgsForDocs;

@@ -18,7 +18,7 @@ let
     }
   ];
   sketchybar = "/etc/profiles/per-user/${config.khanelinix.user.name}/bin/sketchybar";
-  triggerSketchybarNixUpdate = ''
+  triggerSketchybarNixUpdate = lib.optionalString (config.khanelinix.user.name != null) ''
     if [ -x ${lib.escapeShellArg sketchybar} ]; then
       /bin/launchctl asuser "$(/usr/bin/id -u ${lib.escapeShellArg config.khanelinix.user.name})" \
         /usr/bin/sudo -u ${lib.escapeShellArg config.khanelinix.user.name} \

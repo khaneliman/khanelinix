@@ -8,7 +8,7 @@ let
   inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.user;
-  hosts = import (lib.getFile "modules/common/programs/terminal/tools/ssh/hosts.nix");
+  hosts = import (lib.getFile "systems/fleet-ssh-hosts.nix");
   hostUserPublicKeys = lib.mapAttrsToList (_: host: host.userPublicKey) (
     lib.filterAttrs (_: host: host ? userPublicKey) hosts
   );

@@ -181,7 +181,7 @@ _: {
 
         deploy =
           let
-            hosts = import ../modules/common/programs/terminal/tools/ssh/hosts.nix;
+            hosts = import ../systems/fleet-ssh-hosts.nix;
 
             formatRow =
               name: cfg:

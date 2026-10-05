@@ -12,9 +12,16 @@ let
   cfg = config.khanelinix.environments.home-network;
 
   # Get server hostnames from OS config if available, otherwise use local setting
-  serverHostname = osConfig.khanelinix.environments.home-network.serverHostname or cfg.serverHostname;
+  serverHostname =
+    let
+      hostname = osConfig.khanelinix.environments.home-network.serverHostname or "";
+    in
+    if hostname != "" then hostname else cfg.serverHostname;
   serverLocalHostname =
-    osConfig.khanelinix.environments.home-network.serverLocalHostname or cfg.serverLocalHostname;
+    let
+      hostname = osConfig.khanelinix.environments.home-network.serverLocalHostname or "";
+    in
+    if hostname != "" then hostname else cfg.serverLocalHostname;
 
   # The Tailscale (MagicDNS) aliases are only emitted when the daemon/app is
   # enabled. Basic aliases resolve over mDNS (.local) to avoid Tailscale SSH
@@ -43,11 +50,17 @@ in
 {
   options.khanelinix.environments.home-network = with types; {
     enable = lib.mkEnableOption "home network environment";
-    serverHostname = mkOpt str "austinserver.taild8431e.ts.net" "Home server MagicDNS hostname";
-    serverLocalHostname = mkOpt str "austinserver.local" "Home server LAN (mDNS) hostname";
+    serverHostname = mkOpt str "" "Home server MagicDNS hostname";
+    serverLocalHostname = mkOpt str "" "Home server LAN (mDNS) hostname";
   };
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = serverHostname != "" && serverLocalHostname != "";
+        message = "Home network requires explicit serverHostname and serverLocalHostname.";
+      }
+    ];
     # MPD music directory for home network. Kept on the MagicDNS name so it
     # mounts both on-LAN and remotely; NFS is not subject to Tailscale SSH.
     khanelinix.services.mpd.musicDirectory = mkIf config.khanelinix.services.mpd.enable (

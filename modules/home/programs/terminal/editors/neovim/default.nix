@@ -253,11 +253,5 @@ in
         ++ profileWrappers;
     };
 
-    sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
-      wakatime = {
-        sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
-        path = "${config.home.homeDirectory}/.wakatime.cfg";
-      };
-    };
   };
 }

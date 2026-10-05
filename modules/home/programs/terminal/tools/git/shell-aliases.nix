@@ -153,7 +153,6 @@
   # the module system would drop every alias when the condition is false.
   // lib.optionalAttrs config.programs.gh.enable {
     ghrc = "gh repo clone";
-    ghrck = "gh repo clone khaneliman/";
   }
   // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
     log = "git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";

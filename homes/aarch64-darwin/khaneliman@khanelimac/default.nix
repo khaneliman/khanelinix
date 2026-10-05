@@ -14,6 +14,7 @@ let
   '';
 in
 {
+  imports = [ ../../identity.nix ];
   khanelinix = {
     user = {
       enable = true;

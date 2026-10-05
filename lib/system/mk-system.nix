@@ -93,6 +93,8 @@ patchedInputs.nixpkgs.lib.nixosSystem {
   };
 
   modules = [
+    ../../systems/fleet-defaults.nix
+    ../../systems/fleet-nixos.nix
     # Configure nixpkgs with overlays
     {
       nixpkgs = {

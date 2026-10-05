@@ -38,7 +38,9 @@ in
       useGlobalPkgs = true;
       useUserPackages = true;
 
-      users.${config.khanelinix.user.name} = mkAliasDefinitions options.khanelinix.home.extraOptions;
+      users = lib.mkIf (config.khanelinix.user.name != null) {
+        ${config.khanelinix.user.name} = mkAliasDefinitions options.khanelinix.home.extraOptions;
+      };
 
       verbose = true;
     };

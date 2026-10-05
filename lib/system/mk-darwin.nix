@@ -86,6 +86,7 @@ patchedInputs.nix-darwin.lib.darwinSystem {
   };
 
   modules = [
+    ../../systems/fleet-defaults.nix
     # Configure nixpkgs with overlays
     {
       nixpkgs = {

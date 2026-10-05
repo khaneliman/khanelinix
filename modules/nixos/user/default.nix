@@ -13,17 +13,17 @@ let
 in
 {
   options.khanelinix.user = with types; {
-    email = mkOpt str "khaneliman12@gmail.com" "The email of the user.";
+    email = mkOpt str "" "The email of the user.";
     extraGroups = mkOpt (listOf str) [ ] "Groups for the user to be assigned.";
     extraOptions = mkOpt attrs { } "Extra options passed to <option>users.users.<name></option>.";
-    fullName = mkOpt str "Austin Horstman" "The full name of the user.";
+    fullName = mkOpt str "" "The full name of the user.";
     initialPassword =
       mkOpt str "password"
         "The initial password to use when the user is first created.";
-    name = mkOpt str "khaneliman" "The name to use for the user account.";
+    name = mkOpt (nullOr str) null "The name to use for the user account.";
   };
 
-  config = {
+  config = lib.mkIf (cfg.name != null) {
     users.users.${cfg.name} = {
       inherit (cfg) name initialPassword;
 

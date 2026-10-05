@@ -19,28 +19,40 @@ let
   hasTavilyApiKey = lib.hasAttrByPath [ "sops" "secrets" "TAVILY_API_KEY" ] config;
   nixBeastConfig = "NIX_CONFIG=$'max-jobs = auto\\ncores = 0'";
   posixTokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) ''
-    if ${lib.boolToString hasOpenAISecuraKey} && [ -f ${config.sops.secrets.OPENAI_SECURA_KEY.path} ]; then
-      OPENAI_KEY="$(cat ${config.sops.secrets.OPENAI_SECURA_KEY.path})"
+    if ${lib.boolToString hasOpenAISecuraKey} && [ -f ${
+      (config.sops.secrets.OPENAI_SECURA_KEY.path or "/dev/null")
+    } ]; then
+      OPENAI_KEY="$(cat ${(config.sops.secrets.OPENAI_SECURA_KEY.path or "/dev/null")})"
       export OPENAI_KEY
     fi
-    if ${lib.boolToString hasLuarocksApiKey} && [ -f ${config.sops.secrets.LUAROCKS_API_KEY.path} ]; then
-      LUAROCKS_API_KEY="$(cat ${config.sops.secrets.LUAROCKS_API_KEY.path})"
+    if ${lib.boolToString hasLuarocksApiKey} && [ -f ${
+      (config.sops.secrets.LUAROCKS_API_KEY.path or "/dev/null")
+    } ]; then
+      LUAROCKS_API_KEY="$(cat ${(config.sops.secrets.LUAROCKS_API_KEY.path or "/dev/null")})"
       export LUAROCKS_API_KEY
     fi
-    if ${lib.boolToString hasTavilyApiKey} && [ -f ${config.sops.secrets.TAVILY_API_KEY.path} ]; then
-      TAVILY_API_KEY="$(cat ${config.sops.secrets.TAVILY_API_KEY.path})"
+    if ${lib.boolToString hasTavilyApiKey} && [ -f ${
+      (config.sops.secrets.TAVILY_API_KEY.path or "/dev/null")
+    } ]; then
+      TAVILY_API_KEY="$(cat ${(config.sops.secrets.TAVILY_API_KEY.path or "/dev/null")})"
       export TAVILY_API_KEY
     fi
   '';
   fishTokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) /* fish */ ''
-    if ${lib.boolToString hasOpenAISecuraKey}; and test -f ${config.sops.secrets.OPENAI_SECURA_KEY.path}
-      set -gx OPENAI_KEY (cat ${config.sops.secrets.OPENAI_SECURA_KEY.path})
+    if ${lib.boolToString hasOpenAISecuraKey}; and test -f ${
+      (config.sops.secrets.OPENAI_SECURA_KEY.path or "/dev/null")
+    }
+      set -gx OPENAI_KEY (cat ${(config.sops.secrets.OPENAI_SECURA_KEY.path or "/dev/null")})
     end
-    if ${lib.boolToString hasLuarocksApiKey}; and test -f ${config.sops.secrets.LUAROCKS_API_KEY.path}
-      set -gx LUAROCKS_API_KEY (cat ${config.sops.secrets.LUAROCKS_API_KEY.path})
+    if ${lib.boolToString hasLuarocksApiKey}; and test -f ${
+      (config.sops.secrets.LUAROCKS_API_KEY.path or "/dev/null")
+    }
+      set -gx LUAROCKS_API_KEY (cat ${(config.sops.secrets.LUAROCKS_API_KEY.path or "/dev/null")})
     end
-    if ${lib.boolToString hasTavilyApiKey}; and test -f ${config.sops.secrets.TAVILY_API_KEY.path}
-      set -gx TAVILY_API_KEY (cat ${config.sops.secrets.TAVILY_API_KEY.path})
+    if ${lib.boolToString hasTavilyApiKey}; and test -f ${
+      (config.sops.secrets.TAVILY_API_KEY.path or "/dev/null")
+    }
+      set -gx TAVILY_API_KEY (cat ${(config.sops.secrets.TAVILY_API_KEY.path or "/dev/null")})
     end
   '';
 
@@ -374,19 +386,5 @@ in
         ''
       );
 
-    sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
-      OPENAI_SECURA_KEY = {
-        sopsFile = lib.getFile "secrets/CORE/default.yaml";
-        path = "${config.home.homeDirectory}/.OPENAI_SECURA_KEY";
-      };
-      TAVILY_API_KEY = {
-        sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
-        path = "${config.home.homeDirectory}/.TAVILY_API_KEY";
-      };
-      LUAROCKS_API_KEY = {
-        sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
-        path = "${config.home.homeDirectory}/.LUAROCKS_API_KEY";
-      };
-    };
   };
 }

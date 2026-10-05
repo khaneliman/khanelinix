@@ -11,13 +11,11 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.nh;
 
-  # One deploy alias per remote host; the deploy app refuses the local host.
-  remoteHosts = lib.filterAttrs (name: _: name != hostname) (
-    import (lib.getFile "modules/common/programs/terminal/tools/ssh/hosts.nix")
+  deployAliases = lib.listToAttrs (
+    map (name: lib.nameValuePair "deploy-${name}" "nix run \"$NH_FLAKE#deploy\" -- ${name}") (
+      lib.filter (name: name != hostname) cfg.deployHosts
+    )
   );
-  deployAliases = lib.mapAttrs' (
-    name: _: lib.nameValuePair "deploy-${name}" "nix run \"$NH_FLAKE#deploy\" -- ${name}"
-  ) remoteHosts;
 
   userHome = config.home.homeDirectory;
   switchTarget = if pkgs.stdenv.hostPlatform.isLinux then "os" else "darwin";
@@ -41,6 +39,11 @@ in
 {
   options.khanelinix.programs.terminal.tools.nh = {
     enable = lib.mkEnableOption "nh";
+    deployHosts = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = "Explicit remote host names for deployment aliases.";
+    };
   };
 
   config = mkIf cfg.enable {

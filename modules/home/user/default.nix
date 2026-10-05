@@ -61,12 +61,10 @@ in
 {
   options.khanelinix.user = {
     enable = mkOpt types.bool false "Whether to configure the user account.";
-    email = mkOpt types.str "khaneliman12@gmail.com" "The email of the user.";
-    fullName = mkOpt types.str "Austin Horstman" "The full name of the user.";
+    email = mkOpt types.str "" "The email of the user.";
+    fullName = mkOpt types.str "" "The full name of the user.";
     home = mkOpt (types.nullOr types.str) home-directory "The user's home directory.";
-    icon =
-      mkOpt (types.nullOr types.package) pkgs.khanelinix.user-icon
-        "The profile picture to use for the user.";
+    icon = mkOpt (types.nullOr types.package) null "The profile picture to use for the user.";
     name = mkOpt (types.nullOr types.str) username "The user account.";
   };
 

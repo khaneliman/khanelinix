@@ -14,11 +14,17 @@ in
 {
   options.khanelinix.environments.home-network = with types; {
     enable = lib.mkEnableOption "home network environment";
-    serverHostname = mkOpt str "austinserver.taild8431e.ts.net" "Home server hostname";
+    serverHostname = mkOpt str "" "Home server hostname";
     enableNFSMounts = mkBoolOpt true "Enable NFS mounts to home server";
   };
 
   config = mkIf cfg.enable {
+    assertions = lib.mkIf cfg.enable [
+      {
+        assertion = cfg.serverHostname != "";
+        message = "khanelinix.environments.home-network.serverHostname must be set explicitly.";
+      }
+    ];
     # NFS automounts to home server
     fileSystems = mkIf cfg.enableNFSMounts (
       lib.mapAttrs'

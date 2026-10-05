@@ -14,7 +14,7 @@ in
 {
   options.khanelinix.services.sops = with types; {
     enable = lib.mkEnableOption "sops";
-    defaultSopsFile = mkOpt path null "Default sops file.";
+    defaultSopsFile = mkOpt (nullOr path) null "Default sops file.";
     sshKeyPaths = mkOpt (listOf path) [ ] "SSH Key paths to use.";
   };
 

@@ -102,7 +102,11 @@ in
         programs.zsh.enable = true;
 
         khanelinix = {
-          services.openssh.enable = true;
+          user.name = "khaneliman";
+          services.openssh = {
+            enable = true;
+            authorizedKeys = import ../../fleet-authorized-keys.nix;
+          };
         };
 
         environment.systemPackages = with pkgs; [

@@ -12,12 +12,12 @@ let
   user = config.users.users.${config.khanelinix.user.name};
   user-id = toString user.uid;
 
-  hosts = import (lib.getFile "modules/common/programs/terminal/tools/ssh/hosts.nix");
+  inherit (cfg) hosts;
 
   # MagicDNS tailnet suffix. The "-ts" aliases below are only emitted when the
   # Tailscale daemon/app is enabled, since plain ".local" aliases use mDNS and
   # avoid Tailscale SSH re-auth for on-LAN connections.
-  magicDnsSuffix = "taild8431e.ts.net";
+  inherit (cfg) magicDnsSuffix;
   tailscaleEnabled = config.khanelinix.services.tailscale.enable or false;
 
   # Filter out the current host from the SSH configuration
@@ -54,13 +54,17 @@ let
     in
     lib.concatStringsSep "\n" (
       [ (mkHostBlock name remote.hostname) ]
-      ++ lib.optional tailscaleEnabled (mkHostBlock "${name}-ts" "${name}.${magicDnsSuffix}")
+      ++ lib.optional (tailscaleEnabled && magicDnsSuffix != "") (
+        mkHostBlock "${name}-ts" "${name}.${magicDnsSuffix}"
+      )
     )
   ) (builtins.attrNames other-hosts);
 in
 {
   options.khanelinix.programs.terminal.tools.ssh = {
     enable = lib.mkEnableOption "ssh support";
+    hosts = mkOpt lib.types.attrs { } "Explicit SSH host inventory.";
+    magicDnsSuffix = mkOpt lib.types.str "" "Explicit Tailscale DNS suffix.";
     extraConfig = mkOpt lib.types.str "" "Extra configuration to apply.";
     port = mkOpt lib.types.port 2222 "The port to listen on (in addition to 22).";
   };

@@ -20,36 +20,42 @@ let
   aliases = import ./aliases.nix;
   ignores = import ./ignores.nix;
   shell-aliases = import ./shell-aliases.nix { inherit config lib pkgs; };
-  sshHosts = import (lib.getFile "modules/common/programs/terminal/tools/ssh/hosts.nix");
 
   hasGithubAccessToken = lib.hasAttrByPath [ "sops" "secrets" "github/access-token" ] config;
-  posixTokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) ''
-    if ${lib.boolToString hasGithubAccessToken} && [ -f ${
-      config.sops.secrets."github/access-token".path
-    } ]; then
-      GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
-      export GITHUB_TOKEN
-      GH_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
-      export GH_TOKEN
-      # For github-mcp-server
-      GITHUB_PERSONAL_ACCESS_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
-      export GITHUB_PERSONAL_ACCESS_TOKEN
-    fi
-  '';
-  fishTokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) /* fish */ ''
-    if ${lib.boolToString hasGithubAccessToken}; and test -f ${
-      config.sops.secrets."github/access-token".path
-    }
-      set -gx GITHUB_TOKEN (cat ${config.sops.secrets."github/access-token".path})
-      set -gx GH_TOKEN (cat ${config.sops.secrets."github/access-token".path})
-      # For github-mcp-server
-      set -gx GITHUB_PERSONAL_ACCESS_TOKEN (cat ${config.sops.secrets."github/access-token".path})
-    end
-  '';
+  posixTokenExports =
+    lib.optionalString ((config.khanelinix.services.sops.enable or false) && hasGithubAccessToken)
+      ''
+        if ${lib.boolToString hasGithubAccessToken} && [ -f ${
+          config.sops.secrets."github/access-token".path
+        } ]; then
+          GITHUB_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
+          export GITHUB_TOKEN
+          GH_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
+          export GH_TOKEN
+          # For github-mcp-server
+          GITHUB_PERSONAL_ACCESS_TOKEN="$(cat ${config.sops.secrets."github/access-token".path})"
+          export GITHUB_PERSONAL_ACCESS_TOKEN
+        fi
+      '';
+  fishTokenExports =
+    lib.optionalString ((config.khanelinix.services.sops.enable or false) && hasGithubAccessToken)
+      /* fish */ ''
+        if ${lib.boolToString hasGithubAccessToken}; and test -f ${
+          config.sops.secrets."github/access-token".path
+        }
+          set -gx GITHUB_TOKEN (cat ${config.sops.secrets."github/access-token".path})
+          set -gx GH_TOKEN (cat ${config.sops.secrets."github/access-token".path})
+          # For github-mcp-server
+          set -gx GITHUB_PERSONAL_ACCESS_TOKEN (cat ${config.sops.secrets."github/access-token".path})
+        end
+      '';
 in
 {
   options.khanelinix.programs.terminal.tools.git = {
     enable = mkEnableOption "Git";
+    allowedSignerKeys =
+      mkOpt (types.listOf types.str) [ ]
+        "Explicit SSH keys trusted for Git signatures.";
     includes = mkOpt (types.listOf types.attrs) [ ] "Git includeIf paths and conditions.";
     signByDefault = mkOpt types.bool true "Whether to sign commits by default.";
     signingKey =
@@ -195,15 +201,9 @@ in
           key = cfg.signingKey;
           format = "ssh";
           inherit (cfg) signByDefault;
-          # Without an allowed-signers file git cannot verify SSH signatures,
-          # so trust the user key of every host in the shared SSH inventory.
-          allowedSigners = lib.concatMapStringsSep "\n" (key: "${cfg.userEmail} namespaces=\"git\" ${key}") (
-            lib.unique (
-              lib.mapAttrsToList (_: host: host.userPublicKey) (
-                lib.filterAttrs (_: host: host ? userPublicKey) sshHosts
-              )
-            )
-          );
+          allowedSigners = lib.concatMapStringsSep "\n" (
+            key: "${cfg.userEmail} namespaces=\"git\" ${key}"
+          ) cfg.allowedSignerKeys;
         };
       };
 
@@ -222,11 +222,5 @@ in
       inherit (shell-aliases) shellAliases;
     };
 
-    sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
-      "github/access-token" = {
-        sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
-        path = "${config.home.homeDirectory}/.config/gh/access-token";
-      };
-    };
   };
 }

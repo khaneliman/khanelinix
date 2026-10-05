@@ -8,6 +8,7 @@ let
   inherit (lib.khanelinix) enabled;
 in
 {
+  imports = [ ../../identity.nix ];
   khanelinix = {
     user = {
       enable = true;
