@@ -4,6 +4,7 @@
 - [Start Here](start-here.md)
 - [Support and Verification](support.md)
 - [Reliability Milestone Evidence](reliability-milestone.md)
+- [Later Optimization Work](optimization-follow-ups.md)
 - [Architecture](architecture.md)
 - [Platforms](platforms/index.md)
   - [NixOS](platforms/nixos.md)
