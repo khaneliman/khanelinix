@@ -10,7 +10,7 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.atuin;
   hasSops = config.khanelinix.services.sops.enable or false;
-  syncWithSops = cfg.sync.enable && hasSops;
+  syncWithSops = cfg.sync.enable && hasSops && atuinKeyPath != null;
   atuinKeyPath = config.sops.secrets."atuin/key".path or null;
 
   userHome = config.home.homeDirectory;
@@ -88,12 +88,6 @@ in
       Wants = [ "sops-nix.service" ];
     };
 
-    sops.secrets = mkIf (cfg.sync.enable && hasSops) {
-      "atuin/key" = {
-        sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
-      };
-    };
-
     programs.atuin = {
       enable = true;
 
@@ -141,7 +135,7 @@ in
           sync_address = "https://api.atuin.sh";
           sync_frequency = "30m";
         })
-        (mkIf (cfg.sync.enable && hasSops) {
+        (mkIf syncWithSops {
           key_path = config.sops.secrets."atuin/key".path;
         })
       ];

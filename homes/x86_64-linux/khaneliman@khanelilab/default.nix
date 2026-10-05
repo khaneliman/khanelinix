@@ -28,6 +28,7 @@ in
       rclone = {
         enable = true;
         configFile = "/mnt/pool/appdata/rclone/rclone.conf";
+        cacheDir = "/mnt/pool/vfs";
         initialConfigFile = "/run/secrets/rclone/config";
         mounts = {
           dropbox.mountPoint = "/mnt/disks/dropbox";

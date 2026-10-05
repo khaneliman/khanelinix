@@ -14,7 +14,10 @@ let
   '';
 in
 {
-  imports = [ ../../identity.nix ];
+  imports = [
+    ../../identity.nix
+    ./raycast.nix
+  ];
   khanelinix = {
     user = {
       enable = true;

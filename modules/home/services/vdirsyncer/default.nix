@@ -178,6 +178,12 @@ in
             assertion = cfg.google.collections != [ ];
             message = "khanelinix.services.vdirsyncer.google.enable requires khanelinix.services.vdirsyncer.google.collections.";
           }
+          {
+            assertion =
+              config.sops.secrets ? "calendar/google-client-id"
+              && config.sops.secrets ? "calendar/google-client-secret";
+            message = "Google Calendar synchronization requires explicit calendar/google-client-id and calendar/google-client-secret SOPS declarations.";
+          }
         ];
 
         accounts.calendar.accounts.google_calendars = {
@@ -213,11 +219,11 @@ in
             tokenFile = googleCalendarTokenFile;
             clientIdCommand = [
               (lib.getExe' pkgs.coreutils "cat")
-              config.sops.secrets."calendar/google-client-id".path
+              (config.sops.secrets."calendar/google-client-id".path or "/dev/null")
             ];
             clientSecretCommand = [
               (lib.getExe' pkgs.coreutils "cat")
-              config.sops.secrets."calendar/google-client-secret".path
+              (config.sops.secrets."calendar/google-client-secret".path or "/dev/null")
             ];
           };
         };
@@ -253,15 +259,6 @@ in
               Unit = "vdirsyncer-google.service";
             };
             Install.WantedBy = [ "timers.target" ];
-          };
-        };
-
-        sops.secrets = {
-          "calendar/google-client-id" = {
-            sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
-          };
-          "calendar/google-client-secret" = {
-            sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
           };
         };
 

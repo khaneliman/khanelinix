@@ -119,7 +119,7 @@ in
 
     configFile = lib.mkOption {
       type = lib.types.path;
-      default = "/run/secrets/rclone/config";
+      default = "${config.xdg.configHome}/rclone/rclone.conf";
       description = "The rclone config file to use for mounts.";
     };
 
@@ -131,7 +131,7 @@ in
 
     cacheDir = lib.mkOption {
       type = lib.types.path;
-      default = "/mnt/pool/vfs";
+      default = "${config.xdg.cacheHome}/rclone";
       description = "The rclone VFS cache directory.";
     };
 

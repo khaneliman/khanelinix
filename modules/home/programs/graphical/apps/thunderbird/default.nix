@@ -69,23 +69,7 @@ in
           };
         in
         lib.types.attrsOf accountType;
-      default = {
-        "Milwaukee Bucks" = {
-          url = "https://apidata.googleusercontent.com/caldav/v2/jeb1pn12iqgftnq21ae2qjljetlr43cv%40import.calendar.google.com/events/";
-          type = "caldav";
-          color = "#05491C";
-        };
-        "US Holidays" = {
-          url = "https://apidata.googleusercontent.com/caldav/v2/cln2stbjc4hmgrrcd5i62ua0ctp6utbg5pr2sor1dhimsp31e8n6errfctm6abj3dtmg%40virtual/events/";
-          type = "caldav";
-          color = "#92cfe1";
-        };
-        "Green Bay Packers" = {
-          url = "https://sports.yahoo.com/nfl/teams/gnb/ical.ics";
-          type = "http";
-          color = "#F9BC12";
-        };
-      };
+      default = { };
       description = "Extra calendar accounts to configure.";
     };
     extraEmailAccounts = lib.mkOption {
@@ -204,7 +188,9 @@ in
           "${config.khanelinix.user.email}" = {
             remote = {
               type = "caldav";
-              url = "https://apidata.googleusercontent.com/caldav/v2/khaneliman12%40gmail.com/events/";
+              url = "https://apidata.googleusercontent.com/caldav/v2/${
+                builtins.replaceStrings [ "@" "+" ] [ "%40" "%2B" ] config.khanelinix.user.email
+              }/events/";
               userName = config.khanelinix.user.email;
             };
             primary = true;

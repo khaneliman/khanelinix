@@ -14,17 +14,23 @@ let
 
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib; };
-  posixTokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) ''
-    if [ -f ${config.sops.secrets."github/copilot-token".path} ]; then
-      COPILOT_GITHUB_TOKEN="$(cat ${config.sops.secrets."github/copilot-token".path})"
-      export COPILOT_GITHUB_TOKEN
-    fi
-  '';
-  fishTokenExports = lib.optionalString (config.khanelinix.services.sops.enable or false) /* fish */ ''
-    if test -f ${config.sops.secrets."github/copilot-token".path}
-      set -gx COPILOT_GITHUB_TOKEN (cat ${config.sops.secrets."github/copilot-token".path})
-    end
-  '';
+  posixTokenExports =
+    lib.optionalString
+      ((config.khanelinix.services.sops.enable or false) && config.sops.secrets ? "github/copilot-token")
+      ''
+        if [ -f ${config.sops.secrets."github/copilot-token".path} ]; then
+          COPILOT_GITHUB_TOKEN="$(cat ${config.sops.secrets."github/copilot-token".path})"
+          export COPILOT_GITHUB_TOKEN
+        fi
+      '';
+  fishTokenExports =
+    lib.optionalString
+      ((config.khanelinix.services.sops.enable or false) && config.sops.secrets ? "github/copilot-token")
+      /* fish */ ''
+        if test -f ${config.sops.secrets."github/copilot-token".path}
+          set -gx COPILOT_GITHUB_TOKEN (cat ${config.sops.secrets."github/copilot-token".path})
+        end
+      '';
 in
 {
   options.khanelinix.programs.terminal.tools.github-copilot-cli = {
@@ -235,11 +241,5 @@ in
       zsh.initContent = posixTokenExports;
     };
 
-    sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
-      "github/copilot-token" = {
-        sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
-        path = "${config.home.homeDirectory}/.config/copilot/token";
-      };
-    };
   };
 }

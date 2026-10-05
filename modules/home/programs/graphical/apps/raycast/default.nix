@@ -223,15 +223,6 @@ in
           body = ''exec task add "$1"'';
         })
       ]
-      ++ lib.optionals (osConfig.networking.hostName or "" == "khanelimac") [
-        (mkScriptEntry {
-          file = "khanelimac-sessions.sh";
-          title = "Open Khanelimac";
-          description = "Open an interactive sesh session for Khanelimac.";
-          icon = "terminal";
-          body = ''exec kitty --single-instance -d "$HOME" -- zsh -lc "sesh connect khanelinix"'';
-        })
-      ]
     );
   };
 }

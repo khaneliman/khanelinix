@@ -237,11 +237,5 @@ in
       '';
     };
 
-    sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
-      weather_config = {
-        sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
-        path = "${config.home.homeDirectory}/weather_config.json";
-      };
-    };
   };
 }

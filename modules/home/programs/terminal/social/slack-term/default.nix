@@ -19,11 +19,5 @@ in
     # See: https://github.com/erroneousboat/slack-term
     home.packages = [ pkgs.slack-term ];
 
-    sops.secrets = lib.mkIf (config.khanelinix.services.sops.enable or false) {
-      slack-term = {
-        sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
-        path = "${config.home.homeDirectory}/.config/slack-term/config";
-      };
-    };
   };
 }
