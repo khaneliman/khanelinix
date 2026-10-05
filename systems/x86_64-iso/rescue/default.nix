@@ -1,45 +1,40 @@
 {
-  pkgs,
   lib,
-
+  modulesPath,
+  pkgs,
   ...
 }:
-let
-  inherit (lib.khanelinix) enabled;
-in
 {
-  environment.systemPackages = with pkgs; [
-    git
-    wget
-    curl
-    pciutils
-    file
+  imports = [ "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix" ];
+  boot.kernelParams = [
+    "console=tty0"
+    "console=ttyS0,115200n8"
   ];
-
-  khanelinix = {
-    nix = enabled;
-
-    cli-apps = {
-      neovim = enabled;
-    };
-
-    security = {
-      doas = enabled;
-    };
-
-    system = {
-      fonts = enabled;
-      locale = enabled;
-      time = enabled;
-      xkb = enabled;
-    };
+  isoImage = {
+    edition = "rescue";
+    makeEfiBootable = true;
+    makeUsbBootable = true;
   };
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "21.11"; # Did you read the comment?
+  networking = {
+    networkmanager.enable = lib.mkForce false;
+    wireless.enable = lib.mkForce false;
+    wireless.iwd.enable = lib.mkForce false;
+    useDHCP = lib.mkForce false;
+    useNetworkd = lib.mkForce false;
+  };
+  services = {
+    openssh.enable = lib.mkForce false;
+    resolved.enable = lib.mkForce false;
+    timesyncd.enable = lib.mkForce false;
+  };
+  nix = {
+    distributedBuilds = false;
+    buildMachines = [ ];
+    settings.substituters = lib.mkForce [ ];
+  };
+  environment.systemPackages = [
+    pkgs.file
+    pkgs.tmux
+  ];
+  system.stateVersion = "21.11";
 }

@@ -1,53 +1,14 @@
+{ modulesPath, ... }:
 {
-  pkgs,
-  lib,
-
-  ...
-}:
-let
-  inherit (lib) mkForce;
-  inherit (lib.khanelinix) enabled;
-in
-{
-  # `install-iso` adds wireless support that
-  # is incompatible with networkmanager.
-  networking.wireless.enable = mkForce false;
-
-  environment.systemPackages = with pkgs; [
-    git
-    wget
-    curl
-    pciutils
-    file
+  imports = [ "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix" ];
+  boot.kernelParams = [
+    "console=tty0"
+    "console=ttyS0,115200n8"
   ];
-
-  khanelinix = {
-    nix = enabled;
-
-    programs = {
-      terminal = {
-        editors = {
-          neovim = enabled;
-          tmux = enabled;
-        };
-      };
-    };
-
-    services = {
-      openssh = enabled;
-    };
-
-    security = {
-      doas = enabled;
-    };
-
-    system = {
-      boot = enabled;
-      fonts = enabled;
-      locale = enabled;
-      time = enabled;
-      xkb = enabled;
-      networking = enabled;
-    };
+  isoImage = {
+    edition = "minimal";
+    makeEfiBootable = true;
+    makeUsbBootable = true;
   };
+  system.stateVersion = "26.11";
 }

@@ -7,6 +7,7 @@ in
     ../lib
     ./overlays.nix
     ./packages.nix
+    ./images.nix
     ./configs.nix
     ./home.nix
     ./apps.nix
