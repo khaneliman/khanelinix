@@ -2,6 +2,7 @@
   inputs,
   lib,
   self,
+  rootFlake,
   ...
 }:
 {
@@ -9,6 +10,14 @@
 
   perSystem =
     { pkgs, system, ... }:
+    let
+      consumers = import ../../tests/consumers { flake = rootFlake; };
+      systemConsumer = if pkgs.stdenv.hostPlatform.isLinux then consumers.nixos else consumers.darwin;
+      homeConsumer = if pkgs.stdenv.hostPlatform.isLinux then consumers.home else consumers.homeDarwin;
+      nativeHomes = lib.filterAttrs (_: home: home.system == system) (
+        self.lib.file.parseHomeConfigurations ../../homes
+      );
+    in
     {
       pre-commit = lib.mkIf (inputs.git-hooks-nix ? flakeModule) {
         check.enable = false;
@@ -181,6 +190,27 @@
       # Home Manager is exercised through the systems that embed it.
       checks = {
         docs-html = self.packages.${system}.docs-html;
+        neutral-consumers =
+          assert systemConsumer.config.nix.buildMachines == [ ];
+          assert builtins.attrNames systemConsumer.config.sops.secrets == [ ];
+          assert builtins.attrNames homeConsumer.config.sops.secrets == [ ];
+          assert homeConsumer.config.khanelinix.programs.terminal.tools.ssh.hosts == { };
+          assert !(systemConsumer.config.users.users ? khaneliman);
+          pkgs.writeText "neutral-consumers.json" (
+            builtins.toJSON {
+              system = builtins.unsafeDiscardOutputDependency systemConsumer.config.system.build.toplevel.drvPath;
+              home = builtins.unsafeDiscardOutputDependency homeConsumer.activationPackage.drvPath;
+            }
+          );
+        standalone-homes = pkgs.writeText "standalone-homes.json" (
+          builtins.toJSON (
+            lib.mapAttrs (
+              _: home:
+              builtins.unsafeDiscardOutputDependency
+                self.homeConfigurations.${home.userAtHost}.activationPackage.drvPath
+            ) nativeHomes
+          )
+        );
       }
       // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin (
         lib.mapAttrs'

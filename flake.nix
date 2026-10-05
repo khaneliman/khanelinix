@@ -170,13 +170,18 @@
 
   outputs =
     inputs:
-    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [
-        "x86_64-linux"
-        "aarch64-darwin"
-      ];
-      imports = [
-        ./flake
-      ];
-    };
+    inputs.flake-parts.lib.mkFlake
+      {
+        inherit inputs;
+        specialArgs.rootFlake = inputs.self;
+      }
+      {
+        systems = [
+          "x86_64-linux"
+          "aarch64-darwin"
+        ];
+        imports = [
+          ./flake
+        ];
+      };
 }
