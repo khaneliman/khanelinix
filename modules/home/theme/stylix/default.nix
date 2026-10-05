@@ -4,6 +4,7 @@
   pkgs,
   options,
   inputs,
+  osConfig ? { },
   ...
 }:
 let
@@ -108,14 +109,18 @@ in
     theme = mkOpt types.str "catppuccin-macchiato" "base16 theme file name";
 
     cursor = {
-      name = mkOpt types.str "catppuccin-macchiato-blue-cursors" "The name of the cursor theme to apply.";
+      name =
+        mkOpt types.str "catppuccin-macchiato-blue-cursors"
+          "The home fallback cursor theme; a followed system cursor takes precedence.";
       package = mkOpt types.package (
         if pkgs.stdenv.hostPlatform.isLinux then
           pkgs.catppuccin-cursors.macchiatoBlue
         else
           pkgs.emptyDirectory
-      ) "The package to use for the cursor theme.";
-      size = mkOpt types.int 32 "The size of the cursor.";
+      ) "The home fallback cursor package; a followed system cursor takes precedence.";
+      size =
+        mkOpt types.int 32
+          "The home fallback cursor size; a followed system cursor takes precedence.";
     };
 
     icon = {
@@ -239,15 +244,20 @@ in
           qt.enable = false;
         };
 
-        cursor = lib.mkIf isLinux (lib.mkOptionDefault cfg.cursor);
-      };
-
-      # Each theme sets their own pointerCursor.
-      home = lib.mkIf (isLinux && !anyCuratedTheme) {
-        pointerCursor = {
-          enable = true;
-          inherit (cfg.cursor) name package size;
-        };
+        cursor = lib.mkIf isLinux (
+          if anyCuratedTheme then
+            lib.mkForce null
+          else
+            let
+              inheritsNullCursor =
+                (osConfig.stylix.enable or false)
+                && (osConfig.stylix.homeManagerIntegration.autoImport or false)
+                && (osConfig.stylix.homeManagerIntegration.followSystem or false)
+                && (osConfig.stylix.cursor or null) == null;
+            in
+            # A null system default must not suppress the enabled home fallback.
+            lib.mkOverride (if inheritsNullCursor then 900 else 1100) cfg.cursor
+        );
       };
 
       # GTK font overrides are only relevant when Home Manager manages GTK.
