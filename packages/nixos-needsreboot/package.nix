@@ -1,8 +1,15 @@
-{ writeShellApplication, coreutils, ... }:
+{
+  lib,
+  writeShellApplication,
+  coreutils,
+  ...
+}:
 writeShellApplication {
   name = "nixos-needsreboot";
 
   meta = {
+    platforms = lib.platforms.linux;
+    description = "Compare generations on a booted NixOS system";
     mainProgram = "nixos-needsreboot";
   };
 

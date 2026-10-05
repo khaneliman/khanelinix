@@ -1,6 +1,12 @@
-{ writeShellApplication, ... }:
+{ lib, writeShellApplication, ... }:
 writeShellApplication {
   name = "clamshell";
+
+  meta = {
+    platforms = lib.platforms.darwin;
+    mainProgram = "clamshell";
+    description = "Control macOS caffeinate and pmset power modes";
+  };
 
   passthru.updateScript = null;
 
