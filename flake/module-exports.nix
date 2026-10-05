@@ -41,27 +41,16 @@ in
       imports = [
         integratedHome
         ../modules/nixos
-        inputs.home-manager.nixosModules.home-manager
-        inputs.lanzaboote.nixosModules.lanzaboote
-        inputs.sops-nix.nixosModules.sops
-        inputs.disko.nixosModules.disko
-        inputs.fast-nix-gc.nixosModules.default
-        inputs.stylix.nixosModules.stylix
-        inputs.catppuccin.nixosModules.catppuccin
-        inputs.nix-index-database.nixosModules.nix-index
-        inputs.nix-flatpak.nixosModules.nix-flatpak
-      ];
+      ]
+      ++ common.nixosUpstreamModules inputs;
       nixpkgs = common.mkNixpkgsConfig self;
     };
     darwinModules.default = {
       imports = [
         integratedHome
         ../modules/darwin
-        inputs.home-manager.darwinModules.home-manager
-        inputs.sops-nix.darwinModules.sops
-        inputs.stylix.darwinModules.stylix
-        inputs.nix-rosetta-builder.darwinModules.default
-      ];
+      ]
+      ++ common.darwinUpstreamModules inputs;
       nixpkgs = common.mkNixpkgsConfig self;
     };
     homeManagerModules.default = {

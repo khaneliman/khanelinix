@@ -95,11 +95,9 @@ patchedInputs.nix-darwin.lib.darwinSystem {
       // common.mkNixpkgsConfig flake;
     }
 
-    patchedInputs.home-manager.darwinModules.home-manager
-    patchedInputs.sops-nix.darwinModules.sops
-    patchedInputs.stylix.darwinModules.stylix
-    patchedInputs.nix-rosetta-builder.darwinModules.default
-
+  ]
+  ++ common.darwinUpstreamModules patchedInputs
+  ++ [
     # Auto-inject home configurations for this system+hostname
     homeManagerConfig
 

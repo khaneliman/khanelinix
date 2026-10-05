@@ -103,16 +103,9 @@ patchedInputs.nixpkgs.lib.nixosSystem {
       // common.mkNixpkgsConfig flake;
     }
 
-    patchedInputs.home-manager.nixosModules.home-manager
-    patchedInputs.lanzaboote.nixosModules.lanzaboote
-    patchedInputs.sops-nix.nixosModules.sops
-    patchedInputs.disko.nixosModules.disko
-    patchedInputs.fast-nix-gc.nixosModules.default
-    patchedInputs.stylix.nixosModules.stylix
-    patchedInputs.catppuccin.nixosModules.catppuccin
-    patchedInputs.nix-index-database.nixosModules.nix-index
-    patchedInputs.nix-flatpak.nixosModules.nix-flatpak
-
+  ]
+  ++ common.nixosUpstreamModules patchedInputs
+  ++ [
     # Auto-inject home configurations for this system+hostname
     homeManagerConfig
 

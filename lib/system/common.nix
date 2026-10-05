@@ -285,6 +285,25 @@ let
       inherit getPkgsMaster getPkgsUnstable;
     };
 
+  nixosUpstreamModules = moduleInputs: [
+    moduleInputs.home-manager.nixosModules.home-manager
+    moduleInputs.lanzaboote.nixosModules.lanzaboote
+    moduleInputs.sops-nix.nixosModules.sops
+    moduleInputs.disko.nixosModules.disko
+    moduleInputs.fast-nix-gc.nixosModules.default
+    moduleInputs.stylix.nixosModules.stylix
+    moduleInputs.catppuccin.nixosModules.catppuccin
+    moduleInputs.nix-index-database.nixosModules.nix-index
+    moduleInputs.nix-flatpak.nixosModules.nix-flatpak
+  ];
+
+  darwinUpstreamModules = moduleInputs: [
+    moduleInputs.home-manager.darwinModules.home-manager
+    moduleInputs.sops-nix.darwinModules.sops
+    moduleInputs.stylix.darwinModules.stylix
+    moduleInputs.nix-rosetta-builder.darwinModules.default
+  ];
+
   fileLib = import ../file {
     inherit inputs;
     self = ../..;
@@ -304,7 +323,7 @@ let
   ++ fileLib.importModulesRecursive ../../modules/home;
 in
 {
-  inherit hmSharedModules;
+  inherit hmSharedModules nixosUpstreamModules darwinUpstreamModules;
   inherit
     mkExtraInputPatches
     mkInputPatches
