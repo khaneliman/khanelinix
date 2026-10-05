@@ -34,9 +34,9 @@ Before diving in, ensure that you have Nix installed on your system. If not, you
 can download and install it from the official
 [Nix website](https://nixos.org/download.html) or from the
 [Determinate Systems installer](https://github.com/DeterminateSystems/nix-installer).
-If running on macOS, you need to have Nix-Darwin installed, as well. You can
-follow the installation instruction on
-[GitHub](https://github.com/LnL7/nix-darwin?tab=readme-ov-file#flakes).
+On macOS, Nix is sufficient to build the neutral examples. Follow the
+[nix-darwin instructions](https://github.com/nix-darwin/nix-darwin) before the
+first activation of your adapted configuration.
 
 ### Clone this repository to your local machine
 
@@ -48,21 +48,14 @@ nix-shell -p git
 git clone https://github.com/khaneliman/khanelinix.git
 cd khanelinix
 
-# Linux
-sudo nixos-rebuild switch --flake .
-
-# MacOS
-# First run without nix-darwin:
-nix run github:lnl7/nix-darwin#darwin-rebuild -- switch --flake github:khaneliman/khanelinix
-
-darwin-rebuild switch --flake .
-
- # With nh (Nix Helper)
-nh os switch .
-
-# With direnv
-flake switch
+# Choose and adapt a neutral first-host/first-home configuration.
+# See docs/start-here.md before building or activating a new machine.
+nix build .#docs-html
 ```
+
+Read [Start Here](docs/start-here.md) for tested public consumer examples and
+[support boundaries](docs/support.md) for verification levels. Existing fleet
+outputs are not generic installation profiles.
 
 ### Remote deploy
 

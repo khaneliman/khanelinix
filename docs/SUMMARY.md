@@ -2,6 +2,8 @@
 
 - [Overview](index.md)
 - [Start Here](start-here.md)
+- [Support and Verification](support.md)
+- [Reliability Milestone Evidence](reliability-milestone.md)
 - [Architecture](architecture.md)
 - [Platforms](platforms/index.md)
   - [NixOS](platforms/nixos.md)

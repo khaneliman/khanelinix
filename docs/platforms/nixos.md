@@ -2,9 +2,12 @@
 
 ## Entry points
 
-- Host configs: `systems/<host>/default.nix`
+- Host configs: `systems/x86_64-linux/<host>/default.nix`
 - Modules: `modules/nixos/`
 - Shared system modules: `modules/common/`
+
+For a neutral first host, use the complete public module composition in
+[Start Here](../start-here.md), not a named fleet configuration.
 
 ## Typical usage
 
