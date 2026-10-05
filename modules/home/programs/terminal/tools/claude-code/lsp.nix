@@ -19,6 +19,7 @@
   lib,
   pkgs,
   self,
+  hostname ? null,
   ...
 }:
 let
@@ -36,7 +37,8 @@ let
 
   # Flake-aware nixd exprs (cwd flake autodetection, falling back to khanelinix).
   nixdExprs = import (lib.getFile "modules/common/nixd") {
-    inherit self;
+    inherit self hostname;
+    username = config.home.username;
     inherit (pkgs.stdenv.hostPlatform) system;
   };
 in
