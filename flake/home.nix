@@ -21,6 +21,11 @@ let
     }:
     let
       configPath = args.path;
+      host =
+        if lib.hasSuffix "-linux" system then
+          self.nixosConfigurations.${hostname}
+        else
+          self.darwinConfigurations.${hostname};
     in
     {
       name = userAtHost; # Use the full "username@hostname" as key
@@ -31,7 +36,13 @@ let
           hostname
           username
           ;
-        modules = [ configPath ];
+        osConfig = host.config;
+        inherit (host) pkgs;
+        sharedHomeModules = host.config.home-manager.sharedModules;
+        modules = [
+          configPath
+          (lib.mkAliasDefinitions host.options.khanelinix.home.extraOptions)
+        ];
       };
     };
 in

@@ -14,7 +14,7 @@ in
   khanelinix = {
     user = {
       enable = true;
-      name = "khaneliman";
+      name = "nixos";
     };
 
     programs = {

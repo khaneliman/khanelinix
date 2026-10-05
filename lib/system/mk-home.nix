@@ -24,6 +24,9 @@
   system,
   hostname,
   username ? "khaneliman",
+  osConfig ? { },
+  sharedHomeModules ? null,
+  pkgs ? null,
   extraInputPatches ? { },
   modules ? [ ],
   ...
@@ -54,12 +57,18 @@ let
   inputPackageSets = common.mkInputPackageSets {
     inherit flake system;
   };
+  homePkgs =
+    if pkgs != null then
+      pkgs
+    else
+      import nixpkgsInput {
+        inherit system;
+        inherit ((common.mkNixpkgsConfig flake)) config overlays;
+      };
+
 in
 patchedInputs.home-manager.lib.homeManagerConfiguration {
-  pkgs = import nixpkgsInput {
-    inherit system;
-    inherit ((common.mkNixpkgsConfig flake)) config overlays;
-  };
+  pkgs = homePkgs;
 
   extraSpecialArgs = {
     inherit
@@ -67,7 +76,8 @@ patchedInputs.home-manager.lib.homeManagerConfiguration {
       username
       system
       ;
-    osConfig = { };
+    inherit osConfig;
+    pkgs = homePkgs;
     inputs = patchedInputs;
     inherit (patchedInputs) self;
     lib = extendedLib;
@@ -75,5 +85,13 @@ patchedInputs.home-manager.lib.homeManagerConfiguration {
   }
   // inputPackageSets;
 
-  modules = common.hmSharedModules ++ modules;
+  modules =
+    (
+      if sharedHomeModules != null then
+        sharedHomeModules
+      else
+        common.hmSharedModules ++ [ patchedInputs.stylix.homeModules.stylix ]
+    )
+    ++ [ { stylix.overlays.enable = false; } ]
+    ++ modules;
 }

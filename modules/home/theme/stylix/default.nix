@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  options,
   inputs,
   osConfig ? { },
   ...
@@ -137,133 +136,131 @@ in
     };
   };
 
-  config = mkIf cfg.enable (
-    lib.optionalAttrs (lib.hasAttrByPath [ "stylix" ] options) {
-      stylix = {
+  config = mkIf cfg.enable {
+    stylix = {
+      enable = true;
+      # autoEnable = false;
+      base16Scheme = "${inputs.stylix.inputs.tinted-schemes}/base16/${cfg.theme}.yaml";
+
+      fonts = {
+        sizes = {
+          desktop = 11;
+          applications = 12;
+          terminal = 13;
+          popups = 12;
+        };
+
+        serif = {
+          package = pkgs.monaspace;
+          name = fontCfg.monaspace.families.neon;
+        };
+        sansSerif = {
+          package = pkgs.monaspace;
+          name = fontCfg.monaspace.families.neon;
+        };
+        monospace = {
+          package = pkgs.monaspace;
+          name = fontCfg.monaspace.families.krypton;
+        };
+        emoji = {
+          package = pkgs.noto-fonts-color-emoji;
+          name = "Noto Color Emoji";
+        };
+      };
+
+      icons = lib.mkIf isLinux {
         enable = true;
-        # autoEnable = false;
-        base16Scheme = "${inputs.stylix.inputs.tinted-schemes}/base16/${cfg.theme}.yaml";
-
-        fonts = {
-          sizes = {
-            desktop = 11;
-            applications = 12;
-            terminal = 13;
-            popups = 12;
-          };
-
-          serif = {
-            package = pkgs.monaspace;
-            name = fontCfg.monaspace.families.neon;
-          };
-          sansSerif = {
-            package = pkgs.monaspace;
-            name = fontCfg.monaspace.families.neon;
-          };
-          monospace = {
-            package = pkgs.monaspace;
-            name = fontCfg.monaspace.families.krypton;
-          };
-          emoji = {
-            package = pkgs.noto-fonts-color-emoji;
-            name = "Noto Color Emoji";
-          };
-        };
-
-        icons = lib.mkIf isLinux {
-          enable = true;
-          inherit (cfg.icon) package;
-          dark = cfg.icon.name;
-          # TODO: support custom light
-          light = cfg.icon.name;
-        };
-
-        polarity = "dark";
-
-        opacity = {
-          desktop = 1.0;
-          applications = 0.90;
-          terminal = 0.90;
-          popups = 1.0;
-        };
-
-        # ╭──────────────────────────────────────────────────────────╮
-        # │     Prefer custom themes over generic color palette      │
-        # │   Check which themes support which feature and toggle    │
-        # ╰──────────────────────────────────────────────────────────╯
-        targets = {
-          firefox.profileNames = [ config.khanelinix.user.name ];
-
-          # TODO: Very custom styling, integrate with their variables
-          # Currently setup only for catppuccin/nix
-          vscode.enable = false;
-
-          alacritty.enable = !(isThemedBy "alacritty");
-          bat.enable = !(isThemedBy "bat");
-          btop.enable = !(isThemedBy "btop");
-          cava.enable = !(isThemedBy "cava");
-          fish.enable = !(isThemedBy "fish");
-          foot.enable = !(isThemedBy "foot");
-          fzf.enable = !(isThemedBy "fzf");
-          ghostty.enable = !(isThemedBy "ghostty");
-          gitui.enable = !(isThemedBy "gitui");
-          helix.enable = !(isThemedBy "helix");
-          k9s.enable = !(isThemedBy "k9s");
-          kitty = {
-            enable = !(isThemedBy "kitty");
-          };
-          lazygit.enable = !(isThemedBy "lazygit");
-          ncspot.enable = !(isThemedBy "ncspot");
-          neovim.enable = !(isThemedBy "neovim");
-          opencode.enable = !(isThemedBy "opencode");
-          tmux.enable = !(isThemedBy "tmux");
-          vesktop.enable = !(isThemedBy "vesktop");
-          vicinae.enable = !(isThemedBy "vicinae");
-          wezterm.enable = !(isThemedBy "wezterm");
-          yazi.enable = !(isThemedBy "yazi");
-          zathura.enable = !(isThemedBy "zathura");
-          zellij.enable = !(isThemedBy "zellij");
-        }
-        // lib.optionalAttrs isLinux {
-          gnome.enable = !(isThemedBy "gnome");
-          # FIXME: not working
-          gtk.enable = false;
-          hyprland.enable = !(isThemedBy "hyprland");
-          # FIXME:: upstream needs module fix
-          hyprlock.image.enable = false;
-          hyprlock.enable = false;
-          qt.enable = !(isThemedBy "qt");
-          sway.enable = !(isThemedBy "sway");
-          # TODO: Very custom styling, integrate with their variables
-          # Currently setup only for catppuccin/nix
-          swaync.enable = false;
-          waybar.enable = !(isThemedBy "waybar");
-        }
-        // lib.optionalAttrs (!isLinux) {
-          gtk.enable = false;
-          qt.enable = false;
-        };
-
-        cursor = lib.mkIf isLinux (
-          if anyCuratedTheme then
-            lib.mkForce null
-          else
-            let
-              inheritsNullCursor =
-                (osConfig.stylix.enable or false)
-                && (osConfig.stylix.homeManagerIntegration.autoImport or false)
-                && (osConfig.stylix.homeManagerIntegration.followSystem or false)
-                && (osConfig.stylix.cursor or null) == null;
-            in
-            # A null system default must not suppress the enabled home fallback.
-            lib.mkOverride (if inheritsNullCursor then 900 else 1100) cfg.cursor
-        );
+        inherit (cfg.icon) package;
+        dark = cfg.icon.name;
+        # TODO: support custom light
+        light = cfg.icon.name;
       };
 
-      # GTK font overrides are only relevant when Home Manager manages GTK.
-      gtk.gtk3 = lib.mkIf isLinux {
-        font = null;
+      polarity = "dark";
+
+      opacity = {
+        desktop = 1.0;
+        applications = 0.90;
+        terminal = 0.90;
+        popups = 1.0;
       };
-    }
-  );
+
+      # ╭──────────────────────────────────────────────────────────╮
+      # │     Prefer custom themes over generic color palette      │
+      # │   Check which themes support which feature and toggle    │
+      # ╰──────────────────────────────────────────────────────────╯
+      targets = {
+        firefox.profileNames = [ config.khanelinix.user.name ];
+
+        # TODO: Very custom styling, integrate with their variables
+        # Currently setup only for catppuccin/nix
+        vscode.enable = false;
+
+        alacritty.enable = !(isThemedBy "alacritty");
+        bat.enable = !(isThemedBy "bat");
+        btop.enable = !(isThemedBy "btop");
+        cava.enable = !(isThemedBy "cava");
+        fish.enable = !(isThemedBy "fish");
+        foot.enable = !(isThemedBy "foot");
+        fzf.enable = !(isThemedBy "fzf");
+        ghostty.enable = !(isThemedBy "ghostty");
+        gitui.enable = !(isThemedBy "gitui");
+        helix.enable = !(isThemedBy "helix");
+        k9s.enable = !(isThemedBy "k9s");
+        kitty = {
+          enable = !(isThemedBy "kitty");
+        };
+        lazygit.enable = !(isThemedBy "lazygit");
+        ncspot.enable = !(isThemedBy "ncspot");
+        neovim.enable = !(isThemedBy "neovim");
+        opencode.enable = !(isThemedBy "opencode");
+        tmux.enable = !(isThemedBy "tmux");
+        vesktop.enable = !(isThemedBy "vesktop");
+        vicinae.enable = !(isThemedBy "vicinae");
+        wezterm.enable = !(isThemedBy "wezterm");
+        yazi.enable = !(isThemedBy "yazi");
+        zathura.enable = !(isThemedBy "zathura");
+        zellij.enable = !(isThemedBy "zellij");
+      }
+      // lib.optionalAttrs isLinux {
+        gnome.enable = !(isThemedBy "gnome");
+        # FIXME: not working
+        gtk.enable = false;
+        hyprland.enable = !(isThemedBy "hyprland");
+        # FIXME:: upstream needs module fix
+        hyprlock.image.enable = false;
+        hyprlock.enable = false;
+        qt.enable = !(isThemedBy "qt");
+        sway.enable = !(isThemedBy "sway");
+        # TODO: Very custom styling, integrate with their variables
+        # Currently setup only for catppuccin/nix
+        swaync.enable = false;
+        waybar.enable = !(isThemedBy "waybar");
+      }
+      // lib.optionalAttrs (!isLinux) {
+        gtk.enable = false;
+        qt.enable = false;
+      };
+
+      cursor = lib.mkIf isLinux (
+        if anyCuratedTheme then
+          lib.mkForce null
+        else
+          let
+            inheritsNullCursor =
+              (osConfig.stylix.enable or false)
+              && (osConfig.stylix.homeManagerIntegration.autoImport or false)
+              && (osConfig.stylix.homeManagerIntegration.followSystem or false)
+              && (osConfig.stylix.cursor or null) == null;
+          in
+          # A null system default must not suppress the enabled home fallback.
+          lib.mkOverride (if inheritsNullCursor then 900 else 1100) cfg.cursor
+      );
+    };
+
+    # GTK font overrides are only relevant when Home Manager manages GTK.
+    gtk.gtk3 = lib.mkIf isLinux {
+      font = null;
+    };
+  };
 }
