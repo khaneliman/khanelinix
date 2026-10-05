@@ -47,11 +47,11 @@ in
     enableDebug = lib.mkEnableOption "debug mode";
     enableInspect = lib.mkEnableOption "inspect mode";
     fullSizeOutputs =
-      mkOpt (types.listOf types.str) "Which outputs to use the full size waybar on."
-        [ ];
+      mkOpt (types.listOf types.str) [ ]
+        "Which outputs to use the full size waybar on.";
     condensedOutputs =
-      mkOpt (types.listOf types.str) "Which outputs to use the smaller size waybar on."
-        [ ];
+      mkOpt (types.listOf types.str) [ ]
+        "Which outputs to use the smaller size waybar on.";
     resetTimeFormat = mkOpt (types.enum [
       "provider"
       "local"
