@@ -98,9 +98,6 @@ in
         originalsPath = "${media}/photoprism";
         importPath = "${media}/familyphotos";
         storagePath = "${cacheAppdata}/photoprism";
-        passwordFile = "/run/secrets/photoprism/admin-password";
-        databasePasswordFile = "/run/secrets/photoprism/database-password";
-        settings.PHOTOPRISM_SITE_URL = "http://austinserver.local:2342/";
       };
 
       plex = {
@@ -130,7 +127,7 @@ in
         openFirewall = true;
       };
 
-      redis.servers.khanelilab = {
+      redis.servers.${config.networking.hostName} = {
         enable = true;
         # Redis service port is exposed on default TCP 6379.
         openFirewall = true;
@@ -180,7 +177,6 @@ in
           STRICT_PORT_FORWARD = "yes";
           ENABLE_PRIVOXY = "no";
           WEBUI_PORT = "8082";
-          LAN_NETWORK = "192.168.4.0/22";
           NAME_SERVERS = "209.222.18.222,84.200.69.80,37.235.1.174,1.1.1.1,209.222.18.218,37.235.1.177,84.200.70.40,1.0.0.1";
           DEBUG = "false";
           UMASK = "000";

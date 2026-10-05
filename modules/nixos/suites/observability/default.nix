@@ -29,7 +29,6 @@ in
           http_addr = "0.0.0.0";
           http_port = 3000;
         };
-        settings.security.secret_key = "$__file{/run/secrets/grafana/secret-key}";
       };
 
       scrutiny = {

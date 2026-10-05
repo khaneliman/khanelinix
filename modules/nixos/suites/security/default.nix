@@ -29,10 +29,6 @@ in
 
       cloudflared = {
         enable = true;
-        tunnels.KHANELIMANCOM = {
-          credentialsFile = "/run/secrets/cloudflared/khanelimancom.json";
-          default = "http_status:404";
-        };
       };
 
       nginx = {
@@ -52,9 +48,7 @@ in
       vaultwarden = {
         enable = true;
         dbBackend = "postgresql";
-        environmentFile = "/run/secrets/vaultwarden/environment";
         config = {
-          DOMAIN = "https://vaultwarden.khaneliman.com";
           ROCKET_ADDRESS = "0.0.0.0";
           ROCKET_PORT = 8222;
         };

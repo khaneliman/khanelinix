@@ -21,6 +21,7 @@ in
     ./media.nix
     ./nas.nix
     ./networking.nix
+    ./personal-services.nix
     ./reports.nix
     ./secrets.nix
     ./storage.nix
