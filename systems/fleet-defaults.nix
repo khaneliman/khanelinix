@@ -1,6 +1,9 @@
 { lib, ... }:
 {
-  imports = [ ./fleet-policy.nix ];
+  imports = [
+    ./fleet-policy.nix
+    ./fleet-capability-caches.nix
+  ];
   khanelinix = {
     programs.terminal.tools.ssh = {
       hosts = import ./fleet-ssh-hosts.nix;

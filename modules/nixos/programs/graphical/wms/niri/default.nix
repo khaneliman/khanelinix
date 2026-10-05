@@ -43,10 +43,6 @@ in
     (mkIf cfg.enable (
       lib.mkMerge [
         (lib.optionalAttrs hasNiri {
-          nix.settings = {
-            substituters = [ "https://niri.cachix.org" ];
-            trusted-public-keys = [ "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964=" ];
-          };
 
           programs.niri = {
             enable = true;
