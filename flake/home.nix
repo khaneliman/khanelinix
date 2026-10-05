@@ -39,10 +39,6 @@ in
   imports = [ inputs.home-manager.flakeModules.home-manager ];
 
   flake = {
-    homeModules = {
-      default = ../modules/home;
-    };
-
     # Dynamically generated home configurations
     homeConfigurations = lib.mapAttrs' generateHomeConfiguration (
       self.lib.file.publicConfigurations "userAtHost" allHomes

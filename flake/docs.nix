@@ -1,17 +1,10 @@
 { inputs, lib, ... }:
 {
 
-  flake = {
-    nixosModules.default = ../modules/nixos;
-    darwinModules.default = ../modules/darwin;
-    homeManagerModules.default = ../modules/home;
-  };
-
   perSystem =
     { config, pkgs, ... }:
     let
       inherit (inputs.self.lib.system) common;
-      extendedLib = inputs.nixpkgs.lib.extend inputs.self.lib.overlay;
       nixpkgsConfig = common.mkNixpkgsConfig inputs.self;
       mkOptionsDoc =
         eval:
@@ -39,21 +32,12 @@
               (_: {
                 nixpkgs.pkgs = pkgsForDocs;
               })
-              inputs.home-manager.nixosModules.home-manager
-              inputs.lanzaboote.nixosModules.lanzaboote
-              inputs.sops-nix.nixosModules.sops
-              inputs.disko.nixosModules.disko
-              inputs.fast-nix-gc.nixosModules.default
-              inputs.stylix.nixosModules.stylix
-              inputs.catppuccin.nixosModules.catppuccin
-              inputs.nix-index-database.nixosModules.nix-index
-              inputs.nix-flatpak.nixosModules.nix-flatpak
-            ]
-            ++ inputs.self.lib.file.importModulesRecursive ../modules/nixos;
-            specialArgs = {
-              inherit inputs;
-              lib = extendedLib;
-              virtual = false;
+              inputs.self.nixosModules.default
+            ];
+            specialArgs = inputs.self.lib.system.moduleArgs {
+              system = pkgs.stdenv.hostPlatform.system;
+              hostname = "docs";
+              username = "docs";
             };
           };
         in
@@ -72,16 +56,12 @@
               (_: {
                 nixpkgs.pkgs = pkgsForDocs;
               })
-              inputs.home-manager.darwinModules.home-manager
-              inputs.nix-index-database.darwinModules.nix-index
-              inputs.stylix.darwinModules.stylix
-              inputs.sops-nix.darwinModules.sops
-              inputs.nix-rosetta-builder.darwinModules.default
-            ]
-            ++ inputs.self.lib.file.importModulesRecursive ../modules/darwin;
-            specialArgs = {
-              inherit inputs;
-              lib = extendedLib;
+              inputs.self.darwinModules.default
+            ];
+            specialArgs = inputs.self.lib.system.moduleArgs {
+              system = pkgs.stdenv.hostPlatform.system;
+              hostname = "docs";
+              username = "docs";
             };
           };
         in
@@ -106,20 +86,17 @@
                 stylix.overlays.enable = false;
                 targets.darwin.linkApps.enable = false;
               })
-              inputs.sops-nix.homeManagerModules.sops
-              inputs.nix-index-database.homeModules.nix-index
-              inputs.nix-flatpak.homeManagerModules.nix-flatpak
-              inputs.catppuccin.homeModules.catppuccin
-            ]
-            ++ inputs.self.lib.file.importModulesRecursive ../modules/home;
-            extraSpecialArgs = {
-              inherit inputs;
-              lib = extendedLib;
-              hostname = "docs";
-              username = "docs";
-              system = pkgs.stdenv.hostPlatform.system;
-              osConfig = { };
-            };
+              inputs.self.homeManagerModules.default
+            ];
+            extraSpecialArgs =
+              (inputs.self.lib.system.moduleArgs {
+                system = pkgs.stdenv.hostPlatform.system;
+                hostname = "docs";
+                username = "docs";
+              })
+              // {
+                pkgs = pkgsForDocs;
+              };
           };
         in
         mkOptionsDoc eval;

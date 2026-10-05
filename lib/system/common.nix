@@ -415,7 +415,9 @@ in
             inputs.stylix.homeModules.stylix
           else
             null;
-        enableStylixHomeModule = stylixHomeModule != null && !(config.stylix.enable or false);
+        enableStylixHomeModule =
+          stylixHomeModule != null
+          && !((config.stylix.enable or false) && (config.stylix.homeManagerIntegration.autoImport or false));
         hmSharedModulesResolved = if sharedHomeModules == null then hmSharedModules else sharedHomeModules;
       in
       {

@@ -61,7 +61,8 @@
     "common",
     "mkDarwin",
     "mkHome",
-    "mkSystem"
+    "mkSystem",
+    "moduleArgs"
   ],
   "theme": [
     "compileSCSS",
