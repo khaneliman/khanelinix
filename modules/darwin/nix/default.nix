@@ -8,7 +8,8 @@
 }:
 let
   cfg = config.khanelinix.nix;
-  applicationFirewallEnabled = config.networking.applicationFirewall.enable;
+  # Unmanaged ALF may be enabled; exclude executables unless explicitly disabled.
+  applicationFirewallEnabled = config.networking.applicationFirewall.enable != false;
   fastNixGc = inputs.fast-nix-gc.packages.${pkgs.stdenv.hostPlatform.system}.default;
   gcInterval = [
     {

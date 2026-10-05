@@ -19,7 +19,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.pruneStaleAccessibilityPermissions {
+  config = lib.mkIf (cfg.pruneStaleAccessibilityPermissions && config.khanelinix.user.name != null) {
     system.activationScripts.extraActivation.text = lib.mkAfter ''
       echo >&2 "Auditing Accessibility TCC entries..."
 
