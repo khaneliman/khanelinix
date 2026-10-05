@@ -1,8 +1,6 @@
 {
   config,
   lib,
-  virtual,
-
   ...
 }:
 let
@@ -14,7 +12,7 @@ in
   options.khanelinix.security.acme = {
     enable = lib.mkEnableOption "default ACME configuration";
     email = mkOpt lib.types.str config.khanelinix.user.email "The email to use.";
-    staging = mkOpt lib.types.bool virtual "Whether to use the staging server or not.";
+    staging = mkOpt lib.types.bool false "Whether to use the staging server or not.";
   };
 
   config = lib.mkIf cfg.enable {
