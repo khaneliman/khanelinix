@@ -71,6 +71,8 @@ with tempfile.TemporaryDirectory(prefix="khanelinix-uefi-", dir=cache) as scratc
         checks += " && ! systemctl is-active --quiet NetworkManager sshd systemd-networkd systemd-resolved systemd-timesyncd"
         checks += ' && guestScratch=$(mktemp -d /root/rescue-check.XXXXXX) && ddrescue --quiet --size=65536 /dev/sr0 "$guestScratch/boot-sector.bin" "$guestScratch/map" && test $(stat -c%s "$guestScratch/boot-sector.bin") -eq 65536 && test "$(dd if=/dev/sr0 bs=65536 count=1 status=none | sha256sum | cut -d " " -f1)" = "$(sha256sum "$guestScratch/boot-sector.bin" | cut -d " " -f1)"'
         checks += " && cryptsetup --version && ddrescue --version && testdisk /version && smartctl --version && nvme version && parted --version && sgdisk --version && btrfs version && xfs_repair -V && tmux -V && file --version && lsblk && nix-store --verify --check-contents"
+    else:
+        checks += " && command -v nixos-install nixos-generate-config && PAGER=cat MANPAGER=cat nixos-install --help && PAGER=cat MANPAGER=cat nixos-generate-config --help"
     # Split the success marker so its echoed command cannot be mistaken for output.
     guest = "sudo -n sh -c '" + checks + ' && printf "KHANELINIX_%s_OK\\n" UEFI\'\n'
     try:
