@@ -149,6 +149,11 @@ in
           nixpkgs-review
           nurl
         ]
+        # FIXME: diffoscope times out on Hydra for aarch64-darwin, so it is uncached there.
+        # Minimal variant: the full package adds about 9 GiB of rarely needed comparators.
+        ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && cfg.nixEnable) [
+          diffoscopeMinimal
+        ]
         ++ lib.optionals (cfg.gameEnable && includes "standard") (
           [
             godot
