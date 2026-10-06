@@ -35,6 +35,7 @@ guidance owns finding thresholds and suggestions; load it only for review work.
 | Explain or reduce closure contents                                                                              | [Closure analysis](references/closure-analysis.md)               |
 | Trace a dependency or its owning option                                                                         | [Dependency forensics](references/dependency-forensics.md)       |
 | Update flake inputs or maintain lock files                                                                      | [Flake maintenance](references/flake-maintenance.md)             |
+| Maintain nixpkgs updates, plugins, or review publication                                                        | [Nixpkgs maintenance](references/nixpkgs-maintenance.md)         |
 | Measure evaluation cost or validate an optimization                                                             | [Evaluation performance](references/eval-performance.md)         |
 | Remove import-from-derivation                                                                                   | [IFD remediation](references/ifd-remediation.md)                 |
 | Verify activation or loaded runtime state                                                                       | [Activation verification](references/activation-verification.md) |
