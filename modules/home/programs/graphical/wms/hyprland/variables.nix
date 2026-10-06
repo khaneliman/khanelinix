@@ -176,6 +176,9 @@ in
             no_update_news = true;
           };
 
+          # Keep section values in this aggregate block. A standalone
+          # `settings.general` fragment elsewhere renders `hl.general(...)`,
+          # which the Hyprland Lua API does not define.
           general = {
             allow_tearing = true;
             border_size = 2;

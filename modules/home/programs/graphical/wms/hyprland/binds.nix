@@ -83,6 +83,9 @@ let
           "satty --filename -"
         else
           "swappy -f -";
+      # run-as-service starts a transient unit, so an outer pipe reads
+      # systemd-run's output while the producer writes to the journal. Run
+      # whole pipelines inside one shell in the service instead.
       serviceShellCommand = command: "${lib.getExe pkgs.bash} -lc ${lib.escapeShellArg command}";
     in
     [
