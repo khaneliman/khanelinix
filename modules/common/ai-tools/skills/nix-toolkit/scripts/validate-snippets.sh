@@ -123,6 +123,7 @@ nix build --help | grep -q -- "--rebuild"
 nix path-info --help | grep -q -- "--json"
 nix why-depends --help | grep -q -- "--derivation"
 nix store diff-closures --help >/dev/null
+nix store make-content-addressed --help | grep -q -- "--json"
 nix derivation show --help >/dev/null
 nix flake metadata --help | grep -q -- "--inputs-from"
 nix flake update --help | grep -q -- "nix flake update"
