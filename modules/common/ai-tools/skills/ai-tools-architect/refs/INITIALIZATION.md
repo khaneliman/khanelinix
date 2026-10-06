@@ -20,3 +20,17 @@ rules, agents, commands, or skills.
    engineering advice, directory listings, or arbitrary line limits.
 6. Validate links, loading gates, and precedence. Report what stayed global,
    what moved behind a gate, what was deleted, and any unresolved conflict.
+
+## Claude Code and AGENTS.md
+
+Claude Code 2.1.289 loads `AGENTS.md` and `.claude/AGENTS.md` wherever it would
+load `CLAUDE.md`, but only when no project `CLAUDE.md` exists at the session
+root or above it. A `CLAUDE.md` that only imports `@AGENTS.md` therefore turns
+the loader off; delete such shims instead of adding them. The loader reads no
+user-level `AGENTS.md`, so user instructions still need `CLAUDE.md` in the
+Claude config directory. Do not name reference files `AGENTS.md`: nested ones
+load as instructions when Claude reads a sibling file.
+
+Anthropic gates this loader behind a remote flag. When instructions seem
+missing, run `claude -p --debug` and look for
+`no CLAUDE.md found; AGENTS.md loaded` in the debug log.
