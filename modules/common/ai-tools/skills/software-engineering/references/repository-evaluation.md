@@ -27,6 +27,19 @@ Apply root engineering lenses across selected flows. Emphasize credible change
 scenarios, cost concentration, operational ownership, and whether actual module
 boundaries contain those pressures.
 
+## Check upstream before local patches
+
+Before recommending or writing a local patch to third-party code, survey
+upstream releases and tags, roadmap issues, open pull requests and their review
+state, and comparable solutions in other projects. Prefer an applicable upstream
+commit over recreating it locally. Read review threads and linked issues; an
+unreviewed pull request is a design risk, not settled upstream art.
+
+Probe environmental assumptions the patch relies on, such as protocol support,
+available selection sources, or writable configuration paths, before building on
+them. Keep unavoidable local patches small, tested, and suitable for proposing
+upstream.
+
 ## Output
 
 1. Scope, evidence inspected, and confidence limits.
