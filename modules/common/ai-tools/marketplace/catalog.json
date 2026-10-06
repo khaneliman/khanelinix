@@ -62,7 +62,7 @@
 			},
 			"displayName": "Blender Toolkit",
 			"description": "Author and validate Blender assets for game runtimes.",
-			"version": "0.3.1",
+			"version": "0.3.2",
 			"category": "Developer Tools"
 		},
 		{

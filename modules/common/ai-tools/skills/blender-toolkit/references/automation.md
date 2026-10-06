@@ -69,6 +69,22 @@ Track the PID the launch returned, or match command lines containing
 `--background` or `--python`, excluding the live MCP session, whose bootstrap
 also passes `--python` and is not a disposable job.
 
+## Isolate preference probes
+
+Create scratch directories before setting `BLENDER_USER_RESOURCES`,
+`BLENDER_USER_CONFIG`, `BLENDER_USER_SCRIPTS`, and `BLENDER_USER_EXTENSIONS`.
+Missing directories can fall back to real preferences; environment overrides
+alone are not a safety boundary. Enforce filesystem isolation with a read-only
+real filesystem and only scratch writable, for example through bubblewrap.
+Verify the resolved `CONFIG` path before saving and hash real preferences before
+and after the probe.
+
+Enabling an extension can save preferences. Combining it with
+`--factory-startup` can persist factory defaults over existing choices; omit
+factory startup when testing preservation of preferences. If an accidental write
+occurs, a running GUI may retain earlier preferences in memory. Do not restart
+it or claim recovery without verification.
+
 ## Save and verify checkpoints
 
 Before saving through MCP, run `bpy.ops.file.make_paths_relative()` so the file
