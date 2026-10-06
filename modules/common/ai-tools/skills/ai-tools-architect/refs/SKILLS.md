@@ -93,6 +93,22 @@ stable command unless the wrapper creates a useful contract.
 
 ## Claude Code Context Behavior
 
+Claude Code discovers repository skills under `.claude/skills` and follows
+symlinks, including a directory symlink `.claude/skills -> ../.agents/skills`.
+Keep one canonical tree in `.agents/skills` to serve both Claude Code and Codex
+without copied skill files.
+
+For a cheap discovery check, run from the repository root with the intended
+configuration:
+
+```sh
+claude -p "Reply with only available skill names containing X, or NONE." \
+  --max-turns 1
+```
+
+Use a distinctive skill-name fragment in place of `X`. This creates ordinary
+session history; recheck discovery after major CLI updates.
+
 The
 [Claude Code skill documentation](https://code.claude.com/docs/en/skills#skill-content-lifecycle)
 describes reattaching the most recent invocation of each skill after compaction:
