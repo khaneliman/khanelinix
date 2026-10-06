@@ -8,6 +8,8 @@
   ...
 }:
 
+# Nixpkgs removed this theme with its GTK2 murrine dependency. This package
+# keeps the former source and installs only the GTK3 and GTK4 assets.
 stdenvNoCC.mkDerivation {
   pname = "tokyonight-gtk-theme";
   version = "0-unstable-2025-10-23";
