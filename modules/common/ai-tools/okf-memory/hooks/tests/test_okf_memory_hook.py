@@ -255,6 +255,54 @@ class OkfMemoryHookTests(unittest.TestCase):
             stop = self.run_hook(root, "claude", "stop", payload)
             self.assertEqual(stop["decision"], "block")
 
+    def test_claude_task_notification_does_not_rearm_checkpoint(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            transcript = root / "claude.jsonl"
+            transcript.touch()
+            payload = {
+                "session_id": "notification",
+                "cwd": str(root),
+                "transcript_path": str(transcript),
+            }
+            self.append(transcript, self.claude_user("Audit this", "human"))
+            self.run_hook(
+                root, "claude", "user-prompt", payload | {"prompt": "Audit this"}
+            )
+            self.append(
+                transcript,
+                self.claude_call("call-1"),
+                self.claude_result("call-1"),
+                self.claude_call("call-2"),
+                self.claude_result("call-2"),
+            )
+            first = self.run_hook(root, "claude", "stop", payload)
+            self.assertEqual(first["decision"], "block")
+
+            notification = (
+                "<task-notification>\n<task-id>worker</task-id>\n</task-notification>"
+            )
+            self.append(
+                transcript,
+                {
+                    "type": "user",
+                    "uuid": "notification",
+                    "origin": {"kind": "task-notification"},
+                    "message": {"role": "user", "content": notification},
+                },
+            )
+            self.run_hook(
+                root, "claude", "user-prompt", payload | {"prompt": notification}
+            )
+            self.append(
+                transcript,
+                self.claude_call("call-3"),
+                self.claude_result("call-3"),
+                self.claude_call("call-4"),
+                self.claude_result("call-4"),
+            )
+            self.assertEqual(self.run_hook(root, "claude", "stop", payload), {})
+
     def test_small_turn_does_not_checkpoint(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

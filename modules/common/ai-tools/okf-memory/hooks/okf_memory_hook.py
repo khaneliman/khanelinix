@@ -579,6 +579,11 @@ def handle_start(provider: str, payload: dict[str, Any]) -> None:
 
 def handle_user_prompt(provider: str, payload: dict[str, Any]) -> None:
     prompt, marker = latest_user_turn(provider, payload)
+    # Claude submits background-task results as prompts; they continue the
+    # current turn, so they must not re-arm its one-shot checkpoint.
+    if provider == "claude" and prompt.lstrip().startswith("<task-notification>"):
+        emit_no_context(provider)
+        return
     path = state_path(payload)
     memory_paths = bundles(payload)
     with locked_state(path) as state:
