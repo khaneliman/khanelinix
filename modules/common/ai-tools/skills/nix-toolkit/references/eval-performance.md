@@ -15,14 +15,22 @@ controls, profiling, and acceptance evidence.
 Appends `--option eval-cache false`, uses `hyperfine`, captures single-run
 `NIX_SHOW_STATS` after timing.
 
-Manual baseline:
+Manual baseline through an evaluated configuration:
 
 ```bash
-config_path="./configuration.nix"
+host="host-name"
+target=".#nixosConfigurations.${host}.config.system.build.toplevel.drvPath"
 
 hyperfine --warmup 3 --runs 10 \
-  "nix-instantiate --eval --option eval-cache false \"$config_path\""
+  "nix eval --raw '$target' --option eval-cache false"
 ```
+
+Do not benchmark `nix-instantiate --eval ./configuration.nix` when the file is a
+module function: it returns `<LAMBDA>` without doing the configuration work.
+Applying the function alone can still leave nested values unforced. For a
+non-flake baseline, evaluate the module through the appropriate system builder
+and force the same consumed output, such as
+`config.system.build.toplevel.drvPath`.
 
 Rules: always `--option eval-cache false`; minimum 3 warmups; minimum 10 runs;
 never use single-run timings.
@@ -142,6 +150,12 @@ enough and stable enough across runs to justify the complexity, stated
 explicitly with the numbers. Report timing mean, variance, and percentage
 change; report memory regressions even when time improves. Fewer thunks alone do
 not prove a user-visible speedup.
+
+When collecting structured probes with `nix eval --json`, do not name a result
+field `outPath`: Nix can coerce the entire attrset to that path string, hiding
+sibling fields and leaving their errors unforced. Use a neutral name such as
+`outputPath` and confirm the result is a JSON object with every selected field,
+not just a successful path-string result.
 
 ## Readability And Feature Tradeoffs
 

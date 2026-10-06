@@ -199,6 +199,29 @@ Decision rule:
    bloats downstream runtime closures; see
    [Closure analysis](closure-analysis.md).
 
+### Runtime-Loaded GTK Modules
+
+`autoPatchelfHook` resolves linked libraries, not modules loaded at runtime.
+GIO, gdk-pixbuf loaders, and GStreamer plugins can therefore fail only when a
+feature is exercised, even with the underlying libraries in the closure. For GIO
+TLS failures such as "TLS support is not available", add `glib-networking` to
+`buildInputs` with `wrapGAppsHook` or `wrapGAppsHook4`; the wrapper supplies
+`GIO_EXTRA_MODULES`. Include the required image loaders and media plugins for
+the same reason. Verify module paths on every entry point and exercise the
+feature; binary wrappers may require `strings`, not a shell-script grep.
+
+### HIP/ROCm Builds
+
+When upstream expects one ROCm root, use `symlinkJoin` to assemble the needed
+`rocmPackages` components: `clr`, `hip-common`, `hipcc`, `llvm.clang`,
+`rocm-core`, and `rocm-device-libs`, plus `rocwmma` when the source's WMMA path
+requires it. Pass both `--rocm-path=<prefix>` for device libraries and
+`-I<prefix>/include` for headers; `--rocm-path` does not add the include path. A
+compiler wrapper can add these flags while preserving upstream flags via `"$@"`,
+unlike replacing a makefile flag variable. Name the target GPU architecture
+explicitly through a package argument: native detection uses
+`rocm_agent_enumerator`, which cannot enumerate GPUs in the build sandbox.
+
 ### Binary Resolution with `lib.getExe`
 
 Never hardcode path strings like `"${pkg}/bin/my-tool"`. Upstream name changes

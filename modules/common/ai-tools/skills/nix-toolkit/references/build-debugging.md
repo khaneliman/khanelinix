@@ -70,6 +70,23 @@ drv="$(nix build .#package --derivation --no-link --print-out-paths)"
 nix log "$drv"
 ```
 
+## Generated Script Paths
+
+A generated `exec` string can carry derivation output context while pointing to
+`bin/<name>` inside the output, for example from `writeShellScriptBin`.
+`nix eval --raw` can print that path, but building the string may fail with
+"string is not the right placeholder for this derivation output". Build the
+`.drv` named in the error instead:
+
+```bash
+output=$(nix build '<drv>^out' --no-link --print-out-paths)
+cat "$output/bin/<name>"
+```
+
+Compare the realized old and new scripts to verify generated-code changes.
+Normalize only store-path hashes in the diff so dependency hash churn does not
+hide the changed lines; retain package names and script content.
+
 ## Fixed-Output Hash Mismatch
 
 When a build fails with:

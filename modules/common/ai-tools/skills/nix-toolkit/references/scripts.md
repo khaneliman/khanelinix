@@ -38,3 +38,23 @@ Three scripts use a non-zero exit as an answer rather than an error:
 `config-assertions.sh` exits 1 when an assertion failed, `module_graph.py` exits
 1 when nothing matched, and `trace_eval.py` exits 1 when the command failed and
 a report was produced.
+
+## Ad-Hoc Python Tooling
+
+`nix shell` with an interpreter and separate `python3Packages` entries adds
+executables to `PATH`; it does not merge their `site-packages` into an
+interpreter environment. Use `python3.withPackages` instead:
+
+```bash
+nix build --impure --no-link --print-out-paths --expr '
+  let
+    pkgs = (builtins.getFlake "nixpkgs").legacyPackages.x86_64-linux;
+  in pkgs.python3.withPackages (ps: [ ps.numpy ps.requests ])'
+```
+
+Select the current system, then run `<output>/bin/python3` and verify imports
+before starting a long job. For one-off tooling that does not need project
+configuration, use the plain `nixpkgs` registry rather than the project's
+package set; project accelerator flags and overlays can cause unnecessary
+rebuilds instead of using cached tools. Keep converter-only dependencies out of
+the packaged runtime.

@@ -60,6 +60,31 @@ in {
 Before adding a binding: if it is not shared and its name adds no meaning,
 prefer the readable inline form.
 
+## Generated Shell
+
+- Quote each caller value separately with `lib.escapeShellArg` or
+  `lib.escapeShellArgs` for literal arguments. Escape the complete message as
+  one argument, not a value interpolated inside an existing double-quoted
+  message: shell-escaped single quotes there are literal and do not stop command
+  substitution.
+- Never join caller values into a delimited string and split them at runtime; a
+  value may contain the delimiter. Emit one statement per value so known
+  boundaries are never re-parsed, and read values back through quoted
+  expansions.
+- Do not place caller text adjacent to generated syntax. In zsh, an unbraced
+  `$VAR:letter` can be a history-style modifier: `"$HOME:toolchain/bin"`
+  corrupts the path. Keep value and separator separately quoted, or brace an
+  expansion the generator owns.
+- If expansion inside caller values is a documented feature, escape backslash,
+  double quote, and backtick for the emitted double-quoted context; leave `$`
+  active only for that contract. Literal shell-argument escaping would disable
+  the intended expansion.
+- When targeting fish through babelfish, keep generated code unrolled rather
+  than factoring it into functions using `$1`/`$2`; translation can lose quoting
+  or corrupt patterns and silently turn the function into a no-op. Test the
+  generated result in each supported shell, including empty values and values
+  containing delimiters, quotes, and expansion syntax.
+
 ## Scope Choices
 
 | Need                                                    | Form                                                        | Constraint                                                     |

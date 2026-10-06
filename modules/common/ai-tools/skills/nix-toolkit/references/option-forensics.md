@@ -73,6 +73,27 @@ It lists options under the prefix with types, definition state, and priority
 tiers. Run with `--help` for depth bounding, set/unset filtering, and raw JSON
 flags.
 
+### Service Inventories
+
+For daemon ownership, inspect generated systemd services and sockets first.
+Traversing every value under `config.services` can force removed options or
+aliases even when the configuration never used them. `builtins.tryEval` does not
+catch `builtins.abort`, so it does not make that traversal safe. A removed alias
+hit by an inventory is not evidence that the host configured it.
+
+For a declared-enable summary, filter option metadata before forcing values:
+
+```nix
+(options.services.${name}.enable._type or "") == "option"
+&& (options.services.${name}.enable.visible or true) != false
+&& (config.services.${name}.enable or false) == true
+```
+
+Missing `visible` metadata means normally visible; defaulting it to `false`
+silently omits legitimate services. Query an already evaluated configuration
+rather than evaluating a file alone when sibling declarations or arguments are
+needed.
+
 ## Error Matrix
 
 Match the evaluator's text, not a paraphrase of it. The strings below are the

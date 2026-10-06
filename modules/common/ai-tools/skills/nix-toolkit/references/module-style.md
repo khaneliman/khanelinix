@@ -116,6 +116,33 @@ Evaluate all four Boolean combinations with the owning option types. The
 experimental definition must remain absent whenever `cfg.enable` is true. Use
 the delayed form when `cfg` comes from `config`.
 
+Never use `attrs // lib.mkIf cond { ... }`. `mkIf` returns a tagged attrset;
+`//` copies that tag onto the whole merged definition. A false condition drops
+it all, while a true condition keeps only the conditional content, losing the
+base keys in either case. Use `lib.optionalAttrs` for plain attrsets when the
+condition can be evaluated eagerly, or `lib.mkMerge` with only the conditional
+part wrapped in `lib.mkIf` for module definitions. Search for this shape because
+evaluation can succeed while silently dropping values:
+
+```bash
+grep -rnE '^\s*//\s*(lib\.)?mkIf|\}\s*//\s*(lib\.)?mkIf' modules
+```
+
+Check evaluated values, not just evaluation success. Do not use `cfg ? attr` on
+an `attrsOf` or `lazyAttrsOf` option to decide whether to emit a fallback: a
+false leaf `mkIf` can leave the key present, while a parent `mkForce { }`
+removes it. The presence test can therefore suppress a wanted default or
+reintroduce one the user removed. Keep defaults in the option and let
+`mkDefault` resolve priority. For mergeable freeform settings, put soft defaults
+on each leaf; a whole-attrset `mkDefault` can lose unrelated defaults when a
+sibling supplies one key. Moving defaults into generated text also breaks
+consumers that read the public option.
+
+Compare evaluated values against the base configuration with probes for a false
+leaf `mkIf`, a parent `mkForce { }`, an explicit value, `null` where allowed,
+and a consumer that reads the option. Test overriding an existing key, not only
+adding a disjoint key.
+
 ## Module Arguments
 
 Extra arguments reach module bodies two ways, and the difference is when they
@@ -145,6 +172,15 @@ need to vary it. Removing an existing option requires an interface migration,
 not merely evaluating the current default successfully. Avoid generating a large
 option surface when fixed values suffice; option declaration and merging add
 evaluation work.
+
+For option migrations, inspect the repository's rename and deprecation helpers
+before writing compatibility logic. Use declarative rename specifications for
+path-only changes, with explicit paths for case-sensitive or dotted native keys.
+For example, Home Manager exposes settings migration helpers through
+`lib.hm.deprecations`. A rename does not convert enum, unit, or representation
+values; prefer an existing conversion helper and justify any custom conversion
+or lower-level forwarding needed for condition or priority semantics. Do not
+duplicate compatibility schemas or warnings already supplied by a helper.
 
 ## Abstraction Boundaries
 
