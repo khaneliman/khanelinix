@@ -282,11 +282,18 @@ def run_diffoscope(
         if result.returncode not in {0, 1}:
             detail = decode(result.stderr).strip() or "diffoscope failed"
             raise PackageDiffError(detail)
-        if not report_path.exists():
-            raise PackageDiffError("diffoscope did not create its requested report")
 
-        report_text = report_path.read_text(encoding="utf-8", errors="surrogateescape")
-        report_lines = normalize_diffoscope(report_text, temporary_root).splitlines()
+        # diffoscope writes no report file when the inputs are identical.
+        report_lines: list[str] = []
+        if report_path.exists():
+            report_text = report_path.read_text(
+                encoding="utf-8", errors="surrogateescape"
+            )
+            report_lines = normalize_diffoscope(
+                report_text, temporary_root
+            ).splitlines()
+        elif result.returncode == 1:
+            raise PackageDiffError("diffoscope did not create its requested report")
         selected_lines = (
             report_lines if maximum_lines == 0 else report_lines[:maximum_lines]
         )

@@ -19,9 +19,10 @@ def completed(stdout: bytes = b"", stderr: bytes = b"", code: int = 0):
 
 
 class FakeRunner:
-    def __init__(self, before: Path, after: Path) -> None:
+    def __init__(self, before: Path, after: Path, diffoscope_code: int = 1) -> None:
         self.before = before
         self.after = after
+        self.diffoscope_code = diffoscope_code
         self.calls: list[tuple[tuple[str, ...], Path, bool]] = []
 
     def __call__(self, arguments, cwd: Path, check: bool):
@@ -43,13 +44,13 @@ class FakeRunner:
             }
             return completed(json.dumps(data).encode())
         if args[0] == "/tools/diffoscope":
-            report_path = Path(args[2])
-            report_path.write_text(
-                "--- /nix/store/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-old/file\n"
-                "+++ /nix/store/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-new/file\n",
-                encoding="utf-8",
-            )
-            return completed(code=1)
+            if self.diffoscope_code == 1:
+                Path(args[2]).write_text(
+                    "--- /nix/store/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-old/file\n"
+                    "+++ /nix/store/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-new/file\n",
+                    encoding="utf-8",
+                )
+            return completed(code=self.diffoscope_code)
         raise AssertionError(f"unexpected command: {args}")
 
 
@@ -143,6 +144,29 @@ class PackageDiffReportTests(unittest.TestCase):
             self.assertEqual(len(comparison["excerpt"]), 1)
             self.assertIn("/nix/store/<hash>-old/file", comparison["excerpt"][0])
             self.assertEqual(comparison["excerpt_lines_omitted"], 1)
+
+    def test_identical_diffoscope_pair_reports_no_difference(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_root:
+            root = Path(temporary_root)
+            before = root / "before-output"
+            after = root / "after-output"
+            before.mkdir()
+            after.mkdir()
+            fake = FakeRunner(before, after, diffoscope_code=0)
+
+            report = package_diff_report.build_report(
+                root,
+                "before#pkg",
+                "after#pkg",
+                diffoscope=True,
+                runner=fake,
+                which=lambda _name: "/tools/diffoscope",
+            )
+
+            comparison = report["diffoscope"]["comparisons"][0]
+            self.assertFalse(comparison["different"])
+            self.assertEqual(comparison["excerpt"], [])
+            self.assertEqual(comparison["excerpt_lines_omitted"], 0)
 
     def test_missing_diffoscope_fails_before_external_command(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_root:
