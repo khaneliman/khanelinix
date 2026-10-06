@@ -61,7 +61,7 @@ Use the component reference when its constraints affect the task. Do not load
 references merely because the component appears in the tree:
 
 - **For Subagents (Specialized tool/context boundaries):** Read
-  [refs/AGENTS.md](refs/AGENTS.md)
+  [refs/SUBAGENTS.md](refs/SUBAGENTS.md)
 - **For Path-Gated Rules (Domain/Directory guidelines):** Read
   [refs/RULES.md](refs/RULES.md)
 - **For Skills (Multi-step, repeatable workflows):** Read
