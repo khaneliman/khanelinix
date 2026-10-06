@@ -38,11 +38,18 @@ review operations, and the public comment format.
    PR body, and the repository. When the gate fails, draft a review that
    recommends redesign or closure with the native abstraction or existing
    capability named, even when every check is green.
-6. Review only diff plus necessary local context.
+6. Review the merge-base-to-head diff (`base...head`) plus necessary local
+   context, not a two-tip comparison against the default branch tip. For stacked
+   PRs, use the PR's actual base so lower layers stay outside the review unit.
 7. Revalidate each finding against the current PR head, changed code, and
    repository policy before drafting or revising it.
 8. Return draft findings by default. Inspect, create, update, or delete a review
    only when user explicitly requests it.
+
+Choose a reviewer by the hardest question in the change, not diff size. For
+multi-model review, allocate at most one review seat per model family per review
+unit (PR or diff); different gateways serving the same family are not
+independent families.
 
 Never submit pending review, approve, request changes, push, or edit the
 reviewed checkout. Apply proposed fixes only in isolated validation scratch.
@@ -104,8 +111,11 @@ Inspection returns GraphQL `id` and REST `database_id` values for reviews and
 inline comments. Use these GitHub identities for updates and deletions. Do not
 add hidden ownership markers or other tool-specific text to public prose.
 
-Create one pending review from ordinary prose and optional inline comments. Omit
-`body` for an inline-only review:
+Create one pending review from ordinary prose and optional inline comments. If a
+summary is needed, include a nonempty `body` at creation: GitHub can reject
+adding one to an existing bodyless draft. Preserve that draft and edit its
+inline comments unless the user authorizes replacement; back up the complete
+draft before deleting it. Omit `body` for an inline-only review:
 
 ```json
 {
@@ -170,6 +180,20 @@ after re-inspecting that review; a user can submit between turns. When revising
 a pending review, select only the exact review owned by the current actor. Never
 submit it. GitHub permits review-summary updates after submission but permits
 whole-review deletion only while a review is pending.
+
+For draft thread replies, use [pr-feedback.md](pr-feedback.md). Direct GraphQL
+`addPullRequestReviewThreadReply` calls must supply the exact owned pending
+`pullRequestReviewId` as well as the thread ID; omitting it can publish the
+reply.
+
+Verify writes from `applied`, `mutation.complete` when present, and
+`verification.status`, not shell exit status alone. A failed summary mutation
+can stop the batch before inline updates. Partial or unverified results require
+inspection of the affected IDs before retrying; `applied: true` means a write
+occurred even if readback failed. Read back exact bodies, anchors, pending
+state, and null `submitted_at`. Pending comments can have `line: null`; check
+`original_position` and `diff_hunk` rather than assuming the anchor is broken.
+Revalidate anchors against the current head, including drafts on older commits.
 
 Never infer ownership from prose. Never select update or delete targets by body
 text or diff anchor. Use `id` for a GraphQL node ID or `database_id` for a
@@ -252,8 +276,10 @@ Missing coverage can be a finding when repository policy or risk requires it.
   provide a small fenced diff with file paths, or separate applicable suggestion
   blocks. Validate the combined change. Do not expand a suggestion block with
   unrelated lines or leave required companion edits as prose-only homework.
-- Cite local instructions for compliance findings and concrete commit SHAs for
-  code links.
+- Cite the repository's contributor documentation for compliance findings and
+  concrete commit SHAs for code links. Never cite agent instruction files or
+  tooling; before posting, scan the outgoing text for internal command names and
+  instruction sources.
 
 For a validated code fix, an inline comment can follow this structure. Adapt the
 wording to the conversation:

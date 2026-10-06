@@ -12,8 +12,9 @@ ranking.
 
 ## Workflow
 
-1. Resolve metadata, labels, comments, linked pull requests, likely duplicates,
-   and current status.
+1. Resolve metadata and labels, then read the full body, every comment, linked
+   issues and pull requests, likely duplicates, and current status. A late
+   comment or linked pull request can already own or change the fix.
 2. Read contributor guidance, issue templates, root/local instructions, and
    directly relevant documentation.
 3. Classify as bug, feature, docs, question, support, duplicate, stale, or
@@ -28,6 +29,8 @@ ranking.
 
 Triage is read-only unless user explicitly asks for a GitHub write. Do not
 comment, label, close, assign, push, or edit files while only asked to triage.
+When a write is requested, limit tracker updates to public changes relevant to
+the issue.
 
 Return target and classification, evidence and missing information, relevant
 guidelines, recommended next action, and concise draft reply. For agent handoff,

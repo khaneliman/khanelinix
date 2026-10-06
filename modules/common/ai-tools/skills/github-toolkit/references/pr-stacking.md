@@ -40,7 +40,10 @@ Requires the `github/gh-stack` extension. In this repository, add `gh-stack` to
 `pkgs.gh-stack` is the official extension. Do not run `gh extension install`;
 that leaves imperative state Home Manager does not own.
 
-Exit code 9 means stacked pull requests are not enabled for the repository.
+Exit code 9 means stacked pull requests are not enabled for the repository. An
+empty `repos/<owner>/<repo>/stacks` response does not prove the feature is off;
+only a populated response proves it is on. Let the first `gh stack link` or
+`submit` confirm availability.
 
 ## Agent-Safe Commands
 
@@ -130,6 +133,11 @@ with `--downstack` (trunk up to current), `--upstack` (current up to top), or
 `--no-trunk` (skip fetch and trunk rebase). `gh stack push` force-pushes with
 `--force-with-lease` per branch and is non-atomic: passing branches update even
 when another is rejected. It never creates or updates PRs.
+
+Check out the lower layer before `gh stack rebase --upstack`. A positional
+branch argument does not reliably select the start layer: the command can rebase
+only the checked-out branch and still exit zero. Check the start and end
+branches it reports, then verify the base chain with `gh stack view --json`.
 
 Review bottom-up when dependencies affect the review. After propagating a
 lower-layer change, re-read upper-layer checks and reassess prior approvals when
