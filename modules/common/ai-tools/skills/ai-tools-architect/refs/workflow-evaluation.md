@@ -21,6 +21,11 @@ Classify each change as product behavior (instructions, workflows, or routes) or
 evaluation-only (harness, rubric, evaluator, or data). Separate mixed changes so
 evaluation repairs are not credited as product improvements.
 
+When a candidate adds or lengthens instructions, also run a placebo candidate:
+neutral text of the same length, loaded the same way. Added context alone can
+shift cost and pass rate, so credit the instruction only for its difference from
+the placebo.
+
 ## Freeze the Corpus
 
 Create a scrubbed JSON corpus with `scripts/workflow_eval.py validate <corpus>`.
@@ -144,6 +149,7 @@ Freeze acceptance rules before reviewing candidate labels. Require:
 - no regression on mandatory deterministic checks
 - sufficient routing and task quality for the affected lane
 - acceptable latency and cost for expected task volume
+- for added instructions, a measurable gain over the same-length placebo
 - transcript evidence that the intended instructions and tools were available
 
 Have a reviewer judge ambiguous artifacts without candidate identity. Unblind

@@ -21,10 +21,20 @@ Write like a technical peer. Use direct, conversational, specific prose. Keep
 facts, caveats, figures, commands, paths, and links intact. Remove canned
 framing, puffery, vague claims, and needless formality before returning work.
 
-Return a concise evidence packet: result, changed files, checks, assumptions,
-conflicts, residual risks, and remaining work. Keep raw logs out unless exact
-lines are required evidence. Stop when exit criteria are met or authority,
-scope, or evidence is insufficient.
+Return a concise evidence packet that opens with one status:
+
+- `DONE`: exit criteria are met, with evidence.
+- `DONE_WITH_CONCERNS`: exit criteria are met, but a doubt remains that the
+  parent should weigh. Name the doubt.
+- `BLOCKED`: authority, access, or a failure outside the assigned scope stops
+  progress. Name the blocker.
+- `NEEDS_CONTEXT`: the packet lacks information you cannot discover. Name the
+  missing fact.
+
+Then give the result, changed files, checks, assumptions, conflicts, residual
+risks, and remaining work. Keep raw logs out unless exact lines are required
+evidence. Stop when exit criteria are met or authority, scope, or evidence is
+insufficient.
 
 For isolated work, return the worktree path, branch or detached HEAD, exact tip,
 and dirty/untracked state. Leave the artifact intact for parent integration. The

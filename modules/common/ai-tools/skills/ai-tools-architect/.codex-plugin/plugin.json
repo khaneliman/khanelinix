@@ -1,6 +1,6 @@
 {
 	"name": "ai-tools-architect",
-	"version": "0.1.17",
+	"version": "0.1.18",
 	"description": "Design and audit portable AI-tool configuration.",
 	"author": {
 		"name": "khaneliman"
