@@ -36,6 +36,22 @@ inspect the actual output artifact (git diff, file contents, runtime behavior),
 not the delegate's summary. Agents report what they intended, not always what
 happened.
 
+## Isolate probes
+
+- Before probing a CLI or daemon, create scratch directories and redirect
+  `HOME`, every XDG base directory (`XDG_CONFIG_HOME`, `XDG_DATA_HOME`,
+  `XDG_STATE_HOME`, `XDG_CACHE_HOME`, and `XDG_RUNTIME_DIR`), and tool-specific
+  home variables. Some CLIs rewrite files in the data directory on every launch;
+  redirecting configuration alone does not protect real user state.
+- Before probing hardware daemons or control utilities, hide host device nodes
+  with `bwrap --dev /dev` or use a VM. A scratch working directory does not stop
+  device enumeration or writes to real hardware. Report accidental device
+  contact immediately, with a restore step and its verification status.
+- Wait for builders and linkers to finish before accepting live evidence.
+  Compare executable modification time with process start time; if the binary
+  was relinked after launch, restart the probe, reset test state, and repeat it.
+  Evidence from the old process image is stale, not an application regression.
+
 ## Reuse checks before scripting
 
 Run existing checks against the real surface first. A focused manual probe can
