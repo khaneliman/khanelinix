@@ -4,7 +4,8 @@
 
 When `.git/` is sibling of `.jj/`, the repo is "colocated". Git and jj share the
 same commits. Imports/exports happen automatically. You can use `git log` to see
-the same history, but always use `jj` commands to make changes.
+the same history. Use `jj` commands to make changes; the narrow exception for an
+explicitly authorized Git-native rewrite is documented below.
 
 ## Bookmarks
 
@@ -43,6 +44,38 @@ jj git push --dry-run                   # preview
 
 `jj git push` is similar to `git push --force-with-lease`. It verifies the
 remote hasn't changed since last fetch. Conflicted bookmarks cannot be pushed.
+
+### Rewriting a pushed branch
+
+Get rewrite and push authority before starting; a pushed-history rewrite is a
+force-push. Keep a backup bookmark at the old tip. Map each fix to its owning
+commit, then squash only its paths into that ancestor; descendants rebase
+automatically.
+
+```bash
+jj squash --into <ancestor> <paths> --ignore-immutable \
+  --use-destination-message
+```
+
+`--ignore-immutable` is needed when remote bookmarks or other immutable heads
+protect the pushed commits. Path arguments leave unrelated working-copy changes
+out of the squash. Resolve descendant conflicts before pushing; see
+[conflict-resolution.md](conflict-resolution.md).
+
+If the remote bookmark is not tracked, track it with
+`jj bookmark track <name>@<remote>`. Importing the old remote tip after a
+rewrite can leave the local bookmark conflicted or the change ID divergent.
+Select the rewritten tip by **commit ID**, not the now-ambiguous change ID,
+before pushing:
+
+```bash
+jj bookmark set <name> -r <rewritten-commit-id>
+jj git push --bookmark <name>
+```
+
+Verify the bookmark names the intended stack tip and the remote has that commit.
+Do not abandon an old divergent commit until its replacement is verified and any
+unique work is preserved.
 
 ## Change ID push workflow
 
@@ -111,6 +144,31 @@ Symptoms of a missed move: `git log` / `git status` show an older branch tip
 while `jj log` shows your commits; HEAD detached at a commit holding your work;
 bookmark-less commits between the bookmark and `@`. Fix by moving it forward;
 `--allow-backwards` is only for a deliberate move to an ancestor.
+
+Verify Git visibility by ancestry, not just the newest `git log` entry: another
+session may have advanced the branch. An unreferenced commit may remain
+recoverable by ID, but Git branch consumers cannot see it.
+
+```bash
+git merge-base --is-ancestor <commit-id> refs/heads/<bookmark>
+```
+
+### Git-native rewrite handoff
+
+When a Git-native history rewrite is explicitly authorized, use `git-toolkit` in
+an isolated worktree rather than exposing the colocated checkout to mid-rebase
+HEADs that jj can import. For a history-only rewrite, prove the old and rebuilt
+tips have identical trees before integrating. Move the target Git branch with a
+compare-and-swap against its recorded old tip:
+
+```bash
+git update-ref refs/heads/<branch> <new-tip> <expected-old-tip>
+```
+
+Stop if the comparison fails; another session advanced the branch. Do not
+substitute its new tip without inspecting and preserving that work. Recheck jj
+bookmarks, working-copy parents, and Git's index after import. Never abandon
+unfamiliar heads or clear unexplained index changes as rewrite cleanup.
 
 ### Recovery from Accidental Working Copy Committing
 
