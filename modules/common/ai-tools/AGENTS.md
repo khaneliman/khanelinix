@@ -9,16 +9,13 @@
   always load. Keep khanelinix-specific guidance in repository `AGENTS.md`
   files.
 - Keep provider-only behavior in adapter addenda such as `codex.md`, which
-  `default.nix` concatenates onto `base.md`. `CLAUDE.md` files only import
-  sibling `AGENTS.md`.
+  `default.nix` concatenates onto `base.md`.
 - Treat vendored provider copies under `planning-with-files/` as upstream
   artifacts unless task explicitly targets them.
 
 ## Source Map
 
 - `base.md`: always-loaded behavior shared by configured coding agents
-- `CLAUDE.md`: sibling `AGENTS.md` import only; auto-loads as in-repo project
-  memory for this subtree
 - `codex.md`: Codex-only delegation and retry addendum
 - `permissions.nix`: shared command and MCP permission catalog
 - `skills/multi-provider-sdlc/references/model-routing.json`: canonical semantic
