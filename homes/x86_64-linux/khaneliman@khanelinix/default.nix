@@ -75,6 +75,8 @@ in
               WFClient = {
                 AllowAudioInput = "True";
                 HDXH264InputEnabled = "True";
+                # Legacy toolbar: the enhanced toolbar crashes wfica with a
+                # BadWindow race. If that recurs, disable the connection bar.
                 ToolbarVersion = 0;
               };
             };
