@@ -111,8 +111,20 @@ Before committing follow-up fixes, inspect whether history edit is better:
 - nearby local-only regression: prefer `git commit --fixup=<target>` then
   `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash <parent>^`
   (`GIT_SEQUENCE_EDITOR=:` skips the editor in non-interactive mode)
-- pushed/shared commits: avoid rewrite; use follow-up commit unless user
-  coordinates rewrite; confirmed rewrite requires `git push --force-with-lease`
+- for an open pull request branch you own, fold follow-up fixes into the commits
+  they correct, even when already pushed. Create one
+  `git commit --fixup <target>` per target commit, then run
+  `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash <base>`. Do not stack
+  separate review-fix commits on top. Keep edits within the PR's existing scope.
+- genuinely shared branches: avoid rewrite; use a follow-up commit unless the
+  user coordinates the rewrite. Writing to another contributor's branch needs
+  their consent; write access alone is not authorization.
+
+Before an authorized push of rewritten history, record the exact remote tip SHA
+and use `git push --force-with-lease=refs/heads/<branch>:<expected-sha>`. A
+failed lease means the remote changed: inspect it, do not retry with a newer SHA
+merely to bypass the check. Local rewrite authority does not grant push
+permission.
 
 If splitting, squashing, or reordering is needed, state target history shape
 before running commands.
