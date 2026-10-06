@@ -1,6 +1,6 @@
 {
 	"name": "okf-memory",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"description": "Persist durable cross-provider project and user knowledge.",
 	"author": {
 		"name": "khaneliman"

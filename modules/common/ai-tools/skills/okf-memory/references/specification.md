@@ -9,16 +9,16 @@ all OKF lifecycle processing before bundle reads or state writes; set
 
 Claude Code and Antigravity inject no startup context. Routine user turns stay
 silent for every provider. Prior memory remains on-demand through scoped bundle
-reads. A one-shot Stop audit runs after explicit durable-memory intent or
-substantial tool work.
+reads. A Stop audit runs once per user turn after explicit durable-memory intent
+or substantial tool work. Background task notifications continue the current
+turn.
 
 Memory written during a running session is already visible to that agent. Read
 the relevant bundle explicitly when an immediate refresh matters.
 
 Planning-with-files optionally owns transient task/session state when persistent
-continuity is useful. OKF owns durable user or project knowledge.
-Provider-native memory is a secondary mirror, never the sole durable write when
-OKF is available.
+continuity is useful. OKF owns durable user or project knowledge. Do not mirror
+it into provider-native memory.
 
 ## Conformance
 

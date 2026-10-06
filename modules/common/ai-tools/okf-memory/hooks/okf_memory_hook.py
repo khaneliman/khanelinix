@@ -45,7 +45,7 @@ TOOL_THRESHOLD = int(os.environ.get("OKF_MEMORY_TOOL_THRESHOLD", "12"))
 
 START_NUDGE = """[okf-memory] Prior durable memory may apply. Read only relevant project or user OKF scope when this task depends on prior work, saved decisions, recurring issues, or preferences."""
 
-CHECKPOINT = """[okf-memory] End-of-task memory check: would any verified result prevent future research? If yes, invoke okf-memory and write the project or user OKF bundle before any provider-native memory. If no, finish normally. This checkpoint runs once."""
+CHECKPOINT = """[okf-memory] End-of-task memory check: did this task settle a decision, recurring pitfall, or preference that no skill, contributor document, or code comment already owns? If yes, invoke okf-memory and update the matching project or user OKF concept in place, replacing superseded text. If no, finish normally. This checkpoint runs once per user turn."""
 
 
 def load_payload() -> dict[str, Any]:
