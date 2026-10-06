@@ -16,8 +16,8 @@ by `route-model.py` and its JSON contract.
 | Subscription         | Model agents                                                                                 |
 | -------------------- | -------------------------------------------------------------------------------------------- |
 | OpenAI (Codex)       | `gpt-6-luna`, `gpt-5-6-terra`, `gpt-6-1-sol`, `gpt-6-astra`                                  |
-| Google (Antigravity) | `gpt-oss-120b`, `google-opus-4-6`, `google-sonnet-4-6`, `gemini-3-8-flash`, `gemini-3-1-pro` |
 | Anthropic            | `opus-5-5`, `fable-5-1`, `sonnet-5-5`                                                        |
+| Google (Antigravity) | `gpt-oss-120b`, `google-opus-4-6`, `google-sonnet-4-6`, `gemini-3-8-flash`, `gemini-3-1-pro` |
 
 <!-- END GENERATED SUBSCRIPTIONS -->
 

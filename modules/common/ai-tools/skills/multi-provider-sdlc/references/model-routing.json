@@ -1,6 +1,6 @@
 {
 	"schema_version": 2,
-	"subscription_order": ["openai", "google", "anthropic"],
+	"subscription_order": ["openai", "anthropic", "google"],
 	"subscriptions": {
 		"openai": {
 			"label": "OpenAI (Codex)",
