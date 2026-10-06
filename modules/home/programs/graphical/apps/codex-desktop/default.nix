@@ -41,6 +41,8 @@ in
           "appshots"
           "node-repl-reaper"
           "persistent-status-panel"
+          # Recursive repository watches on broad thread roots such as $HOME
+          # froze the Electron main thread on sidebar hover.
           "shallow-repository-watches"
         ];
       };
