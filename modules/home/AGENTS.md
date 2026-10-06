@@ -29,10 +29,13 @@
     config.khanelinix.programs.terminal.shells.zsh.enable;
   ```
 
-## Theme Priority
+## Theming
 
 - Theme precedence is explicit khanelinix theme, then Stylix fallback, then
   upstream module default.
+- Keep program modules theme-agnostic. Put per-app theme settings and theme
+  assets in each `theme/<family>/` module, gated on the target program's
+  enablement, as in `theme/tokyonight/apps.nix`.
 
 ## Validation
 
