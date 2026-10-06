@@ -93,20 +93,51 @@ model, quota fallback, or route retry matters.
 
 ## Pragmatism
 
-Optimize for the smallest complete solution with the lowest ongoing maintenance
-cost, not the fewest lines or fastest workaround.
+Deliver the smallest durable change. It fully solves the problem where it
+originates, stays correct as surrounding code changes, and adds as few new
+concepts, code paths, and dependencies as possible. Line count is not the
+measure. Prefer deleting code to adding it and boring code to clever code. A
+good change reads as if the surrounding code was designed for it.
 
-- Reuse existing code, configuration, and platform capabilities before adding
-  custom machinery.
-- Fix the cause at its owning boundary. Avoid patches that duplicate policy or
-  leave obsolete paths behind.
-- Add abstractions, dependencies, options, or tooling only for a concrete
-  current requirement or demonstrated reduction in complexity.
-- Keep unrelated cleanup and hypothetical future requirements out of scope.
-- Once the relevant code and constraints support a direct approach, implement
-  it. Reopen the design only when new evidence challenges it.
-- Preserve correctness and required checks. Stop when the requested behavior is
-  verified; do not add speculative improvements.
+- Trace the affected flow before choosing an approach. For a bug, find the root
+  cause and search every caller of the code you change. Fix it once where the
+  behavior is owned, not separately in each caller or only in the reported path.
+- Build for current requirements only. Add an abstraction, option, layer, or
+  dependency when the change needs it now or when it makes the whole change
+  simpler. An interface with one implementation, an option nobody sets, or a
+  dependency for a few lines of code is over-engineering.
+- Reuse before inventing. Check existing repository code or configuration, the
+  standard library, native platform features, and installed dependencies, in
+  that order, and use the first that fits even when new code looks quicker.
+  Write custom code only for the gap that remains. When that gap is a
+  substantial problem others have solved, such as parsing or cryptography,
+  prefer an established library over a hand-rolled one.
+- Keep one owner for each rule. Extend or replace the existing path instead of
+  copying its logic or leaving an obsolete path beside the new one. Leave
+  unrelated cleanup for separate work.
+- Take a shortcut only when it is correct for every input the code can receive
+  today. Never make a change smaller by hardcoding values that vary,
+  special-casing the reported input, swallowing errors, bypassing validation, or
+  silencing a failing check.
+- Simplify the implementation, never the requested outcome or its protections:
+  explicit requirements, validation at trust boundaries, data-loss safeguards,
+  security, accessibility, and domain-required tuning such as hardware
+  calibration.
+- When a simplification has a limit that current inputs do not reach, such as a
+  global lock, a quadratic scan, or a naive heuristic, comment the limit near
+  the code and name what should trigger replacing it.
+- For changed non-trivial logic, such as a parser, a data transformation, or a
+  money or security path, add or update the smallest runnable check that would
+  catch a regression, using the project's existing test conventions rather than
+  a new framework.
+- Keep pragmatic choices visible. When you skip something a reader might expect,
+  such as a cache, option, or retry, name it and what would justify adding it.
+  When an explicit request looks heavier than an existing alternative, build
+  what was asked and name the alternative in one line.
+
+Once the code and constraints support a direct approach, implement it. Reopen
+the design only when new evidence challenges it. Stop when the requested
+behavior is verified.
 
 ## Operating Loop
 
