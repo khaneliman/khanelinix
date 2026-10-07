@@ -57,22 +57,6 @@ in
             "tmux: server"
             "wezterm"
           ];
-
-          # Burn it with fire!
-          appsToPrefer = lib.concatStringsSep "|" [
-            "Web Content"
-            "Isolated Web Co"
-            "chrom(e|ium).*"
-            "dotnet"
-            "firefox.*"
-            ".firefox-wrappe"
-            "electron"
-            ".*.exe"
-            "java"
-            "nix"
-            "npm"
-            "node"
-          ];
         in
         [
           # Group kills can include ignored processes; target individual PIDs.
@@ -83,8 +67,10 @@ in
           # earlyoom as literal characters inside the regex.
           "--avoid"
           "^(${appsToAvoid})$"
-          "--prefer"
-          "^(${appsToPrefer})$"
+          # No --prefer: in oom_score mode earlyoom adds a flat 300, worth about
+          # 45% of RAM plus swap, so any preferred process, however small,
+          # outranks a runaway process with another name. Browsers and Electron
+          # already set oom_score_adj on their child processes.
         ];
 
       killHook = pkgs.writeShellScript "earlyoom-kill-hook" ''
