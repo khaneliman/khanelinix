@@ -88,5 +88,9 @@ in
         dates = [ "04:00" ];
       };
     };
+
+    # Nix never deletes per-derivation build logs. The `~` keeps the
+    # two-character subdirectories and ages only the logs inside them.
+    systemd.tmpfiles.rules = [ "e /nix/var/log/nix/drvs - - - ~30d" ];
   };
 }
