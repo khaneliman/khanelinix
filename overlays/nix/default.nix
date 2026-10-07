@@ -11,4 +11,11 @@ _: _final: prev: {
       doCheck = !prev.stdenv.hostPlatform.isDarwin;
     };
   };
+
+  # nixd links the Nix libraries but does not need the codeload fix. Keep the
+  # family on upstream Nix so it comes from the binary cache; a local rebuild
+  # runs nixt's tests, which fail on darwin for the same root channel reason.
+  nixd = prev.nixd.override { inherit (prev) nixVersions; };
+  nixf = prev.nixf.override { inherit (prev) nixVersions; };
+  nixt = prev.nixt.override { inherit (prev) nixVersions; };
 }
