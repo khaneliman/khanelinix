@@ -1,16 +1,16 @@
 diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/ChatView.tsx
-index 5f339b0147dce1cea1a591d8c3e89d58a8e2efa6..f95baabc456d72c1779730bd7cbedfd71d83d293 100644
+index ca71e42f7a402cb915bdbe3ff9116505f6e8d017..4d3ac806c8063cafdf6b800b5420bbb8e474f1e8 100644
 --- a/apps/web/src/components/ChatView.tsx
 +++ b/apps/web/src/components/ChatView.tsx
-@@ -230,7 +230,6 @@ import {
- import { BranchToolbar, type BranchToolbarHandle } from "./BranchToolbar";
- import { resolveShortcutCommand, shortcutLabelForCommand } from "../keybindings";
+@@ -295,7 +295,6 @@ import { makeWorkspaceFileDropHandlers } from "./chat/workspaceFileDrop";
  import { isEditableFocused } from "../lib/editableFocus";
+ import { DEFAULT_RESOLVED_KEYBINDINGS } from "@t3tools/shared/keybindings";
+ import { resolveChatShortcutCommand, shortcutLabelForCommand } from "../keybindings";
 -import ThreadTerminalDrawer from "./ThreadTerminalDrawer";
  import {
    AlarmClockIcon,
    CheckCircle2Icon,
-@@ -581,6 +580,7 @@ const DevicePanel = lazy(() =>
+@@ -704,6 +703,7 @@ const DevicePanel = lazy(() =>
    import("./device/DevicePanel").then((module) => ({ default: module.DevicePanel })),
  );
  const FilePreviewPanel = lazy(() => import("./files/FilePreviewPanel"));
@@ -18,7 +18,7 @@ index 5f339b0147dce1cea1a591d8c3e89d58a8e2efa6..f95baabc456d72c1779730bd7cbedfd7
  const EMPTY_PENDING_FILE_SURFACE_IDS: ReadonlySet<string> = new Set();
  const TYPE_TO_FOCUS_EDITABLE_SELECTOR = [
    "input",
-@@ -1148,35 +1148,37 @@ const PersistentThreadTerminalDrawer = memo(function PersistentThreadTerminalDra
+@@ -1325,35 +1325,39 @@ const PersistentThreadTerminalDrawer = memo(function PersistentThreadTerminalDra
        )}
      >
        <div className="min-h-0 overflow-clip">
@@ -31,7 +31,7 @@ index 5f339b0147dce1cea1a591d8c3e89d58a8e2efa6..f95baabc456d72c1779730bd7cbedfd7
 -          visible={visible}
 -          height={terminalUiState.terminalHeight}
 -          // Known-session order is MRU and changes on focus; persisted store order keeps sidebar labels stable.
--          terminalIds={terminalUiState.terminalIds}
+-          terminalIds={canOperateTerminal ? terminalUiState.terminalIds : serverOrderedTerminalIds}
 -          activeTerminalId={terminalUiState.activeTerminalId}
 -          terminalGroups={terminalUiState.terminalGroups}
 -          activeTerminalGroupId={terminalUiState.activeTerminalGroupId}
@@ -61,7 +61,9 @@ index 5f339b0147dce1cea1a591d8c3e89d58a8e2efa6..f95baabc456d72c1779730bd7cbedfd7
 +            visible={visible}
 +            height={terminalUiState.terminalHeight}
 +            // Known-session order is MRU and changes on focus; persisted store order keeps sidebar labels stable.
-+            terminalIds={terminalUiState.terminalIds}
++            terminalIds={
++              canOperateTerminal ? terminalUiState.terminalIds : serverOrderedTerminalIds
++            }
 +            activeTerminalId={terminalUiState.activeTerminalId}
 +            terminalGroups={terminalUiState.terminalGroups}
 +            activeTerminalGroupId={terminalUiState.activeTerminalGroupId}
@@ -85,7 +87,7 @@ index 5f339b0147dce1cea1a591d8c3e89d58a8e2efa6..f95baabc456d72c1779730bd7cbedfd7
        </div>
      </div>
    );
-@@ -1316,41 +1318,45 @@ const PersistentThreadTerminalPanel = memo(function PersistentThreadTerminalPane
+@@ -1493,41 +1497,45 @@ const PersistentThreadTerminalPanel = memo(function PersistentThreadTerminalPane
    if (!project || !cwd) return null;
  
    return (
@@ -167,10 +169,10 @@ index 5f339b0147dce1cea1a591d8c3e89d58a8e2efa6..f95baabc456d72c1779730bd7cbedfd7
  });
  
 diff --git a/apps/web/vite.config.ts b/apps/web/vite.config.ts
-index 702c1884098311aeb1eb07bbc0886219ec1f00c9..ffeb8e6a33e8661b6adb5152ab151d93f8914b05 100644
+index cf343e26a4fcf9ffbe1e9d208753d319bdbc9581..3f144defbcb60aefae84e19af295d96b3d797632 100644
 --- a/apps/web/vite.config.ts
 +++ b/apps/web/vite.config.ts
-@@ -271,6 +271,21 @@ export default defineConfig(() => {
+@@ -285,6 +285,21 @@ export default defineConfig(() => {
        emptyOutDir: true,
        manifest: true,
        sourcemap: buildSourcemap,

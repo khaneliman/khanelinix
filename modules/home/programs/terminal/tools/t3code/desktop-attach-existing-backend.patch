@@ -1,15 +1,16 @@
 diff --git a/apps/desktop/src/app/DesktopApp.ts b/apps/desktop/src/app/DesktopApp.ts
+index 08318bcd8da5303890bab865208bcb3a68c2bc2e..80b71f176d074edd71b0b09ff1b9957489a1d0c1 100644
 --- a/apps/desktop/src/app/DesktopApp.ts
 +++ b/apps/desktop/src/app/DesktopApp.ts
-@@ -32,6 +32,7 @@
+@@ -33,6 +33,7 @@ import * as DesktopRemoteUpdates from "../updates/DesktopRemoteUpdates.ts";
  import * as DesktopUpdates from "../updates/DesktopUpdates.ts";
  import * as DesktopSnapShot from "../snapShot/DesktopSnapShot.ts";
  import * as DesktopWslBackend from "../wsl/DesktopWslBackend.ts";
 +import * as DesktopExistingBackendAttachment from "../backend/DesktopExistingBackendAttachment.ts";
+ import * as DesktopRendererHistory from "../telemetry/DesktopRendererHistory.ts";
  
  const DEFAULT_DESKTOP_BACKEND_PORT = 3773;
- const MAX_TCP_PORT = 65_535;
-@@ -158,14 +159,47 @@
+@@ -160,14 +161,50 @@ export const stopAllPoolInstances = Effect.fn("desktop.app.stopAllPoolInstances"
  );
  
  const bootstrap = Effect.gen(function* () {
@@ -42,6 +43,9 @@ diff --git a/apps/desktop/src/app/DesktopApp.ts b/apps/desktop/src/app/DesktopAp
 +    yield* snapShot.initialize;
 +    yield* installDesktopIpcHandlers();
 +    yield* logBootstrapInfo("bootstrap ipc handlers registered");
++    yield* (yield* DesktopLegacyLocalStorage.DesktopLegacyLocalStorage).load(
++      yield* (yield* DesktopAppIdentity.DesktopAppIdentity).resolveUserDataPath,
++    );
 +    if (!(yield* Ref.get(state.quitting))) {
 +      yield* desktopWindow.handleBackendReady(attached.value.httpBaseUrl);
 +      yield* appActivation.start.pipe(
@@ -59,10 +63,10 @@ diff --git a/apps/desktop/src/app/DesktopApp.ts b/apps/desktop/src/app/DesktopAp
    // The renderer is served from the bundled client (or Vite in development)
    // rather than through the local backend, so the window can open without one.
 diff --git a/apps/desktop/src/app/DesktopConfig.ts b/apps/desktop/src/app/DesktopConfig.ts
-index d157a4c6ba44122c413ac1be525ec30fb5d98bdf..f7413b7232868d06cfc837fca65e648a4db26eaa 100644
+index 773ea24509cf146ea63e57e6c5415e491eca2a52..2c78ca835ad2044c8bccd47ec607910d1a8769eb 100644
 --- a/apps/desktop/src/app/DesktopConfig.ts
 +++ b/apps/desktop/src/app/DesktopConfig.ts
-@@ -37,6 +37,7 @@ export const DesktopConfig = Config.all({
+@@ -38,6 +38,7 @@ export const DesktopConfig = Config.all({
    xdgConfigHome: trimmedString("XDG_CONFIG_HOME"),
    xdgDataHome: trimmedString("XDG_DATA_HOME"),
    t3Home: trimmedString("T3CODE_HOME"),
@@ -71,25 +75,61 @@ index d157a4c6ba44122c413ac1be525ec30fb5d98bdf..f7413b7232868d06cfc837fca65e648a
    appUserModelIdOverride: trimmedString("T3CODE_DESKTOP_APP_USER_MODEL_ID"),
    devRemoteT3ServerEntryPath: trimmedString("T3CODE_DEV_REMOTE_T3_SERVER_ENTRY_PATH"),
 diff --git a/apps/desktop/src/app/DesktopEnvironment.ts b/apps/desktop/src/app/DesktopEnvironment.ts
-index 9d7f00c3ee69f0f04f8e3f7cd0b19ebef38af410..8c2a1c6048f5b610f81f4203eaebb5d103e80285 100644
+index 6a8bc8e0ea4955a0313349f0ffbe1bc41e1b1abb..1973ee1e8e652c2116e5adfcc2d5edf222505953 100644
 --- a/apps/desktop/src/app/DesktopEnvironment.ts
 +++ b/apps/desktop/src/app/DesktopEnvironment.ts
-@@ -67,6 +67,7 @@ export class DesktopEnvironment extends Context.Service<
+@@ -72,6 +72,7 @@ export class DesktopEnvironment extends Context.Service<
      readonly devServerUrl: Option.Option<URL>;
      readonly devRemoteT3ServerEntryPath: Option.Option<string>;
      readonly configuredBackendPort: Option.Option<number>;
 +    readonly attachExistingBackend: boolean;
      readonly commitHashOverride: Option.Option<string>;
      readonly otlpTracesUrl: Option.Option<string>;
-     readonly otlpExportIntervalMs: number;
-@@ -219,6 +220,7 @@ const make = Effect.fn("desktop.environment.make")(function* (
+     readonly otlpMetricsUrl: Option.Option<string>;
+@@ -226,6 +227,7 @@ const make = Effect.fn("desktop.environment.make")(function* (
      devServerUrl,
      devRemoteT3ServerEntryPath: config.devRemoteT3ServerEntryPath,
      configuredBackendPort: config.configuredBackendPort,
 +    attachExistingBackend: config.attachExistingBackend,
      commitHashOverride: config.commitHashOverride,
      otlpTracesUrl: config.otlpTracesUrl,
-     otlpExportIntervalMs: config.otlpExportIntervalMs,
+     otlpMetricsUrl: config.otlpMetricsUrl,
+diff --git a/apps/desktop/src/backend/DesktopBackendManager.test.ts b/apps/desktop/src/backend/DesktopBackendManager.test.ts
+index 24303aa66997c4fddeb45f4f8c3c1cca21835d6a..a2e9865d1345d1390b0df617f00d7a7c6efad1be 100644
+--- a/apps/desktop/src/backend/DesktopBackendManager.test.ts
++++ b/apps/desktop/src/backend/DesktopBackendManager.test.ts
+@@ -22,6 +22,9 @@ import * as TestClock from "effect/testing/TestClock";
+ import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
+ import { ChildProcess, ChildProcessSpawner } from "effect/process";
+ 
++import { spawn } from "node:child_process";
++import { processIsAlive } from "./DesktopExistingBackendAttachment.ts";
++
+ import * as DesktopBackendManager from "./DesktopBackendManager.ts";
+ import * as DesktopApp from "../app/DesktopApp.ts";
+ import * as DesktopBackendPool from "./DesktopBackendPool.ts";
+@@ -1509,6 +1512,13 @@ describe("DesktopBackendManager", () => {
+   it.effect("stopAllPoolInstances bounds the quit finalizer when backends hang", () =>
+     Effect.scoped(
+       Effect.gen(function* () {
++        const external = yield* Effect.acquireRelease(
++          Effect.sync(() =>
++            spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], { stdio: "ignore" }),
++          ),
++          (child) => Effect.sync(() => child.kill()),
++        );
++        if (external.pid === undefined) return yield* Effect.die("external process has no pid");
+         // Each backend's process-scope finalizer reports when it starts and
+         // when it finishes, keyed by instance name, so the test can prove
+         // both backends reached each milestone instead of inferring it from
+@@ -1574,6 +1584,7 @@ describe("DesktopBackendManager", () => {
+         yield* Deferred.succeed(allowTeardown, undefined);
+         const finished = yield* Queue.takeN(teardownFinished, 2);
+         assert.deepEqual(finished.toSorted(), ["instance1", "instance2"]);
++        assert.isTrue(processIsAlive(external.pid));
+       }).pipe(Effect.provide(TestClock.layer())),
+     ),
+   );
 diff --git a/apps/desktop/src/backend/DesktopExistingBackendAttachment.test.ts b/apps/desktop/src/backend/DesktopExistingBackendAttachment.test.ts
 new file mode 100644
 index 0000000000000000000000000000000000000000..96ab3fcf82ae64f846637d1ddc30e4a97e29275c
@@ -341,7 +381,7 @@ index 0000000000000000000000000000000000000000..96ab3fcf82ae64f846637d1ddc30e4a9
 +});
 diff --git a/apps/desktop/src/backend/DesktopExistingBackendAttachment.ts b/apps/desktop/src/backend/DesktopExistingBackendAttachment.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..0cc2bcde1de1e2113fb8f1641c9eea5cce6a0317
+index 0000000000000000000000000000000000000000..b59837108cca1ec4a61a84d462fd1a25348310f9
 --- /dev/null
 +++ b/apps/desktop/src/backend/DesktopExistingBackendAttachment.ts
 @@ -0,0 +1,316 @@
@@ -355,8 +395,8 @@ index 0000000000000000000000000000000000000000..0cc2bcde1de1e2113fb8f1641c9eea5c
 +import * as Ref from "effect/Ref";
 +import * as Schema from "effect/Schema";
 +import * as Semaphore from "effect/Semaphore";
-+import { ChildProcess, ChildProcessSpawner } from "effect/unstable/process";
-+import * as HttpClient from "effect/unstable/http/HttpClient";
++import { ChildProcess, ChildProcessSpawner } from "effect/process";
++import * as HttpClient from "effect/http/HttpClient";
 +
 +import * as DesktopEnvironment from "../app/DesktopEnvironment.ts";
 +
@@ -662,10 +702,10 @@ index 0000000000000000000000000000000000000000..0cc2bcde1de1e2113fb8f1641c9eea5c
 +    ready: Effect.succeed(state.kind === "ready" ? Option.some(state) : Option.none()),
 +  });
 diff --git a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.test.ts b/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.test.ts
-index e7a58baef140c7984b342533cdbfacf3a1f5ee67..94e660fc6cfc999c39b06397c3043aaa2213023b 100644
+index 3f0bd82d5888d1f34c9e3d76909294f1e248c472..52fb879df1d12b59c6979023483d5f502e8b1e5d 100644
 --- a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.test.ts
 +++ b/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.test.ts
-@@ -9,6 +9,7 @@ import { PRIMARY_LOCAL_ENVIRONMENT_ID } from "@t3tools/contracts";
+@@ -16,6 +16,7 @@ import * as TestClock from "effect/testing/TestClock";
  
  import * as DesktopBackendPool from "./DesktopBackendPool.ts";
  import * as DesktopLocalEnvironmentAuth from "./DesktopLocalEnvironmentAuth.ts";
@@ -673,24 +713,54 @@ index e7a58baef140c7984b342533cdbfacf3a1f5ee67..94e660fc6cfc999c39b06397c3043aaa
  
  const config = {
    executablePath: "/electron",
-@@ -65,7 +66,13 @@ describe("DesktopLocalEnvironmentAuth", () => {
+@@ -72,7 +73,13 @@ describe("DesktopLocalEnvironmentAuth", () => {
          ]),
        } as unknown as DesktopBackendPool.DesktopBackendPool["Service"]);
-       const testLayer = DesktopLocalEnvironmentAuth.layer.pipe(
--        Layer.provide(Layer.mergeAll(poolLayer, httpClientLayer)),
+       const layerTest = DesktopLocalEnvironmentAuth.layer.pipe(
+-        Layer.provide(Layer.mergeAll(layerPool, layerHttpClient)),
 +        Layer.provide(
 +          Layer.mergeAll(
-+            poolLayer,
-+            httpClientLayer,
++            layerPool,
++            layerHttpClient,
 +            DesktopExistingBackendAttachment.layerTest({ kind: "disabled" }),
 +          ),
 +        ),
        );
  
        const [first, second] = yield* Effect.gen(function* () {
-@@ -78,4 +85,33 @@ describe("DesktopLocalEnvironmentAuth", () => {
+@@ -136,7 +143,13 @@ describe("DesktopLocalEnvironmentAuth", () => {
+         }).pipe(
+           Effect.provide(
+             DesktopLocalEnvironmentAuth.layer.pipe(
+-              Layer.provide(Layer.mergeAll(poolLayer, httpClientLayer)),
++              Layer.provide(
++                Layer.mergeAll(
++                  poolLayer,
++                  httpClientLayer,
++                  DesktopExistingBackendAttachment.layerTest({ kind: "disabled" }),
++                ),
++              ),
+             ),
+           ),
+         );
+@@ -190,7 +203,13 @@ describe("DesktopLocalEnvironmentAuth", () => {
+       const auth = yield* DesktopLocalEnvironmentAuth.DesktopLocalEnvironmentAuth.pipe(
+         Effect.provide(
+           DesktopLocalEnvironmentAuth.layer.pipe(
+-            Layer.provide(Layer.mergeAll(layerPool, layerHttpClient)),
++            Layer.provide(
++              Layer.mergeAll(
++                layerPool,
++                layerHttpClient,
++                DesktopExistingBackendAttachment.layerTest({ kind: "disabled" }),
++              ),
++            ),
+           ),
+         ),
+       );
+@@ -234,4 +253,33 @@ describe("DesktopLocalEnvironmentAuth", () => {
        assert.strictEqual(yield* Ref.get(requestCount), 1);
-     }),
+     }).pipe(Effect.provide(TestClock.layer())),
    );
 +
 +  it.effect("prefers the attached administrative bearer", () =>
@@ -723,18 +793,18 @@ index e7a58baef140c7984b342533cdbfacf3a1f5ee67..94e660fc6cfc999c39b06397c3043aaa
 +  );
  });
 diff --git a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts b/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts
-index dae20e2da9555b3bb0dae83da014143a1ceafb01..c25e0162267644b4f4854e9922cdfa7059863b12 100644
+index d137d502e6c5ede735a5e75bb9a6c47eccde399c..754d9ac2d49b024887edd37a049898640c462a7a 100644
 --- a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts
 +++ b/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts
-@@ -10,6 +10,7 @@ import * as Semaphore from "effect/Semaphore";
- import * as HttpClient from "effect/unstable/http/HttpClient";
+@@ -15,6 +15,7 @@ import * as Semaphore from "effect/Semaphore";
+ import * as HttpClient from "effect/http/HttpClient";
  
  import * as DesktopBackendPool from "./DesktopBackendPool.ts";
 +import * as DesktopExistingBackendAttachment from "./DesktopExistingBackendAttachment.ts";
  
- export class DesktopLocalEnvironmentAuthBackendNotConfiguredError extends Schema.TaggedError<DesktopLocalEnvironmentAuthBackendNotConfiguredError>()(
-   "DesktopLocalEnvironmentAuthBackendNotConfiguredError",
-@@ -45,6 +46,7 @@ export class DesktopLocalEnvironmentAuth extends Context.Service<
+ // A loopback /oauth/token exchange can fail transiently while the backend
+ // settles (a 502-504, a refused or reset connection, a timeout). Retry those
+@@ -70,6 +71,7 @@ export class DesktopLocalEnvironmentAuth extends Context.Service<
  /** @public Service construction is part of the canonical Effect module API. */
  export const make = Effect.gen(function* () {
    const pool = yield* DesktopBackendPool.DesktopBackendPool;
@@ -742,7 +812,7 @@ index dae20e2da9555b3bb0dae83da014143a1ceafb01..c25e0162267644b4f4854e9922cdfa70
    const httpClient = yield* HttpClient.HttpClient;
    const tokenRef = yield* Ref.make(Option.none<string>());
    const mutex = yield* Semaphore.make(1);
-@@ -52,6 +54,10 @@ export const make = Effect.gen(function* () {
+@@ -77,6 +79,10 @@ export const make = Effect.gen(function* () {
    const getBearerToken = mutex
      .withPermits(1)(
        Effect.gen(function* () {
@@ -754,62 +824,40 @@ index dae20e2da9555b3bb0dae83da014143a1ceafb01..c25e0162267644b4f4854e9922cdfa70
          if (Option.isSome(cached)) {
            return cached.value;
 diff --git a/apps/desktop/src/ipc/methods/window.test.ts b/apps/desktop/src/ipc/methods/window.test.ts
-index 203151c2660ea5ff2f6fd13b491c07becf4fb1a6..783924d23c06da2d955dd6282fa9407e220123cc 100644
+index 41d93ecc4969d582435fcabf44867bf6133c9940..36594835cefb544e07c298f0909a822a82156973 100644
 --- a/apps/desktop/src/ipc/methods/window.test.ts
 +++ b/apps/desktop/src/ipc/methods/window.test.ts
-@@ -8,6 +8,7 @@ import type * as Electron from "electron";
- 
+@@ -22,6 +22,7 @@ vi.mock("electron", () => ({
+ import * as DesktopBackendConfiguration from "../../backend/DesktopBackendConfiguration.ts";
  import * as DesktopBackendManager from "../../backend/DesktopBackendManager.ts";
  import * as DesktopBackendPool from "../../backend/DesktopBackendPool.ts";
 +import * as DesktopExistingBackendAttachment from "../../backend/DesktopExistingBackendAttachment.ts";
  import * as ElectronDialog from "../../electron/ElectronDialog.ts";
  import * as ElectronWindow from "../../electron/ElectronWindow.ts";
- import {
-@@ -70,7 +71,14 @@ describe("getLocalEnvironmentBootstraps", () => {
-           bootstrapToken: "bootstrap-token",
-         },
-       ]);
--    }).pipe(Effect.provide(DesktopBackendPool.layerTest([defaultWslInstance]))),
-+    }).pipe(
-+      Effect.provide(
-+        Layer.mergeAll(
-+          DesktopBackendPool.layerTest([defaultWslInstance]),
-+          DesktopExistingBackendAttachment.layerTest({ kind: "disabled" }),
-+        ),
-+      ),
-+    ),
-   );
+ import * as DesktopAppSettings from "../../settings/DesktopAppSettings.ts";
+@@ -82,8 +83,17 @@ const backendConfigurationLayer = Layer.succeed(
+   } satisfies DesktopBackendConfiguration.DesktopBackendConfiguration["Service"],
+ );
  
-   it.effect("publishes a pending bootstrap only while a transient retry is scheduled", () => {
-@@ -105,7 +113,14 @@ describe("getLocalEnvironmentBootstraps", () => {
-           wsBaseUrl: null,
-         },
-       ]);
--    }).pipe(Effect.provide(DesktopBackendPool.layerTest([retryingInstance])));
-+    }).pipe(
-+      Effect.provide(
-+        Layer.mergeAll(
-+          DesktopBackendPool.layerTest([retryingInstance]),
-+          DesktopExistingBackendAttachment.layerTest({ kind: "disabled" }),
-+        ),
-+      ),
-+    );
-   });
+-const bootstrapsLayer = (instances: ReadonlyArray<DesktopBackendManager.DesktopBackendInstance>) =>
+-  Layer.merge(DesktopBackendPool.layerTest([...instances]), backendConfigurationLayer);
++const bootstrapsLayer = (
++  instances: ReadonlyArray<DesktopBackendManager.DesktopBackendInstance>,
++  attachment: DesktopExistingBackendAttachment.DesktopExistingBackendAttachmentState = {
++    kind: "disabled",
++  },
++) =>
++  Layer.mergeAll(
++    DesktopBackendPool.layerTest([...instances]),
++    backendConfigurationLayer,
++    DesktopExistingBackendAttachment.layerTest(attachment),
++  );
  
-   it.effect("omits a bounded transient bootstrap after retries stop", () => {
-@@ -133,8 +148,49 @@ describe("getLocalEnvironmentBootstraps", () => {
-     return Effect.gen(function* () {
-       const result = yield* getLocalEnvironmentBootstraps.handler();
+ describe("getLocalEnvironmentBootstraps", () => {
+   it.effect("publishes the concrete running distro without replacing the stable instance id", () =>
+@@ -195,6 +205,37 @@ describe("getLocalEnvironmentBootstraps", () => {
        assert.deepEqual(result, []);
--    }).pipe(Effect.provide(DesktopBackendPool.layerTest([stoppedInstance])));
-+    }).pipe(
-+      Effect.provide(
-+        Layer.mergeAll(
-+          DesktopBackendPool.layerTest([stoppedInstance]),
-+          DesktopExistingBackendAttachment.layerTest({ kind: "disabled" }),
-+        ),
-+      ),
-+    );
+     }).pipe(Effect.provide(bootstrapsLayer([stoppedInstance])));
    });
 +
 +  it.effect("publishes the attached primary without a bootstrap token", () =>
@@ -833,15 +881,12 @@ index 203151c2660ea5ff2f6fd13b491c07becf4fb1a6..783924d23c06da2d955dd6282fa9407e
 +      ]);
 +    }).pipe(
 +      Effect.provide(
-+        Layer.mergeAll(
-+          DesktopBackendPool.layerTest([defaultWslInstance]),
-+          DesktopExistingBackendAttachment.layerTest({
-+            kind: "ready",
-+            httpBaseUrl: new URL("http://127.0.0.1:3773"),
-+            bearer: "attached-bearer",
-+            label: "Canonical server",
-+          }),
-+        ),
++        bootstrapsLayer([defaultWslInstance], {
++          kind: "ready",
++          httpBaseUrl: new URL("http://127.0.0.1:3773"),
++          bearer: "attached-bearer",
++          label: "Canonical server",
++        }),
 +      ),
 +    ),
 +  );
@@ -849,10 +894,10 @@ index 203151c2660ea5ff2f6fd13b491c07becf4fb1a6..783924d23c06da2d955dd6282fa9407e
  
  describe("getWindowFullscreenState", () => {
 diff --git a/apps/desktop/src/ipc/methods/window.ts b/apps/desktop/src/ipc/methods/window.ts
-index 61de1361a3112c962e49573cb25d38b44a8788f4..2a2957080db77d6392450f6e644e274007a53c69 100644
+index 64e0566d3e708c68f70a095ce43fb5f894e99aaa..591259eb54e35aa2afed7ac3132a6adf3a48c84e 100644
 --- a/apps/desktop/src/ipc/methods/window.ts
 +++ b/apps/desktop/src/ipc/methods/window.ts
-@@ -28,6 +28,7 @@ import * as DesktopEnvironment from "../../app/DesktopEnvironment.ts";
+@@ -30,6 +30,7 @@ import * as DesktopEnvironment from "../../app/DesktopEnvironment.ts";
  import * as DesktopAppSettings from "../../settings/DesktopAppSettings.ts";
  import * as DesktopWslBackend from "../../wsl/DesktopWslBackend.ts";
  import * as DesktopWslEnvironment from "../../wsl/DesktopWslEnvironment.ts";
@@ -860,10 +905,10 @@ index 61de1361a3112c962e49573cb25d38b44a8788f4..2a2957080db77d6392450f6e644e2740
  import * as ElectronApp from "../../electron/ElectronApp.ts";
  import * as ElectronDialog from "../../electron/ElectronDialog.ts";
  import * as ElectronMenu from "../../electron/ElectronMenu.ts";
-@@ -91,10 +92,21 @@ export const getLocalEnvironmentBootstraps = DesktopIpc.makeSyncIpcMethod({
-   result: Schema.Array(DesktopEnvironmentBootstrapSchema),
+@@ -97,10 +98,21 @@ export const getLocalEnvironmentBootstraps = DesktopIpc.makeSyncIpcMethod({
    handler: Effect.fn("desktop.ipc.window.getLocalEnvironmentBootstraps")(function* () {
      const pool = yield* DesktopBackendPool.DesktopBackendPool;
+     const configuration = yield* DesktopBackendConfiguration.DesktopBackendConfiguration;
 +    const attachment = yield* DesktopExistingBackendAttachment.DesktopExistingBackendAttachment;
 +    const attached = yield* attachment.ready;
      const instances = yield* pool.list;
@@ -883,10 +928,10 @@ index 61de1361a3112c962e49573cb25d38b44a8788f4..2a2957080db77d6392450f6e644e2740
        const snapshot = yield* instance.snapshot;
        // A secondary backend (e.g. a parallel WSL backend) that hasn't produced
 diff --git a/apps/desktop/src/main.ts b/apps/desktop/src/main.ts
-index ed920abcdc8f77d7b490d570558807c24dcc692e..70fd4874b9f20e6381cb3097d32c621850d8be83 100644
+index 2c56f6b39c8e46f104ee1c267363ffd6a453f6a3..0dfeff2da17c9e915e283add49cc317e34edc9d6 100644
 --- a/apps/desktop/src/main.ts
 +++ b/apps/desktop/src/main.ts
-@@ -41,6 +41,7 @@ import * as DesktopAssets from "./app/DesktopAssets.ts";
+@@ -43,6 +43,7 @@ import * as DesktopAssets from "./app/DesktopAssets.ts";
  import * as DesktopBackendConfiguration from "./backend/DesktopBackendConfiguration.ts";
  import * as DesktopBackendPool from "./backend/DesktopBackendPool.ts";
  import * as DesktopLocalEnvironmentAuth from "./backend/DesktopLocalEnvironmentAuth.ts";
@@ -894,46 +939,11 @@ index ed920abcdc8f77d7b490d570558807c24dcc692e..70fd4874b9f20e6381cb3097d32c6218
  import * as DesktopNetworkInterfaces from "./backend/DesktopNetworkInterfaces.ts";
  import * as DesktopEnvironment from "./app/DesktopEnvironment.ts";
  import * as DesktopLifecycle from "./app/DesktopLifecycle.ts";
-@@ -195,6 +196,7 @@ const desktopWslBackendLayer = DesktopWslBackend.layer.pipe(
+@@ -206,6 +207,7 @@ const layerDesktopWslBackend = DesktopWslBackend.layer.pipe(
  
- const desktopLocalEnvironmentAuthLayer = DesktopLocalEnvironmentAuth.layer.pipe(
-   Layer.provideMerge(desktopBackendLayer),
+ const layerDesktopLocalEnvironmentAuth = DesktopLocalEnvironmentAuth.layer.pipe(
+   Layer.provideMerge(layerDesktopBackend),
 +  Layer.provideMerge(DesktopExistingBackendAttachment.layer),
  );
  
- const desktopApplicationLayer = Layer.mergeAll(
-diff --git a/apps/desktop/src/backend/DesktopBackendManager.test.ts b/apps/desktop/src/backend/DesktopBackendManager.test.ts
---- a/apps/desktop/src/backend/DesktopBackendManager.test.ts
-+++ b/apps/desktop/src/backend/DesktopBackendManager.test.ts
-@@ -21,6 +21,9 @@
- import * as TestClock from "effect/testing/TestClock";
- import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/unstable/http";
- import { ChildProcess, ChildProcessSpawner } from "effect/unstable/process";
-+
-+import { spawn } from "node:child_process";
-+import { processIsAlive } from "./DesktopExistingBackendAttachment.ts";
- 
- import * as DesktopBackendManager from "./DesktopBackendManager.ts";
- import * as DesktopApp from "../app/DesktopApp.ts";
-@@ -1509,6 +1512,13 @@
-   it.effect("stopAllPoolInstances bounds the quit finalizer when backends hang", () =>
-     Effect.scoped(
-       Effect.gen(function* () {
-+        const external = yield* Effect.acquireRelease(
-+          Effect.sync(() =>
-+            spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], { stdio: "ignore" }),
-+          ),
-+          (child) => Effect.sync(() => child.kill()),
-+        );
-+        if (external.pid === undefined) return yield* Effect.die("external process has no pid");
-         // Each backend's process-scope finalizer reports when it starts and
-         // when it finishes, keyed by instance name, so the test can prove
-         // both backends reached each milestone instead of inferring it from
-@@ -1574,6 +1584,7 @@
-         yield* Deferred.succeed(allowTeardown, undefined);
-         const finished = yield* Queue.takeN(teardownFinished, 2);
-         assert.deepEqual(finished.toSorted(), ["instance1", "instance2"]);
-+        assert.isTrue(processIsAlive(external.pid));
-       }).pipe(Effect.provide(TestClock.layer())),
-     ),
-   );
+ const layerDesktopApplication = Layer.mergeAll(
