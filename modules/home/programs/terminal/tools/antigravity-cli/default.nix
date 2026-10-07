@@ -175,5 +175,11 @@ in
         AGENTS = aiTools.base;
       };
     };
+
+    # agy writes one log file per process and never deletes old ones. The
+    # CodexBar usage poller alone adds thousands a day.
+    systemd.user.tmpfiles.rules = mkIf pkgs.stdenv.hostPlatform.isLinux [
+      "e %h/.gemini/antigravity-cli/log - - - 3d"
+    ];
   };
 }
