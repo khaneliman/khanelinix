@@ -1,0 +1,18 @@
+--- a/src/libfetchers/github.cc
++++ b/src/libfetchers/github.cc
+@@ -438,9 +438,14 @@
+ 
+         // If we have no auth headers then we default to the public archive
+         // urls so we do not run into rate limits.
++        //
++        // With a token, request the codeload URL that the API tarball endpoint
++        // redirects to. curl drops the Authorization header on that cross-host
++        // redirect, which leaves the actual download anonymous and subject to
++        // per-network rate limits.
+         const auto urlFmt = host != "github.com" ? "https://%s/api/v3/repos/%s/%s/tarball/%s"
+                             : headers.empty()    ? "https://%s/%s/%s/archive/%s.tar.gz"
+-                                                 : "https://api.%s/repos/%s/%s/tarball/%s";
++                                                 : "https://codeload.%s/%s/%s/legacy.tar.gz/%s";
+ 
+         const auto url =
+             fmt(urlFmt, host, getOwner(input), getRepo(input), input.getRev()->to_string(HashFormat::Base16, false));
