@@ -66,7 +66,12 @@ in
 
           # utility commands
           color_picker = "grim -g \"$(slurp -p)\" -t ppm - | ${getExe' pkgs.imagemagick "convert"} - -format '%[pixel:p{0,0}]' txt:- | tail -n1 | cut -d' ' -f4 | wl-copy && (${getExe' pkgs.imagemagick "convert"} -size 32x32 xc:$(wl-paste) /tmp/color.png && notify-send \"Color Code:\" \"$(wl-paste)\" -h \"string:bgcolor:$(wl-paste)\" --icon /tmp/color.png -u critical -t 4000)";
-          cliphist = "cliphist list | ${listOrFallback enabledDmenuLaunchers "rofi -dmenu"} | cliphist decode | wl-copy";
+          # vicinae dmenu returns nothing when any entry contains a control
+          # character, so strip them (keeping tab) from the previews. cliphist
+          # decode only reads the leading id, so the selection is unaffected.
+          # sway unescapes config arguments once and truncates at \0, so the
+          # backslashes are doubled to reach the shell as \000.
+          cliphist = "cliphist list | tr -d '\\\\000-\\\\010\\\\013-\\\\037\\\\177' | ${listOrFallback enabledDmenuLaunchers "rofi -dmenu"} | cliphist decode | wl-copy";
           smile = "smile";
           window-inspector = "swaymsg -t get_tree | jq -r '.. | select(.focused? == true)' | notify-send 'Window Info' -t 5000";
 
