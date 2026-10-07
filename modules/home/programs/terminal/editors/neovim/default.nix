@@ -253,5 +253,12 @@ in
         ++ profileWrappers;
     };
 
+    # emmylua_ls keeps one log per project and never deletes old ones. fff
+    # keeps only its 20 newest session logs; the Neovim age limit is a
+    # backstop for those and anything else written to stdpath("log").
+    systemd.user.tmpfiles.rules = lib.mkIf pkgs.stdenv.hostPlatform.isLinux [
+      "e ${config.xdg.stateHome}/nvim/logs - - - 14d"
+      "e ${config.xdg.dataHome}/emmylua_ls/logs - - - 30d"
+    ];
   };
 }
