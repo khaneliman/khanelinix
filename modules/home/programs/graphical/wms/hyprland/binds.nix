@@ -159,7 +159,10 @@ let
       }
       {
         from = "$cliphist";
-        to = serviceShellCommand "cliphist list | tr -d '\\000' | ${dmenuLauncher} | cliphist decode | wl-copy";
+        # vicinae dmenu returns nothing when any entry contains a control
+        # character, so strip them (keeping tab) from the previews. cliphist
+        # decode only reads the leading id, so the selection is unaffected.
+        to = serviceShellCommand "cliphist list | tr -d '\\000-\\010\\013-\\037\\177' | ${dmenuLauncher} | cliphist decode | wl-copy";
       }
       {
         from = "$looking-glass";
