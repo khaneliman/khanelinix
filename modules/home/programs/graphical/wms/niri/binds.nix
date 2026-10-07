@@ -98,7 +98,10 @@ in
           notificationCommand = "swaync-client -t -sw";
           lookingGlassCommand = "looking-glass-client";
 
-          cliphistCommand = "cliphist list | ${dmenuLauncher} | cliphist decode | ${wlCopy}";
+          # vicinae dmenu returns nothing when any entry contains a control
+          # character, so strip them (keeping tab) from the previews. cliphist
+          # decode only reads the leading id, so the selection is unaffected.
+          cliphistCommand = "cliphist list | tr -d '\\000-\\010\\013-\\037\\177' | ${dmenuLauncher} | cliphist decode | ${wlCopy}";
 
           colorPickerCommand = ''
             color="$(niri msg pick-color | awk '/Hex:/ { print $2 }')" &&
