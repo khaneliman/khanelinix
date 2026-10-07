@@ -13,11 +13,23 @@
   which,
   tzdata,
   python3,
+  writeShellScriptBin,
   ...
 }:
 
 let
   version = "0.69.0";
+
+  # Without a usable token, agy print mode runs xdg-open (it ignores $BROWSER)
+  # and waits 60 seconds for the OAuth callback, past codexbar-waybar's
+  # 20-second limit. Stopping agy makes CodexBar report that the Antigravity
+  # CLI is signed out. Other processes codexbar spawns only see a failed open.
+  blockedXdgOpen = writeShellScriptBin "xdg-open" ''
+    if [[ /proc/$PPID/exe -ef ${lib.getExe antigravity-cli} ]]; then
+      kill -TERM "$PPID"
+    fi
+    exit 1
+  '';
 
   sources = {
     x86_64-linux = {
@@ -114,7 +126,12 @@ stdenv.mkDerivation {
         -o $out/lib/codexbar-path-redirect.so -ldl -lssl -lcrypto -lcurl
 
       makeWrapper $out/bin/.codexbar-wrapped $out/bin/codexbar \
-        --prefix PATH : ${lib.makeBinPath [ antigravity-cli ]} \
+        --prefix PATH : ${
+          lib.makeBinPath [
+            antigravity-cli
+            blockedXdgOpen
+          ]
+        } \
         --set LD_PRELOAD $out/lib/codexbar-path-redirect.so
     ''}
 
@@ -133,6 +150,7 @@ stdenv.mkDerivation {
       -L$out/lib -Wl,-rpath,$out/lib -l:codexbar-path-redirect.so -lcurl -lssl -lcrypto
     python3 ${./tests/antigravity-cert.py} ${./antigravity-cert.py} \
       ${lib.getExe antigravity-cli} ${lib.getExe openssl} ./antigravity-compat-test
+    [ "$(bash -c '${blockedXdgOpen}/bin/xdg-open u; echo survived')" = survived ]
 
     runHook postInstallCheck
   '';
