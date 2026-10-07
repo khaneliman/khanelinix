@@ -131,7 +131,10 @@ in
 
           app_launcher_cmd =
             if enabledAppLaunchers == [ ] then "rofi -show drun" else builtins.elemAt enabledAppLaunchers 0;
-          clipboard_cmd = "cliphist list | ${dmenuCommand} | cliphist decode | wl-copy";
+          # vicinae dmenu returns nothing when any entry contains a control
+          # character, so strip them (keeping tab) from the previews. cliphist
+          # decode only reads the leading id, so the selection is unaffected.
+          clipboard_cmd = "cliphist list | tr -d '\\000-\\010\\013-\\037\\177' | ${dmenuCommand} | cliphist decode | wl-copy";
           truncate_title_after_length = 150;
 
           # TODO: Ashell 0.7.0 exposes one global `modules` layout per instance.
