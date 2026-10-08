@@ -22,14 +22,16 @@ in
       # See: https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
       settings = {
         gui = {
-          authorColors = {
-            "${config.khanelinix.user.fullName}" = "#c6a0f6";
-            "dependabot[bot]" = "#eed49f";
-          };
-          branchColorPatterns = {
-            "^main$" = "#ed8796";
-            "^master$" = "#ed8796";
-            "^dev" = "#8bd5ca";
+          theme = {
+            authorColors = {
+              "${config.khanelinix.user.fullName}" = "#c6a0f6";
+              "dependabot[bot]" = "#eed49f";
+            };
+            branchColorPatterns = {
+              "^main$" = "#ed8796";
+              "^master$" = "#ed8796";
+              "^dev" = "#8bd5ca";
+            };
           };
           nerdFontsVersion = "3";
           # Hide X of N on lists
