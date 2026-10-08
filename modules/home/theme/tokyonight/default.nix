@@ -40,7 +40,8 @@ let
     surfaceOverlay = colors.bg_dark;
     surfaceRaised = colors.bg_highlight;
     text = colors.fg;
-    textMuted = colors.comment;
+    # comment is too dim for secondary text on canvas, popovers, and toasts.
+    textMuted = colors.fg_dark;
     warning = colors.yellow;
   };
   thunderbirdAddon = pkgs.stdenvNoCC.mkDerivation {
