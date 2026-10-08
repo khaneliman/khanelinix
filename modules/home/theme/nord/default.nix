@@ -27,6 +27,7 @@ let
     canvas = palette.palette.nord0.hex;
     chrome = palette.palette.nord0.hex;
     error = palette.palette.nord11.hex;
+    highlight = palette.palette.nord3.hex;
     secondary = palette.palette.nord8.hex;
     statusForeground = palette.palette.nord0.hex;
     success = palette.palette.nord14.hex;

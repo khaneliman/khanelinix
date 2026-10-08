@@ -7,6 +7,7 @@
   chrome,
   config,
   error,
+  highlight,
   id,
   lib,
   name,
@@ -73,12 +74,12 @@ let
       terminalForeground = text;
       terminalScrollbar = border;
       terminalScrollbarHover = textMuted;
-      terminalSelection = surfaceOverlay;
+      terminalSelection = highlight;
       toolbar = surface;
       toolbarBorder = border;
       toolbarControl = surfaceRaised;
       toolbarControlForeground = text;
-      toolbarControlHover = surfaceOverlay;
+      toolbarControlHover = highlight;
       toolbarForeground = text;
       update = success;
       updateForeground = statusForeground;

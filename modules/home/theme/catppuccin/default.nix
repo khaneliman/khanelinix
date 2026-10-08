@@ -36,11 +36,12 @@ let
     canvas = catppuccinColors.base.hex;
     chrome = catppuccinColors.mantle.hex;
     error = catppuccinColors.red.hex;
+    highlight = catppuccinColors.surface2.hex;
     secondary = catppuccinColors.teal.hex;
     statusForeground = catppuccinColors.crust.hex;
     success = catppuccinColors.green.hex;
     surface = catppuccinColors.surface0.hex;
-    surfaceOverlay = catppuccinColors.surface2.hex;
+    surfaceOverlay = catppuccinColors.mantle.hex;
     surfaceRaised = catppuccinColors.surface1.hex;
     text = catppuccinColors.text.hex;
     textMuted = catppuccinColors.subtext0.hex;

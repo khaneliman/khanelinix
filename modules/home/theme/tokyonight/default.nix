@@ -32,11 +32,12 @@ let
     canvas = colors.bg;
     chrome = colors.bg_dark;
     error = colors.red;
+    highlight = colors.dark3;
     secondary = colors.cyan;
     statusForeground = if cfg.variant == "day" then "#1a1b26" else colors.bg_dark1;
     success = colors.green;
     surface = colors.bg_dark;
-    surfaceOverlay = colors.dark3;
+    surfaceOverlay = colors.bg_dark;
     surfaceRaised = colors.bg_highlight;
     text = colors.fg;
     textMuted = colors.comment;
