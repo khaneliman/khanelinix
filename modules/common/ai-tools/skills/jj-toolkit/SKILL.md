@@ -1,6 +1,6 @@
 ---
 name: jj-toolkit
-description: Use for working with Jujutsu (jj) history workflows, including hunk-level split/squash/diffedit/restore via `jj-hunk-tool`.
+description: Jujutsu (jj) workflows, including committing in a jj-colocated Git checkout even with plain git, bookmarks, conflicts, bisect, revsets, workspaces, and hunk-level split/squash/diffedit/restore via `jj-hunk-tool`. Load before the first commit in any checkout with `.jj/`.
 ---
 
 # Jujutsu Toolkit
