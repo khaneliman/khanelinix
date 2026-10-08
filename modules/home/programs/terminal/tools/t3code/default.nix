@@ -212,10 +212,31 @@ in
             }
           '';
         };
+
+      # Mint a tailnet pairing link on this host or, given an SSH host, on that
+      # host's backend. Usage: t3-pair [ssh-host] [t3 pair flags...]
+      pairCommand = pkgs.writeShellApplication {
+        name = "t3-pair";
+        runtimeInputs = [ pkgs.coreutils ];
+        text = ''
+          label=$(uname -n)
+          label=''${label%%.*}
+
+          # t3 keeps the first --label, so caller flags override this default.
+          if [ "$#" -gt 0 ] && [ "''${1#-}" = "$1" ]; then
+            host=$1
+            shift
+            # ssh joins arguments into one remote shell command, so quote them.
+            exec ssh "$host" t3 pair --tailscale "''${@@Q}" --label "''${label@Q}"
+          fi
+
+          exec t3 pair --tailscale "$@" --label "$label"
+        '';
+      };
     in
     lib.mkIf cfg.enable {
       home = {
-        packages = [ reconcileCommand ];
+        packages = [ reconcileCommand ] ++ lib.optional tailscaleEnabled pairCommand;
 
         # Explicit instances shadow legacy providers. Update only Nix-owned
         # fields without creating instances or overriding undeclared GUI enablement.
