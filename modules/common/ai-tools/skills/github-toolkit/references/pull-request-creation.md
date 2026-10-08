@@ -22,7 +22,8 @@ Creating pull request requires explicit user request. Draft title/body by
 default. If creation is explicit but branch is dirty, unpushed, or missing
 required context, return title/body plus exact blocker. Do not push, force-push,
 rebase, amend, or edit files unless separately requested. Create draft PR only
-when user asks for draft state.
+when user asks for draft state. After creating a PR, start
+[pr-babysit.md](pr-babysit.md) unless the user declined monitoring.
 
 ## Template Discovery (mandatory)
 
