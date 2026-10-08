@@ -16,7 +16,7 @@ by `route-model.py` and its JSON contract.
 | Subscription         | Model agents                                                                                 |
 | -------------------- | -------------------------------------------------------------------------------------------- |
 | OpenAI (Codex)       | `gpt-6-luna`, `gpt-5-6-terra`, `gpt-6-1-sol`, `gpt-6-astra`                                  |
-| Anthropic            | `opus-5-5`, `fable-5-1`, `sonnet-5-5`                                                        |
+| Anthropic            | `opus-5-5`, `fable-5-1`, `sonnet-5-5`, `haiku-5-5`                                           |
 | Google (Antigravity) | `gpt-oss-120b`, `google-opus-4-6`, `google-sonnet-4-6`, `gemini-3-8-flash`, `gemini-3-1-pro` |
 
 <!-- END GENERATED SUBSCRIPTIONS -->
@@ -31,6 +31,12 @@ for routine implementation and review; Opus or Astra for serious review and
 sustained judgment. Keep Fable as an evidence-driven escalation, not the first
 reviewer for every change. For architecture or high-risk review, use
 `plan or code review`; for an ordinary diff, use `routine code review`.
+
+Haiku 5.5 is the alternative to Luna for the same narrow packets. It runs on the
+Anthropic subscription, so it stays available when a `429` opens the shared
+OpenAI pool that Luna draws from. Luna remains preferred; Haiku is the first
+fallback wherever Luna is preferred and directly follows Luna wherever Luna is
+itself a fallback.
 
 Sonnet 5.5 is a provisional candidate, not a blanket replacement for Opus. Use
 `bounded Sonnet trial` for an intentional implementation or UI experiment; keep
@@ -49,20 +55,20 @@ Every subscription requires a live route and current authentication.
 
 <!-- BEGIN GENERATED ROUTES -->
 
-| Need                                       | Preferred                 | Fallback                                      | Semantic role  | Write policy                      |
-| ------------------------------------------ | ------------------------- | --------------------------------------------- | -------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-6-luna`              | `gemini-3-8-flash`                            | `mechanic`     | read-only unless edit is explicit |
-| repository discovery                       | `gpt-6-luna`              | `gpt-6-1-sol`, `gemini-3-8-flash`             | `fact-finder`  | read-only                         |
-| bounded reproduction                       | `gpt-6-luna`              | `gpt-6-1-sol`, `opus-5-5`, `gemini-3-8-flash` | `probe-runner` | build artifacts only              |
-| focused validation                         | `gpt-6-luna`              | `gemini-3-8-flash`                            | `checker`      | build artifacts only              |
-| noisy validation                           | `gpt-6-luna`              | `gemini-3-8-flash`, `gpt-oss-120b`            | `test-runner`  | build artifacts only              |
-| implementation                             | `gpt-6-1-sol`             | `opus-5-5`, `gpt-6-luna`, `gemini-3-8-flash`  | `implementer`  | workspace write                   |
-| difficult implementation                   | `gpt-6-1-sol`, `opus-5-5` | `gpt-6-luna`, `gemini-3-8-flash`              | `implementer`  | workspace write                   |
-| ambiguous diagnosis                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-3-8-flash`                | `debugger`     | read-only                         |
-| plan or code review                        | `opus-5-5`, `gpt-6-astra` | `gpt-6-1-sol`, `fable-5-1`, `google-opus-4-6` | `reviewer`     | read-only                         |
-| routine code review                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-3-8-flash`                | `reviewer`     | read-only                         |
-| bounded Sonnet trial                       | `sonnet-5-5`              | `gpt-6-1-sol`, `opus-5-5`                     | `implementer`  | workspace write                   |
-| multimodal analysis                        | `gemini-3-8-flash`        | `gpt-6-1-sol`, `opus-5-5`                     | `fact-finder`  | read-only                         |
+| Need                                       | Preferred                 | Fallback                                                   | Semantic role  | Write policy                      |
+| ------------------------------------------ | ------------------------- | ---------------------------------------------------------- | -------------- | --------------------------------- |
+| obvious lookup or mechanical one-file edit | `gpt-6-luna`              | `haiku-5-5`, `gemini-3-8-flash`                            | `mechanic`     | read-only unless edit is explicit |
+| repository discovery                       | `gpt-6-luna`              | `haiku-5-5`, `gpt-6-1-sol`, `gemini-3-8-flash`             | `fact-finder`  | read-only                         |
+| bounded reproduction                       | `gpt-6-luna`              | `haiku-5-5`, `gpt-6-1-sol`, `opus-5-5`, `gemini-3-8-flash` | `probe-runner` | build artifacts only              |
+| focused validation                         | `gpt-6-luna`              | `haiku-5-5`, `gemini-3-8-flash`                            | `checker`      | build artifacts only              |
+| noisy validation                           | `gpt-6-luna`              | `haiku-5-5`, `gemini-3-8-flash`, `gpt-oss-120b`            | `test-runner`  | build artifacts only              |
+| implementation                             | `gpt-6-1-sol`             | `opus-5-5`, `gpt-6-luna`, `haiku-5-5`, `gemini-3-8-flash`  | `implementer`  | workspace write                   |
+| difficult implementation                   | `gpt-6-1-sol`, `opus-5-5` | `gpt-6-luna`, `haiku-5-5`, `gemini-3-8-flash`              | `implementer`  | workspace write                   |
+| ambiguous diagnosis                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-3-8-flash`                             | `debugger`     | read-only                         |
+| plan or code review                        | `opus-5-5`, `gpt-6-astra` | `gpt-6-1-sol`, `fable-5-1`, `google-opus-4-6`              | `reviewer`     | read-only                         |
+| routine code review                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-3-8-flash`                             | `reviewer`     | read-only                         |
+| bounded Sonnet trial                       | `sonnet-5-5`              | `gpt-6-1-sol`, `opus-5-5`                                  | `implementer`  | workspace write                   |
+| multimodal analysis                        | `gemini-3-8-flash`        | `gpt-6-1-sol`, `opus-5-5`                                  | `fact-finder`  | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5-5`, Google
 `gemini-3-8-flash` with `google-opus-4-6` fallback (degraded family diversity),
@@ -278,9 +284,9 @@ binding evidence.
 
 Choose for capability and total retry cost. Among capable routes, favor the
 primary subscriptions and then independent quota headroom. A quota fallback must
-still fit the task: Luna is suitable for a narrow mechanical packet, not a
-silent downgrade for an unresolved cross-cutting design. Rescope or let the
-parent continue if no capable route remains. Keep Terra explicit-only and
+still fit the task: Luna or Haiku is suitable for a narrow mechanical packet,
+not a silent downgrade for an unresolved cross-cutting design. Rescope or let
+the parent continue if no capable route remains. Keep Terra explicit-only and
 GPT-OSS as a legacy validation fallback, not a preferred use of Google quota.
 Prefer a reviewer from another model family when available and useful; do not
 duplicate routine work merely to balance subscriptions or manufacture diversity.

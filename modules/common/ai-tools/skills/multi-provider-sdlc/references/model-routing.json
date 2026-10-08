@@ -23,7 +23,7 @@
 		},
 		"anthropic": {
 			"label": "Anthropic",
-			"model_agents": ["opus-5-5", "fable-5-1", "sonnet-5-5"]
+			"model_agents": ["opus-5-5", "fable-5-1", "sonnet-5-5", "haiku-5-5"]
 		}
 	},
 	"models": {
@@ -194,6 +194,20 @@
 			"write": true,
 			"workspace_write": true,
 			"publish_alias": false
+		},
+		"haiku-5-5": {
+			"subscription": "anthropic",
+			"model_family": "anthropic-claude",
+			"quota_pool": "general",
+			"upstream_provider": "claude",
+			"upstream_model": "claude-haiku-5-5",
+			"gateway_alias": "claude-haiku-5-5",
+			"display_name": "Anthropic · Haiku 5.5",
+			"description": "Anthropic Haiku 5.5 gateway worker and cross-provider alternative to Luna for repository discovery, bounded reproduction, mechanical edits, focused checks, and deterministic high-volume work.",
+			"reasoning_effort": null,
+			"write": true,
+			"workspace_write": true,
+			"publish_alias": false
 		}
 	},
 	"cliproxy_alias_order": [
@@ -348,49 +362,49 @@
 		{
 			"need": "obvious lookup or mechanical one-file edit",
 			"preferred": ["gpt-6-luna"],
-			"fallbacks": ["gemini-3-8-flash"],
+			"fallbacks": ["haiku-5-5", "gemini-3-8-flash"],
 			"semantic_role": "mechanic",
 			"write_policy": "read-only unless edit is explicit"
 		},
 		{
 			"need": "repository discovery",
 			"preferred": ["gpt-6-luna"],
-			"fallbacks": ["gpt-6-1-sol", "gemini-3-8-flash"],
+			"fallbacks": ["haiku-5-5", "gpt-6-1-sol", "gemini-3-8-flash"],
 			"semantic_role": "fact-finder",
 			"write_policy": "read-only"
 		},
 		{
 			"need": "bounded reproduction",
 			"preferred": ["gpt-6-luna"],
-			"fallbacks": ["gpt-6-1-sol", "opus-5-5", "gemini-3-8-flash"],
+			"fallbacks": ["haiku-5-5", "gpt-6-1-sol", "opus-5-5", "gemini-3-8-flash"],
 			"semantic_role": "probe-runner",
 			"write_policy": "build artifacts only"
 		},
 		{
 			"need": "focused validation",
 			"preferred": ["gpt-6-luna"],
-			"fallbacks": ["gemini-3-8-flash"],
+			"fallbacks": ["haiku-5-5", "gemini-3-8-flash"],
 			"semantic_role": "checker",
 			"write_policy": "build artifacts only"
 		},
 		{
 			"need": "noisy validation",
 			"preferred": ["gpt-6-luna"],
-			"fallbacks": ["gemini-3-8-flash", "gpt-oss-120b"],
+			"fallbacks": ["haiku-5-5", "gemini-3-8-flash", "gpt-oss-120b"],
 			"semantic_role": "test-runner",
 			"write_policy": "build artifacts only"
 		},
 		{
 			"need": "implementation",
 			"preferred": ["gpt-6-1-sol"],
-			"fallbacks": ["opus-5-5", "gpt-6-luna", "gemini-3-8-flash"],
+			"fallbacks": ["opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-3-8-flash"],
 			"semantic_role": "implementer",
 			"write_policy": "workspace write"
 		},
 		{
 			"need": "difficult implementation",
 			"preferred": ["gpt-6-1-sol", "opus-5-5"],
-			"fallbacks": ["gpt-6-luna", "gemini-3-8-flash"],
+			"fallbacks": ["gpt-6-luna", "haiku-5-5", "gemini-3-8-flash"],
 			"semantic_role": "implementer",
 			"write_policy": "workspace write"
 		},

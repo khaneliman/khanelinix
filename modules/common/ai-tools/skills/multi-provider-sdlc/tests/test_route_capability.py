@@ -206,6 +206,20 @@ class RouteCapabilityTests(unittest.TestCase):
             {"gpt-6-1-sol", "gpt-6-luna"},
         )
 
+    def test_haiku_covers_luna_routes_when_openai_pool_is_exhausted(self) -> None:
+        self.initialize()
+        self.complete("gpt-6-luna", "quota-exhausted")
+        luna_needs = [
+            route["need"]
+            for route in self.registry["task_routes"]
+            if route["preferred"] == ["gpt-6-luna"]
+        ]
+        self.assertTrue(luna_needs)
+        for need in luna_needs:
+            with self.subTest(need=need):
+                plan = capability.plan_route(self.state, self.task_id, need)
+                self.assertEqual(plan["selected"], "haiku-5-5")
+
     def test_cli_runs_claimed_named_model_lifecycle(self) -> None:
         initialized = self.run_cli("init")
         plan = self.run_cli("plan", "--need", "repository discovery")
@@ -280,7 +294,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(claim["planRevision"], 0)
         self.assertEqual(
             claim["plannedCandidates"],
-            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-3-8-flash"],
         )
         self.assertIsNone(claim["candidateOverride"])
         self.assertEqual(
@@ -308,7 +322,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(stored_claim["plan_revision"], 0)
         self.assertEqual(
             stored_claim["planned_candidates"],
-            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-3-8-flash"],
         )
         self.assertIsNone(stored_claim["candidate_override"])
 
@@ -337,7 +351,7 @@ class RouteCapabilityTests(unittest.TestCase):
         )
         self.assertEqual(
             claim["plannedCandidates"],
-            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "gemini-3-8-flash"],
+            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-3-8-flash"],
         )
         self.assertEqual(stored_claim["candidate_override"], claim["candidateOverride"])
 
@@ -528,10 +542,11 @@ class RouteCapabilityTests(unittest.TestCase):
     def test_gateway_role_in_exhausted_pool_has_no_semantic_fallback(self) -> None:
         self.initialize()
         self.complete("gpt-6-luna", "quota-exhausted")
+        self.complete("haiku-5-5", "quota-exhausted", 2)
         capability.ingest_google_telemetry(
             self.state,
             self.task_id,
-            2,
+            4,
             self.google_telemetry("exhausted", "exhausted"),
         )
 
@@ -545,10 +560,11 @@ class RouteCapabilityTests(unittest.TestCase):
     def test_native_role_survives_exhausted_gateway_pool(self) -> None:
         self.initialize()
         self.complete("gpt-6-luna", "quota-exhausted")
+        self.complete("haiku-5-5", "quota-exhausted", 2)
         capability.ingest_google_telemetry(
             self.state,
             self.task_id,
-            2,
+            4,
             self.google_telemetry("exhausted", "exhausted"),
         )
 
