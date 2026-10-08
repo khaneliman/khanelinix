@@ -1,6 +1,6 @@
 ---
 name: github-toolkit
-description: GitHub maintainer queues; issue discovery, triage, and creation; PR creation, walkthroughs, and stacking; review authoring and feedback; CI checks and fixes using gh CLI. Use for read or write work on GitHub issues, PRs, stacks, reviews, or checks.
+description: GitHub maintainer queues; issue discovery, triage, and creation; PR creation, walkthroughs, stacking, and babysitting; review authoring and feedback; CI checks and fixes. Use for read or write work on GitHub issues, PRs, stacks, reviews, or checks.
 ---
 
 # GitHub Toolkit
@@ -32,6 +32,9 @@ Route to one mode and load only named reference:
     too.
 11. **pr-walkthrough**: explain a PR or prepare a reviewer guide. Read
     [pr-walkthrough.md](references/pr-walkthrough.md).
+12. **pr-babysit**: watch an open PR across wakes and respond to new reviews,
+    bot comments, and checks with local fixes and pending-review drafts. Read
+    [pr-babysit.md](references/pr-babysit.md).
 
 If intent is unclear, ask for mode before GitHub writes or source edits.
 

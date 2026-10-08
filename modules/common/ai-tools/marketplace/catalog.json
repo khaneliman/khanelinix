@@ -190,7 +190,7 @@
 			},
 			"displayName": "GitHub Toolkit",
 			"description": "Manage GitHub queues, issues, pull requests, reviews, and CI.",
-			"version": "0.1.26",
+			"version": "0.1.27",
 			"category": "Developer Tools"
 		},
 		{
