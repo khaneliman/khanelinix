@@ -76,6 +76,8 @@ in
     ];
 
     homebrew = {
+      brews = [ "cameroncooke/axe/axe" ];
+
       casks =
         lib.optionals (cfg.containerBackend == "docker-desktop") [
           "docker-desktop"
