@@ -41,7 +41,8 @@ in
         urgent = {
           childBorder = "$peach";
           background = "$base";
-          text = "$peach";
+          # Latte peach misses 4.5:1 on base; red clears it in every flavor.
+          text = "$red";
           indicator = "$overlay0";
           border = "$peach";
         };

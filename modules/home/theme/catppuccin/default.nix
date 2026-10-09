@@ -26,17 +26,41 @@ let
   catppuccinColors =
     (lib.importJSON "${config.catppuccin.sources.palette}/palette.json").${cfg.flavor}.colors;
   isLatte = cfg.flavor == "latte";
-  # Latte's red, yellow, green, and teal miss 4.5:1 on its light surfaces or
-  # under white text. These keep each color's OKLCH hue and chroma with
-  # lightness solved to 4.6:1, as T3 Code does for generated themes.
-  t3codeColors =
-    lib.mapAttrs (_: color: color.hex) catppuccinColors
-    // lib.optionalAttrs isLatte {
-      green = "#007200";
-      red = "#c5002f";
-      teal = "#008188";
-      yellow = "#984c00";
-    };
+  # Frappe and Latte accents miss 4.5:1 on their own base, mantle, crust, and
+  # surface0. These keep each color's OKLCH hue and chroma with lightness
+  # solved to 4.6:1 against those surfaces, as T3 Code does for generated
+  # themes. Mocha and Macchiato already clear it.
+  readableAccents =
+    {
+      frappe = {
+        blue = "#97b5fa";
+        mauve = "#d0a4ed";
+        maroon = "#f19fa2";
+        peach = "#f2a279";
+        red = "#ff999b";
+        subtext0 = "#adb5d6";
+      };
+      latte = {
+        blue = "#0049d7";
+        flamingo = "#96393d";
+        green = "#006700";
+        lavender = "#3f4aba";
+        maroon = "#b2002a";
+        mauve = "#761ad8";
+        peach = "#b10a00";
+        pink = "#97277e";
+        red = "#b30020";
+        rosewater = "#8b4132";
+        sapphire = "#006074";
+        sky = "#005b96";
+        subtext0 = "#54576c";
+        subtext1 = "#52556d";
+        teal = "#006269";
+        yellow = "#8d4200";
+      };
+    }
+    .${cfg.flavor} or { };
+  t3codeColors = lib.mapAttrs (_: color: color.hex) catppuccinColors // readableAccents;
   # Surfaces sit one step darker than Catppuccin's surface0/surface1 so muted
   # and status text clear 4.5:1; Latte inverts the ramp for a light canvas.
   t3codeTheme = import ../t3code.nix {
@@ -386,6 +410,16 @@ in
             fzf.colors = mkIf config.khanelinix.programs.terminal.tools.fzf.enable fzfColors;
 
             gh-dash.settings = mkIf config.khanelinix.programs.terminal.tools.gh.enable ghDashTheme;
+
+            # GTK keeps the last @define-color, so these replace the flavor
+            # colors catppuccin/nix imports ahead of the Waybar stylesheet.
+            waybar.style = mkIf (readableAccents != { }) (
+              lib.mkAfter (
+                lib.concatStrings (
+                  lib.mapAttrsToList (name: color: "@define-color ${name} ${color};\n") readableAccents
+                )
+              )
+            );
 
             ghostty.settings = mkIf pkgs.stdenv.hostPlatform.isDarwin {
               macos-icon = "custom-style";
