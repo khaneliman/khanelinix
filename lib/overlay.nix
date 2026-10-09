@@ -31,7 +31,6 @@ in
     importDirPlain
     importSubdirs
     importModulesRecursive
-    mergeAttrs
     ;
 
   inherit (moduleLib)

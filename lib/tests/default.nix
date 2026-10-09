@@ -198,6 +198,13 @@ in
     expected = { };
   };
 
+  # lib.extend also rebinds nixpkgs' internal references, so a shadowed name
+  # breaks upstream code such as mergeDefaultOption, not just callers.
+  testOverlayKeepsStockLibNames = {
+    expr = builtins.attrNames (builtins.intersectAttrs lib (self.lib.overlay lib lib));
+    expected = [ ];
+  };
+
   # theme helpers
   testThemeMkColorScheme = {
     expr = theme.mkColorScheme "test" { bg = "#000000"; };
