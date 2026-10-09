@@ -25,27 +25,41 @@ let
   inherit (palette) colors;
   catppuccinColors =
     (lib.importJSON "${config.catppuccin.sources.palette}/palette.json").${cfg.flavor}.colors;
+  isLatte = cfg.flavor == "latte";
+  # Latte's red, yellow, green, and teal miss 4.5:1 on its light surfaces or
+  # under white text. These keep each color's OKLCH hue and chroma with
+  # lightness solved to 4.6:1, as T3 Code does for generated themes.
+  t3codeColors =
+    lib.mapAttrs (_: color: color.hex) catppuccinColors
+    // lib.optionalAttrs isLatte {
+      green = "#007200";
+      red = "#c5002f";
+      teal = "#008188";
+      yellow = "#984c00";
+    };
+  # Surfaces sit one step darker than Catppuccin's surface0/surface1 so muted
+  # and status text clear 4.5:1; Latte inverts the ramp for a light canvas.
   t3codeTheme = import ../t3code.nix {
     inherit config lib pkgs;
-    appearance = if cfg.flavor == "latte" then "light" else "dark";
+    appearance = if isLatte then "light" else "dark";
     id = "khanelinix-catppuccin-${cfg.flavor}";
     name = "Catppuccin ${lib.khanelinix.capitalize cfg.flavor}";
-    accent = catppuccinColors.${cfg.accent}.hex;
-    accentForeground = catppuccinColors.base.hex;
-    border = catppuccinColors.surface2.hex;
-    canvas = catppuccinColors.base.hex;
-    chrome = catppuccinColors.mantle.hex;
-    error = catppuccinColors.red.hex;
-    highlight = catppuccinColors.surface2.hex;
-    secondary = catppuccinColors.teal.hex;
-    statusForeground = catppuccinColors.crust.hex;
-    success = catppuccinColors.green.hex;
-    surface = catppuccinColors.surface0.hex;
-    surfaceOverlay = catppuccinColors.mantle.hex;
-    surfaceRaised = catppuccinColors.surface1.hex;
-    text = catppuccinColors.text.hex;
-    textMuted = catppuccinColors.subtext0.hex;
-    warning = catppuccinColors.yellow.hex;
+    accent = t3codeColors.${cfg.accent};
+    accentForeground = if isLatte then "#ffffff" else t3codeColors.base;
+    border = t3codeColors.surface2;
+    canvas = t3codeColors.base;
+    chrome = t3codeColors.mantle;
+    error = t3codeColors.red;
+    highlight = t3codeColors.surface2;
+    secondary = t3codeColors.teal;
+    statusForeground = if isLatte then "#ffffff" else t3codeColors.crust;
+    success = t3codeColors.green;
+    surface = t3codeColors.mantle;
+    surfaceOverlay = if isLatte then t3codeColors.base else t3codeColors.mantle;
+    surfaceRaised = if isLatte then t3codeColors.crust else t3codeColors.surface0;
+    inherit (t3codeColors) text;
+    textMuted = t3codeColors.subtext1;
+    warning = t3codeColors.yellow;
   };
   fzfColors = {
     "bg+" = colors.surface0.hex;
