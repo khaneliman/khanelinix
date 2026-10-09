@@ -223,7 +223,7 @@ in
         set -g status-left-length 24
         set -g status-right-length 40
         set -g status-left "#[fg=${colors.fg},bg=default,bold] #S #[fg=${colors.bg_dark},bg=default,nobold]"
-        set -g status-right "#[fg=${colors.yellow},bg=${colors.bg_dark}]#{prefix_highlight}#[fg=${colors.comment},bg=${colors.bg_dark}] #h "
+        set -g status-right "#[fg=${colors.yellow},bg=${colors.bg_dark}]#{prefix_highlight}#[fg=${colors.fg_dark},bg=${colors.bg_dark}] #h "
 
         set -g window-style "bg=${colors.bg}"
         set -g window-active-style "bg=${colors.bg}"
@@ -372,7 +372,7 @@ in
               surface1 = ${toLuaColor colors.terminal_black},
               surface2 = ${toLuaColor colors.dark3},
               overlay0 = ${toLuaColor colors.comment},
-              overlay1 = ${toLuaColor colors.fg_gutter},
+              overlay1 = ${toLuaColor colors.dark5},
               overlay2 = ${toLuaColor colors.blue7},
               blue = ${toLuaColor colors.blue},
               lavender = ${toLuaColor colors.blue1},

@@ -35,7 +35,7 @@ in
         LinkVisited = colors.purple;
         Mid = colors.bg_dark;
         Midlight = colors.bg_highlight;
-        PlaceholderText = colors.comment;
+        PlaceholderText = colors.fg_dark;
         Shadow = colors.bg_dark1;
         Text = colors.fg;
         ToolTipBase = colors.bg_dark;

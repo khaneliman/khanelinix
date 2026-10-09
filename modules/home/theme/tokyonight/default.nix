@@ -18,23 +18,6 @@ let
   palette = import ./colors.nix;
   colors = palette.getVariant cfg.variant;
   isDay = cfg.variant == "day";
-  # Day's text, accent, and status colors and moon's fg_dark miss 4.5:1 on
-  # their own T3 Code surfaces. These keep each color's OKLCH hue and chroma
-  # with lightness solved to 4.6:1, as T3 Code does for generated themes.
-  t3codeColors =
-    colors
-    // {
-      day = {
-        blue = "#2272dd";
-        fg = "#325ab8";
-        fg_dark = "#4c5c98";
-        green = "#4c682c";
-        red = "#bf003d";
-        yellow = "#78592b";
-      };
-      moon.fg_dark = "#929cca";
-    }
-    .${cfg.variant} or { };
   t3codeTheme = import ../t3code.nix {
     inherit config lib pkgs;
     appearance = if isDay then "light" else "dark";
@@ -44,23 +27,23 @@ let
         "Tokyo Night"
       else
         "Tokyo Night ${lib.khanelinix.capitalize cfg.variant}";
-    accent = t3codeColors.blue;
-    accentForeground = if isDay then "#ffffff" else t3codeColors.bg_dark1;
-    border = t3codeColors.blue7;
-    canvas = t3codeColors.bg;
-    chrome = t3codeColors.bg_dark;
-    error = t3codeColors.red;
-    highlight = t3codeColors.dark3;
-    secondary = t3codeColors.cyan;
-    statusForeground = if isDay then "#ffffff" else t3codeColors.bg_dark1;
-    success = t3codeColors.green;
-    surface = t3codeColors.bg_dark;
-    surfaceOverlay = t3codeColors.bg_dark;
-    surfaceRaised = if isDay then t3codeColors.bg_dark1 else t3codeColors.bg_highlight;
-    text = t3codeColors.fg;
+    accent = colors.blue;
+    accentForeground = if isDay then "#ffffff" else colors.bg_dark1;
+    border = colors.blue7;
+    canvas = colors.bg;
+    chrome = colors.bg_dark;
+    error = colors.red;
+    highlight = colors.dark3;
+    secondary = colors.cyan;
+    statusForeground = if isDay then "#ffffff" else colors.bg_dark1;
+    success = colors.green;
+    surface = colors.bg_dark;
+    surfaceOverlay = colors.bg_dark;
+    surfaceRaised = if isDay then colors.bg_dark1 else colors.bg_highlight;
+    text = colors.fg;
     # comment is too dim for secondary text on canvas, popovers, and toasts.
-    textMuted = t3codeColors.fg_dark;
-    warning = t3codeColors.yellow;
+    textMuted = colors.fg_dark;
+    warning = colors.yellow;
   };
   thunderbirdAddon = pkgs.stdenvNoCC.mkDerivation {
     pname = "thunderbird-addon-tokyo-night";
@@ -182,7 +165,7 @@ in
                   surfaceAlt = colors.bg_highlight;
                   accent = colors.blue;
                   accentSoft = colors.cyan;
-                  accentFg = if cfg.variant == "day" then "#ffffff" else colors.fg;
+                  accentFg = if isDay then "#ffffff" else colors.bg;
                   border = colors.blue7;
                 };
               };
@@ -197,13 +180,13 @@ in
             appearanceDarkChromeTheme = {
               surface = colors.bg;
               ink = colors.fg_dark;
-              accent = colors.blue0;
+              accent = colors.blue;
               contrast = 60;
               fonts = { };
               opaqueWindows = false;
               semanticColors = {
                 diffAdded = colors.git.add;
-                diffRemoved = colors.git.delete;
+                diffRemoved = colors.red;
                 skill = colors.purple;
               };
             };

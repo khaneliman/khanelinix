@@ -63,7 +63,9 @@ let
     dark3 = "#545c7e";
     dark5 = "#737aa2";
     fg = "#c8d3f5";
-    fg_dark = "#828bb8";
+    # Upstream #828bb8 misses 4.5:1 on bg_highlight; OKLCH lightness solved to
+    # 4.6:1 against bg, bg_dark, and bg_highlight with hue and chroma kept.
+    fg_dark = "#929cca";
     fg_gutter = "#3b4261";
     green = "#c3e88d";
     green1 = "#4fd6be";
@@ -88,37 +90,40 @@ let
   # Note: This is a simplified version. The actual day variant
   # uses Lua's deepcopy and invert/blend functions which are
   # complex to replicate in Nix. This provides the essential colors.
+  # Text and accent colors keep their OKLCH hue and chroma with lightness
+  # solved to 4.6:1 against bg, bg_dark, bg_dark1, and bg_highlight, so they
+  # read as text on day surfaces and as fills under light text.
   day = {
     bg = "#e1e2e7";
     bg_dark = "#e9e9ec";
     bg_dark1 = "#dcdcde";
     bg_highlight = "#c4c8da";
-    blue = "#2e7de9";
+    blue = "#004cb4";
     blue0 = "#a8aecb";
-    blue1 = "#007197";
-    blue2 = "#4e529a";
-    blue5 = "#006a83";
+    blue1 = "#00587d";
+    blue2 = "#474b92";
+    blue5 = "#005a73";
     blue6 = "#2e5857";
     blue7 = "#92a6d5";
     comment = "#9699a3";
-    cyan = "#007197";
+    cyan = "#00587d";
     dark3 = "#8990b3";
     dark5 = "#6172b0";
-    fg = "#3760bf";
-    fg_dark = "#6172b0";
+    fg = "#264caa";
+    fg_dark = "#404f8a";
     fg_gutter = "#a8aecb";
-    green = "#587539";
-    green1 = "#387068";
-    green2 = "#38919f";
-    magenta = "#9854f1";
+    green = "#3f5b1f";
+    green1 = "#235c54";
+    green2 = "#005c69";
+    magenta = "#7121c2";
     magenta2 = "#ff007c";
-    orange = "#b15c00";
-    purple = "#7847bd";
-    red = "#f52a65";
-    red1 = "#c64343";
-    teal = "#387068";
+    orange = "#8c3a00";
+    purple = "#6836ab";
+    red = "#a9002d";
+    red1 = "#a21d25";
+    teal = "#235c54";
     terminal_black = "#a1a6c5";
-    yellow = "#8c6c3e";
+    yellow = "#6b4d1e";
     git = {
       add = "#387068";
       change = "#506d9c";
