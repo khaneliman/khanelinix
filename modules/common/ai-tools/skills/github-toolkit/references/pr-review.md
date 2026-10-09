@@ -1,8 +1,10 @@
 # Pull Request Review Authoring
 
-Use for high-signal review and explicit inspection or mutation of GitHub reviews
-owned by current actor. Use [pr-feedback.md](pr-feedback.md) for existing review
-comments.
+Use for high-signal review delivered as a pending GitHub review owned by the
+current actor. A request to review a PR includes creating or updating that
+pending review without another permission question. The user edits and submits
+it on GitHub. Explicit chat-only, read-only, or no-post instructions take
+precedence. Use [pr-feedback.md](pr-feedback.md) for existing review comments.
 
 The `premise-review` method in `engineering-principles` is the review contract:
 its packet, premise gate, evidence axes, finding format, and verdict apply here.
@@ -43,17 +45,33 @@ review operations, and the public comment format.
    PRs, use the PR's actual base so lower layers stay outside the review unit.
 7. Revalidate each finding against the current PR head, changed code, and
    repository policy before drafting or revising it.
-8. Return draft findings by default. Inspect, create, update, or delete a review
-   only when user explicitly requests it.
+8. Inspect the current actor's reviews, preview the exact pending-review writes,
+   then apply them under the review request's authority. Create one pending
+   review when absent; otherwise preserve the user's existing draft and update
+   only findings covered by this task. Add genuinely new findings to that same
+   pending review. For a delegated review, the child returns evidence without
+   GitHub writes; the parent owns draft delivery and readback. Do not delete or
+   replace an existing review to simplify the write. For a no-issues verdict,
+   create or update a short pending summary when GitHub permits it, without
+   overwriting unrelated draft content.
+9. Read back the review and comments from GitHub. Completion requires the
+   intended bodies and anchors, current-head validation, `PENDING` state, and
+   null `submitted_at`. Link the PR's Files changed page and report the pending
+   review ID and comment count so the user can edit and submit it there. A local
+   report, JSON payload, or successful preview alone is not delivery. If GitHub
+   authentication, permissions, or API failure blocks delivery, report that
+   concrete blocker and retain the prepared draft; do not ask whether to post an
+   already-authorized pending review.
 
 Choose a reviewer by the hardest question in the change, not diff size. For
 multi-model review, allocate at most one review seat per model family per review
 unit (PR or diff); different gateways serving the same family are not
 independent families.
 
-Never submit pending review, approve, request changes, push, or edit the
-reviewed checkout. Apply proposed fixes only in isolated validation scratch.
-Leave final publication to user in GitHub UI.
+Never submit pending review, approve, request changes, publish standalone
+comments, push, or edit the reviewed checkout in this mode. Apply proposed fixes
+only in isolated validation scratch. Leave final publication to user in GitHub
+UI. Chat-only and read-only requests end with findings in chat and no writes.
 
 ## Full-history and duplicate gate
 
@@ -117,7 +135,7 @@ adding one to an existing bodyless draft. Preserve that draft and edit its
 inline comments unless the user authorizes replacement; back up the complete
 draft before deleting it. Omit `body` for an inline-only review:
 
-```json
+````json
 {
   "expected_head_sha": "FULL_HEAD_SHA",
   "comments": [
@@ -126,10 +144,20 @@ draft before deleting it. Omit `body` for an inline-only review:
       "start_line": 10,
       "line": 12,
       "side": "RIGHT",
-      "body": "issue (blocking): describe validated defect"
+      "body": "issue (blocking): describe validated defect\n\n```suggestion\nexact replacement for lines 10 through 12\n```\n\nDescribe the focused check and observed result."
     }
   ]
 }
+````
+
+Save the payload to a JSON file in ignored scratch, then preview and apply the
+same file without another permission question:
+
+```bash
+python "<path-to-skill>/scripts/review_draft.py" create \
+  --repo "OWNER/REPO" --pr "NUMBER_OR_URL" --input "review.json"
+python "<path-to-skill>/scripts/review_draft.py" create \
+  --repo "OWNER/REPO" --pr "NUMBER_OR_URL" --input "review.json" --apply
 ```
 
 Update a current-actor review summary or comment only when GitHub permits it.
@@ -168,8 +196,10 @@ Delete current-actor review comments without deleting their review:
 ```
 
 Run `create`, `update`, or `delete` without `--apply` first and preview every
-planned mutation, including its exact IDs and replacement body. Add `--apply`
-only when the user explicitly requested that write. Helpers refresh actor
+planned mutation, including its exact IDs and replacement body. For pending
+review creation or updates, the PR review request already authorizes `--apply`;
+preview is an internal check, not a user approval checkpoint. Deletion and
+published-content changes require separate authority. Helpers refresh actor
 ownership and selected IDs before mutation, then read back exact bodies or
 absence. For a pending-review update, include `expected_head_sha` and
 `expected_review_state: "PENDING"`. The helper validates both during preview and
@@ -180,6 +210,16 @@ after re-inspecting that review; a user can submit between turns. When revising
 a pending review, select only the exact review owned by the current actor. Never
 submit it. GitHub permits review-summary updates after submission but permits
 whole-review deletion only while a review is pending.
+
+The helper's `update` edits existing bodies; it does not add new inline
+comments. To add a finding to an existing draft, use GitHub's
+[`addPullRequestReviewThread`](https://docs.github.com/en/graphql/reference/pulls#addpullrequestreviewthread)
+with the exact owned pending `pullRequestReviewId`, `path`, `body`, `line`, and
+`side: RIGHT`; a multiline range also needs `startLine` and `startSide: RIGHT`.
+Inspect ownership, pending state, current head, and anchors before mutation,
+preview the exact input, and read back the new comment's ID, body, and range in
+that same pending review. Do not create a second review or publish a standalone
+comment as a workaround.
 
 For draft thread replies, use [pr-feedback.md](pr-feedback.md). Direct GraphQL
 `addPullRequestReviewThreadReply` calls must supply the exact owned pending
@@ -262,26 +302,41 @@ Missing coverage can be a finding when repository policy or risk requires it.
 
 ### Suggestion blocks
 
+- For every validated code replacement that can be anchored in the PR diff,
+  write a native GitHub `suggestion` block in an inline pending-review comment.
+  This is required, not an optional template. Ordinary code fences, unified
+  patches, fenced `diff` blocks, and prose-only instructions are not
+  substitutes.
+- Anchor the comment on the current head's `RIGHT` side. For one line, use
+  `line`; for multiple lines, use `start_line` through `line` on that same side.
+  A plain `suggestion` fence replaces that selected range. Put only the exact
+  replacement text inside it, preserving indentation, with no diff headers, hunk
+  markers, or added `+`/`-` prefixes. An empty block represents deletion; for
+  insertion, retain the anchor line with the new adjacent lines.
 - Select the smallest contiguous diff range that the replacement can fully fix.
   "Fully fix the selected range" does not authorize replacing a surrounding
   option, function, or expression block for a one-line or one-word change.
 - Do not duplicate unchanged context in a suggestion block. The replacement must
   contain only the selected lines' new content, not surrounding lines that
-  remain unchanged.
+  remain unchanged, except the anchor needed for an insertion.
 - Before writing the comment, compare the selected lines with the proposed
   replacement. Confirm that every selected line is intentionally replaced and
-  that no unchanged context was added; if this comparison fails, narrow the
-  range or rewrite the replacement.
-- For coordinated edits that cannot be expressed in the same minimal range,
-  provide a small fenced diff with file paths, or separate applicable suggestion
-  blocks. Validate the combined change. Do not expand a suggestion block with
-  unrelated lines or leave required companion edits as prose-only homework.
+  that no unchanged context was added beyond a required insertion anchor; if
+  this comparison fails, narrow the range or rewrite the replacement.
+- For coordinated edits that cannot be expressed in the same minimal range, use
+  separate applicable suggestion blocks, each in its own correctly anchored
+  comment, including across files. Explain that the edits belong together and
+  validate the combined change. Do not expand a suggestion block with unrelated
+  lines or leave required companion edits as prose-only homework. If GitHub
+  cannot anchor a required edit, such as a new file or code outside the
+  reviewable diff, state that limitation and link the exact validated companion
+  patch separately; do not disguise a fenced diff as an applicable suggestion.
 - Cite the repository's contributor documentation for compliance findings and
   concrete commit SHAs for code links. Never cite agent instruction files or
   tooling; before posting, scan the outgoing text for internal command names and
   instruction sources.
 
-For a validated code fix, an inline comment can follow this structure. Adapt the
+For a validated code fix, use this native suggestion structure. Adapt the
 wording to the conversation:
 
 ````markdown
@@ -306,7 +361,7 @@ omit decoration. Keep one primary label.
 A no-issues verdict still requires checking premise, scope, API boundary, and
 diff minimality internally. Do not publish that checklist.
 
-No-issues comment when requested:
+No-issues pending summary:
 
 ```markdown
 No issues found.

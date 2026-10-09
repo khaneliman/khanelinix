@@ -153,6 +153,51 @@ class PullRequestReviewContract(unittest.TestCase):
         ):
             self.assertIn(requirement, self.text)
 
+    def test_review_request_authorizes_pending_delivery_not_submission(self) -> None:
+        root = compact(read(SKILL_MD)).lower()
+        for requirement in (
+            "a pr review request authorizes creating or updating",
+            "pending review, not submitting it",
+            "explicit chat-only, read-only, or no-post",
+        ):
+            self.assertIn(requirement, root)
+        for requirement in (
+            "without another permission question",
+            "apply them under the review request's authority",
+            "preserve the user's existing draft",
+            "preview is an internal check, not a user approval checkpoint",
+            "chat-only and read-only requests end with findings in chat and no writes",
+            "deletion and published-content changes require separate authority",
+        ):
+            self.assertIn(requirement, self.text)
+        self.assertNotIn("return draft findings by default", self.text)
+        self.assertNotIn("only when user explicitly requests it", self.text)
+
+    def test_delivery_requires_github_readback_and_ui_handoff(self) -> None:
+        for requirement in (
+            "read back the review and comments from github",
+            "`pending` state",
+            "null `submitted_at`",
+            "link the pr's files changed page",
+            "report the pending review id and comment count",
+            "successful preview alone is not delivery",
+            "report that concrete blocker and retain the prepared draft",
+            "no-issues pending summary",
+        ):
+            self.assertIn(requirement, self.text)
+
+    def test_existing_drafts_can_receive_new_findings_without_replacement(self) -> None:
+        for requirement in (
+            "the helper's `update` edits existing bodies",
+            "`addpullrequestreviewthread`",
+            "exact owned pending `pullrequestreviewid`",
+            "`startline` and `startside: right`",
+            "read back the new comment's id, body, and range",
+            "do not create a second review or publish a standalone comment",
+            "the parent owns draft delivery and readback",
+        ):
+            self.assertIn(requirement, self.text)
+
     def test_pending_mutations_are_previewed_owned_and_never_submitted(self) -> None:
         for requirement in (
             "inspect the exact review and comment ids again",
@@ -167,16 +212,24 @@ class PullRequestReviewContract(unittest.TestCase):
 
     def test_suggestion_blocks_are_minimal_and_preflighted(self) -> None:
         for requirement in (
+            "native github `suggestion` block",
+            "required, not an optional template",
+            "fenced `diff` blocks, and prose-only instructions are not substitutes",
+            "current head's `right` side",
+            "a plain `suggestion` fence replaces that selected range",
+            "no diff headers, hunk markers, or added `+`/`-` prefixes",
             "smallest contiguous diff range",
             "does not authorize replacing a surrounding",
             "do not duplicate unchanged context",
             "compare the selected lines with the proposed replacement",
             "every selected line is intentionally replaced",
             "coordinated edits that cannot be expressed in the same minimal range",
-            "provide a small fenced diff with file paths",
+            "each in its own correctly anchored comment, including across files",
+            "if github cannot anchor a required edit",
             "validate the combined change",
         ):
             self.assertIn(requirement, self.text)
+        self.assertNotIn("provide a small fenced diff with file paths", self.text)
 
 
 if __name__ == "__main__":

@@ -187,7 +187,9 @@ directly; do not load skills or create planning artifacts solely for process.
 Use `engineering-workflow` for routine implementation, `figure-it-out` for large
 or unattended work, `software-engineering` for architecture-only work, and
 `architect` for explicit design-led implementation. Use `github-toolkit` for
-GitHub issues, pull requests, reviews, and checks.
+GitHub issues, pull requests, reviews, and checks. That skill owns
+pending-review delivery and native code suggestions for GitHub PR review
+requests.
 
 Keep invocation boundaries from skill metadata. `program-orchestration`,
 `show-me-your-work`, and `swarm` are explicit overlays; do not activate them
