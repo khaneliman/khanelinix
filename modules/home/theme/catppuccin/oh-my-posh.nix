@@ -29,7 +29,7 @@ in
       filler = catppuccin.colors.surface1.hex;
 
       nodeBg = catppuccin.colors.green.hex;
-      nodeFg = catppuccin.colors.text.hex;
+      nodeFg = catppuccin.colors.base.hex;
       goBg = catppuccin.colors.sky.hex;
       goFg = catppuccin.colors.base.hex;
       juliaBg = catppuccin.colors.blue.hex;
@@ -37,11 +37,11 @@ in
       pythonBg = catppuccin.colors.yellow.hex;
       pythonFg = catppuccin.colors.base.hex;
       rubyBg = catppuccin.colors.red.hex;
-      rubyFg = catppuccin.colors.text.hex;
+      rubyFg = catppuccin.colors.base.hex;
       azfuncBg = catppuccin.colors.peach.hex;
-      azfuncFg = catppuccin.colors.text.hex;
+      azfuncFg = catppuccin.colors.base.hex;
 
-      awsFg = catppuccin.colors.text.hex;
+      awsFg = catppuccin.colors.base.hex;
       awsDefaultBg = catppuccin.colors.yellow.hex;
       awsJanBg = catppuccin.colors.red.hex;
 
@@ -53,7 +53,7 @@ in
 
       exitBg = catppuccin.colors.surface0.hex;
       exitFg = catppuccin.colors.green.hex;
-      exitErrFg = catppuccin.colors.yellow.hex;
+      exitErrFg = catppuccin.colors.base.hex;
       exitErrBg = catppuccin.colors.red.hex;
 
       timeBg = catppuccin.colors.text.hex;

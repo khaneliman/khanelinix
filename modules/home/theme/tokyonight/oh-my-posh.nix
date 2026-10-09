@@ -30,7 +30,7 @@ in
       filler = colors.bg_highlight;
 
       nodeBg = colors.green;
-      nodeFg = colors.fg;
+      nodeFg = colors.bg;
       goBg = colors.cyan;
       goFg = colors.bg;
       juliaBg = colors.blue;
@@ -38,11 +38,11 @@ in
       pythonBg = colors.yellow;
       pythonFg = colors.bg;
       rubyBg = colors.red;
-      rubyFg = colors.fg;
+      rubyFg = colors.bg;
       azfuncBg = colors.orange;
-      azfuncFg = colors.fg;
+      azfuncFg = colors.bg;
 
-      awsFg = colors.fg;
+      awsFg = colors.bg;
       awsDefaultBg = colors.yellow;
       awsJanBg = colors.red;
 
@@ -54,7 +54,7 @@ in
 
       exitBg = colors.bg_dark;
       exitFg = colors.green;
-      exitErrFg = colors.yellow;
+      exitErrFg = colors.bg;
       exitErrBg = colors.red;
 
       timeBg = colors.fg;

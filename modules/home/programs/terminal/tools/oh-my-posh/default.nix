@@ -53,21 +53,21 @@ in
           filler = "#686869";
 
           nodeBg = "#689f63";
-          nodeFg = "#ffffff";
+          nodeFg = "#111111";
           goBg = "#00acd7";
           goFg = "#111111";
           juliaBg = "#4063D8";
-          juliaFg = "#111111";
+          juliaFg = "#ffffff";
           pythonBg = "#FFDE57";
           pythonFg = "#111111";
           rubyBg = "#AE1401";
           rubyFg = "#ffffff";
           azfuncBg = "#FEAC19";
-          azfuncFg = "#ffffff";
+          azfuncFg = "#111111";
 
-          awsFg = "#ffffff";
+          awsFg = "#111111";
           awsDefaultBg = "#FFA400";
-          awsJanBg = "#f1184c";
+          awsJanBg = "#f51f4f";
 
           rootBg = "#ffff66";
           rootFg = "#111111";
@@ -76,15 +76,15 @@ in
           executionFg = "#000000";
 
           exitBg = "#333333";
-          exitFg = "#4e9a06";
+          exitFg = "#8ae234";
           exitErrFg = "#fffe00";
-          exitErrBg = "#f1184c";
+          exitErrBg = "#cc0000";
 
           timeBg = "#d3d7cf";
           timeFg = "#000000";
 
           transient = "#4e9a06";
-          transientError = "#f1184c";
+          transientError = "#ff6b6b";
           secondary = "#689f63";
 
           tooltipGit = "#4e9a06";
