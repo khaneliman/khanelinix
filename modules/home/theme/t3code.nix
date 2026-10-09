@@ -11,6 +11,8 @@
   id,
   lib,
   name,
+  # Roles whose mapped color misses 4.5:1 and cannot be fixed by input choice.
+  overrides ? { },
   pkgs,
   secondary,
   statusForeground,
@@ -43,13 +45,17 @@ let
         warning
         ;
       accentSurface = surfaceRaised;
-      accentSurfaceForeground = accent;
+      # Hovered and selected rows. Upstream derives a near-text color here;
+      # accent hues rarely clear 4.5:1 on a raised surface.
+      accentSurfaceForeground = text;
       codeBackground = chrome;
       codeForeground = text;
       # Status foregrounds are colored text on neutral or tinted surfaces;
-      # solid status fills use white text upstream.
+      # solid status fills use white text upstream. Status boxes use
+      # `surface`, the role nearest the canvas, where palette status colors
+      # keep the most contrast.
       errorForeground = error;
-      errorSurface = surfaceRaised;
+      errorSurface = surface;
       focus = accent;
       iconMuted = textMuted;
       input = surface;
@@ -85,10 +91,11 @@ let
       toolbarForeground = text;
       update = success;
       updateForeground = success;
-      updateSurface = surfaceRaised;
+      updateSurface = surface;
       warningForeground = warning;
-      warningSurface = surfaceRaised;
-    };
+      warningSurface = surface;
+    }
+    // overrides;
   };
   # Clients resolve a theme saved in their own library before a published one
   # with the same id, so a fixed id lets a stale saved copy shadow every
