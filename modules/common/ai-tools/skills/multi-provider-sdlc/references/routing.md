@@ -177,9 +177,11 @@ circuits, and one semantic fallback. When `selectionRequired` is true, choose
 one `preferredCandidates` entry with caller judgment. The planner leaves
 `selected` null because each preferred model has equal policy rank. When
 `selectionRequired` is false, claim `selected`. `probe: true` means that route
-has unknown capability. Add `--gateway off` when the provider runs semantic
-roles on native models. The default `on` resolves each role through its gateway
-model.
+has unknown capability. The default `--gateway off` keeps semantic roles native;
+use `--gateway on` only for an explicit gateway invocation. Add
+`--native-dispatch` to plans and claims for native semantic or T3 workers so a
+local named-agent failure does not gate app-owned dispatch. Provider, pool,
+route, and active-claim circuits still apply.
 
 When no candidate remains, the plan also resolves the semantic role. If
 `claimConflicts` is true, wait for the active claim; `semanticFallback` is null
@@ -187,8 +189,11 @@ with reason `claim-conflict`. If every gateway model for the role is blocked,
 `semanticFallback` is null and `semanticFallbackReason` names the blocking
 circuit. Force a native worker or wait for that quota; do not dispatch the role
 through the blocked circuit. Otherwise, use the semantic fallback when no named
-candidate remains. Claim the selected or caller-chosen preferred model with the
-returned need and revision:
+candidate remains. In native mode, `native-profile-requires-resolution` means
+call `route-model.py` with the actual provider and existing state to check that
+profile's quota; the generic planner cannot authorize an unchecked native
+fallback. Claim the selected or caller-chosen preferred model with the returned
+need and revision:
 
 ```console
 python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> claim --expected-revision <revision> --need "<need>" --model <model>
@@ -209,8 +214,10 @@ or active claim scope.
 After every claimed named-model attempt, record one categorical outcome with its
 `claimId`. Use `success`, `quota-exhausted`, `route-unavailable`,
 `auth-failure`, `connection-failure`, `agent-type-unavailable`, or
-`agent-type-available`. Record `agent-type-available` when the host accepted the
-named agent type but the attempt returned no route, pool, or provider evidence.
+`agent-type-available`. Named-agent outcomes apply only to local named workers,
+not claims created with `--native-dispatch`. Record `agent-type-available` when
+the host accepted the named agent type but the attempt returned no route, pool,
+or provider evidence.
 
 ```console
 python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> record --claim-id <claim-id> --outcome route-unavailable
@@ -240,7 +247,27 @@ outcome that carries named-agent availability evidence closes that surface and
 resumes named routing. A compare-and-swap claim rejects concurrent or stale
 probes. If the canonical registry or state schema changes, initialize a new
 task-state path. Do not rewrite stale state because older claims lack current
-binding evidence.
+binding evidence. Schema 3 records whether each claim uses a local named agent.
+Existing schema-2 task state is rejected rather than silently converted. Finish
+its claims with the matching installed script and keep its failures for that
+task; initialize schema-3 state for new tasks, not to bypass old circuits.
+
+### T3 native dispatch
+
+`route-model.py` accepts the live `orchestrator_capabilities` result in the
+optional `capabilities` field. It matches canonical upstream models to the
+appropriate native driver and advertised model IDs, then returns `target` for
+`delegate_task`. Unsupported models, unavailable child-task providers, and
+unsupported effort values are not dispatched. Multiple matching account
+instances require narrowing the catalog. Keep quota state scoped to the accounts
+represented in that catalog; model identity alone does not establish billing.
+
+Subscription constraints and task-state claims work without a gateway. A native
+local CLI remains on its configured semantic profile; a different subscription
+requires T3 capabilities or an explicitly configured gateway invocation. T3
+targets do not use local model-named agent registrations, and native success
+does not reopen a failed local named-agent surface. Claim revisions, provider
+quota failures, and categorical outcomes retain the same protections.
 
 - Google: Opus, Sonnet, and GPT-OSS share `claude-gpt`; Gemini Pro and Flash
   share `gemini`. Run [check-google-quota](../scripts/check-google-quota.sh)
