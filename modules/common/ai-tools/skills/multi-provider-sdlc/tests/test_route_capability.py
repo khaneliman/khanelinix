@@ -274,7 +274,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(plan["candidates"][0]["modelFamily"], "anthropic-claude")
         self.assertEqual(
             [candidate["model"] for candidate in plan["candidates"]],
-            ["opus-5-5", "gpt-6-astra", "gpt-6-1-sol", "fable-5-1", "google-opus-4-6"],
+            ["opus-5-5", "gpt-6-astra", "gpt-6-1-sol", "fable-5-1", "google-opus-5-5"],
         )
         self.assertTrue(all(candidate["probe"] for candidate in plan["candidates"]))
         self.assertEqual(plan["semanticFallback"], "reviewer")

@@ -17,7 +17,7 @@ by `route-model.py` and its JSON contract.
 | -------------------- | -------------------------------------------------------------------------------------------- |
 | OpenAI (Codex)       | `gpt-6-luna`, `gpt-5-6-terra`, `gpt-6-1-sol`, `gpt-6-astra`                                  |
 | Anthropic            | `opus-5-5`, `fable-5-1`, `sonnet-5-5`, `haiku-5-5`                                           |
-| Google (Antigravity) | `gpt-oss-120b`, `google-opus-4-6`, `google-sonnet-4-6`, `gemini-3-8-flash`, `gemini-3-1-pro` |
+| Google (Antigravity) | `gpt-oss-120b`, `google-opus-5-5`, `google-sonnet-5-5`, `gemini-3-8-flash`, `gemini-3-1-pro` |
 
 <!-- END GENERATED SUBSCRIPTIONS -->
 
@@ -65,13 +65,13 @@ Every subscription requires a live route and current authentication.
 | implementation                             | `gpt-6-1-sol`             | `opus-5-5`, `gpt-6-luna`, `haiku-5-5`, `gemini-3-8-flash`  | `implementer`  | workspace write                   |
 | difficult implementation                   | `gpt-6-1-sol`, `opus-5-5` | `gpt-6-luna`, `haiku-5-5`, `gemini-3-8-flash`              | `implementer`  | workspace write                   |
 | ambiguous diagnosis                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-3-8-flash`                             | `debugger`     | read-only                         |
-| plan or code review                        | `opus-5-5`, `gpt-6-astra` | `gpt-6-1-sol`, `fable-5-1`, `google-opus-4-6`              | `reviewer`     | read-only                         |
+| plan or code review                        | `opus-5-5`, `gpt-6-astra` | `gpt-6-1-sol`, `fable-5-1`, `google-opus-5-5`              | `reviewer`     | read-only                         |
 | routine code review                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-3-8-flash`                             | `reviewer`     | read-only                         |
 | bounded Sonnet trial                       | `sonnet-5-5`              | `gpt-6-1-sol`, `opus-5-5`                                  | `implementer`  | workspace write                   |
 | multimodal analysis                        | `gemini-3-8-flash`        | `gpt-6-1-sol`, `opus-5-5`                                  | `fact-finder`  | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5-5`, Google
-`gemini-3-8-flash` with `google-opus-4-6` fallback (degraded family diversity),
+`gemini-3-8-flash` with `google-opus-5-5` fallback (degraded family diversity),
 and OpenAI `gpt-6-astra`.
 
 <!-- END GENERATED ROUTES -->

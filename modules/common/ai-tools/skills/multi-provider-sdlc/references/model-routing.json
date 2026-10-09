@@ -15,8 +15,8 @@
 			"label": "Google (Antigravity)",
 			"model_agents": [
 				"gpt-oss-120b",
-				"google-opus-4-6",
-				"google-sonnet-4-6",
+				"google-opus-5-5",
+				"google-sonnet-5-5",
 				"gemini-3-8-flash",
 				"gemini-3-1-pro"
 			]
@@ -111,29 +111,29 @@
 			"workspace_write": false,
 			"publish_alias": true
 		},
-		"google-sonnet-4-6": {
+		"google-sonnet-5-5": {
 			"subscription": "google",
 			"model_family": "anthropic-claude",
 			"quota_pool": "claude-gpt",
 			"upstream_provider": "antigravity",
-			"upstream_model": "claude-sonnet-4-6",
-			"gateway_alias": "claude-antigravity-sonnet-4-6",
-			"display_name": "Google · Claude Sonnet 4.6",
-			"description": "Google subscription Claude Sonnet 4.6 gateway worker for bounded implementation and routine debugging.",
+			"upstream_model": "claude-sonnet-5-5-high",
+			"gateway_alias": "claude-antigravity-sonnet-5-5",
+			"display_name": "Google · Claude Sonnet 5.5",
+			"description": "Google subscription Claude Sonnet 5.5 gateway worker for bounded implementation and routine debugging.",
 			"reasoning_effort": null,
 			"write": true,
 			"workspace_write": true,
 			"publish_alias": true
 		},
-		"google-opus-4-6": {
+		"google-opus-5-5": {
 			"subscription": "google",
 			"model_family": "anthropic-claude",
 			"quota_pool": "claude-gpt",
 			"upstream_provider": "antigravity",
-			"upstream_model": "claude-opus-4-6-thinking",
-			"gateway_alias": "claude-antigravity-opus-4-6",
-			"display_name": "Google · Claude Opus 4.6",
-			"description": "Google subscription Claude Opus 4.6 gateway worker for difficult read-only review, diagnosis, and planning critique.",
+			"upstream_model": "claude-opus-5-5-high",
+			"gateway_alias": "claude-antigravity-opus-5-5",
+			"display_name": "Google · Claude Opus 5.5",
+			"description": "Google subscription Claude Opus 5.5 gateway worker for difficult read-only review, diagnosis, and planning critique.",
 			"reasoning_effort": null,
 			"write": false,
 			"workspace_write": false,
@@ -217,8 +217,8 @@
 		"gpt-6-luna",
 		"gemini-3-8-flash",
 		"gemini-3-1-pro",
-		"google-sonnet-4-6",
-		"google-opus-4-6",
+		"google-sonnet-5-5",
+		"google-opus-5-5",
 		"gpt-oss-120b"
 	],
 	"gateway_defaults": {
@@ -418,7 +418,7 @@
 		{
 			"need": "plan or code review",
 			"preferred": ["opus-5-5", "gpt-6-astra"],
-			"fallbacks": ["gpt-6-1-sol", "fable-5-1", "google-opus-4-6"],
+			"fallbacks": ["gpt-6-1-sol", "fable-5-1", "google-opus-5-5"],
 			"semantic_role": "reviewer",
 			"write_policy": "read-only"
 		},
@@ -447,7 +447,7 @@
 	"deliberation": {
 		"anthropic": "opus-5-5",
 		"google": "gemini-3-8-flash",
-		"google_fallback": "google-opus-4-6",
+		"google_fallback": "google-opus-5-5",
 		"openai": "gpt-6-astra"
 	},
 	"quota_pools": {

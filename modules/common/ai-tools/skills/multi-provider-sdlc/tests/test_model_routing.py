@@ -72,7 +72,7 @@ class ModelRoutingTests(unittest.TestCase):
 
     def test_duplicate_primary_family_is_rejected(self) -> None:
         invalid = copy.deepcopy(self.registry)
-        invalid["deliberation"]["google"] = "google-opus-4-6"
+        invalid["deliberation"]["google"] = "google-opus-5-5"
         with self.assertRaisesRegex(routes.RoutingError, "distinct model families"):
             routes.validate_registry(invalid)
 
@@ -97,7 +97,7 @@ class ModelRoutingTests(unittest.TestCase):
         )
         self.assertEqual(
             routes["plan or code review"]["fallbacks"],
-            ["gpt-6-1-sol", "fable-5-1", "google-opus-4-6"],
+            ["gpt-6-1-sol", "fable-5-1", "google-opus-5-5"],
         )
         self.assertEqual(
             self.registry["semantic_roles"]["reviewer"]["gateway"]["claude"],
@@ -364,7 +364,7 @@ class ModelRoutingTests(unittest.TestCase):
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
             False: "887d9f966e2598a2db4e73cb710afe00862df68cbc3213672a2af3fe70cef9a2",
-            True: "713c10ee939f4003dd0c1bfa5521e41f23dfe5de2a58120d09bbfc1358f452bc",
+            True: "e8fc5ad355d33de092c37510adade4e1b3282427a8372e33a5c54d8613d33788",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():
