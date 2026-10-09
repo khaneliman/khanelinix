@@ -61,6 +61,8 @@ let
       "vicinae"
       "wezterm"
       "yazi"
+      # Wayland/Linux specific
+      "qt"
     ];
     tokyonight = [
       "alacritty"
