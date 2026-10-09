@@ -29,7 +29,8 @@ let
   # Frappe and Latte accents miss 4.5:1 on their own base, mantle, crust, and
   # surface0. These keep each color's OKLCH hue and chroma with lightness
   # solved to 4.6:1 against those surfaces, as T3 Code does for generated
-  # themes. Mocha and Macchiato already clear it.
+  # themes; overlay2 only draws icons, so it is solved to 3.1:1. Mocha and
+  # Macchiato already clear both.
   readableAccents =
     {
       frappe = {
@@ -47,6 +48,7 @@ let
         lavender = "#3f4aba";
         maroon = "#b2002a";
         mauve = "#761ad8";
+        overlay2 = "#6d7084";
         peach = "#b10a00";
         pink = "#97277e";
         red = "#b30020";
