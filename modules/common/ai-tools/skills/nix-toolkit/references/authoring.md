@@ -9,8 +9,8 @@ conflicting local guidance before editing. Keep unrelated Nix unchanged.
 Read only the references needed for the authoring decisions in this task:
 
 - [Module style](module-style.md): module templates, option surfaces, merge
-  priority, module arguments, normal assignments, `mkDefault`, `mkForce`, and
-  `mkMerge`.
+  priority, module arguments, exported-module portability, normal assignments,
+  `mkDefault`, `mkForce`, and `mkMerge`.
 - [Packages and overlays](packages-and-overlays.md): `final: prev:` semantics,
   `override` versus `overrideAttrs`, `finalAttrs` derivations, dependency
   classification, fixed-output hashes, and flake outputs.

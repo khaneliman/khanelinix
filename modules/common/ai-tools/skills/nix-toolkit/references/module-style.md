@@ -145,22 +145,94 @@ adding a disjoint key.
 
 ## Module Arguments
 
-Extra arguments reach module bodies two ways, and the difference is when they
-resolve.
+Extra arguments reach module bodies three ways. They differ in when the value
+resolves and in who must supply it.
 
-|                        | `specialArgs`                                     | `_module.args`                                  |
-| ---------------------- | ------------------------------------------------- | ----------------------------------------------- |
-| Resolved               | Before any module body evaluates.                 | Inside the fixpoint, like any other option.     |
-| Usable in `imports`    | Yes.                                              | No; it closes a recursion loop.                 |
-| Settable by a module   | No, it is fixed by the `evalModules` caller.      | Yes, including `mkDefault` and `mkForce`.       |
-| May depend on `config` | No.                                               | Yes.                                            |
-| Typical contents       | Flake inputs, target system, architectural flags. | `pkgs`, generated values, internal helper sets. |
+|                        | `specialArgs`                                | `_module.args`                                  | `lib.modules.importApply`                   |
+| ---------------------- | -------------------------------------------- | ----------------------------------------------- | ------------------------------------------- |
+| Resolved               | Before any module body evaluates.            | Inside the fixpoint, like any other option.     | Before `evalModules` receives the module.   |
+| Usable in `imports`    | Yes.                                         | No; it closes a recursion loop.                 | Yes.                                        |
+| Supplied by            | The `evalModules` caller.                    | Any module, at any priority.                    | The module author, where it is defined.     |
+| May depend on `config` | No.                                          | Yes.                                            | No.                                         |
+| Typical contents       | Flake inputs within one owned configuration. | `pkgs`, generated values, internal helper sets. | Dependencies of exported or shared modules. |
 
-Choose `specialArgs` for anything an `imports` list must consult, and
-`_module.args` for everything else, because a module can then override it.
-Deciding an import from a value that came out of `_module.args` fails with
+Inside one configuration whose `evalModules` calls you control, choose
+`specialArgs` for anything an `imports` list must consult, and `_module.args`
+for everything else, because a module can then override it. Deciding an import
+from a value that came out of `_module.args` fails with
 `infinite recursion encountered`; see
 [Option forensics](option-forensics.md#infinite-recursion).
+
+### Exported And Shared Modules
+
+A module that names an argument such as `inputs` works only where the caller
+supplies that name through `specialArgs` or `_module.args`. The author of a
+module exported as `nixosModules`, `darwinModules`, or `homeModules`, or shared
+between configurations, does not control that caller. A consumer who supplies
+nothing gets `attribute 'inputs' missing`. A consumer who supplies their own
+flake inputs gives the module the wrong `inputs.self` and a different set of
+inputs, so it fails on a missing attribute or evaluates against the wrong
+source. Keep caller-supplied arguments for configurations you own, and bind an
+exported module's dependencies where it is defined:
+
+```nix
+# module.nix: the outer function receives values bound by this flake.
+{ self }:
+{ lib, pkgs, ... }:
+{
+  options.services.foo.package = lib.mkOption {
+    type = lib.types.package;
+    default = self.packages.${pkgs.stdenv.hostPlatform.system}.foo;
+  };
+}
+```
+
+```nix
+# flake.nix
+{
+  outputs =
+    { self, nixpkgs }:
+    {
+      nixosModules.foo = nixpkgs.lib.modules.importApply ./module.nix { inherit self; };
+    };
+}
+```
+
+`importApply` is `import ./module.nix { inherit self; }` that also sets `_file`,
+so errors still name `module.nix`. flake-parts exports the same helper. The
+consumer's `evalModules` call receives an ordinary module and supplies nothing
+extra. Because the value is bound before evaluation, the module may also use it
+in `imports`.
+
+Do not set `_module.args.<name>` from a reusable module to supply its own
+dependencies. `_module.args` has type `lazyAttrsOf raw`, and `raw` does not
+merge, so two modules that set the same name fail with
+`is defined multiple times while it's expected to be unique` even when the
+values are equal. `mkForce` hides that error only by overriding the argument for
+every module.
+
+Binding also changes module identity. A module imported by path is keyed by that
+path, so importing it twice is harmless and `disabledModules` can name it.
+`importApply` sets `_file` but not `key`, so its result is anonymous: imported
+twice, it declares its options twice (`is already declared in`), and
+`disabledModules` cannot match it by path. When an exported module can reach one
+configuration through several imports, or consumers must be able to disable it,
+give it a key:
+
+```nix
+{
+  nixosModules.foo = {
+    key = toString ./module.nix;
+    _file = ./module.nix;
+    imports = [ (import ./module.nix { inherit self; }) ];
+  };
+}
+```
+
+Key by path only when every application of that file uses the same arguments.
+The module system keeps the first module with a given key and silently ignores
+later ones, so a second application with different arguments disappears without
+an error.
 
 ## Option Surface
 

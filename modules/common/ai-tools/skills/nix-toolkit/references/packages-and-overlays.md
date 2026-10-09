@@ -298,6 +298,10 @@ Flake outputs organize build artifacts, modules, and utilities across systems.
 | `darwinModules.<name>`      | Module      | nix-darwin configuration modules.                 |
 | `homeModules.<name>`        | Module      | Home Manager configuration modules.               |
 
+An exported module receives only the arguments its consumer's `evalModules` call
+supplies. Bind flake-local dependencies with `importApply`; see
+[Module arguments](module-style.md#exported-and-shared-modules).
+
 ### The `forAllSystems` Pattern
 
 Generate per-system outputs by iterating over a system list with `genAttrs`:
