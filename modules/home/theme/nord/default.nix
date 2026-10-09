@@ -21,18 +21,23 @@ let
     appearance = "dark";
     id = "khanelinix-nord";
     name = "Nord";
-    accent = palette.palette.nord10.hex;
-    accentForeground = palette.palette.nord6.hex;
+    # Nord's style guide assigns nord8 to primary UI accents, nord9 to
+    # secondary ones, and nord1 to floating popups.
+    accent = palette.palette.nord8.hex;
+    accentForeground = palette.palette.nord0.hex;
     border = palette.palette.nord3.hex;
     canvas = palette.palette.nord0.hex;
     chrome = palette.palette.nord0.hex;
     error = palette.palette.nord11.hex;
     highlight = palette.palette.nord3.hex;
-    secondary = palette.palette.nord8.hex;
+    # nord11 misses 4.5:1 on every Nord background, so error text uses its
+    # OKLCH hue and chroma with lightness solved to 4.6:1. Fills keep nord11.
+    overrides.errorForeground = "#f7949b";
+    secondary = palette.palette.nord9.hex;
     statusForeground = palette.palette.nord0.hex;
     success = palette.palette.nord14.hex;
     surface = palette.palette.nord1.hex;
-    surfaceOverlay = palette.palette.nord3.hex;
+    surfaceOverlay = palette.palette.nord1.hex;
     surfaceRaised = palette.palette.nord2.hex;
     text = palette.palette.nord6.hex;
     textMuted = palette.palette.nord4.hex;
