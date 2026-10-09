@@ -1,0 +1,1477 @@
+# Backport https://github.com/pingdotgg/t3code/pull/15198
+# Source commit: 87cfeb097deeea76b495796c7f4fe0c19034f380
+# Rebased on 6e4ca6ce9d04009af290412b77a0acb9be9f8a18 with logout race coverage.
+diff --git a/apps/mobile/src/features/threads/ComposerUsageLimits.tsx b/apps/mobile/src/features/threads/ComposerUsageLimits.tsx
+index 31d3a0e3f27743ff6e9613f678489af8ffa323cf..6cc72cd70f12ba626f8f353c1bdc5c5e22e839bb 100644
+--- a/apps/mobile/src/features/threads/ComposerUsageLimits.tsx
++++ b/apps/mobile/src/features/threads/ComposerUsageLimits.tsx
+@@ -5,7 +5,11 @@ import { SymbolView } from "../../components/AppSymbol";
+ import { AppText as Text } from "../../components/AppText";
+ import { AccountLimits, ResetCredits } from "../usage/UsageLimitsSection";
+ 
+-const DRIVER_LABEL: Partial<Record<string, string>> = { codex: "Codex", claudeAgent: "Claude" };
++const DRIVER_LABEL: Partial<Record<string, string>> = {
++  codex: "Codex",
++  claudeAgent: "Claude",
++  antigravity: "Antigravity",
++};
+ 
+ /**
+  * The /usage-limits result, docked above the composer. It is the Usage → Limits
+diff --git a/apps/mobile/src/features/usage/UsageLimitsPooled.tsx b/apps/mobile/src/features/usage/UsageLimitsPooled.tsx
+index 713b9ffd160fab77e8110742086e387d53758740..9f672d14dad30420c10747295efb039fca0af65c 100644
+--- a/apps/mobile/src/features/usage/UsageLimitsPooled.tsx
++++ b/apps/mobile/src/features/usage/UsageLimitsPooled.tsx
+@@ -27,7 +27,11 @@ import { environmentPresentations } from "../../state/presentation";
+ import { ResetCredits } from "./UsageLimitsSection";
+ import { useProviderColors } from "./usageProviders";
+ 
+-const DRIVER_LABEL: Partial<Record<string, string>> = { codex: "Codex", claudeAgent: "Claude" };
++const DRIVER_LABEL: Partial<Record<string, string>> = {
++  codex: "Codex",
++  claudeAgent: "Claude",
++  antigravity: "Antigravity",
++};
+ const PACE_LABEL = { ahead: "Ahead of pace", on: "On pace", under: "Under pace" } as const;
+ 
+ function accountName(account: LimitAccount) {
+diff --git a/apps/server/src/provider/AntigravityProvider.test.ts b/apps/server/src/provider/AntigravityProvider.test.ts
+index f1728108dfae619e1a1ffb9ca4551db87fa7108d..39ab07182dac6ccc94dcc8becbe8a864217971bd 100644
+--- a/apps/server/src/provider/AntigravityProvider.test.ts
++++ b/apps/server/src/provider/AntigravityProvider.test.ts
+@@ -6,7 +6,9 @@ import {
+   ProviderDriverKind,
+   ProviderInstanceId,
+   ProviderSetupError,
++  type ServerProviderUsageLimits,
+ } from "@t3tools/contracts";
++import * as Cause from "effect/Cause";
+ import * as Deferred from "effect/Deferred";
+ import * as Effect from "effect/Effect";
+ import * as Fiber from "effect/Fiber";
+@@ -128,7 +130,12 @@ const layerTest = ProviderHostLive.layer.pipe(
+ type ProbeError = EffectAcpErrors.AcpError | ProviderSetupError;
+ 
+ const makeHarness = Effect.fn("makeAntigravityProviderHarness")(function* (
+-  options: { readonly enabled?: boolean; readonly safe?: boolean } = {},
++  options: {
++    readonly enabled?: boolean;
++    readonly safe?: boolean;
++    readonly usageLimits?: Effect.Effect<ServerProviderUsageLimits>;
++    readonly usageLimitsCredentialFingerprint?: Effect.Effect<string | undefined, Error>;
++  } = {},
+ ) {
+   const initialProbe = yield* Deferred.make<EffectAcpSchema.InitializeResponse, ProbeError>();
+   const probeCalls = yield* Ref.make(0);
+@@ -149,6 +156,10 @@ const makeHarness = Effect.fn("makeAntigravityProviderHarness")(function* (
+         Effect.andThen(Ref.get(safety)),
+         Effect.flatten,
+       ),
++      ...(options.usageLimits ? { usageLimits: options.usageLimits } : {}),
++      ...(options.usageLimitsCredentialFingerprint
++        ? { usageLimitsCredentialFingerprint: options.usageLimitsCredentialFingerprint }
++        : {}),
+     },
+   );
+   const initialUpdate = yield* Stream.toPull(
+@@ -671,3 +682,377 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
+     ),
+   );
+ });
++
++const testLimits = {
++  checkedAt: "2026-10-03T00:00:00.000Z",
++  windows: [{ id: "gemini-5h", kind: "session", label: "Gemini · 5 hours", usedPercent: 25 }],
++} satisfies ServerProviderUsageLimits;
++const unsupportedLimits = {
++  checkedAt: "2026-10-03T00:00:00.000Z",
++  windows: [],
++  unavailable: { reason: "unsupported" },
++} satisfies ServerProviderUsageLimits;
++
++describe("Antigravity quota lifecycle", () => {
++  it.effect("health refreshes finish while a serialized quota read is pending", () =>
++    Effect.scoped(
++      Effect.gen(function* () {
++        const release = yield* Deferred.make<ServerProviderUsageLimits>();
++        const requested = yield* Deferred.make<void>();
++        const reads = yield* Ref.make(0);
++        const harness = yield* makeHarness({
++          usageLimits: Ref.update(reads, (count) => count + 1).pipe(
++            Effect.andThen(Deferred.succeed(requested, undefined)),
++            Effect.andThen(Deferred.await(release)),
++          ),
++        });
++        yield* harness.initialize;
++        yield* Deferred.await(requested);
++        const first = yield* harness.provider.snapshot.refresh;
++        const second = yield* harness.provider.snapshot.refresh;
++        expect(first.installed).toBe(true);
++        expect(second.status).toBe("warning");
++        expect(second.usageLimits).toBeUndefined();
++        expect(yield* Ref.get(reads)).toBe(1);
++        expect(yield* Ref.get(harness.probeCalls)).toBe(3);
++        const published = yield* Stream.toPull(
++          harness.provider.snapshot.streamChanges.pipe(
++            Stream.filter((snapshot) => snapshot.usageLimits?.windows.length === 1),
++          ),
++        );
++        yield* Deferred.succeed(release, testLimits);
++        const update = yield* published;
++        expect(Array.from(update)[0]?.usageLimits).toEqual(testLimits);
++        yield* TestClock.adjust("0 seconds");
++        expect(yield* Ref.get(reads)).toBe(1);
++      }),
++    ).pipe(Effect.provide(layerTest)),
++  );
++
++  it.effect("publishes models immediately, then publishes quota after sign-in", () =>
++    Effect.scoped(
++      Effect.gen(function* () {
++        const read = yield* Ref.make<Effect.Effect<ServerProviderUsageLimits>>(
++          Effect.succeed(unsupportedLimits),
++        );
++        const harness = yield* makeHarness({ usageLimits: Ref.get(read).pipe(Effect.flatten) });
++        yield* harness.initialize;
++        yield* harness.provider.snapshot.refresh;
++        const release = yield* Deferred.make<ServerProviderUsageLimits>();
++        const requested = yield* Deferred.make<void>();
++        yield* Ref.set(
++          read,
++          Deferred.succeed(requested, undefined).pipe(Effect.andThen(Deferred.await(release))),
++        );
++        yield* harness.provider.onSessionStarted(started);
++        const connected = yield* harness.provider.snapshot.getSnapshot;
++        expect(connected.auth.status).toBe("authenticated");
++        expect(connected.models.length).toBeGreaterThan(0);
++        yield* Deferred.await(requested);
++        const published = yield* Stream.toPull(
++          harness.provider.snapshot.streamChanges.pipe(
++            Stream.filter((snapshot) => snapshot.usageLimits?.windows.length === 1),
++          ),
++        );
++        yield* Deferred.succeed(release, testLimits);
++        const update = yield* published;
++        expect(Array.from(update)[0]?.usageLimits).toEqual(testLimits);
++      }),
++    ).pipe(Effect.provide(layerTest)),
++  );
++
++  it.effect(
++    "a quota response started before sign-out cannot restore the old account's limits",
++    () =>
++      Effect.scoped(
++        Effect.gen(function* () {
++          const read = yield* Ref.make<Effect.Effect<ServerProviderUsageLimits>>(
++            Effect.succeed(unsupportedLimits),
++          );
++          const harness = yield* makeHarness({ usageLimits: Ref.get(read).pipe(Effect.flatten) });
++          yield* harness.initialize;
++          const release = yield* Deferred.make<ServerProviderUsageLimits>();
++          const requested = yield* Deferred.make<void>();
++          yield* Ref.set(
++            read,
++            Deferred.succeed(requested, undefined).pipe(Effect.andThen(Deferred.await(release))),
++          );
++          yield* harness.provider.onSessionStarted(started);
++          yield* Deferred.await(requested);
++          yield* harness.provider.onSignedOut;
++          expect((yield* harness.provider.snapshot.getSnapshot).usageLimits).toBeUndefined();
++          yield* Deferred.succeed(release, testLimits);
++          yield* harness.provider.snapshot.refresh;
++          yield* TestClock.adjust("0 seconds");
++          const snapshot = yield* harness.provider.snapshot.getSnapshot;
++          expect(snapshot.auth.status).toBe("unauthenticated");
++          expect(snapshot.usageLimits).toBeUndefined();
++        }),
++      ).pipe(Effect.provide(layerTest)),
++  );
++
++  it.effect.each(["onSignedOut", "onAuthRequired"] as const)(
++    "a health response finishing after %s cannot restart quota reads",
++    (invalidate) =>
++      Effect.scoped(
++        Effect.gen(function* () {
++          const reads = yield* Ref.make(0);
++          const harness = yield* makeHarness({
++            usageLimits: Ref.update(reads, (count) => count + 1).pipe(Effect.as(testLimits)),
++          });
++          const published = yield* Stream.toPull(
++            harness.provider.snapshot.streamChanges.pipe(
++              Stream.filter((snapshot) => snapshot.usageLimits?.windows.length === 1),
++            ),
++          );
++          yield* harness.initialize;
++          yield* published;
++          const requested = yield* Deferred.make<void>();
++          const release = yield* Deferred.make<typeof initializeResult>();
++          yield* Ref.set(
++            harness.probe,
++            Deferred.succeed(requested, undefined).pipe(Effect.andThen(Deferred.await(release))),
++          );
++          const refresh = yield* harness.provider.snapshot.refresh.pipe(Effect.forkChild);
++          yield* Deferred.await(requested);
++          yield* harness.provider[invalidate];
++          yield* Deferred.succeed(release, initializeResult);
++          yield* Fiber.join(refresh);
++          yield* TestClock.adjust("0 seconds");
++          const snapshot = yield* harness.provider.snapshot.getSnapshot;
++          expect(yield* Ref.get(reads)).toBe(1);
++          expect(snapshot.auth.status).toBe("unauthenticated");
++          expect(snapshot.usageLimits).toBeUndefined();
++        }),
++      ).pipe(Effect.provide(layerTest)),
++  );
++
++  it.effect.each(["onSignedOut", "onAuthRequired"] as const)(
++    "a session callback pending credential lookup cannot undo %s",
++    (invalidate) =>
++      Effect.scoped(
++        Effect.gen(function* () {
++          const fingerprint = yield* Ref.make<Effect.Effect<string | undefined, Error>>(
++            Effect.succeed("account-a"),
++          );
++          const harness = yield* makeHarness({
++            usageLimits: Effect.succeed({ ...testLimits, credentialFingerprint: "account-a" }),
++            usageLimitsCredentialFingerprint: Ref.get(fingerprint).pipe(Effect.flatten),
++          });
++          const published = yield* Stream.toPull(
++            harness.provider.snapshot.streamChanges.pipe(
++              Stream.filter((snapshot) => snapshot.usageLimits?.windows.length === 1),
++            ),
++          );
++          yield* harness.initialize;
++          yield* published;
++          const requested = yield* Deferred.make<void>();
++          const release = yield* Deferred.make<string>();
++          yield* Ref.set(
++            fingerprint,
++            Deferred.succeed(requested, undefined).pipe(Effect.andThen(Deferred.await(release))),
++          );
++          const session = yield* harness.provider.onSessionStarted(started).pipe(Effect.forkChild);
++          yield* Deferred.await(requested);
++          yield* harness.provider[invalidate];
++          yield* Deferred.succeed(release, "account-a");
++          yield* Fiber.join(session);
++          const snapshot = yield* harness.provider.snapshot.getSnapshot;
++          expect(snapshot.auth.status).toBe("unauthenticated");
++          expect(snapshot.models).toEqual([]);
++          expect(snapshot.usageLimits).toBeUndefined();
++        }),
++      ).pipe(Effect.provide(layerTest)),
++  );
++
++  it.effect("keeps both workspaces when session starts await the same credential lookup", () =>
++    Effect.scoped(
++      Effect.gen(function* () {
++        const requested = yield* Deferred.make<void>();
++        const release = yield* Deferred.make<string>();
++        const lookups = yield* Ref.make(0);
++        const harness = yield* makeHarness({
++          usageLimitsCredentialFingerprint: Ref.updateAndGet(lookups, (count) => count + 1).pipe(
++            Effect.flatMap((count) =>
++              count === 2 ? Deferred.succeed(requested, undefined) : Effect.void,
++            ),
++            Effect.andThen(Deferred.await(release)),
++          ),
++        });
++        yield* harness.initialize;
++        const sessions = yield* Effect.all(
++          [
++            harness.provider.onSessionStarted(started, "/workspace-a"),
++            harness.provider.onSessionStarted(started, "/workspace-b"),
++          ],
++          { concurrency: "unbounded" },
++        ).pipe(Effect.forkChild);
++        yield* Deferred.await(requested);
++        yield* Deferred.succeed(release, "account-a");
++        yield* Fiber.join(sessions);
++        const snapshot = yield* harness.provider.snapshot.getSnapshot;
++        expect(snapshot.workspaceSnapshots?.map((workspace) => workspace.cwd).toSorted()).toEqual([
++          "/workspace-a",
++          "/workspace-b",
++        ]);
++        expect(snapshot.auth.status).toBe("authenticated");
++      }),
++    ).pipe(Effect.provide(layerTest)),
++  );
++
++  it.effect.each(["session", "health"] as const)(
++    "clears another account's quota before a failing %s refresh",
++    (trigger) =>
++      Effect.scoped(
++        Effect.gen(function* () {
++          const accountA = { ...testLimits, credentialFingerprint: "account-a" };
++          const identity = yield* Ref.make<string | undefined>("account-a");
++          const read = yield* Ref.make<Effect.Effect<ServerProviderUsageLimits>>(
++            Effect.succeed(accountA),
++          );
++          const harness = yield* makeHarness({
++            usageLimits: Ref.get(read).pipe(Effect.flatten),
++            usageLimitsCredentialFingerprint: Ref.get(identity),
++          });
++          const initial = yield* Stream.toPull(
++            harness.provider.snapshot.streamChanges.pipe(
++              Stream.filter(
++                (snapshot) => snapshot.usageLimits?.credentialFingerprint === "account-a",
++              ),
++            ),
++          );
++          yield* harness.initialize;
++          yield* initial;
++          yield* harness.provider.onSessionStarted(started);
++          yield* TestClock.adjust("0 seconds");
++          const release = yield* Deferred.make<ServerProviderUsageLimits>();
++          const requested = yield* Deferred.make<void>();
++          yield* Ref.set(
++            read,
++            Deferred.succeed(requested, undefined).pipe(Effect.andThen(Deferred.await(release))),
++          );
++          const cleared = yield* Stream.toPull(
++            harness.provider.snapshot.streamChanges.pipe(
++              Stream.filter((snapshot) => snapshot.usageLimits === undefined),
++            ),
++          );
++          const clearUpdate = yield* cleared.pipe(Effect.forkChild);
++          yield* TestClock.adjust("0 seconds");
++          yield* Ref.set(identity, "account-b");
++          if (trigger === "session") yield* harness.provider.onSessionStarted(started);
++          else yield* harness.provider.snapshot.refresh;
++          yield* Deferred.await(requested);
++          yield* Fiber.join(clearUpdate);
++          expect((yield* harness.provider.snapshot.getSnapshot).usageLimits).toBeUndefined();
++          const failed = {
++            checkedAt: testLimits.checkedAt,
++            windows: [],
++            credentialFingerprint: "account-b",
++            unavailable: { reason: "probeFailed" },
++          } satisfies ServerProviderUsageLimits;
++          const published = yield* Stream.toPull(
++            harness.provider.snapshot.streamChanges.pipe(
++              Stream.filter(
++                (snapshot) => snapshot.usageLimits?.unavailable?.reason === "probeFailed",
++              ),
++            ),
++          );
++          yield* Deferred.succeed(release, failed);
++          expect(Array.from(yield* published)[0]?.usageLimits).toEqual(failed);
++        }),
++      ).pipe(Effect.provide(layerTest)),
++  );
++
++  it.effect("keeps the published quota when the account identity cannot be read", () =>
++    Effect.scoped(
++      Effect.gen(function* () {
++        const accountA = { ...testLimits, credentialFingerprint: "account-a" };
++        const identity = yield* Ref.make<Effect.Effect<string | undefined, Error>>(
++          Effect.succeed("account-a"),
++        );
++        const read = yield* Ref.make<Effect.Effect<ServerProviderUsageLimits>>(
++          Effect.succeed(accountA),
++        );
++        const reads = yield* Ref.make(0);
++        const harness = yield* makeHarness({
++          usageLimits: Ref.update(reads, (count) => count + 1).pipe(
++            Effect.andThen(Ref.get(read)),
++            Effect.flatten,
++          ),
++          usageLimitsCredentialFingerprint: Ref.get(identity).pipe(Effect.flatten),
++        });
++        const published = yield* Stream.toPull(
++          harness.provider.snapshot.streamChanges.pipe(
++            Stream.filter((snapshot) => snapshot.usageLimits?.windows.length === 1),
++          ),
++        );
++        yield* harness.initialize;
++        yield* published;
++
++        const lookedUp = yield* Deferred.make<void>();
++        yield* Ref.set(
++          identity,
++          Deferred.succeed(lookedUp, undefined).pipe(
++            Effect.andThen(Effect.fail(new Cause.TimeoutError())),
++          ),
++        );
++        yield* harness.provider.snapshot.refresh;
++        yield* Deferred.await(lookedUp);
++
++        // Quota reads are serialized, so this read observes the state after the failed lookup.
++        const observed = yield* Deferred.make<ServerProviderUsageLimits | undefined>();
++        yield* Ref.set(identity, Effect.succeed("account-a"));
++        yield* Ref.set(
++          read,
++          harness.provider.snapshot.getSnapshot.pipe(
++            Effect.tap((snapshot) => Deferred.succeed(observed, snapshot.usageLimits)),
++            Effect.as(accountA),
++          ),
++        );
++        yield* TestClock.adjust("30 seconds");
++        yield* harness.provider.snapshot.refresh;
++        expect(yield* Deferred.await(observed)).toEqual(accountA);
++        // Clearing would also reset the throttle and force an extra read.
++        expect(yield* Ref.get(reads)).toBe(2);
++      }),
++    ).pipe(Effect.provide(layerTest)),
++  );
++
++  it.effect("retains the last successful quota when a later read fails", () =>
++    Effect.scoped(
++      Effect.gen(function* () {
++        const read = yield* Ref.make<Effect.Effect<ServerProviderUsageLimits>>(
++          Effect.succeed({ ...testLimits, credentialFingerprint: "account-a" }),
++        );
++        const harness = yield* makeHarness({
++          usageLimits: Ref.get(read).pipe(Effect.flatten),
++          usageLimitsCredentialFingerprint: Effect.succeed("account-a"),
++        });
++        const published = yield* Stream.toPull(
++          harness.provider.snapshot.streamChanges.pipe(
++            Stream.filter((snapshot) => snapshot.usageLimits?.windows.length === 1),
++          ),
++        );
++        yield* harness.initialize;
++        yield* published;
++        const failed = yield* Deferred.make<void>();
++        yield* Ref.set(
++          read,
++          Effect.succeed({
++            checkedAt: "2026-10-03T00:01:00.000Z",
++            credentialFingerprint: "account-a",
++            windows: [],
++            unavailable: { reason: "probeFailed" },
++          } satisfies ServerProviderUsageLimits).pipe(
++            Effect.tap(() => Deferred.succeed(failed, undefined)),
++          ),
++        );
++        yield* TestClock.adjust("30 seconds");
++        yield* harness.provider.snapshot.refresh;
++        yield* Deferred.await(failed);
++        const snapshot = yield* harness.provider.snapshot.getSnapshot;
++        expect(snapshot.usageLimits).toEqual({ ...testLimits, credentialFingerprint: "account-a" });
++      }),
++    ).pipe(Effect.provide(layerTest)),
++  );
++});
+diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/provider/AntigravityProvider.ts
+index ce4663a9be416e7a3a96109403637b23c479fd2c..7fbfe334f3a5f035c439910ed4245de9fd04715a 100644
+--- a/apps/server/src/provider/AntigravityProvider.ts
++++ b/apps/server/src/provider/AntigravityProvider.ts
+@@ -6,12 +6,16 @@ import {
+   type ServerProvider,
+   type ServerProviderModel,
+   type ServerProviderSlashCommand,
++  type ServerProviderUsageLimits,
+ } from "@t3tools/contracts";
+ import { createModelCapabilities } from "@t3tools/shared/model";
++import * as Clock from "effect/Clock";
+ import * as DateTime from "effect/DateTime";
+ import * as Effect from "effect/Effect";
+ import * as Option from "effect/Option";
+ import * as Predicate from "effect/Predicate";
++import * as Ref from "effect/Ref";
++import * as Semaphore from "effect/Semaphore";
+ import * as Result from "effect/Result";
+ import * as Stream from "effect/Stream";
+ import * as SubscriptionRef from "effect/SubscriptionRef";
+@@ -19,6 +23,7 @@ import type * as EffectAcpErrors from "effect-acp/errors";
+ import type * as EffectAcpSchema from "effect-acp/compat";
+ 
+ import type * as AcpSessionRuntime from "@t3tools/provider-acp/server/AcpSessionRuntime";
++import { resolveUsageLimitsAfterProbe } from "@t3tools/provider-core/server/usageLimits";
+ import { makeManagedServerProvider } from "@t3tools/provider-core/server/managedProvider";
+ import {
+   makeManualOnlyProviderMaintenanceCapabilities,
+@@ -114,6 +119,7 @@ function isMissingInstallation(error: EffectAcpErrors.AcpError | ProviderSetupEr
+ interface AntigravityProviderState {
+   readonly draft: ServerProviderDraft;
+   readonly authRevision: number;
++  readonly authInvalidationRevision: number;
+ }
+ 
+ interface AntigravityProviderOptions {
+@@ -123,6 +129,9 @@ interface AntigravityProviderOptions {
+     EffectAcpErrors.AcpError | ProviderSetupError
+   >;
+   readonly supportsTextGeneration: Effect.Effect<boolean>;
++  readonly usageLimits?: Effect.Effect<ServerProviderUsageLimits>;
++  /** Fails when the account identity cannot be determined right now. */
++  readonly usageLimitsCredentialFingerprint?: Effect.Effect<string | undefined, Error>;
+   readonly maintenanceCapabilities?: ProviderMaintenanceCapabilities;
+   /** Auth type and label published once a session authenticates. */
+   readonly auth?: { readonly type: string; readonly label: string };
+@@ -134,6 +143,9 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+   options: AntigravityProviderOptions,
+ ) {
+   const checkedAt = DateTime.formatIso(yield* DateTime.now);
++  const scope = yield* Effect.scope;
++  const usageSemaphore = yield* Semaphore.make(1);
++  const lastUsageAttempt = yield* Ref.make<number | undefined>(undefined);
+   const initialDraft = {
+     ...buildServerProvider({
+       presentation: { displayName: "Antigravity", showInteractionModeToggle: false },
+@@ -160,6 +172,7 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+   const metadata = yield* SubscriptionRef.make<AntigravityProviderState>({
+     draft: initialDraft,
+     authRevision: 0,
++    authInvalidationRevision: 0,
+   });
+   // Skills the driver discovered on disk per workspace. Session callbacks
+   // rewrite the workspace entry with native commands and must keep these, or
+@@ -169,6 +182,82 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+     Effect.flatMap((state) => options.stampIdentity(state.draft)),
+   );
+ 
++  /** Clear the previous account's limits without waiting for the quota backend. */
++  const clearChangedAccountLimits = Effect.fn("AntigravityProvider.clearChangedAccountLimits")(
++    function* (revision: number) {
++      if (!options.usageLimitsCredentialFingerprint) return;
++      const lookup = yield* Effect.option(options.usageLimitsCredentialFingerprint);
++      // An unknown identity is not an account change; keep the published quota.
++      if (Option.isNone(lookup)) return;
++      const fingerprint = lookup.value;
++      const cleared = yield* SubscriptionRef.modify(metadata, (state) => {
++        const limits = state.draft.usageLimits;
++        if (
++          state.authRevision !== revision ||
++          !limits ||
++          (limits.credentialFingerprint === undefined && limits.windows.length === 0) ||
++          (fingerprint !== undefined && limits.credentialFingerprint === fingerprint)
++        ) {
++          return [false, state] as const;
++        }
++        return [true, { ...state, draft: { ...state.draft, usageLimits: undefined } }] as const;
++      });
++      if (cleared) yield* Ref.set(lastUsageAttempt, undefined);
++    },
++  );
++
++  /** Read quotas in the background, serialized and throttled for the current account revision. */
++  const refreshUsageLimits = Effect.fn("AntigravityProvider.refreshUsageLimits")(function* (
++    revision: number,
++    force = false,
++  ) {
++    const read = options.usageLimits;
++    if (!read) return;
++    yield* usageSemaphore.withPermits(1)(
++      Effect.gen(function* () {
++        yield* clearChangedAccountLimits(revision);
++        const state = yield* SubscriptionRef.get(metadata);
++        if (
++          state.authRevision !== revision ||
++          state.draft.auth.status === "unauthenticated" ||
++          !state.draft.enabled ||
++          !state.draft.installed
++        )
++          return;
++        const now = yield* Clock.currentTimeMillis;
++        const last = yield* Ref.get(lastUsageAttempt);
++        if (!force && last !== undefined && now - last < 30_000) return;
++        yield* Ref.set(lastUsageAttempt, now);
++        const limits = yield* read;
++        if (
++          options.usageLimitsCredentialFingerprint &&
++          limits.credentialFingerprint !== undefined &&
++          Option.exists(
++            yield* Effect.option(options.usageLimitsCredentialFingerprint),
++            (current) => current !== limits.credentialFingerprint,
++          )
++        ) {
++          yield* clearChangedAccountLimits(revision);
++          return;
++        }
++        yield* SubscriptionRef.update(metadata, (current) =>
++          current.authRevision !== revision
++            ? current
++            : {
++                ...current,
++                draft: {
++                  ...current.draft,
++                  usageLimits: resolveUsageLimitsAfterProbe({
++                    published: current.draft.usageLimits,
++                    probed: limits,
++                  }),
++                },
++              },
++        );
++      }),
++    );
++  });
++
+   const checkProvider = Effect.fn("checkAntigravityProvider")(function* () {
+     if (!settings.enabled) return yield* getSnapshot;
+     const before = yield* SubscriptionRef.get(metadata);
+@@ -231,7 +320,10 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+         },
+       } satisfies AntigravityProviderState;
+     });
+-    return yield* options.stampIdentity(next.draft);
++    if (initialized !== undefined) {
++      yield* refreshUsageLimits(next.authRevision).pipe(Effect.forkIn(scope));
++    }
++    return yield* getSnapshot;
+   });
+ 
+   const maintenanceCapabilities =
+@@ -250,7 +342,11 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+     enrichSnapshot: ({ publishSnapshot }) =>
+       SubscriptionRef.changes(metadata).pipe(
+         Stream.runForEach((state) =>
+-          options.stampIdentity(state.draft).pipe(Effect.flatMap(publishSnapshot)),
++          options
++            .stampIdentity(state.draft)
++            .pipe(
++              Effect.flatMap((snapshot) => publishSnapshot(snapshot, { replaceUsageLimits: true })),
++            ),
+         ),
+       ),
+   });
+@@ -260,20 +356,21 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+     cwd?: string,
+   ) {
+     const before = yield* SubscriptionRef.get(metadata);
++    yield* clearChangedAccountLimits(before.authRevision);
+     const supportsTextGeneration = yield* options.supportsTextGeneration;
+     const updatedAt = DateTime.formatIso(yield* DateTime.now);
+-    yield* SubscriptionRef.update(metadata, (state) => {
+-      if (
+-        state.authRevision !== before.authRevision &&
+-        state.draft.auth.status === "unauthenticated"
+-      ) {
+-        return state;
++    const revision = yield* SubscriptionRef.modify(metadata, (state) => {
++      // Other successful sessions may publish during lookup; only logout or
++      // an authentication failure invalidates this session's metadata.
++      if (state.authInvalidationRevision !== before.authInvalidationRevision) {
++        return [undefined, state] as const;
+       }
+       const { message: _previousMessage, ...draft } = state.draft;
+       const workspaces = draft.workspaceSnapshots ?? [];
+       const workspace = cwd ? workspaces.find((entry) => entry.cwd === cwd) : undefined;
+-      return {
++      const next = {
+         authRevision: state.authRevision + 1,
++        authInvalidationRevision: state.authInvalidationRevision,
+         draft: {
+           ...draft,
+           installed: true,
+@@ -302,7 +399,14 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+             : {}),
+         },
+       } satisfies AntigravityProviderState;
++      return [next.authRevision, next] as const;
+     });
++    if (revision !== undefined) {
++      yield* refreshUsageLimits(
++        revision,
++        before.draft.auth.status !== "authenticated" || !before.draft.usageLimits?.windows.length,
++      ).pipe(Effect.forkIn(scope));
++    }
+   });
+ 
+   const onConfigOptionsUpdated = Effect.fn("AntigravityProvider.onConfigOptionsUpdated")(function* (
+@@ -351,11 +455,13 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+ 
+   const clearAccountMetadata = Effect.fn("AntigravityProvider.clearAccountMetadata")(function* () {
+     const updatedAt = DateTime.formatIso(yield* DateTime.now);
++    yield* Ref.set(lastUsageAttempt, undefined);
+     yield* SubscriptionRef.update(
+       metadata,
+       (state) =>
+         ({
+           authRevision: state.authRevision + 1,
++          authInvalidationRevision: state.authInvalidationRevision + 1,
+           draft: {
+             ...state.draft,
+             auth: { status: "unauthenticated" },
+@@ -367,6 +473,7 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+             skills: [],
+             workspaceSnapshots: [],
+             supportsTextGeneration: false,
++            usageLimits: undefined,
+           },
+         }) satisfies AntigravityProviderState,
+     );
+diff --git a/apps/server/src/provider/Drivers/AntigravityDriver.test.ts b/apps/server/src/provider/Drivers/AntigravityDriver.test.ts
+index f15cdfeff676b6e425f6fdbea05d1e755d2df0d0..ba40cf0ef8363995438a88d9549d4d41af68fb6d 100644
+--- a/apps/server/src/provider/Drivers/AntigravityDriver.test.ts
++++ b/apps/server/src/provider/Drivers/AntigravityDriver.test.ts
+@@ -15,6 +15,7 @@ import * as Path from "effect/Path";
+ import * as Schema from "effect/Schema";
+ import * as TestClock from "effect/testing/TestClock";
+ import * as ChildProcessSpawner from "effect/process/ChildProcessSpawner";
++import { HttpClient } from "effect/http";
+ 
+ import * as BackgroundPolicy from "../../background/BackgroundPolicy.ts";
+ import * as ServerConfig from "../../config.ts";
+@@ -246,6 +247,12 @@ const layerDeps = ServerConfig.layerTest(process.cwd(), {
+   prefix: "t3-antigravity-driver-config-",
+ }).pipe(
+   Layer.provideMerge(NodeServices.layer),
++  Layer.provideMerge(
++    Layer.succeed(
++      HttpClient.HttpClient,
++      HttpClient.make(() => Effect.die("Unexpected quota request")),
++    ),
++  ),
+   Layer.provideMerge(ServerSettings.layerTest()),
+   Layer.provideMerge(
+     Layer.mock(BackgroundPolicy.BackgroundPolicy)({
+diff --git a/apps/server/src/provider/Drivers/AntigravityDriver.ts b/apps/server/src/provider/Drivers/AntigravityDriver.ts
+index c82565e8f2fe79f29678d5f910422796044fd800..5bd564c6f91947ee289c6d872d7b485e1e3d69f2 100644
+--- a/apps/server/src/provider/Drivers/AntigravityDriver.ts
++++ b/apps/server/src/provider/Drivers/AntigravityDriver.ts
+@@ -17,6 +17,7 @@ import * as Schema from "effect/Schema";
+ import * as Scope from "effect/Scope";
+ import * as Stream from "effect/Stream";
+ import * as ChildProcessSpawner from "effect/process/ChildProcessSpawner";
++import { HttpClient } from "effect/http";
+ import type { AcpError } from "effect-acp/errors";
+ 
+ import * as ProviderHost from "@t3tools/provider-core/server/ProviderHost";
+@@ -52,6 +53,7 @@ import * as ProviderContinuationRequests from "@t3tools/provider-core/server/Pro
+ import { makeAntigravityAdapterV2 } from "../../orchestration-v2/Adapters/AntigravityAdapterV2.ts";
+ import { makeAcpNativeLoggerFactory } from "@t3tools/provider-acp/server/nativeLogging";
+ import { ProviderDriverError } from "../Errors.ts";
++import { makeAntigravityUsageLimits } from "../antigravityUsageLimits.ts";
+ import { makeAntigravityProvider } from "../AntigravityProvider.ts";
+ import * as ProviderEventLoggers from "@t3tools/provider-core/server/ProviderEventLoggers";
+ import * as ModelCatalog from "@t3tools/provider-core/server/ModelCatalog";
+@@ -74,6 +76,7 @@ export type AntigravityDriverEnv =
+   | ChildProcessSpawner.ChildProcessSpawner
+   | Crypto.Crypto
+   | FileSystem.FileSystem
++  | HttpClient.HttpClient
+   | IdAllocator.IdAllocatorV2
+   | McpProviderSessions.McpProviderSessions
+   | ModelCatalog.ModelCatalog
+@@ -94,6 +97,7 @@ export const AntigravityDriver: ProviderDriver<
+   create: ({ instanceId, displayName, accentColor, environment, enabled, config }) =>
+     Effect.gen(function* () {
+       const crypto = yield* Crypto.Crypto;
++      const httpClient = yield* HttpClient.HttpClient;
+       const fileSystem = yield* FileSystem.FileSystem;
+       const path = yield* Path.Path;
+       const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
+@@ -384,9 +388,21 @@ export const AntigravityDriver: ProviderDriver<
+         };
+       });
+ 
++      const usageLimits = yield* makeAntigravityUsageLimits({
++        enabled,
++        authMethod: auth.authMethod,
++        tokenPath: path.join(profileDirectory, "antigravity-acp", "acp_token.json"),
++      }).pipe(
++        Effect.provideService(FileSystem.FileSystem, fileSystem),
++        Effect.provideService(Crypto.Crypto, crypto),
++      );
+       const provider = yield* makeAntigravityProvider(settings, {
+         stampIdentity: classifyModels,
+         probe,
++        usageLimits: usageLimits.read.pipe(
++          Effect.provideService(HttpClient.HttpClient, httpClient),
++        ),
++        usageLimitsCredentialFingerprint: usageLimits.credentialFingerprint,
+         auth: { type: auth.authMethod, label: antigravityAuthLabel(auth.authMethod) },
+         supportsTextGeneration: isAntigravityTextGenerationAvailable(profileDirectory).pipe(
+           Effect.provideService(FileSystem.FileSystem, fileSystem),
+diff --git a/apps/server/src/provider/antigravityUsageLimits.test.ts b/apps/server/src/provider/antigravityUsageLimits.test.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..da99cc814e16047c22e57e5f97c555e040a6d5f9
+--- /dev/null
++++ b/apps/server/src/provider/antigravityUsageLimits.test.ts
+@@ -0,0 +1,299 @@
++import { describe, expect, it } from "@effect/vitest";
++import * as NodeServices from "@effect/platform-node/NodeServices";
++import type { AntigravityAuthMethod } from "@t3tools/contracts";
++import * as Deferred from "effect/Deferred";
++import * as Effect from "effect/Effect";
++import * as Exit from "effect/Exit";
++import * as Fiber from "effect/Fiber";
++import * as FileSystem from "effect/FileSystem";
++import * as Path from "effect/Path";
++import * as Ref from "effect/Ref";
++import * as Schema from "effect/Schema";
++import { HttpClient, HttpClientResponse } from "effect/http";
++import * as TestClock from "effect/testing/TestClock";
++
++import {
++  antigravityQuotaSummaryToLimits,
++  makeAntigravityUsageLimits,
++} from "./antigravityUsageLimits.ts";
++
++const summary = {
++  groups: [
++    {
++      displayName: "Gemini Models",
++      buckets: [
++        {
++          bucketId: "gemini-weekly",
++          window: "weekly",
++          remainingFraction: 0.25,
++          resetTime: "2026-10-07T00:00:00Z",
++        },
++        { bucketId: "gemini-5h", window: "5h", remainingFraction: 0.75 },
++      ],
++    },
++    {
++      displayName: "Claude and GPT models",
++      buckets: [
++        { bucketId: "3p-weekly", window: "weekly", remainingFraction: 0 },
++        { bucketId: "3p-5h", window: "5h", remainingFraction: 1 },
++      ],
++    },
++  ],
++};
++const encodeJson = Schema.encodeSync(Schema.fromJsonString(Schema.Unknown));
++const credentials = { client_id: "client", client_secret: "secret", refresh_token: "account-a" };
++const makeFixture = Effect.fn("antigravityUsageFixture")(function* (input: {
++  readonly contents?: string;
++  readonly authMethod?: AntigravityAuthMethod;
++  readonly enabled?: boolean;
++}) {
++  const fs = yield* FileSystem.FileSystem;
++  const path = yield* Path.Path;
++  const directory = yield* fs.makeTempDirectoryScoped();
++  const tokenPath = path.join(directory, "acp_token.json");
++  if (input.contents !== undefined) yield* fs.writeFileString(tokenPath, input.contents);
++  const reader = yield* makeAntigravityUsageLimits({
++    enabled: input.enabled ?? true,
++    authMethod: input.authMethod ?? "oauth-personal",
++    tokenPath,
++  });
++  return { fs, tokenPath, ...reader };
++});
++
++describe("Antigravity subscription limits", () => {
++  it("keeps Gemini and third-party allowances separate, including exhausted and unused buckets", () => {
++    const limits = antigravityQuotaSummaryToLimits(summary, "2026-10-03T00:00:00.000Z");
++    expect(limits.windows).toHaveLength(4);
++    expect(limits.windows.find((window) => window.id === "gemini-weekly")).toEqual({
++      id: "gemini-weekly",
++      kind: "weekly",
++      label: "Gemini · Weekly",
++      usedPercent: 75,
++      windowDurationMins: 10_080,
++      resetsAt: "2026-10-07T00:00:00.000Z",
++    });
++    expect(limits.windows.find((window) => window.id === "3p-weekly")?.usedPercent).toBe(100);
++    expect(limits.windows.find((window) => window.id === "3p-5h")?.usedPercent).toBe(0);
++  });
++
++  it("does not invent an allowance for missing fractions or unknown windows", () => {
++    const limits = antigravityQuotaSummaryToLimits(
++      {
++        groups: [
++          {
++            buckets: [
++              { bucketId: "gemini-5h", window: "5h" },
++              { bucketId: "future", window: "future", remainingFraction: 1 },
++            ],
++          },
++        ],
++      },
++      "2026-10-03T00:00:00.000Z",
++    );
++    expect(limits.windows).toEqual([]);
++    expect(limits.unavailable?.reason).toBe("probeFailed");
++  });
++
++  it.effect(
++    "refreshes only this profile's credentials, caches the token, and never writes it back",
++    () =>
++      Effect.gen(function* () {
++        const contents = encodeJson({
++          ...credentials,
++          token_uri: "https://untrusted.example/token",
++        });
++        const fixture = yield* makeFixture({ contents });
++        let refreshes = 0;
++        let quotas = 0;
++        const client = HttpClient.make((request) => {
++          if (request.url === "https://oauth2.googleapis.com/token") {
++            refreshes++;
++            expect(request.headers["content-type"]).toContain("application/x-www-form-urlencoded");
++            return Effect.succeed(
++              HttpClientResponse.fromWeb(
++                request,
++                Response.json({ access_token: "fresh-token", expires_in: 3600 }),
++              ),
++            );
++          }
++          quotas++;
++          expect(request.url).toBe(
++            "https://daily-cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary",
++          );
++          expect(request.headers.authorization).toBe("Bearer fresh-token");
++          return Effect.succeed(HttpClientResponse.fromWeb(request, Response.json(summary)));
++        });
++        const first = yield* fixture.read.pipe(
++          Effect.provideService(HttpClient.HttpClient, client),
++        );
++        const second = yield* fixture.read.pipe(
++          Effect.provideService(HttpClient.HttpClient, client),
++        );
++        expect(refreshes).toBe(1);
++        expect(quotas).toBe(2);
++        expect(yield* fixture.credentialFingerprint).toBe(first.credentialFingerprint);
++        expect(first.credentialFingerprint).toMatch(/^[a-f0-9]{64}$/);
++        expect(second.credentialFingerprint).toBe(first.credentialFingerprint);
++        expect(yield* fixture.fs.readFileString(fixture.tokenPath)).toBe(contents);
++      }).pipe(
++        Effect.provide(NodeServices.layer),
++        Effect.provideService(
++          HttpClient.HttpClient,
++          HttpClient.make(() => Effect.die("unexpected request")),
++        ),
++      ),
++  );
++
++  it.effect(
++    "reads account identity locally and detects replaced, missing, or unreadable credentials",
++    () =>
++      Effect.gen(function* () {
++        const fixture = yield* makeFixture({ contents: encodeJson(credentials) });
++        const first = yield* fixture.credentialFingerprint;
++        expect(first).toMatch(/^[a-f0-9]{64}$/);
++        yield* fixture.fs.writeFileString(
++          fixture.tokenPath,
++          encodeJson({ ...credentials, refresh_token: "account-b" }),
++        );
++        expect(yield* fixture.credentialFingerprint).not.toBe(first);
++        // A half-written file is an unknown identity, not a sign-out.
++        yield* fixture.fs.writeFileString(fixture.tokenPath, "invalid json");
++        expect(Exit.isFailure(yield* Effect.exit(fixture.credentialFingerprint))).toBe(true);
++        yield* fixture.fs.remove(fixture.tokenPath);
++        expect(yield* fixture.credentialFingerprint).toBeUndefined();
++      }).pipe(Effect.provide(NodeServices.layer)),
++  );
++
++  it.effect("retries an expired stored access token once", () =>
++    Effect.gen(function* () {
++      const fixture = yield* makeFixture({
++        contents: encodeJson({ ...credentials, token: "expired" }),
++      });
++      const urls: string[] = [];
++      const client = HttpClient.make((request) => {
++        urls.push(request.url);
++        const response =
++          request.url === "https://oauth2.googleapis.com/token"
++            ? Response.json({ access_token: "renewed", expires_in: 3600 })
++            : request.headers.authorization === "Bearer expired"
++              ? new Response("", { status: 401 })
++              : Response.json(summary);
++        return Effect.succeed(HttpClientResponse.fromWeb(request, response));
++      });
++      const limits = yield* fixture.read.pipe(Effect.provideService(HttpClient.HttpClient, client));
++      expect(limits.windows).toHaveLength(4);
++      expect(urls).toHaveLength(3);
++    }).pipe(
++      Effect.provide(NodeServices.layer),
++      Effect.provideService(
++        HttpClient.HttpClient,
++        HttpClient.make(() => Effect.die("unexpected request")),
++      ),
++    ),
++  );
++
++  it.effect("bounds a stalled credential read and allows a later quota read to recover", () =>
++    Effect.gen(function* () {
++      const fixture = yield* makeFixture({ contents: encodeJson(credentials) });
++      const requested = yield* Deferred.make<void>();
++      const contents = yield* Ref.make<Effect.Effect<string>>(
++        Deferred.succeed(requested, undefined).pipe(Effect.andThen(Effect.never)),
++      );
++      const reader = yield* makeAntigravityUsageLimits({
++        enabled: true,
++        authMethod: "oauth-personal",
++        tokenPath: fixture.tokenPath,
++      }).pipe(
++        Effect.provideService(FileSystem.FileSystem, {
++          ...fixture.fs,
++          readFileString: () => Ref.get(contents).pipe(Effect.flatten),
++        }),
++      );
++      const pending = yield* reader.read.pipe(Effect.timeout("3 seconds"), Effect.forkChild);
++      yield* Deferred.await(requested);
++      yield* TestClock.adjust("3 seconds");
++      expect((yield* Fiber.join(pending)).unavailable).toEqual({
++        reason: "probeFailed",
++        message: "Antigravity could not read usage limits.",
++      });
++      yield* Ref.set(contents, Effect.succeed(encodeJson({ ...credentials, token: "valid" })));
++      expect((yield* reader.read).windows).toHaveLength(4);
++    }).pipe(
++      Effect.provide(NodeServices.layer),
++      Effect.provideService(
++        HttpClient.HttpClient,
++        HttpClient.make((request) =>
++          Effect.succeed(HttpClientResponse.fromWeb(request, Response.json(summary))),
++        ),
++      ),
++    ),
++  );
++
++  it.effect.each(["gemini-api-key", "agent-platform", "oauth-business"] as const)(
++    "does not query personal subscription quotas for %s",
++    (authMethod) =>
++      Effect.gen(function* () {
++        const fixture = yield* makeFixture({ authMethod, contents: encodeJson(credentials) });
++        expect((yield* fixture.read).unavailable?.reason).toBe("unsupported");
++      }).pipe(
++        Effect.provide(NodeServices.layer),
++        Effect.provideService(
++          HttpClient.HttpClient,
++          HttpClient.make(() => Effect.die("must not request quota")),
++        ),
++      ),
++  );
++
++  it.effect.each([403, 500] as const)("reports a failed probe for HTTP %s", (status) =>
++    Effect.gen(function* () {
++      const fixture = yield* makeFixture({
++        contents: encodeJson({ ...credentials, access_token: "token" }),
++      });
++      const client = HttpClient.make((request) =>
++        Effect.succeed(
++          HttpClientResponse.fromWeb(request, new Response("private error", { status })),
++        ),
++      );
++      const limits = yield* fixture.read.pipe(Effect.provideService(HttpClient.HttpClient, client));
++      expect(limits.credentialFingerprint).toBe(yield* fixture.credentialFingerprint);
++      expect(limits.unavailable).toEqual({
++        reason: "probeFailed",
++        message: "Antigravity could not read usage limits.",
++      });
++    }).pipe(
++      Effect.provide(NodeServices.layer),
++      Effect.provideService(
++        HttpClient.HttpClient,
++        HttpClient.make(() => Effect.die("unexpected request")),
++      ),
++    ),
++  );
++
++  it.effect("invalidates the cached token when the profile changes accounts", () =>
++    Effect.gen(function* () {
++      const fixture = yield* makeFixture({ contents: encodeJson(credentials) });
++      let refreshes = 0;
++      const client = HttpClient.make((request) => {
++        const response =
++          request.url === "https://oauth2.googleapis.com/token"
++            ? Response.json({ access_token: `token-${++refreshes}`, expires_in: 3600 })
++            : Response.json(summary);
++        return Effect.succeed(HttpClientResponse.fromWeb(request, response));
++      });
++      const first = yield* fixture.read.pipe(Effect.provideService(HttpClient.HttpClient, client));
++      yield* fixture.fs.writeFileString(
++        fixture.tokenPath,
++        encodeJson({ ...credentials, refresh_token: "account-b" }),
++      );
++      const second = yield* fixture.read.pipe(Effect.provideService(HttpClient.HttpClient, client));
++      expect(refreshes).toBe(2);
++      expect(first.credentialFingerprint).not.toBe(second.credentialFingerprint);
++    }).pipe(
++      Effect.provide(NodeServices.layer),
++      Effect.provideService(
++        HttpClient.HttpClient,
++        HttpClient.make(() => Effect.die("unexpected request")),
++      ),
++    ),
++  );
++});
+diff --git a/apps/server/src/provider/antigravityUsageLimits.ts b/apps/server/src/provider/antigravityUsageLimits.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..36fb6925c283d3b87c0ecb573f32914763c1d6da
+--- /dev/null
++++ b/apps/server/src/provider/antigravityUsageLimits.ts
+@@ -0,0 +1,225 @@
++import type { AntigravityAuthMethod, ServerProviderUsageWindow } from "@t3tools/contracts";
++import * as Clock from "effect/Clock";
++import * as Crypto from "effect/Crypto";
++import * as DateTime from "effect/DateTime";
++import * as Effect from "effect/Effect";
++import * as Hex from "effect/encoding/Hex";
++import * as FileSystem from "effect/FileSystem";
++import * as Option from "effect/Option";
++import * as Ref from "effect/Ref";
++import * as Schema from "effect/Schema";
++import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
++
++import {
++  makeUnavailableUsageLimits,
++  makeUsageLimits,
++} from "@t3tools/provider-core/server/usageLimits";
++
++// The CLI's quota backend. The production cloudcode host can return placeholder
++// fractions; do not fall back to it and present those as a fresh allowance.
++const QUOTA_URL = "https://daily-cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary";
++const TOKEN_URL = "https://oauth2.googleapis.com/token";
++const TokenFile = Schema.Struct({
++  token: Schema.optional(
++    Schema.Union([Schema.String, Schema.Struct({ access_token: Schema.optional(Schema.String) })]),
++  ),
++  access_token: Schema.optional(Schema.String),
++  refresh_token: Schema.optional(Schema.String),
++  client_id: Schema.optional(Schema.String),
++  client_secret: Schema.optional(Schema.String),
++});
++const TokenResponse = Schema.Struct({
++  access_token: Schema.NonEmptyString,
++  expires_in: Schema.Number.check(Schema.isGreaterThan(0)),
++});
++const QuotaSummary = Schema.Struct({
++  groups: Schema.Array(
++    Schema.Struct({
++      displayName: Schema.optional(Schema.String),
++      buckets: Schema.Array(
++        Schema.Struct({
++          bucketId: Schema.NonEmptyString,
++          window: Schema.String,
++          remainingFraction: Schema.optional(
++            Schema.Number.check(Schema.isBetween({ minimum: 0, maximum: 1 })),
++          ),
++          resetTime: Schema.optional(Schema.String),
++        }),
++      ),
++    }),
++  ),
++});
++const decodeTokenFile = Schema.decodeUnknownEffect(Schema.fromJsonString(TokenFile));
++
++/** Keep model families separate: their allowances cannot be spent interchangeably. */
++export function antigravityQuotaSummaryToLimits(
++  summary: typeof QuotaSummary.Type,
++  checkedAt: string,
++) {
++  const windows = new Map<string, ServerProviderUsageWindow>();
++  for (const group of summary.groups) {
++    for (const bucket of group.buckets) {
++      const kind =
++        bucket.window === "5h" ? "session" : bucket.window === "weekly" ? "weekly" : undefined;
++      if (kind === undefined || bucket.remainingFraction === undefined) continue;
++      const family = bucket.bucketId.startsWith("gemini-")
++        ? "Gemini"
++        : bucket.bucketId.startsWith("3p-")
++          ? "Claude/GPT"
++          : group.displayName?.trim() || bucket.bucketId;
++      const reset = bucket.resetTime ? DateTime.make(bucket.resetTime) : Option.none();
++      windows.set(bucket.bucketId, {
++        id: bucket.bucketId,
++        kind,
++        label: `${family} · ${kind === "session" ? "5 hours" : "Weekly"}`,
++        usedPercent: (1 - bucket.remainingFraction) * 100,
++        windowDurationMins: kind === "session" ? 300 : 10_080,
++        ...(Option.isSome(reset) ? { resetsAt: DateTime.formatIso(reset.value) } : {}),
++      });
++    }
++  }
++  return windows.size > 0
++    ? makeUsageLimits({ checkedAt, windows: windows.values() })
++    : makeUnavailableUsageLimits({
++        checkedAt,
++        reason: "probeFailed",
++        message: "Antigravity did not report subscription quota windows.",
++      });
++}
++
++/** Reads only this instance's ACP profile; refreshed credentials stay in memory. */
++export const makeAntigravityUsageLimits = Effect.fn("makeAntigravityUsageLimits")(
++  function* (input: {
++    readonly enabled: boolean;
++    readonly authMethod: AntigravityAuthMethod;
++    readonly tokenPath: string;
++  }) {
++    const fs = yield* FileSystem.FileSystem;
++    const crypto = yield* Crypto.Crypto;
++    const cachedToken = yield* Ref.make<
++      { readonly source: string; readonly token: string; readonly expiresAt: number } | undefined
++    >(undefined);
++    const fingerprint = Effect.fn("antigravityCredentialFingerprint")(function* (
++      file: typeof TokenFile.Type,
++    ) {
++      const identity =
++        file.refresh_token?.trim() ||
++        (typeof file.token === "string" ? file.token : file.token?.access_token)?.trim() ||
++        file.access_token?.trim();
++      return identity
++        ? Hex.encode(yield* crypto.digest("SHA-256", new TextEncoder().encode(identity)))
++        : undefined;
++    });
++    // Account identity must be available even when the quota backend is down.
++    // Succeeds with undefined when signed out; fails when the identity is unknown
++    // (unreadable or half-written file) so callers keep the published quota.
++    const credentialFingerprint = Effect.gen(function* () {
++      if (!input.enabled || input.authMethod !== "oauth-personal") return undefined;
++      const source = yield* fs.readFileString(input.tokenPath).pipe(
++        Effect.catchTags({
++          PlatformError: (error) =>
++            error.reason._tag === "NotFound" ? Effect.succeed("") : Effect.fail(error),
++        }),
++      );
++      if (!source.trim()) return undefined;
++      return yield* fingerprint(yield* decodeTokenFile(source));
++    }).pipe(Effect.timeout("2 seconds"));
++    const read = Effect.gen(function* () {
++      const checkedAt = DateTime.formatIso(yield* DateTime.now);
++      if (!input.enabled || input.authMethod !== "oauth-personal") {
++        return makeUnavailableUsageLimits({ checkedAt, reason: "unsupported" });
++      }
++      return yield* Effect.gen(function* () {
++        const client = yield* HttpClient.HttpClient;
++        const source = yield* fs.readFileString(input.tokenPath).pipe(
++          Effect.timeout("2 seconds"),
++          Effect.catchTags({
++            PlatformError: (error) =>
++              error.reason._tag === "NotFound" ? Effect.succeed("") : Effect.fail(error),
++          }),
++        );
++        if (!source.trim()) {
++          yield* Ref.set(cachedToken, undefined);
++          return makeUnavailableUsageLimits({ checkedAt, reason: "unsupported" });
++        }
++        const file = yield* decodeTokenFile(source);
++        const identity = yield* fingerprint(file);
++        return yield* Effect.gen(function* () {
++          const now = yield* Clock.currentTimeMillis;
++          const cached = yield* Ref.get(cachedToken);
++          const stored =
++            (typeof file.token === "string" ? file.token : file.token?.access_token)?.trim() ||
++            file.access_token?.trim();
++          const refresh = Effect.gen(function* () {
++            if (!file.refresh_token || !file.client_id || !file.client_secret) return undefined;
++            const response = yield* client.execute(
++              HttpClientRequest.post(TOKEN_URL).pipe(
++                HttpClientRequest.bodyUrlParams({
++                  grant_type: "refresh_token",
++                  refresh_token: file.refresh_token,
++                  client_id: file.client_id,
++                  client_secret: file.client_secret,
++                }),
++              ),
++            );
++            const body = yield* HttpClientResponse.filterStatusOk(response).pipe(
++              Effect.flatMap(HttpClientResponse.schemaBodyJson(TokenResponse)),
++            );
++            yield* Ref.set(cachedToken, {
++              source,
++              token: body.access_token,
++              expiresAt: (yield* Clock.currentTimeMillis) + body.expires_in * 1000,
++            });
++            return body.access_token;
++          });
++          const token =
++            cached?.source === source && cached.expiresAt > now + 60_000
++              ? cached.token
++              : stored || (yield* refresh);
++          if (!token) return makeUnavailableUsageLimits({ checkedAt, reason: "unsupported" });
++          const request = (accessToken: string) =>
++            client.execute(
++              HttpClientRequest.post(QUOTA_URL).pipe(
++                HttpClientRequest.bearerToken(accessToken),
++                HttpClientRequest.setHeader("user-agent", "antigravity"),
++                HttpClientRequest.bodyJsonUnsafe({}),
++              ),
++            );
++          const first = yield* request(token);
++          const response =
++            first.status === 401
++              ? yield* refresh.pipe(
++                  Effect.flatMap((next) => (next ? request(next) : Effect.succeed(first))),
++                )
++              : first;
++          const summary = yield* HttpClientResponse.filterStatusOk(response).pipe(
++            Effect.flatMap(HttpClientResponse.schemaBodyJson(QuotaSummary)),
++          );
++          return antigravityQuotaSummaryToLimits(summary, checkedAt);
++        }).pipe(
++          Effect.timeout("15 seconds"),
++          Effect.orElseSucceed(() =>
++            makeUnavailableUsageLimits({
++              checkedAt,
++              reason: "probeFailed",
++              message: "Antigravity could not read usage limits.",
++            }),
++          ),
++          Effect.map((limits) =>
++            identity ? { ...limits, credentialFingerprint: identity } : limits,
++          ),
++        );
++      }).pipe(
++        // HTTP and schema failures may contain credentials. Publish a fixed message.
++        Effect.orElseSucceed(() =>
++          makeUnavailableUsageLimits({
++            checkedAt,
++            reason: "probeFailed",
++            message: "Antigravity could not read usage limits.",
++          }),
++        ),
++      );
++    });
++    return { read, credentialFingerprint };
++  },
++);
+diff --git a/docs/user/usage.md b/docs/user/usage.md
+index 7474a30e8bc6d7943f3fc0425e7668defb048b70..6a92f11caab346463c82bd5f5c8fc09ee8c7238f 100644
+--- a/docs/user/usage.md
++++ b/docs/user/usage.md
+@@ -74,6 +74,10 @@ the dialog.
+ 
+ ## Track subscription limits
+ 
++Antigravity reports the remaining Gemini and Claude/GPT allowances on five-hour
++and weekly windows for each instance signed in with a personal Google account.
++Other Antigravity sign-in methods do not report subscription limits.
++
+ **Usage → Limits** pools every subscription account it can see per provider, so with several Codex
+ or Claude accounts across your environments and hubs you read one number per window rather than a
+ list. Each window card shows how much of the pool is left and a bar with one segment per account,
+diff --git a/packages/provider-core/src/server/managedProvider.test.ts b/packages/provider-core/src/server/managedProvider.test.ts
+index 239508cec41c61b5216c8de5309dce4059b589c9..c91f07fb22415e5e613970297e41f3be1ba18ac2 100644
+--- a/packages/provider-core/src/server/managedProvider.test.ts
++++ b/packages/provider-core/src/server/managedProvider.test.ts
+@@ -573,6 +573,49 @@ describe("makeManagedServerProvider", () => {
+     ).pipe(Effect.provide(layerAlwaysRunTest)),
+   );
+ 
++  it.effect("allows provider-owned enrichment to replace and clear usage limits", () =>
++    Effect.scoped(
++      Effect.gen(function* () {
++        const replace = yield* Deferred.make<void>();
++        const replaced = yield* Deferred.make<void>();
++        const clear = yield* Deferred.make<void>();
++        const cleared = yield* Deferred.make<void>();
++        const limits = {
++          checkedAt: "2026-04-10T00:00:02.000Z",
++          windows: [{ id: "primary", kind: "session", label: "Session", usedPercent: 60 }],
++        } as const;
++        const provider = yield* makeManagedServerProvider<TestSettings>({
++          resolveMaintenance: () => Effect.succeed(maintenanceCapabilities),
++          getSettings: Effect.succeed({ enabled: true }),
++          streamSettings: Stream.empty,
++          haveSettingsChanged: (previous, next) => previous.enabled !== next.enabled,
++          initialSnapshot: () => Effect.succeed(initialSnapshot),
++          checkProvider: Effect.succeed(refreshedSnapshot),
++          enrichSnapshot: ({ publishSnapshot }) =>
++            Effect.gen(function* () {
++              yield* Deferred.await(replace);
++              yield* publishSnapshot(
++                { ...refreshedSnapshot, usageLimits: limits },
++                { replaceUsageLimits: true },
++              );
++              yield* Deferred.succeed(replaced, undefined);
++              yield* Deferred.await(clear);
++              yield* publishSnapshot(refreshedSnapshot, { replaceUsageLimits: true });
++              yield* Deferred.succeed(cleared, undefined);
++            }),
++          refreshInterval: "1 hour",
++        });
++        yield* Stream.take(provider.streamChanges, 1).pipe(Stream.runDrain);
++        yield* Deferred.succeed(replace, undefined);
++        yield* Deferred.await(replaced);
++        assert.deepStrictEqual((yield* provider.getSnapshot).usageLimits, limits);
++        yield* Deferred.succeed(clear, undefined);
++        yield* Deferred.await(cleared);
++        assert.strictEqual((yield* provider.getSnapshot).usageLimits, undefined);
++      }),
++    ).pipe(Effect.provide(layerAlwaysRunTest)),
++  );
++
+   it.effect("keeps live usage windows across a failed probe and a stale enrichment", () =>
+     Effect.scoped(
+       Effect.gen(function* () {
+diff --git a/packages/provider-core/src/server/managedProvider.ts b/packages/provider-core/src/server/managedProvider.ts
+index b74788a38bada01f0257812a537109fc9e9d7e29..91213fed6f47be1af857ebc010f807092b70ce3e 100644
+--- a/packages/provider-core/src/server/managedProvider.ts
++++ b/packages/provider-core/src/server/managedProvider.ts
+@@ -48,7 +48,10 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
+     readonly settings: Settings;
+     readonly snapshot: ServerProvider;
+     readonly getSnapshot: Effect.Effect<ServerProvider>;
+-    readonly publishSnapshot: (snapshot: ServerProvider) => Effect.Effect<void>;
++    readonly publishSnapshot: (
++      snapshot: ServerProvider,
++      options?: { readonly replaceUsageLimits: boolean },
++    ) => Effect.Effect<void>;
+   }) => Effect.Effect<void>;
+   readonly refreshInterval?: Duration.Input;
+   readonly refreshOnInterval?: boolean;
+@@ -77,14 +80,19 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
+   const publishEnrichedSnapshot = Effect.fn("publishEnrichedSnapshot")(function* (
+     generation: number,
+     nextSnapshot: ServerProvider,
++    options?: { readonly replaceUsageLimits: boolean },
+   ) {
+     const snapshotToPublish = yield* Ref.modify(snapshotStateRef, (state) => {
+       if (state.enrichmentGeneration !== generation) {
+         return [null, state] as const;
+       }
+       // Enrichment derives from the snapshot it was handed; a runtime usage
+-      // update that landed since must not be reverted by it.
+-      const merged = withUsageLimits(nextSnapshot, state.snapshot.usageLimits);
++      // update that landed since must not be reverted by it. Providers whose
++      // enrichment owns usage state can explicitly replace or clear it.
++      const merged = withUsageLimits(
++        nextSnapshot,
++        options?.replaceUsageLimits ? nextSnapshot.usageLimits : state.snapshot.usageLimits,
++      );
+       if (Equal.equals(state.snapshot, merged)) {
+         return [null, state] as const;
+       }
+@@ -115,7 +123,8 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
+         settings,
+         snapshot,
+         getSnapshot: Ref.get(snapshotStateRef).pipe(Effect.map((state) => state.snapshot)),
+-        publishSnapshot: (nextSnapshot) => publishEnrichedSnapshot(generation, nextSnapshot),
++        publishSnapshot: (nextSnapshot, options) =>
++          publishEnrichedSnapshot(generation, nextSnapshot, options),
+       })
+       .pipe(Effect.ignoreCause({ log: true }), Effect.forkIn(scope));
+ 
+diff --git a/packages/provider-core/src/server/usageLimits.test.ts b/packages/provider-core/src/server/usageLimits.test.ts
+index 9b305a74b98eb52e3a028fe3b81bd1dd0b7e010f..57e577df270007337eeedd47493efe25b0a5f4e5 100644
+--- a/packages/provider-core/src/server/usageLimits.test.ts
++++ b/packages/provider-core/src/server/usageLimits.test.ts
+@@ -79,6 +79,23 @@ describe("applyUsageLimitsUpdate", () => {
+ });
+ 
+ describe("resolveUsageLimitsAfterProbe", () => {
++  it("does not reuse successful quotas from another credential after a failed probe", () => {
++    const accountA = { ...published, credentialFingerprint: "account-a" };
++    const failed = {
++      checkedAt,
++      windows: [],
++      credentialFingerprint: "account-b",
++      unavailable: { reason: "probeFailed" as const },
++    };
++    expect(resolveUsageLimitsAfterProbe({ published: accountA, probed: failed })).toBe(failed);
++    expect(
++      resolveUsageLimitsAfterProbe({
++        published: accountA,
++        probed: { ...failed, credentialFingerprint: "account-a" },
++      }),
++    ).toBe(accountA);
++  });
++
+   it("keeps the last good windows through a failed probe but not an unsupported one", () => {
+     const failed = { checkedAt, windows: [], unavailable: { reason: "probeFailed" as const } };
+     const unsupported = { checkedAt, windows: [], unavailable: { reason: "unsupported" as const } };
+diff --git a/packages/provider-core/src/server/usageLimits.ts b/packages/provider-core/src/server/usageLimits.ts
+index ea8d0d1d029fb5a2c8b09cf7c1d54c9da96951c8..b3f09dba0b134367f05e1be743743636fde7bf82 100644
+--- a/packages/provider-core/src/server/usageLimits.ts
++++ b/packages/provider-core/src/server/usageLimits.ts
+@@ -127,7 +127,14 @@ export function resolveUsageLimitsAfterProbe(input: {
+   readonly probed: ServerProviderUsageLimits | undefined;
+ }): ServerProviderUsageLimits | undefined {
+   const { published, probed } = input;
+-  if (probed?.unavailable?.reason === "probeFailed" && published && !published.unavailable) {
++  // A failed read for another credential cannot inherit the old account's allowance.
++  if (
++    probed?.unavailable?.reason === "probeFailed" &&
++    published &&
++    !published.unavailable &&
++    (probed.credentialFingerprint === undefined ||
++      probed.credentialFingerprint === published.credentialFingerprint)
++  ) {
+     return published;
+   }
+   return probed;

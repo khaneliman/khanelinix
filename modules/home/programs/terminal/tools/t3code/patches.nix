@@ -5,4 +5,6 @@
   # now owns the PATH walk, so only editor and command probes run concurrently.
   ./perf-concurrent-command-resolution.patch
   ./desktop-attach-existing-backend.patch
+  # Upstream #15198, adapted to provider-core and guarded against late logout reads.
+  ./antigravity-usage-limits.patch
 ]
