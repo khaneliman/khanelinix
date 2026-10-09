@@ -46,7 +46,9 @@ let
       accentSurfaceForeground = accent;
       codeBackground = chrome;
       codeForeground = text;
-      errorForeground = statusForeground;
+      # Status foregrounds are colored text on neutral or tinted surfaces;
+      # solid status fills use white text upstream.
+      errorForeground = error;
       errorSurface = surfaceRaised;
       focus = accent;
       iconMuted = textMuted;
@@ -82,9 +84,9 @@ let
       toolbarControlHover = highlight;
       toolbarForeground = text;
       update = success;
-      updateForeground = statusForeground;
+      updateForeground = success;
       updateSurface = surfaceRaised;
-      warningForeground = statusForeground;
+      warningForeground = warning;
       warningSurface = surfaceRaised;
     };
   };
