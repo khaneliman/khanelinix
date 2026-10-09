@@ -23,7 +23,7 @@ from typing import Any
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = SKILL_ROOT / "references" / "model-routing.json"
 RENDERER_PATH = SKILL_ROOT / "scripts" / "render-model-routes.py"
-STATE_SCHEMA_VERSION = 2
+STATE_SCHEMA_VERSION = 3
 MAX_REGISTRY_BYTES = 256 * 1024
 MAX_STATE_BYTES = 64 * 1024
 MAX_TELEMETRY_BYTES = 64 * 1024
@@ -265,6 +265,7 @@ def validate_claims(value: Any, registry: dict[str, Any]) -> None:
             {
                 "candidate_override",
                 "model",
+                "named_agent",
                 "need",
                 "plan_revision",
                 "planned_candidates",
@@ -278,6 +279,16 @@ def validate_claims(value: Any, registry: dict[str, Any]) -> None:
         planned_candidates = claim["planned_candidates"]
         candidate_override = claim["candidate_override"]
         scopes = claim["scopes"]
+        if type(claim["named_agent"]) is not bool:
+            raise CapabilityError("claim named-agent flag must be boolean")
+        if (
+            not claim["named_agent"]
+            and isinstance(scopes, list)
+            and "named-agent-surface" in scopes
+        ):
+            raise CapabilityError(
+                "native dispatch cannot reserve the named-agent surface"
+            )
         if not isinstance(model_id, str) or model_id not in registry["models"]:
             raise CapabilityError("claim references an unknown model")
         routes = {route["need"]: route for route in registry["task_routes"]}
@@ -340,7 +351,7 @@ def validate_claim_scope_coverage(
         subscription = model["subscription"]
         pool = model["quota_pool"]
         required = {f"route:{model_id}"}
-        if state["named_agents"] == "unknown":
+        if claim["named_agent"] and state["named_agents"] == "unknown":
             required.add("named-agent-surface")
         if state["providers"][subscription] == "unknown":
             required.add(f"provider:{subscription}")
@@ -517,26 +528,37 @@ def record_outcome(
         if claim_id not in state["claims"]:
             raise CapabilityError("claim is not active")
         claim = state["claims"].pop(claim_id)
+        if not claim["named_agent"] and outcome in {
+            "agent-type-unavailable",
+            "agent-type-available",
+        }:
+            raise CapabilityError(
+                "native dispatch has no named-agent availability outcome"
+            )
         model = claim["model"]
         need = claim["need"]
         route = registry["models"][model]
         subscription = route["subscription"]
         pool = route["quota_pool"]
         if outcome == "success":
-            mark_named_available(state)
+            if claim["named_agent"]:
+                mark_named_available(state)
             mark_available(state["providers"], subscription)
             mark_available(state["pools"][subscription], pool)
             mark_available(state["routes"], model)
         elif outcome == "quota-exhausted":
-            mark_named_available(state)
+            if claim["named_agent"]:
+                mark_named_available(state)
             mark_available(state["providers"], subscription)
             mark_open(state["pools"][subscription], pool)
         elif outcome == "route-unavailable":
-            mark_named_available(state)
+            if claim["named_agent"]:
+                mark_named_available(state)
             mark_available(state["providers"], subscription)
             mark_open(state["routes"], model)
         elif outcome in {"auth-failure", "connection-failure"}:
-            mark_named_available(state)
+            if claim["named_agent"]:
+                mark_named_available(state)
             mark_open(state["providers"], subscription)
         elif outcome == "agent-type-unavailable":
             # Availability evidence from a later outcome closes this surface.
@@ -616,16 +638,22 @@ def route_block_reason(
 
 
 def route_needs_probe(
-    state: dict[str, Any], model_id: str, model: dict[str, Any]
+    state: dict[str, Any],
+    model_id: str,
+    model: dict[str, Any],
+    *,
+    named_agent: bool = True,
 ) -> bool:
     subscription = model["subscription"]
     pool = model["quota_pool"]
-    return "unknown" in {
-        state["named_agents"],
+    circuits = {
         state["routes"][model_id],
         state["providers"][subscription],
         state["pools"][subscription][pool],
     }
+    if named_agent:
+        circuits.add(state["named_agents"])
+    return "unknown" in circuits
 
 
 def task_route(registry: dict[str, Any], need: str) -> dict[str, Any]:
@@ -636,12 +664,22 @@ def task_route(registry: dict[str, Any], need: str) -> dict[str, Any]:
 
 
 def candidate_model_ids(
-    state: dict[str, Any], registry: dict[str, Any], route: dict[str, Any]
+    state: dict[str, Any],
+    registry: dict[str, Any],
+    route: dict[str, Any],
+    *,
+    named_agent: bool = True,
 ) -> list[str]:
     return [
         model_id
         for model_id in [*route["preferred"], *route["fallbacks"]]
-        if route_block_reason(state, model_id, registry["models"][model_id]) is None
+        if route_block_reason(
+            state,
+            model_id,
+            registry["models"][model_id],
+            include_named_surface=named_agent,
+        )
+        is None
     ]
 
 
@@ -687,10 +725,14 @@ def claim_route(
     need: str,
     model_id: str,
     override_reason: str | None = None,
+    *,
+    named_agent: bool = True,
 ) -> dict[str, Any]:
     require_task_id(task_id)
     path = state_path(path)
     registry, digest = load_registry_context()
+    if type(named_agent) is not bool:
+        raise CapabilityError("claim named-agent flag must be boolean")
     if not isinstance(model_id, str) or model_id not in registry["models"]:
         raise CapabilityError("claim references an unknown model")
     if override_reason is not None and (
@@ -704,7 +746,9 @@ def claim_route(
         if len(state["claims"]) >= MAX_ACTIVE_CLAIMS:
             raise CapabilityError("too many active claims")
         route = task_route(registry, need)
-        planned_candidates = candidate_model_ids(state, registry, route)
+        planned_candidates = candidate_model_ids(
+            state, registry, route, named_agent=named_agent
+        )
         is_candidate = model_id in planned_candidates
         if not is_candidate and override_reason is None:
             raise CapabilityError(
@@ -713,11 +757,13 @@ def claim_route(
         if is_candidate and override_reason is not None:
             raise CapabilityError("non-candidate override is not valid for a candidate")
         model = registry["models"][model_id]
-        reason = route_block_reason(state, model_id, model)
+        reason = route_block_reason(
+            state, model_id, model, include_named_surface=named_agent
+        )
         if reason is not None:
             raise CapabilityError(f"route is unavailable: {reason}")
         scopes = {f"route:{model_id}"}
-        if state["named_agents"] == "unknown":
+        if named_agent and state["named_agents"] == "unknown":
             scopes.add("named-agent-surface")
         subscription = model["subscription"]
         if state["providers"][subscription] == "unknown":
@@ -735,6 +781,7 @@ def claim_route(
                 else {"marker": "non-candidate", "reason": override_reason}
             ),
             "model": model_id,
+            "named_agent": named_agent,
             "need": need,
             "plan_revision": expected_revision,
             "planned_candidates": planned_candidates,
@@ -750,26 +797,35 @@ def claim_route(
         "planRevision": expected_revision,
         "plannedCandidates": planned_candidates,
         "candidateOverride": state["claims"][claim_id]["candidate_override"],
-        "probe": route_needs_probe(state, model_id, model),
+        "probe": route_needs_probe(state, model_id, model, named_agent=named_agent),
         "reservedScopes": sorted(scopes),
     }
 
 
 def plan_route(
-    path: Path, task_id: str, need: str, gateway_enabled: bool = True
+    path: Path,
+    task_id: str,
+    need: str,
+    gateway_enabled: bool = False,
+    *,
+    named_agent: bool = True,
 ) -> dict[str, Any]:
     require_task_id(task_id)
     path = state_path(path)
     registry, digest = load_registry_context()
     state = load_state(path, task_id, registry, digest)
-    return plan_from_state(state, registry, need, gateway_enabled)
+    return plan_from_state(
+        state, registry, need, gateway_enabled, named_agent=named_agent
+    )
 
 
 def plan_from_state(
     state: dict[str, Any],
     registry: dict[str, Any],
     need: str,
-    gateway_enabled: bool = True,
+    gateway_enabled: bool = False,
+    *,
+    named_agent: bool = True,
 ) -> dict[str, Any]:
     route = task_route(registry, need)
     candidates = []
@@ -777,7 +833,9 @@ def plan_from_state(
     blocked = []
     for model_id in [*route["preferred"], *route["fallbacks"]]:
         model = registry["models"][model_id]
-        reason = route_block_reason(state, model_id, model)
+        reason = route_block_reason(
+            state, model_id, model, include_named_surface=named_agent
+        )
         if reason is not None:
             blocked.append({"model": model_id, "reason": reason})
             continue
@@ -786,7 +844,7 @@ def plan_from_state(
             "subscription": model["subscription"],
             "modelFamily": model["model_family"],
             "pool": model["quota_pool"],
-            "probe": route_needs_probe(state, model_id, model),
+            "probe": route_needs_probe(state, model_id, model, named_agent=named_agent),
         }
         candidates.append(candidate)
         if model_id in route["preferred"]:
@@ -799,6 +857,10 @@ def plan_from_state(
     if not candidates:
         if claim_conflicts:
             semantic_fallback_reason = "claim-conflict"
+        elif not gateway_enabled:
+            # This planner has no caller provider; the model resolver must check
+            # the actual native profile against these same quota circuits.
+            semantic_fallback_reason = "native-profile-requires-resolution"
         else:
             semantic_fallback_reason = semantic_fallback_block_reason(
                 state, registry, route, gateway_enabled
@@ -947,10 +1009,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     plan = commands.add_parser("plan")
     plan.add_argument("--need", required=True)
-    plan.add_argument("--gateway", choices=("on", "off"), default="on")
+    plan.add_argument("--gateway", choices=("on", "off"), default="off")
+    plan.add_argument("--native-dispatch", action="store_true")
 
     claim = commands.add_parser("claim")
     claim.add_argument("--expected-revision", type=int, required=True)
+    claim.add_argument("--native-dispatch", action="store_true")
     claim.add_argument("--need", required=True)
     claim.add_argument("--model", required=True)
     claim.add_argument(
@@ -987,7 +1051,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             result = initialize(args.state, args.task_id)
         elif args.command == "plan":
             result = plan_route(
-                args.state, args.task_id, args.need, args.gateway == "on"
+                args.state,
+                args.task_id,
+                args.need,
+                args.gateway == "on",
+                named_agent=not args.native_dispatch,
             )
         elif args.command == "claim":
             result = claim_route(
@@ -997,6 +1065,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 args.need,
                 args.model,
                 args.override_reason,
+                named_agent=not args.native_dispatch,
             )
         elif args.command == "record":
             result = record_outcome(

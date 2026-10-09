@@ -279,7 +279,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertTrue(all(candidate["probe"] for candidate in plan["candidates"]))
         self.assertEqual(plan["semanticFallback"], "reviewer")
         self.assertIsNone(plan["semanticFallbackReason"])
-        self.assertTrue(plan["gatewayEnabled"])
+        self.assertFalse(plan["gatewayEnabled"])
         self.assertEqual(plan["writePolicy"], "read-only")
 
     def test_claim_reserves_unknown_scopes_and_blocks_repeated_probe(self) -> None:
@@ -470,7 +470,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.initialize()
         self.complete("opus-5-5", "agent-type-unavailable")
 
-        plan = capability.plan_route(self.state, self.task_id, "implementation")
+        plan = capability.plan_route(self.state, self.task_id, "implementation", True)
 
         self.assertIsNone(plan["selected"])
         self.assertEqual(plan["candidates"], [])
@@ -497,7 +497,7 @@ class RouteCapabilityTests(unittest.TestCase):
             blocked_claim["claimId"],
             "agent-type-unavailable",
         )
-        opened = capability.plan_route(self.state, self.task_id, "implementation")
+        opened = capability.plan_route(self.state, self.task_id, "implementation", True)
         capability.record_outcome(
             self.state,
             self.task_id,
@@ -550,14 +550,14 @@ class RouteCapabilityTests(unittest.TestCase):
             self.google_telemetry("exhausted", "exhausted"),
         )
 
-        plan = capability.plan_route(self.state, self.task_id, "noisy validation")
+        plan = capability.plan_route(self.state, self.task_id, "noisy validation", True)
 
         self.assertEqual(plan["candidates"], [])
         self.assertFalse(plan["claimConflicts"])
         self.assertIsNone(plan["semanticFallback"])
         self.assertEqual(plan["semanticFallbackReason"], "pool:openai/general")
 
-    def test_native_role_survives_exhausted_gateway_pool(self) -> None:
+    def test_native_fallback_requires_provider_specific_quota_resolution(self) -> None:
         self.initialize()
         self.complete("gpt-6-luna", "quota-exhausted")
         self.complete("haiku-5-5", "quota-exhausted", 2)
@@ -574,14 +574,16 @@ class RouteCapabilityTests(unittest.TestCase):
 
         self.assertEqual(plan["candidates"], [])
         self.assertFalse(plan["gatewayEnabled"])
-        self.assertEqual(plan["semanticFallback"], "test-runner")
-        self.assertIsNone(plan["semanticFallbackReason"])
+        self.assertIsNone(plan["semanticFallback"])
+        self.assertEqual(
+            plan["semanticFallbackReason"], "native-profile-requires-resolution"
+        )
 
     def test_gateway_role_in_healthy_pool_keeps_semantic_fallback(self) -> None:
         self.initialize()
         self.complete("gpt-oss-120b", "agent-type-unavailable")
 
-        plan = capability.plan_route(self.state, self.task_id, "noisy validation")
+        plan = capability.plan_route(self.state, self.task_id, "noisy validation", True)
         state = self.load_state()
 
         self.assertEqual(plan["candidates"], [])

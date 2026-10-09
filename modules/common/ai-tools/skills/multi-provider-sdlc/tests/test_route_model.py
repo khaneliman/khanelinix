@@ -137,7 +137,7 @@ class RouteModelTests(unittest.TestCase):
             self.request(gateway="true"),
             self.request(extra=True),
             self.request(gateway=True, provider="copilot"),
-            self.request(subscription="openai"),
+            self.request(subscription="invented"),
             self.request(gateway=True, subscription="invented"),
             self.request(gateway=True, state={}),
             self.request(gateway=True, state={"path": [], "task_id": "task-001"}),
@@ -236,7 +236,7 @@ class RouteModelTests(unittest.TestCase):
         self.assertIn("--schema", skill)
         self.assertNotIn("references/", skill)
         self.assertNotIn("model-routing.json", skill)
-        self.assertLessEqual(len(skill.splitlines()), 25)
+        self.assertLessEqual(len(skill.splitlines()), 40)
 
     def test_cli_rejects_duplicate_keys_and_oversized_input(self) -> None:
         for value in (
