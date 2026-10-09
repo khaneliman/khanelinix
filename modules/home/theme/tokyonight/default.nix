@@ -187,7 +187,7 @@ in
               semanticColors = {
                 diffAdded = colors.git.add;
                 diffRemoved = colors.red;
-                skill = colors.purple;
+                skill = colors.magenta;
               };
             };
           };
