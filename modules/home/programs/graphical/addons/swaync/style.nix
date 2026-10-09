@@ -13,10 +13,12 @@ let
         mantle = tokyonightColors.bg_dark;
         crust = tokyonightColors.bg_dark1;
         text = tokyonightColors.fg;
-        subtext0 = tokyonightColors.fg_gutter;
+        # fg_gutter and dark3 are line-number and border tones; text needs
+        # fg_dark, and fg needs a hover surface darker than dark3.
+        subtext0 = tokyonightColors.fg_dark;
         subtext1 = tokyonightColors.fg_dark;
         surface0 = tokyonightColors.bg_highlight;
-        surface1 = tokyonightColors.dark3;
+        surface1 = tokyonightColors.fg_gutter;
         surface2 = tokyonightColors.dark5;
         overlay0 = tokyonightColors.blue0;
         overlay1 = tokyonightColors.blue1;
