@@ -35,21 +35,35 @@ let
     provider.experimental_bearer_token
     (lib.getExe package)
   ];
+  extractSubcommand = ''
+    # Codex drops root -c overrides when app-server also receives -c flags.
+    subcommand=()
+    if [[ "''${1-}" == app-server ]]; then
+      subcommand=(app-server)
+      shift
+    fi
+  '';
   direct = pkgs.writeShellApplication {
     name = "codex-direct";
     text = ''
       ${refreshCommand} --bundled-only
-      # Codex drops root -c overrides when app-server also receives -c flags.
-      subcommand=()
-      if [[ "''${1-}" == app-server ]]; then
-        subcommand=(app-server)
-        shift
-      fi
+      ${extractSubcommand}
       exec ${lib.getExe package} --no-daemon "''${subcommand[@]}" \
         -c 'model_provider="openai"' \
-        -c 'model="gpt-6-astra"' \
-        -c 'web_search="live"' \
         -c ${lib.escapeShellArg "model_catalog_json=${builtins.toJSON bundledCatalogPath}"} \
+        "$@"
+    '';
+  };
+  command = pkgs.writeShellApplication {
+    name = "codex-gateway";
+    text = ''
+      ${refreshCommand}
+      ${extractSubcommand}
+      exec ${lib.getExe package} --no-daemon "''${subcommand[@]}" \
+        -c 'model_provider="cliproxyapi"' \
+        -c ${lib.escapeShellArg "model=${builtins.toJSON (modelAlias cfg.models.codex)}"} \
+        -c 'web_search="disabled"' \
+        -c ${lib.escapeShellArg "model_catalog_json=${builtins.toJSON catalogPath}"} \
         "$@"
     '';
   };
@@ -60,28 +74,20 @@ in
     bundledCatalogPath
     modelAlias
     direct
+    command
     ;
-  defaultModel = modelAlias cfg.models.codex;
-
   package = pkgs.symlinkJoin {
-    name = "${package.name}-gateway";
+    name = "${package.name}-direct";
     paths = [ package ];
     passthru = { inherit direct; };
     nativeBuildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
-      # The CLI override prevents reuse of a daemon's startup-only catalog.
+      # Leave provider selection to config so custom profiles still work.
       wrapProgram "$out/bin/codex" \
-        --add-flags ${
-          lib.escapeShellArg (
-            lib.escapeShellArgs [
-              "-c"
-              "model_catalog_json=${builtins.toJSON catalogPath}"
-            ]
-          )
-        } --run ${lib.escapeShellArg ''
+        --add-flags "--no-daemon" --run ${lib.escapeShellArg ''
           case "''${1-}" in
             --version|-V|--help|-h|completion) ;;
-            *) ${refreshCommand} || exit $? ;;
+            *) ${refreshCommand} --bundled-only || exit $? ;;
           esac
         ''}
     '';

@@ -52,7 +52,7 @@ let
     }
   ) config.programs.mcp.servers;
   aiTools = import (lib.getFile "modules/common/ai-tools") {
-    inherit gatewayEnabled lib pkgs;
+    inherit lib pkgs;
     pluginSource = inputs.claude-plugins-official;
   };
   tomlFormat = pkgs.formats.toml { };
@@ -80,8 +80,8 @@ let
     package = codexBasePackage;
   };
   codexPackage = if gatewayEnabled then gateway.package else codexBasePackage;
-  defaultModel = if gatewayEnabled then gateway.defaultModel else "gpt-6-astra";
-  defaultWebSearch = if gatewayEnabled then "disabled" else "live";
+  defaultModel = "gpt-6-astra";
+  defaultWebSearch = "live";
   localCatalogOverride = lib.optionalString gatewayEnabled (
     " -c " + lib.escapeShellArg "model_catalog_json=${builtins.toJSON gateway.bundledCatalogPath}"
   );
@@ -149,7 +149,7 @@ let
     # Faster implementation loop for routine coding tasks.
     quick = {
       model_reasoning_effort = "medium";
-      model = if gatewayEnabled then gateway.modelAlias "gpt-6-luna" else "gpt-6-luna";
+      model = "gpt-6-luna";
       model_reasoning_summary = "none";
       model_verbosity = "low";
       plan_mode_reasoning_effort = "medium";
@@ -207,7 +207,10 @@ in
       packages = [
         codexRepairMessageIds
       ]
-      ++ lib.optional gatewayEnabled gateway.direct
+      ++ lib.optionals gatewayEnabled [
+        gateway.direct
+        gateway.command
+      ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         pkgs.khanelinix.codex-browser-use-linux-chromium
       ];
@@ -316,8 +319,8 @@ in
 
         # No service_tier: Astra is costly enough on the default tier.
         model = defaultModel;
-        model_provider = mkIf gatewayEnabled "cliproxyapi";
-        model_catalog_json = mkIf gatewayEnabled gateway.catalogPath;
+        model_provider = "openai";
+        model_catalog_json = mkIf gatewayEnabled gateway.bundledCatalogPath;
         model_reasoning_effort = "low";
         plan_mode_reasoning_effort = "low";
         web_search = defaultWebSearch;

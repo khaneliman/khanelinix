@@ -76,14 +76,16 @@ let
 
   claudeCommand =
     provider: model:
-    lib.concatStringsSep " " (
-      lib.mapAttrsToList (name: value: "${name}=${lib.escapeShellArg value}") claudeGatewayEnv
-      ++ [
+    lib.escapeShellArgs (
+      [
+        "env"
         "CLAUDE_CODE_ALWAYS_ENABLE_EFFORT=1"
         "CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY=3"
         "claude"
+        "--settings"
+        (builtins.toJSON { env = claudeGatewayEnv; })
         "--model"
-        (lib.escapeShellArg (proxyModel provider model))
+        (proxyModel provider model)
       ]
       ++ lib.optionals (provider == "codex" && model == "gpt-6-astra") [
         "--effort"
@@ -91,43 +93,14 @@ let
       ]
     );
 
-  claudeDirect = pkgs.writeShellApplication {
-    name = "claude-direct";
-    text = ''
-      for arg in "$@"; do
-        case "$arg" in
-          --settings|--settings=*)
-            echo "claude-direct: --settings is reserved for the direct Anthropic route" >&2
-            exit 2
-            ;;
-        esac
-      done
-
-      exec ${lib.getExe config.programs.claude-code.package} \
-        --settings ${
-          lib.escapeShellArg (
-            builtins.toJSON {
-              env = {
-                ANTHROPIC_BASE_URL = "https://api.anthropic.com";
-                ANTHROPIC_AUTH_TOKEN = "";
-                CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY = "0";
-                ENABLE_TOOL_SEARCH = "true";
-              };
-            }
-          )
-        } \
-        "$@"
-    '';
-  };
-
   codexCommand =
     provider: model:
-    "codex --strict-config -c model_provider='\"cliproxyapi\"' -m ${lib.escapeShellArg (proxyModel provider model)}";
+    "codex-gateway --strict-config -m ${lib.escapeShellArg (proxyModel provider model)}";
 
   # If the gateway returns `503 auth_unavailable` and logs `Refresh token expired`,
   # run `cliproxyapi-claude-login`. Claude Code's `/login` updates only its direct
   # credential. Gateway mode disables claude.ai connectors by design; use
-  # `claude-direct` when those connectors are required.
+  # plain `claude` when those connectors are required.
   loginCommand =
     provider: flag:
     pkgs.writeShellApplication {
@@ -317,12 +290,11 @@ in
         (loginCommand "codex" "--codex-login")
         (loginCommand "copilot" "--github-copilot-login")
         (loginCommand "gemini" "--antigravity-login")
-      ]
-      ++ lib.optional claudeCodeEnabled claudeDirect;
+      ];
 
       shellAliases =
         lib.optionalAttrs claudeCodeEnabled {
-          claude = claudeCommand "claude" cfg.models.claude;
+          claude-gateway = claudeCommand "claude" cfg.models.claude;
           claude-claude = claudeCommand "claude" cfg.models.claude;
           claude-codex = claudeCommand "codex" cfg.models.codex;
           claude-gemini = claudeCommand "antigravity" cfg.models.gemini;
@@ -343,8 +315,6 @@ in
     xdg.configFile."cliproxyapi/config.yaml".source = proxyConfig;
 
     programs = {
-      claude-code.settings.env = mkIf claudeCodeEnabled claudeGatewayEnv;
-
       codex.settings.model_providers.cliproxyapi = mkIf codexEnabled {
         name = "CLIProxyAPI";
         base_url = "${baseUrl}/v1";

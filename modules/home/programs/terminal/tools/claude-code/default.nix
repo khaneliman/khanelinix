@@ -14,7 +14,6 @@ let
   cfg = config.khanelinix.programs.terminal.tools.claude-code;
   mcpModuleEnabled = config.khanelinix.programs.terminal.tools.mcp.enable or false;
   aiTools = import (lib.getFile "modules/common/ai-tools") {
-    gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
     inherit lib pkgs;
     pluginSource = inputs.claude-plugins-official;
   };
@@ -198,6 +197,10 @@ in
         };
 
         env = {
+          # Explicit values also clear gateway settings retained by the mutable merge.
+          ANTHROPIC_BASE_URL = "https://api.anthropic.com";
+          ANTHROPIC_AUTH_TOKEN = "";
+          CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY = "0";
           # Custom Anthropic endpoints disable deferred MCP tool loading unless
           # explicitly enabled.
           ENABLE_TOOL_SEARCH = "true";
