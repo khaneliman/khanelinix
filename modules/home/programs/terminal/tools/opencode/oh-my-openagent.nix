@@ -9,7 +9,6 @@ let
   opencodeSkills = config.programs.opencode.skills or null;
 
   aiTools = import (lib.getFile "modules/common/ai-tools") {
-    gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
     inherit lib;
   };
   deliberateModel = "openai/gpt-6-luna";
@@ -33,8 +32,7 @@ in
   config = lib.mkIf cfg.enable {
     xdg.configFile."opencode/oh-my-openagent.json".source =
       let
-        # OmO consumes the raw semantic model mappings rather than the rendered
-        # OpenCode roster, so routedModel keeps these gateway-aware.
+        # OmO consumes the same native semantic models as the OpenCode roster.
         debuggerModel = aiTools.agents.debugger.model.opencode;
         testRunnerModel = aiTools.agents.test-runner.model.opencode;
         miniModel = "openai/gpt-6-luna";

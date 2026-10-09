@@ -18,7 +18,6 @@ let
   swapEnabled = osConfig.khanelinix.services.llm.llamaSwap.enable or false;
 
   aiTools = import (lib.getFile "modules/common/ai-tools") {
-    gatewayEnabled = config.khanelinix.services.cliproxyapi.enable or false;
     inherit lib pkgs;
   };
   deliberateModel = "openai/gpt-6-luna";
