@@ -15,8 +15,11 @@ fail() {
 # being suppressed.
 #   builtins.parallel - Determinate Nix only, behind the parallel-eval
 #                       experimental feature, absent from upstream Nix.
+#   lib.hm.deprecations - Home Manager's lib extension, which nixpkgs lib does
+#                         not contain.
 allowed_missing=(
     "builtins.parallel"
+    "lib.hm.deprecations"
 )
 
 extract_blocks() {
