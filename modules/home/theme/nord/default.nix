@@ -30,9 +30,8 @@ let
     chrome = palette.palette.nord0.hex;
     error = palette.palette.nord11.hex;
     highlight = palette.palette.nord3.hex;
-    # nord11 misses 4.5:1 on every Nord background, so error text uses its
-    # OKLCH hue and chroma with lightness solved to 4.6:1. Fills keep nord11.
-    overrides.errorForeground = "#f7949b";
+    # nord11 misses 4.5:1 on every Nord background; fills keep nord11.
+    overrides.errorForeground = palette.readable.red;
     secondary = palette.palette.nord9.hex;
     statusForeground = palette.palette.nord0.hex;
     success = palette.palette.nord14.hex;
@@ -146,9 +145,9 @@ in
                   surface = palette.palette.nord1.hex;
                   surfaceAlt = palette.palette.nord2.hex;
                   fg = palette.palette.nord6.hex;
-                  accent = palette.palette.nord10.hex;
-                  accentSoft = palette.palette.nord8.hex;
-                  accentFg = palette.palette.nord6.hex;
+                  accent = palette.palette.nord8.hex;
+                  accentSoft = palette.palette.nord7.hex;
+                  accentFg = palette.palette.nord0.hex;
                   border = palette.palette.nord3.hex;
                 };
               };
@@ -166,14 +165,14 @@ in
               appearanceDarkChromeTheme = {
                 surface = palette.palette.nord0.hex;
                 ink = palette.palette.nord6.hex;
-                accent = palette.palette.nord10.hex;
+                accent = palette.palette.nord8.hex;
                 contrast = 45;
                 fonts = { };
                 opaqueWindows = false;
                 semanticColors = {
                   diffAdded = palette.palette.nord14.hex;
-                  diffRemoved = palette.palette.nord11.hex;
-                  skill = palette.palette.nord15.hex;
+                  diffRemoved = palette.readable.red;
+                  skill = palette.readable.purple;
                 };
               };
             };

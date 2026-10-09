@@ -66,6 +66,14 @@
     };
   };
 
+  # nord11, nord12, and nord15 miss 4.5:1 against nord0 and nord1. These keep
+  # each OKLCH hue and chroma with lightness solved to 4.6:1 against both, so
+  # they read as text on Nord backgrounds and as fills under nord0 text.
+  readable = {
+    red = "#f7949b";
+    orange = "#e99e87";
+    purple = "#caa4c3";
+  };
   colors = {
     background = "#2E3440";
     foreground = "#ECEFF4";

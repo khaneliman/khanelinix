@@ -1,4 +1,4 @@
-{ palette }:
+{ palette, readable }:
 let
   nord = { inherit palette; };
 in
@@ -10,7 +10,7 @@ in
       bold = true;
     };
     normal_alt = {
-      fg = nord.palette.nord9.hex;
+      fg = nord.palette.nord8.hex;
       bg = nord.palette.nord1.hex;
     };
     select_main = {
@@ -24,11 +24,11 @@ in
     };
     unset_main = {
       fg = nord.palette.nord0.hex;
-      bg = nord.palette.nord11.hex;
+      bg = readable.red;
       bold = true;
     };
     unset_alt = {
-      fg = nord.palette.nord11.hex;
+      fg = readable.red;
       bg = nord.palette.nord1.hex;
     };
   };
@@ -49,7 +49,7 @@ in
       fg = nord.palette.nord9.hex;
     };
     active = {
-      fg = nord.palette.nord15.hex;
+      fg = readable.purple;
     };
     inactive = { };
   };
@@ -90,14 +90,14 @@ in
       fg = nord.palette.nord7.hex;
     };
     rest = {
-      fg = nord.palette.nord3.hex;
+      fg = nord.palette.nord4.hex;
     };
     desc = {
-      fg = nord.palette.nord15.hex;
+      fg = readable.purple;
     };
     separator = "  ";
     separator_style = {
-      fg = nord.palette.nord2.hex;
+      fg = nord.palette.nord9.hex;
     };
   };
 
@@ -106,7 +106,7 @@ in
       fg = nord.palette.nord9.hex;
     };
     chord = {
-      fg = nord.palette.nord15.hex;
+      fg = readable.purple;
     };
     action = {
       fg = nord.palette.nord7.hex;

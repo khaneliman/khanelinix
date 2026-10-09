@@ -6,12 +6,7 @@
 let
   cfg = config.khanelinix.theme.nord;
   nord = import ./colors.nix;
-  # nord11, nord12, and nord15 miss 4.5:1 against nord0 both as text and as
-  # fills under nord0 text. These keep each OKLCH hue and chroma with
-  # lightness solved to 4.6:1.
-  red = "#e38189";
-  orange = "#d58c74";
-  purple = "#b993b2";
+  inherit (nord.readable) orange purple red;
 in
 {
   config = lib.mkIf cfg.enable {

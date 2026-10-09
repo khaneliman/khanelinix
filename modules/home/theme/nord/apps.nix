@@ -60,7 +60,7 @@ in
       '';
 
       yazi = {
-        theme = lib.mkForce (import ./yazi/theme.nix { inherit (import ./colors.nix) palette; });
+        theme = lib.mkForce (import ./yazi/theme.nix { inherit (import ./colors.nix) palette readable; });
       };
 
       swaylock.settings =
