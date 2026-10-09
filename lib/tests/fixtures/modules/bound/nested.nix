@@ -1,0 +1,4 @@
+{ token, ... }:
+{
+  nestedValues = [ token ];
+}

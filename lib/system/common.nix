@@ -2,9 +2,12 @@
 let
   inherit (inputs.nixpkgs.lib)
     filterAttrs
+    hasPrefix
     hasSuffix
+    isFunction
     mapAttrs'
     optionalAttrs
+    setFunctionArgs
     ;
 
   patchesRoot = ../../patches;
@@ -321,9 +324,87 @@ let
     inputs.sops-nix.homeManagerModules.sops
   ]
   ++ fileLib.importModulesRecursive ../../modules/home;
+
+  /**
+    Arguments that repository modules take from this flake rather than from
+    the configuration evaluating them.
+
+    # Inputs
+
+    `inputs`
+
+    : Flake inputs, possibly patched
+
+    `extendedLib`
+
+    : Extended library
+  */
+  mkBoundArgs =
+    { inputs, extendedLib }:
+    {
+      inherit inputs;
+      inherit (inputs) self;
+      lib = extendedLib;
+      flake-parts-lib = inputs.flake-parts.lib;
+      format = "system";
+    };
+
+  repoRoot = toString ../.. + "/";
+
+  bindModule =
+    args: module:
+    let
+      bindImports =
+        value:
+        if builtins.isAttrs value && value ? imports && (value._type or "module") == "module" then
+          value // { imports = map (bindModule args) value.imports; }
+        else
+          value;
+      apply =
+        value:
+        if isFunction value then
+          setFunctionArgs (moduleArgs: bindImports (value (moduleArgs // args))) (
+            removeAttrs (builtins.functionArgs value) (builtins.attrNames args)
+          )
+        else
+          bindImports value;
+    in
+    if (builtins.isPath module || builtins.isString module) && hasPrefix repoRoot (toString module) then
+      # Keying by path keeps deduplication and disabledModules working. It is
+      # safe only while one evaluation binds every file with the same args.
+      {
+        key = toString module;
+        _file = module;
+        imports = [ (apply (import module)) ];
+      }
+    else
+      bindImports module;
 in
 {
-  inherit hmSharedModules nixosUpstreamModules darwinUpstreamModules;
+  inherit
+    hmSharedModules
+    nixosUpstreamModules
+    darwinUpstreamModules
+    mkBoundArgs
+    ;
+
+  /**
+    Apply flake-owned arguments to repository modules before module
+    evaluation, so an `evalModules` caller need not supply them through
+    `specialArgs`. Path imports inside a bound module are bound the same way.
+    Modules from other flakes pass through unchanged.
+
+    # Inputs
+
+    `args`
+
+    : Arguments to bind, usually from `mkBoundArgs`
+
+    `modules`
+
+    : Module list
+  */
+  bindModules = args: map (bindModule args);
   inherit
     mkExtraInputPatches
     mkInputPatches
@@ -511,12 +592,9 @@ in
       extendedLib,
       inputPackageSets,
     }:
-    {
-      inherit inputs hostname username;
-      inherit (inputs) self;
-      lib = extendedLib;
-      flake-parts-lib = inputs.flake-parts.lib;
-      format = "system";
+    mkBoundArgs { inherit inputs extendedLib; }
+    // {
+      inherit hostname username;
     }
     // inputPackageSets;
 }

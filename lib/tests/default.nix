@@ -9,8 +9,97 @@ let
     module
     theme
     ;
+
+  boundModule = ./fixtures/modules/bound;
+  evaluateBoundModules =
+    extraModules:
+    (lib.evalModules {
+      specialArgs = {
+        token = "consumer";
+        inputs.marker = "consumer";
+        callerValue = "caller";
+      };
+      modules = [
+        {
+          options = {
+            boundValues = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
+              default = [ ];
+            };
+            nestedValues = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
+              default = [ ];
+            };
+          };
+        }
+      ]
+      ++ self.lib.system.common.bindModules {
+        inherit lib;
+        token = "owner";
+        inputs.marker = "owner";
+      } ([ boundModule ] ++ extraModules);
+    }).config;
 in
 {
+  testBoundModuleArguments = {
+    expr = evaluateBoundModules [ ];
+    expected = {
+      boundValues = [
+        "owner"
+        "owner"
+        "caller"
+      ];
+      nestedValues = [ "owner" ];
+    };
+  };
+
+  testBoundModuleDeduplication = {
+    expr = evaluateBoundModules [ boundModule ];
+    expected = {
+      boundValues = [
+        "owner"
+        "owner"
+        "caller"
+      ];
+      nestedValues = [ "owner" ];
+    };
+  };
+
+  testBoundModuleDisabledByPath = {
+    expr = evaluateBoundModules [ { disabledModules = [ boundModule ]; } ];
+    expected = {
+      boundValues = [ ];
+      nestedValues = [ ];
+    };
+  };
+
+  testBoundNestedModuleDisabledByPath = {
+    expr = evaluateBoundModules [ { disabledModules = [ (boundModule + "/nested.nix") ]; } ];
+    expected = {
+      boundValues = [
+        "owner"
+        "owner"
+        "caller"
+      ];
+      nestedValues = [ ];
+    };
+  };
+
+  testBindingLeavesCallerModulesUntouched = {
+    expr = evaluateBoundModules [ ({ token, ... }: { nestedValues = [ token ]; }) ];
+    expected = {
+      boundValues = [
+        "owner"
+        "owner"
+        "caller"
+      ];
+      nestedValues = [
+        "owner"
+        "consumer"
+      ];
+    };
+  };
+
   # base64.decode
   testBase64DecodeHello = {
     expr = base64.decode "aGVsbG8=";
