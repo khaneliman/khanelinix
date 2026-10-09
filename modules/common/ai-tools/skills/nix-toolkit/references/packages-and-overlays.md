@@ -199,6 +199,12 @@ Decision rule:
    bloats downstream runtime closures; see
    [Closure analysis](closure-analysis.md).
 
+Keep each dependency list flat. `lib.optional cond [ a b ]` produces a nested
+list; use `lib.optionals` for a list and `lib.optional` for one element. Nested
+dependency lists are deprecated as of Nixpkgs 26.05, emit
+`uses a nested list in attribute`, and push `mkDerivation` onto a slower
+validation pass. The flattened list yields the same derivation.
+
 ### Runtime-Loaded GTK Modules
 
 `autoPatchelfHook` resolves linked libraries, not modules loaded at runtime.
