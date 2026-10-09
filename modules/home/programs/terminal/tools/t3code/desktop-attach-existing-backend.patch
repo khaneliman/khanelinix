@@ -1,16 +1,16 @@
 diff --git a/apps/desktop/src/app/DesktopApp.ts b/apps/desktop/src/app/DesktopApp.ts
-index 08318bcd8da5303890bab865208bcb3a68c2bc2e..80b71f176d074edd71b0b09ff1b9957489a1d0c1 100644
+index a6906099dbd5f275c2be94a75b72f61e04953025..6e88dfa977313e9291c9600c2200e67c16286634 100644
 --- a/apps/desktop/src/app/DesktopApp.ts
 +++ b/apps/desktop/src/app/DesktopApp.ts
-@@ -33,6 +33,7 @@ import * as DesktopRemoteUpdates from "../updates/DesktopRemoteUpdates.ts";
- import * as DesktopUpdates from "../updates/DesktopUpdates.ts";
- import * as DesktopSnapShot from "../snapShot/DesktopSnapShot.ts";
- import * as DesktopWslBackend from "../wsl/DesktopWslBackend.ts";
+@@ -19,6 +19,7 @@ import * as DesktopApplicationMenu from "../window/DesktopApplicationMenu.ts";
+ import * as DesktopWindow from "../window/DesktopWindow.ts";
+ import * as PreviewPasskeys from "../preview/Passkeys.ts";
+ import * as DesktopBackendPool from "../backend/DesktopBackendPool.ts";
 +import * as DesktopExistingBackendAttachment from "../backend/DesktopExistingBackendAttachment.ts";
- import * as DesktopRendererHistory from "../telemetry/DesktopRendererHistory.ts";
- 
- const DEFAULT_DESKTOP_BACKEND_PORT = 3773;
-@@ -160,14 +161,50 @@ export const stopAllPoolInstances = Effect.fn("desktop.app.stopAllPoolInstances"
+ import * as DesktopEnvironment from "./DesktopEnvironment.ts";
+ import * as DesktopLegacyLocalStorage from "./DesktopLegacyLocalStorage.ts";
+ import * as DesktopLifecycle from "./DesktopLifecycle.ts";
+@@ -162,14 +163,50 @@ export const stopAllPoolInstances = Effect.fn("desktop.app.stopAllPoolInstances"
  );
  
  const bootstrap = Effect.gen(function* () {
@@ -95,14 +95,14 @@ index 6a8bc8e0ea4955a0313349f0ffbe1bc41e1b1abb..1973ee1e8e652c2116e5adfcc2d5edf2
      otlpTracesUrl: config.otlpTracesUrl,
      otlpMetricsUrl: config.otlpMetricsUrl,
 diff --git a/apps/desktop/src/backend/DesktopBackendManager.test.ts b/apps/desktop/src/backend/DesktopBackendManager.test.ts
-index 24303aa66997c4fddeb45f4f8c3c1cca21835d6a..a2e9865d1345d1390b0df617f00d7a7c6efad1be 100644
+index 24303aa66997c4fddeb45f4f8c3c1cca21835d6a..0b62e08c84abdb3e4a10900c1b1998f7f96b59b0 100644
 --- a/apps/desktop/src/backend/DesktopBackendManager.test.ts
 +++ b/apps/desktop/src/backend/DesktopBackendManager.test.ts
 @@ -22,6 +22,9 @@ import * as TestClock from "effect/testing/TestClock";
  import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
  import { ChildProcess, ChildProcessSpawner } from "effect/process";
  
-+import { spawn } from "node:child_process";
++import * as NodeServices from "@effect/platform-node/NodeServices";
 +import { processIsAlive } from "./DesktopExistingBackendAttachment.ts";
 +
  import * as DesktopBackendManager from "./DesktopBackendManager.ts";
@@ -112,33 +112,36 @@ index 24303aa66997c4fddeb45f4f8c3c1cca21835d6a..a2e9865d1345d1390b0df617f00d7a7c
    it.effect("stopAllPoolInstances bounds the quit finalizer when backends hang", () =>
      Effect.scoped(
        Effect.gen(function* () {
-+        const external = yield* Effect.acquireRelease(
-+          Effect.sync(() =>
-+            spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], { stdio: "ignore" }),
-+          ),
-+          (child) => Effect.sync(() => child.kill()),
++        const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
++        const external = yield* spawner.spawn(
++          ChildProcess.make(process.execPath, ["-e", "setInterval(() => {}, 1000)"], {
++            stdout: "ignore",
++            stderr: "ignore",
++          }),
 +        );
-+        if (external.pid === undefined) return yield* Effect.die("external process has no pid");
          // Each backend's process-scope finalizer reports when it starts and
          // when it finishes, keyed by instance name, so the test can prove
          // both backends reached each milestone instead of inferring it from
-@@ -1574,6 +1584,7 @@ describe("DesktopBackendManager", () => {
+@@ -1574,7 +1584,8 @@ describe("DesktopBackendManager", () => {
          yield* Deferred.succeed(allowTeardown, undefined);
          const finished = yield* Queue.takeN(teardownFinished, 2);
          assert.deepEqual(finished.toSorted(), ["instance1", "instance2"]);
+-      }).pipe(Effect.provide(TestClock.layer())),
 +        assert.isTrue(processIsAlive(external.pid));
-       }).pipe(Effect.provide(TestClock.layer())),
++      }).pipe(Effect.provide(Layer.mergeAll(TestClock.layer(), NodeServices.layer))),
      ),
    );
+ });
 diff --git a/apps/desktop/src/backend/DesktopExistingBackendAttachment.test.ts b/apps/desktop/src/backend/DesktopExistingBackendAttachment.test.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..96ab3fcf82ae64f846637d1ddc30e4a97e29275c
+index 0000000000000000000000000000000000000000..e36852a504ad03c0d10a9a6fd5c872f7b985e41d
 --- /dev/null
 +++ b/apps/desktop/src/backend/DesktopExistingBackendAttachment.test.ts
-@@ -0,0 +1,243 @@
+@@ -0,0 +1,242 @@
 +import { assert, describe, it } from "@effect/vitest";
 +import { AuthAdministrativeScopes } from "@t3tools/contracts";
-+import { spawn } from "node:child_process";
++import * as NodeServices from "@effect/platform-node/NodeServices";
++import { ChildProcess, ChildProcessSpawner } from "effect/process";
 +import * as Effect from "effect/Effect";
 +import * as Option from "effect/Option";
 +import * as Ref from "effect/Ref";
@@ -161,7 +164,7 @@ index 0000000000000000000000000000000000000000..96ab3fcf82ae64f846637d1ddc30e4a9
 +      readonly isProcessAlive?: (pid: number) => boolean;
 +      readonly descriptorId?: string;
 +      readonly sessionJson?: string;
-+      readonly issueSession?: () => Effect.Effect<string, unknown>;
++      readonly issueSession?: () => Effect.Effect<string, Error>;
 +    } = {},
 +  ) =>
 +    DesktopExistingBackendAttachment.makeWithOperations({
@@ -296,15 +299,13 @@ index 0000000000000000000000000000000000000000..96ab3fcf82ae64f846637d1ddc30e4a9
 +
 +  it.effect("does not take ownership of an attached external process", () =>
 +    Effect.gen(function* () {
-+      const child = yield* Effect.acquireRelease(
-+        Effect.sync(() =>
-+          spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], {
-+            stdio: "ignore",
-+          }),
-+        ),
-+        (process) => Effect.sync(() => process.kill()),
++      const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
++      const child = yield* spawner.spawn(
++        ChildProcess.make(process.execPath, ["-e", "setInterval(() => {}, 1000)"], {
++          stdout: "ignore",
++          stderr: "ignore",
++        }),
 +      );
-+      if (child.pid === undefined) return yield* Effect.die("external process has no pid");
 +      const pid = child.pid;
 +      yield* Effect.scoped(
 +        Effect.gen(function* () {
@@ -321,7 +322,7 @@ index 0000000000000000000000000000000000000000..96ab3fcf82ae64f846637d1ddc30e4a9
 +        }),
 +      );
 +      assert.isTrue(DesktopExistingBackendAttachment.processIsAlive(pid));
-+    }).pipe(Effect.scoped),
++    }).pipe(Effect.scoped, Effect.provide(NodeServices.layer)),
 +  );
 +
 +  it.effect("rejects empty and mismatched environment IDs", () =>
@@ -381,10 +382,10 @@ index 0000000000000000000000000000000000000000..96ab3fcf82ae64f846637d1ddc30e4a9
 +});
 diff --git a/apps/desktop/src/backend/DesktopExistingBackendAttachment.ts b/apps/desktop/src/backend/DesktopExistingBackendAttachment.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..b59837108cca1ec4a61a84d462fd1a25348310f9
+index 0000000000000000000000000000000000000000..4a73194d4e9235d58cf3b3d5ba3aaf8fade15198
 --- /dev/null
 +++ b/apps/desktop/src/backend/DesktopExistingBackendAttachment.ts
-@@ -0,0 +1,316 @@
+@@ -0,0 +1,310 @@
 +import { fetchRemoteEnvironmentDescriptor } from "@t3tools/client-runtime/environment";
 +import { AuthAdministrativeScopes, TrimmedNonEmptyString } from "@t3tools/contracts";
 +import * as Context from "effect/Context";
@@ -481,15 +482,9 @@ index 0000000000000000000000000000000000000000..b59837108cca1ec4a61a84d462fd1a25
 +): Effect.Effect<URL, DesktopExistingBackendAttachmentError> =>
 +  Effect.try({
 +    try: () => new URL(runtime.origin),
-+    catch: (cause) => cause,
++    catch: (cause) =>
++      new DesktopExistingBackendAttachmentError({ reason: "server origin is invalid", cause }),
 +  }).pipe(
-+    Effect.mapError(
-+      (cause) =>
-+        new DesktopExistingBackendAttachmentError({
-+          reason: "server origin is invalid",
-+          cause,
-+        }),
-+    ),
 +    Effect.filterOrFail(
 +      isLoopback,
 +      () =>
@@ -512,12 +507,12 @@ index 0000000000000000000000000000000000000000..b59837108cca1ec4a61a84d462fd1a25
 +  );
 +
 +export interface DesktopExistingBackendAttachmentOperations {
-+  readonly readFileString: (path: string) => Effect.Effect<string, unknown>;
++  readonly readFileString: (path: string) => Effect.Effect<string, Error>;
 +  readonly isProcessAlive: (pid: number) => boolean;
 +  readonly fetchDescriptor: (
 +    origin: URL,
-+  ) => Effect.Effect<{ readonly environmentId: string; readonly label: string }, unknown>;
-+  readonly issueSession: () => Effect.Effect<string, unknown>;
++  ) => Effect.Effect<{ readonly environmentId: string; readonly label: string }, Error>;
++  readonly issueSession: () => Effect.Effect<string, Error>;
 +}
 +
 +export interface DesktopExistingBackendAttachmentInput {
@@ -824,7 +819,7 @@ index d137d502e6c5ede735a5e75bb9a6c47eccde399c..754d9ac2d49b024887edd37a04989864
          if (Option.isSome(cached)) {
            return cached.value;
 diff --git a/apps/desktop/src/ipc/methods/window.test.ts b/apps/desktop/src/ipc/methods/window.test.ts
-index 41d93ecc4969d582435fcabf44867bf6133c9940..36594835cefb544e07c298f0909a822a82156973 100644
+index a6913528653cadbecab8bae2631740ab54bb4d1b..6352c9d28f9b1eafe0ec5cc2010c7b05e9d3bb5c 100644
 --- a/apps/desktop/src/ipc/methods/window.test.ts
 +++ b/apps/desktop/src/ipc/methods/window.test.ts
 @@ -22,6 +22,7 @@ vi.mock("electron", () => ({
@@ -894,10 +889,10 @@ index 41d93ecc4969d582435fcabf44867bf6133c9940..36594835cefb544e07c298f0909a822a
  
  describe("getWindowFullscreenState", () => {
 diff --git a/apps/desktop/src/ipc/methods/window.ts b/apps/desktop/src/ipc/methods/window.ts
-index 64e0566d3e708c68f70a095ce43fb5f894e99aaa..591259eb54e35aa2afed7ac3132a6adf3a48c84e 100644
+index 47e6c02ffe52eaf73439b86589d66ef47caf3577..0149e26cf2cd6e3f1671c45c8c0dcee9e51f048c 100644
 --- a/apps/desktop/src/ipc/methods/window.ts
 +++ b/apps/desktop/src/ipc/methods/window.ts
-@@ -30,6 +30,7 @@ import * as DesktopEnvironment from "../../app/DesktopEnvironment.ts";
+@@ -29,6 +29,7 @@ import * as DesktopEnvironment from "../../app/DesktopEnvironment.ts";
  import * as DesktopAppSettings from "../../settings/DesktopAppSettings.ts";
  import * as DesktopWslBackend from "../../wsl/DesktopWslBackend.ts";
  import * as DesktopWslEnvironment from "../../wsl/DesktopWslEnvironment.ts";
@@ -905,7 +900,7 @@ index 64e0566d3e708c68f70a095ce43fb5f894e99aaa..591259eb54e35aa2afed7ac3132a6adf
  import * as ElectronApp from "../../electron/ElectronApp.ts";
  import * as ElectronDialog from "../../electron/ElectronDialog.ts";
  import * as ElectronMenu from "../../electron/ElectronMenu.ts";
-@@ -97,10 +98,21 @@ export const getLocalEnvironmentBootstraps = DesktopIpc.makeSyncIpcMethod({
+@@ -96,10 +97,21 @@ export const getLocalEnvironmentBootstraps = DesktopIpc.makeSyncIpcMethod({
    handler: Effect.fn("desktop.ipc.window.getLocalEnvironmentBootstraps")(function* () {
      const pool = yield* DesktopBackendPool.DesktopBackendPool;
      const configuration = yield* DesktopBackendConfiguration.DesktopBackendConfiguration;
@@ -928,10 +923,10 @@ index 64e0566d3e708c68f70a095ce43fb5f894e99aaa..591259eb54e35aa2afed7ac3132a6adf
        const snapshot = yield* instance.snapshot;
        // A secondary backend (e.g. a parallel WSL backend) that hasn't produced
 diff --git a/apps/desktop/src/main.ts b/apps/desktop/src/main.ts
-index 2c56f6b39c8e46f104ee1c267363ffd6a453f6a3..0dfeff2da17c9e915e283add49cc317e34edc9d6 100644
+index ef00c4d66ed89b41f11f52aa6b754dccc7cc6446..3fa6a8238db1094c7a7587477ee29e7dcb3d743e 100644
 --- a/apps/desktop/src/main.ts
 +++ b/apps/desktop/src/main.ts
-@@ -43,6 +43,7 @@ import * as DesktopAssets from "./app/DesktopAssets.ts";
+@@ -45,6 +45,7 @@ import * as DesktopAssets from "./app/DesktopAssets.ts";
  import * as DesktopBackendConfiguration from "./backend/DesktopBackendConfiguration.ts";
  import * as DesktopBackendPool from "./backend/DesktopBackendPool.ts";
  import * as DesktopLocalEnvironmentAuth from "./backend/DesktopLocalEnvironmentAuth.ts";
@@ -939,7 +934,7 @@ index 2c56f6b39c8e46f104ee1c267363ffd6a453f6a3..0dfeff2da17c9e915e283add49cc317e
  import * as DesktopNetworkInterfaces from "./backend/DesktopNetworkInterfaces.ts";
  import * as DesktopEnvironment from "./app/DesktopEnvironment.ts";
  import * as DesktopLifecycle from "./app/DesktopLifecycle.ts";
-@@ -206,6 +207,7 @@ const layerDesktopWslBackend = DesktopWslBackend.layer.pipe(
+@@ -210,6 +211,7 @@ const layerDesktopWslBackend = DesktopWslBackend.layer.pipe(
  
  const layerDesktopLocalEnvironmentAuth = DesktopLocalEnvironmentAuth.layer.pipe(
    Layer.provideMerge(layerDesktopBackend),
