@@ -233,6 +233,64 @@ for platform in ["nixos", "darwin"]:
         + '.extendModules { modules = [ { home-manager.users.example.khanelinix.environments.home-network = { enable = true; serverHostname = "server.example.invalid"; serverLocalHostname = "server.local"; }; } ]; }; h = c.config.home-manager.users.example; in { drvPath = h.home.activationPackage.drvPath; server = h.programs.ssh.settings."austinserver austinserver.local server".data.HostName; systemDrvPath = c.config.system.build.toplevel.drvPath; }',
         validate=lambda value: value["server"] == "server.local",
     )
+    # Exports bind their own inputs, so a consumer's specialArgs cannot change
+    # them, and keyed aggregates deduplicate when imported more than once.
+    toplevel = (
+        "config.system.build.toplevel.drvPath"
+        if platform == "nixos"
+        else "system.drvPath"
+    )
+    evaluate(
+        "consumer-foreign-args-" + platform,
+        "let c = ("
+        + consumers
+        + ")."
+        + platform
+        + "; o = c.extendModules { specialArgs = { inputs = { }; self = { }; }; }; in [ c."
+        + toplevel
+        + " o."
+        + toplevel
+        + " ]",
+        validate=lambda value: value[0] == value[1],
+    )
+    evaluate(
+        "consumer-double-import-" + platform,
+        "let c = ("
+        + consumers
+        + ")."
+        + platform
+        + "; o = c.extendModules { modules = [ f."
+        + platform
+        + "Modules.default { home-manager.users.example.imports = [ f.homeManagerModules.default f.homeModules.default ]; } ]; }; in [ c."
+        + toplevel
+        + " o."
+        + toplevel
+        + " ]",
+        validate=lambda value: value[0] == value[1],
+    )
+    evaluate(
+        "consumer-foreign-lib-" + platform,
+        "let c = ("
+        + consumers
+        + ")."
+        + platform
+        + '; o = c.extendModules { specialArgs.lib = lib // { foreignMarker = "consumer"; khanelinix = throw "consumer library used by repository module"; importModulesRecursive = throw "consumer import helper used"; }; modules = [ ({ lib, ... }: assert lib.foreignMarker == "consumer"; {}) ]; }; in [ c.'
+        + toplevel
+        + " o."
+        + toplevel
+        + " ]",
+        validate=lambda value: value[0] == value[1],
+    )
+for name in ["home", "homeDarwin"]:
+    evaluate(
+        "consumer-home-portability-" + name,
+        "let c = ("
+        + consumers
+        + ")."
+        + name
+        + '; o = c.extendModules { specialArgs = { inputs = {}; self = {}; lib = (import (f.inputs.home-manager.outPath + "/modules/lib/stdlib-extended.nix") c.pkgs.lib) // { foreignMarker = "consumer"; khanelinix = throw "consumer library used by repository module"; importModulesRecursive = throw "consumer import helper used"; }; }; modules = [ f.homeManagerModules.default f.homeModules.default ({ lib, ... }: assert lib.foreignMarker == "consumer"; {}) ]; }; in [ c.activationPackage.drvPath o.activationPackage.drvPath ]',
+        validate=lambda value: value[0] == value[1],
+    )
 for backend in ["none", "colima", "docker-desktop"]:
     evaluate(
         "backend-" + backend,
@@ -421,9 +479,7 @@ evaluate(
 )
 evaluate(
     "optional-disabled",
-    "let h = ("
-    + consumers
-    + ').home.extendModules { specialArgs.inputs = f.inputs // builtins.listToAttrs (map (name: { inherit name; value = throw ("disabled input forced: " + name); }) [ "khanelivim" "mcp-servers-nix" "t3code" "claude-plugins-official" ]); modules = [ { khanelinix.services.sops.enable = lib.mkForce false; khanelinix.programs.terminal.editors.neovim.enable = lib.mkForce false; } ]; }; in { drvPath = h.activationPackage.drvPath; secrets = builtins.attrNames h.config.sops.secrets; }',
+    'let inputs = f.inputs // { self = f; } // builtins.listToAttrs (map (name: { inherit name; value = throw ("disabled input forced: " + name); }) [ "khanelivim" "mcp-servers-nix" "t3code" "claude-plugins-official" ]); exports = (import (f.outPath + "/flake/module-exports.nix") { inherit inputs; self = f; }).flake; fixtures = import (f.outPath + "/tests/consumers") { flake = f // { inherit (exports) homeManagerModules; }; }; h = fixtures.home.extendModules { modules = [ { khanelinix.services.sops.enable = lib.mkForce false; khanelinix.programs.terminal.editors.neovim.enable = lib.mkForce false; } ]; }; in { drvPath = h.activationPackage.drvPath; secrets = builtins.attrNames h.config.sops.secrets; }',
     validate=lambda value: value["secrets"] == [],
 )
 evaluate(

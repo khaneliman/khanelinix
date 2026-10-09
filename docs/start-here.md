@@ -53,21 +53,22 @@ services or a Darwin container VM backend for you.
 ## Public composition contract
 
 Use `nixosModules.default`, `darwinModules.default`, or
-`homeManagerModules.default` (`homeModules.default` is an alias). Supply
-`lib.system.moduleArgs { system; hostname; username; }` as `specialArgs` for a
-system or `extraSpecialArgs` for a home. This provides the extended library,
-locked upstream inputs, auxiliary package-set functions, and repository helpers.
-Do not replace `inputs.self` with your consumer flake: repository assets belong
-to the input; your host configuration belongs to your own flake.
+`homeManagerModules.default` (`homeModules.default` is an alias) with the stock
+`nixosSystem`, `darwinSystem`, or `homeManagerConfiguration`. You do not pass
+`specialArgs`. Each aggregate binds its own extended library, locked inputs, and
+repository helpers into khanelinix modules, so your own `specialArgs`, including
+your `inputs`, `self`, or `lib`, cannot change them. Importing an aggregate more
+than once is harmless. Per-host values come from your configuration: a system
+reads `networking.hostName` and `khanelinix.user.name`, and a home reads
+`home.username` and, when integrated, the host's name.
 
 System aggregates provision their upstream modules, package policy, all fleet
 package overlays, and integrated Home Manager composition. They do not discover
 homes or choose a personal account. Define the user and its home explicitly. For
 standalone Home Manager, import a package set with
-`lib.system.common.mkNixpkgsConfig khanelinix`, pass it as `pkgs`, and also pass
-that same set in `extraSpecialArgs.pkgs`. This keeps package ownership outside
-Home Manager and avoids a pinned Stylix/Home Manager overlay-library recursion.
-The executable examples show the complete composition, not just entry paths.
+`lib.system.common.mkNixpkgsConfig khanelinix` and pass it as `pkgs`. This keeps
+package ownership outside Home Manager. The executable examples show the
+complete composition, not just entry paths.
 
 Integrated homes receive their own account name, not the primary system user's
 name. If you disable Stylix's automatic Home Manager import, the aggregate still

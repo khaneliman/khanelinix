@@ -1,13 +1,6 @@
 { flake }:
 let
   f = flake;
-  args =
-    system:
-    f.lib.system.moduleArgs {
-      inherit system;
-      hostname = "first-host";
-      username = "example";
-    };
   home = {
     home = {
       username = "example";
@@ -45,9 +38,6 @@ let
     in
     f.inputs.home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
-      extraSpecialArgs = args system // {
-        inherit pkgs;
-      };
       modules = [
         f.homeManagerModules.default
         home
@@ -58,7 +48,6 @@ in
 {
   nixos = f.inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
-    specialArgs = args "x86_64-linux";
     modules = [
       f.nixosModules.default
       {
@@ -78,7 +67,6 @@ in
   };
   darwin = f.inputs.nix-darwin.lib.darwinSystem {
     system = "aarch64-darwin";
-    specialArgs = args "aarch64-darwin";
     modules = [
       f.darwinModules.default
       {
