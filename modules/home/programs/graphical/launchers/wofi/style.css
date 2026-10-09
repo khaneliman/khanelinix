@@ -64,14 +64,14 @@ label {
 }
 
 #entry {
-  color: #4c566a;
+  color: #d8dee9;
   padding: 8px 8px;
   border-radius: 4px;
   background: transparent;
 }
 
 #entry:selected {
-  color: #eceff4;
+  color: #2e3440;
   background: #8fbcbb;
   font-weight: bold;
 }
@@ -81,7 +81,7 @@ expander arrow {
 }
 
 #entry #selected #text {
-  color: #eceff4;
+  color: #2e3440;
 }
 
 expander list {
@@ -107,7 +107,7 @@ expander list #entry #selected {
 }
 
 expander list #entry #selected label {
-  color: #eceff4;
+  color: #2e3440;
   font-weight: bold;
 }
 
@@ -118,7 +118,7 @@ expander list #entry:active {
 
 expander list #entry:hover label,
 expander list #entry:active label {
-  color: #eceff4;
+  color: #2e3440;
   font-weight: bold;
 }
 
