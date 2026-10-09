@@ -21,8 +21,7 @@
 }
 
 #pulseaudio.muted {
-  background-color: #90b1b1;
-  color: #2a5c45;
+  color: @subtext0;
 }
 
 #keyboard-state {

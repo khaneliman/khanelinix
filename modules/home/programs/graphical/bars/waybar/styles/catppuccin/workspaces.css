@@ -25,7 +25,7 @@
 }
 
 #workspaces button.empty {
-  color: @overlay0;
+  color: @overlay2;
 }
 
 #workspaces button.visible {
