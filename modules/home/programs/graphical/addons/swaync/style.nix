@@ -14,11 +14,16 @@ let
         crust = tokyonightColors.bg_dark1;
         text = tokyonightColors.fg;
         # fg_gutter and dark3 are line-number and border tones; text needs
-        # fg_dark, and fg needs a hover surface darker than dark3.
+        # fg_dark, and fg needs a hover surface it clears 4.5:1 on. Day's
+        # gutter tone is too dark for its text, so its hover steps lighter.
         subtext0 = tokyonightColors.fg_dark;
         subtext1 = tokyonightColors.fg_dark;
         surface0 = tokyonightColors.bg_highlight;
-        surface1 = tokyonightColors.fg_gutter;
+        surface1 =
+          if config.khanelinix.theme.tokyonight.variant == "day" then
+            tokyonightColors.bg_dark1
+          else
+            tokyonightColors.fg_gutter;
         surface2 = tokyonightColors.dark5;
         overlay0 = tokyonightColors.blue0;
         overlay1 = tokyonightColors.blue1;
