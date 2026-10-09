@@ -23,7 +23,7 @@
   warning,
 }:
 let
-  themeFile = (pkgs.formats.json { }).generate "t3code-${id}.json" {
+  theme = {
     version = 1;
     inherit appearance name;
     colors = {
@@ -90,11 +90,27 @@ let
       warningSurface = surfaceRaised;
     };
   };
+  # Clients resolve a theme saved in their own library before a published one
+  # with the same id, so a fixed id lets a stale saved copy shadow every
+  # update. A content-derived id cannot match an older palette's copy.
+  paletteHash = builtins.substring 0 8 (builtins.hashString "sha256" (builtins.toJSON theme));
+  publishedId = "${id}-${paletteHash}";
+  themeFile = (pkgs.formats.json { }).generate "t3code-${publishedId}.json" theme;
+  baseDir = "${config.home.homeDirectory}/.t3";
+  themesDir = "${baseDir}/userdata/themes";
 in
 lib.mkIf config.programs.t3code.enable (
   lib.hm.dag.entryAfter [ "t3codeSettingsActivation" "t3codeProviderSettings" ] ''
     run ${lib.getExe' config.programs.t3code.package "t3"} theme set ${themeFile} \
-      --id ${lib.escapeShellArg id} \
-      --base-dir ${lib.escapeShellArg "${config.home.homeDirectory}/.t3"}
+      --id ${lib.escapeShellArg publishedId} \
+      --base-dir ${lib.escapeShellArg baseDir}
+
+    # Nix owns every khanelinix-* published theme; drop superseded palettes
+    # so clients do not list them.
+    for staleTheme in ${lib.escapeShellArg themesDir}/khanelinix-*.json; do
+      if [ -e "$staleTheme" ] && [ "$staleTheme" != ${lib.escapeShellArg "${themesDir}/${publishedId}.json"} ]; then
+        run rm -f -- "$staleTheme"
+      fi
+    done
   ''
 )
