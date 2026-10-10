@@ -263,46 +263,7 @@
       }; f
     '';
 
-    stash-staged = /* Bash */ ''
-      !f() {
-          : git stash ;
-          staged=$(git diff --staged --unified=0);
-          unstaged=$(git diff --unified=0);
-          [ "$staged" = "" ] && return;
-          [ "$unstaged" = "" ] && { git stash $@; return $?; };
-          printf 'This is a potentially destructive command.\nBe sure you understand it before running it.\nContinue? [y/N]: ';
-          IFS= read -r cont; echo $cont | grep -iq '^y' || { echo 'Not continuing.'; return 1; };
-          git reset --hard && echo -E $staged |
-              git apply --unidiff-zero --allow-empty - &&
-              git stash $@ &&
-              echo -E $unstaged | git apply --unidiff-zero --allow-empty - || {
-                  top=$(git rev-parse --git-dir);
-                  echo -E $staged >$top/LAST_STAGED.diff;
-                  echo -E $unstaged >$top/LAST_UNSTAGED.diff;
-                  printf 'ERROR: Could not stash staged.\nDiffs saved: try git apply --unidiff-zero .git/LAST_STAGED.diff .git/LAST_UNSTAGED.diff\n';
-              };
-      }; f
-    '';
-
-    stash-unstaged = /* Bash */ ''
-      !f() {
-          : git stash ;
-          staged=$(git diff --staged --unified=0);
-          unstaged=$(git diff --unified=0);
-          [ "$staged" = "" ] && { git stash $@; return $?; };
-          [ "$unstaged" = "" ] && return;
-          printf 'This is a potentially destructive command.\nBe sure you understand it before running it.\nContinue? [y/N]: ';
-          IFS= read -r cont; echo $cont | grep -iq '^y' || { echo 'Not continuing.'; return 1; };
-          git reset --hard && echo -E $unstaged |
-              git apply --unidiff-zero - &&
-              git stash $@ &&
-              echo -E $staged | git apply --unidiff-zero --allow-empty - || {
-                  top=$(git rev-parse --git-dir);
-                  echo -E $staged >$top/LAST_STAGED.diff;
-                  echo -E $unstaged >$top/LAST_UNSTAGED.diff;
-                  printf 'ERROR: Could not stash unstaged.\nDiffs saved: try git apply --unidiff-zero .git/LAST_STAGED.diff .git/LAST_UNSTAGED.diff\n';
-              };
-      }; f
-    '';
+    stash-staged = "!f() { ${builtins.readFile ./stash-selected.sh} }; f staged";
+    stash-unstaged = "!f() { ${builtins.readFile ./stash-selected.sh} }; f unstaged";
   };
 }
