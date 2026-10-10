@@ -28,13 +28,13 @@ in
       # rotation frequency
       priority = 1;
       frequency = "weekly";
-      rotate = 7; # special value, means every 7 days
+      rotate = 7; # Keep seven rotated logs.
       minage = 7; # avoid removing logs that are less than 7 days old
 
       # compression
       compress = true; # lets compress logs to save space
       compresscmd = "${lib.getExe' pkgs.zstd "zstd"}";
-      compressoptions = " -Xcompression-level 10";
+      compressoptions = "-10";
       compressext = "zst";
       uncompresscmd = "${lib.getExe' pkgs.zstd "unzstd"}";
     };
