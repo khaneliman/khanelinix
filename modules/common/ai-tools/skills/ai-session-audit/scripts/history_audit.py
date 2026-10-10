@@ -577,6 +577,7 @@ def extract(
         for sid, items in sorted(by_session.items())
     ]
     summary = {
+        "selected_session_ids": sorted(sessions),
         "sessions": len(by_session),
         "prompts": len(kept),
         "dropped": dict(sorted(dropped.items())),
@@ -885,6 +886,7 @@ def routing(
     triggers: dict[str, Any],
     boundaries: Sequence[str],
     skills_root: Path | None,
+    selected_session_ids: set[str] | None = None,
 ) -> dict[str, Any]:
     aliases = triggers["aliases"]
     loads = observed_skills(db, aliases, triggers["installed"])
@@ -930,7 +932,9 @@ def routing(
     return {
         "created": created,
         "rows": rows,
-        "edits": edit_before_load(db, prompts, triggers, loads, boundaries),
+        "edits": edit_before_load(
+            db, prompts, triggers, loads, boundaries, selected_session_ids
+        ),
     }
 
 
@@ -940,7 +944,13 @@ def edit_before_load(
     triggers: dict[str, Any],
     loads: dict[str, dict[str, float]],
     boundaries: Sequence[str],
+    selected_session_ids: set[str] | None = None,
 ) -> list[dict[str, Any]]:
+    selected = (
+        {prompt["session_id"] for prompt in prompts}
+        if selected_session_ids is None
+        else selected_session_ids
+    )
     suffixes = {
         name: tuple(spec["edit_suffixes"])
         for name, spec in triggers["skills"].items()
@@ -969,6 +979,8 @@ def edit_before_load(
         where t.tool_name in ({tools})""",
         sorted(EDIT_TOOLS),
     ):
+        if row["sid"] not in selected:
+            continue
         paths = [row["path"]] if row["path"] else PATCH_PATH.findall(row["inp"] or "")
         for name, endings in suffixes.items():
             if any(path.endswith(endings) for path in paths if path):
@@ -1144,8 +1156,16 @@ def phrases_markdown(report: dict[str, Any]) -> str:
 
 
 def signals(
-    db: sqlite3.Connection, prompts: Sequence[dict[str, Any]], boundaries: Sequence[str]
+    db: sqlite3.Connection,
+    prompts: Sequence[dict[str, Any]],
+    boundaries: Sequence[str],
+    selected_session_ids: set[str] | None = None,
 ) -> dict[str, Any]:
+    selected = (
+        {prompt["session_id"] for prompt in prompts}
+        if selected_session_ids is None
+        else selected_session_ids
+    )
     windows: dict[tuple[str, str], collections.Counter[str]] = collections.defaultdict(
         collections.Counter
     )
@@ -1167,21 +1187,24 @@ def signals(
     for name, pattern in HARNESS_ERRORS.items():
         for row in db.execute(
             f"""select s.agent agent, substr(coalesce({stamp}, s.started_at),1,7) month,
-            {relationship} rel, count(*) n from messages m join sessions s on s.id = m.session_id
-            where m.role='assistant' and m.content like ? group by 1,2,3""",
+            {relationship} rel, s.id sid, count(*) n from messages m join sessions s on s.id = m.session_id
+            where m.role='assistant' and m.content like ? group by 1,2,3,4""",
             (pattern,),
         ):
+            if row["sid"] not in selected:
+                continue
             errors[(row["agent"], row["month"], "subagent" if row["rel"] else "root")][
                 name
             ] += row["n"]
     interrupts = collections.Counter()
     for row in db.execute(
-        f"""select s.agent agent, substr(coalesce({stamp}, s.started_at),1,7) month, count(*) n
+        f"""select s.agent agent, substr(coalesce({stamp}, s.started_at),1,7) month, s.id sid, count(*) n
         from messages m join sessions s on s.id = m.session_id
         where m.role='user' and {relationship}='' and (m.content like '[Request interrupted by user%'
-        or {subtype}='interrupted') group by 1,2"""
+        or {subtype}='interrupted') group by 1,2,3"""
     ):
-        interrupts[(row["agent"], row["month"])] = row["n"]
+        if row["sid"] in selected:
+            interrupts[(row["agent"], row["month"])] += row["n"]
     return {
         "prompt_signals": [
             {
@@ -1481,6 +1504,20 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def read_selected_session_ids(out: Path) -> set[str]:
+    path = out / "extract-summary.json"
+    try:
+        summary = json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError) as error:
+        raise HistoryError(
+            f"cannot read audit scope from {path}; rerun extract"
+        ) from error
+    ids = summary.get("selected_session_ids") if isinstance(summary, dict) else None
+    if not isinstance(ids, list) or not all(isinstance(sid, str) for sid in ids):
+        raise HistoryError(f"missing audit scope in {path}; rerun extract")
+    return set(ids)
+
+
 def run_threads(args: argparse.Namespace, db: sqlite3.Connection) -> dict[str, Any]:
     prompts = read_jsonl(args.out / "prompts.jsonl")
     sessions = read_jsonl(args.out / "sessions.jsonl")
@@ -1585,6 +1622,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 load_triggers(args.triggers),
                 boundaries,
                 args.skills_root,
+                read_selected_session_ids(args.out),
             )
             write_json(args.out / "routing.json", report, args.force)
             write_text(args.out / "routing.md", routing_markdown(report), args.force)
@@ -1599,7 +1637,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             write_text(args.out / "phrases.md", phrases_markdown(report), args.force)
             manifest["phrases"] = len(report["phrases"])
         if args.command in {"signals", "run"}:
-            report = signals(db, read_jsonl(args.out / "prompts.jsonl"), boundaries)
+            report = signals(
+                db,
+                read_jsonl(args.out / "prompts.jsonl"),
+                boundaries,
+                read_selected_session_ids(args.out),
+            )
             write_json(args.out / "signals.json", report, args.force)
             write_text(args.out / "signals.md", signals_markdown(report), args.force)
             manifest["signals_rows"] = len(report["prompt_signals"])

@@ -435,6 +435,140 @@ class SignalTests(unittest.TestCase):
         self.assertEqual(errors[("claude", "root")]["gateway-cooldown"], 1)
 
 
+class SelectedScopeTests(unittest.TestCase):
+    def test_empty_prompt_scope_does_not_include_archive_rows(self) -> None:
+        db = sqlite3.connect(":memory:")
+        self.addCleanup(db.close)
+        db.row_factory = sqlite3.Row
+        db.executescript(SCHEMA)
+        db.execute(
+            "insert into sessions (id, agent, started_at) values ('outside', 'claude', '2020-01-01')"
+        )
+        db.execute(
+            "insert into messages (id, session_id, ordinal, role, content) values (1, 'outside', 1, 'assistant', 'API Error: outside')"
+        )
+        db.execute(
+            "insert into messages (id, session_id, ordinal, role, content) values (2, 'outside', 2, 'user', '[Request interrupted by user]')"
+        )
+        db.execute(
+            "insert into tool_calls (message_id, session_id, tool_name, file_path) values (1, 'outside', 'Edit', 'outside.nix')"
+        )
+        triggers = {"skills": {"nix": {"edit_suffixes": [".nix"]}}, "aliases": {}}
+        self.assertEqual(history.edit_before_load(db, [], triggers, {}, []), [])
+        self.assertEqual(
+            history.signals(db, [], []),
+            {"prompt_signals": [], "harness_errors": [], "interrupts": []},
+        )
+
+    def test_cli_scope_keeps_workers_and_session_dates(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            db = root / "archive.db"
+            archive = Archive(db)
+            cases = (
+                ("root", "codex", "2026-09-01", ""),
+                ("second-root", "codex", "2026-09-02", ""),
+                ("worker", "codex", "2026-09-02", "subagent"),
+                ("automated", "codex", "2026-09-02", ""),
+                ("wrong-agent", "claude", "2026-09-02", ""),
+                ("before", "codex", "2026-08-31", ""),
+                ("at-until", "codex", "2026-10-01", ""),
+            )
+            for sid, agent, started, relationship in cases:
+                archive.session(sid, agent, started, relationship=relationship)
+                archive.message(sid, 0, "user", "Please fix this Nix module")
+                mid = archive.message(sid, 1, "assistant", "API Error: failed")
+                archive.tool(sid, mid, "Edit", path=f"{sid}.nix")
+                archive.message(sid, 2, "user", "[Request interrupted by user]")
+            archive.db.execute(
+                "update sessions set is_automated=1 where id='automated'"
+            )
+            # Session scope, not message-time scope: selected sessions retain late events.
+            archive.db.execute(
+                "update messages set timestamp='2026-10-05' where session_id='root'"
+            )
+            archive.close()
+            out = root / "run"
+            code, _, stderr = run_cli(
+                "extract",
+                "--db",
+                str(db),
+                "--out",
+                str(out),
+                "--agents",
+                "codex",
+                "--since",
+                "2026-09-01",
+                "--until",
+                "2026-10-01",
+            )
+            self.assertEqual(code, 0, stderr)
+            for command in ("routing", "signals"):
+                code, _, stderr = run_cli(command, "--db", str(db), "--out", str(out))
+                self.assertEqual(code, 0, stderr)
+            edits = json.loads((out / "routing.json").read_text())["edits"]
+            self.assertEqual({row["agent"] for row in edits}, {"codex"})
+            self.assertEqual(sum(row.get("never", 0) for row in edits), 4)
+            self.assertEqual(
+                sum(
+                    row.get("never", 0)
+                    for row in edits
+                    if row["session_kind"] == "subagent"
+                ),
+                1,
+            )
+            report = json.loads((out / "signals.json").read_text())
+            self.assertEqual(
+                {row["agent"] for row in report["harness_errors"]}, {"codex"}
+            )
+            self.assertEqual(
+                sum(row.get("api-error", 0) for row in report["harness_errors"]), 4
+            )
+            self.assertEqual(sum(row["count"] for row in report["interrupts"]), 3)
+            self.assertIn("2026-10", {row["month"] for row in report["harness_errors"]})
+            self.assertEqual(
+                {p["session_id"] for p in read_jsonl(out / "prompts.jsonl")},
+                {"root", "second-root"},
+            )
+
+    def test_standalone_reports_reject_missing_or_invalid_scope(self) -> None:
+        with fixture() as (root, db):
+            out = root / "run"
+            code, _, stderr = run_cli("extract", "--db", str(db), "--out", str(out))
+            self.assertEqual(code, 0, stderr)
+            for summary in ({}, [], {"selected_session_ids": [1]}):
+                (out / "extract-summary.json").write_text(json.dumps(summary))
+                for command in ("routing", "signals"):
+                    code, _, stderr = run_cli(
+                        command, "--db", str(db), "--out", str(out)
+                    )
+                    self.assertEqual(code, 2, stderr)
+                    self.assertIn("rerun extract", stderr)
+
+    def test_run_uses_empty_selected_scope(self) -> None:
+        with fixture() as (root, db):
+            out = root / "empty"
+            code, _, stderr = run_cli(
+                "run",
+                "--db",
+                str(db),
+                "--out",
+                str(out),
+                "--agents",
+                "codex",
+                "--since",
+                "2030-01-01",
+            )
+            self.assertEqual(code, 0, stderr)
+            self.assertEqual(
+                json.loads((out / "routing.json").read_text())["edits"], []
+            )
+            report = json.loads((out / "signals.json").read_text())
+            self.assertEqual(
+                report, {"prompt_signals": [], "harness_errors": [], "interrupts": []}
+            )
+
+
 def git(repo: Path, *args: str, date: str = "2026-09-01T00:00:00Z") -> None:
     env = {
         "PATH": os.environ["PATH"],

@@ -25,6 +25,12 @@ git log --format='%ad %h %s' --date=short -- <base.md> <skill references>
 Commit dates approximate activation. Label comparisons approximate unless a
 retained system generation proves when the change went live.
 
+`extract-summary.json` records every agent/date-selected session, including
+workers whose prompts are deliberately excluded. Routing edits and harness
+errors use this session scope, not message dates or only human-prompt sessions.
+Rerun extraction for older output directories before running `routing` or
+`signals`; summaries without the saved scope are rejected.
+
 ## 3. Verify the extraction
 
 Sample 40 rows from `prompts.jsonl` and confirm each is human-typed. A new
