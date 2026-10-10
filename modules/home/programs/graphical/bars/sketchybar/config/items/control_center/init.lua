@@ -17,7 +17,6 @@ local github = require("items.control_center.github")
 local volume = require("items.control_center.volume")
 
 local items = {
-	keep_awake and keep_awake.name or nil,
 	battery.name,
 	wifi.name,
 	bluetooth.name,
@@ -26,14 +25,11 @@ local items = {
 	volume.icon.name,
 }
 
-local visible_items = {}
-for _, item in ipairs(items) do
-	if item ~= nil then
-		table.insert(visible_items, item)
-	end
+if keep_awake then
+	table.insert(items, 1, keep_awake.name)
 end
 
-Sbar.add("bracket", visible_items, {
+Sbar.add("bracket", items, {
 	background = {
 		color = colors.surface0,
 		border_color = colors.surface1,
