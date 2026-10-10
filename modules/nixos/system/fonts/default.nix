@@ -18,11 +18,6 @@ in
       enableDefaultPackages = true;
 
       fontconfig = {
-        # allowType1 = true;
-        # Defaults to true, but be explicit
-        antialias = true;
-        hinting.enable = true;
-
         defaultFonts =
           let
             common = [
