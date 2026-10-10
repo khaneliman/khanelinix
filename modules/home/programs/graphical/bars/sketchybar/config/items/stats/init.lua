@@ -7,6 +7,7 @@ local disk = require("items.stats.disk")
 local network = require("items.stats.network")
 
 local stats = {}
+local visibility_generation = 0
 
 local function activate_stats()
 	cpu.activate()
@@ -23,6 +24,8 @@ local function deactivate_stats()
 end
 
 stats.close = function()
+	visibility_generation = visibility_generation + 1
+	local generation = visibility_generation
 	deactivate_stats()
 
 	Sbar.animate("tanh", settings.animation.default_duration, function()
@@ -36,6 +39,9 @@ stats.close = function()
 	separator:set({ icon = "" })
 
 	DELAY(settings.animation.reveal_delay, function()
+		if generation ~= visibility_generation then
+			return
+		end
 		cpu:set({ drawing = false })
 		memory:set({ drawing = false })
 		disk:set({ drawing = false })
@@ -45,6 +51,7 @@ stats.close = function()
 end
 
 stats.open = function()
+	visibility_generation = visibility_generation + 1
 	activate_stats()
 	separator:set({ icon = "" })
 
