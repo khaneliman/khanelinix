@@ -171,12 +171,12 @@ Suites bundle related modules by platform and purpose.
 <details>
 <summary><strong>Development Suite</strong></summary>
 
-| Category           | Items           | Condition      |
-| ------------------ | --------------- | -------------- |
-| **Homebrew Casks** | `cutter`        | Always         |
-| **Homebrew Casks** | `docker`        | `dockerEnable` |
-| **Homebrew Casks** | `ollamac`       | `aiEnable`     |
-| **Mac App Store**  | Patterns, Xcode | Always         |
+| Category           | Items                  | Condition                              |
+| ------------------ | ---------------------- | -------------------------------------- |
+| **Homebrew Brews** | `cameroncooke/axe/axe` | Always                                 |
+| **Homebrew Casks** | `docker-desktop`       | `containerBackend == "docker-desktop"` |
+| **Homebrew Casks** | `codexbar`, `ollamac`  | `aiEnable`                             |
+| **Mac App Store**  | Patterns, Xcode        | `khanelinix.tools.homebrew.masEnable`  |
 
 </details>
 
