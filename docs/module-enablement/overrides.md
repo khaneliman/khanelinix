@@ -1,6 +1,7 @@
 # Overrides
 
-Suites are enabled using `lib.mkDefault`, so it’s easy to override defaults.
+Suites use `lib.mkDefault` for individual module enablement, so those module
+defaults can be overridden.
 
 ```nix
 # Enable a suite
