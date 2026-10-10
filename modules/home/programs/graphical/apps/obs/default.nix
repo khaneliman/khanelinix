@@ -19,7 +19,6 @@ in
       # OBS Studio documentation
       # See: https://obsproject.com/wiki/
       enable = true;
-      package = pkgs.obs-studio;
 
       plugins =
         with pkgs.obs-studio-plugins;
