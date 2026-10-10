@@ -532,7 +532,7 @@ class ModelRoutingTests(unittest.TestCase):
         return f"""
           let
             repo = builtins.toPath {repo};
-            flake = builtins.getFlake (toString repo);
+            flake = builtins.getFlake ("git+file://" + toString repo);
             aiTools = import (repo + "/modules/common/ai-tools") {{
               inherit (flake.inputs.nixpkgs) lib;
               gatewayEnabled = {enabled};
@@ -552,7 +552,7 @@ class ModelRoutingTests(unittest.TestCase):
         return f"""
           let
             repo = builtins.toPath {repo};
-            flake = builtins.getFlake (toString repo);
+            flake = builtins.getFlake ("git+file://" + toString repo);
             modelRouting = (import (repo + "/modules/common/ai-tools") {{
               inherit (flake.inputs.nixpkgs) lib;
             }}).modelRouting;
@@ -573,7 +573,7 @@ class ModelRoutingTests(unittest.TestCase):
         return f"""
           let
             repo = builtins.toPath {repo};
-            flake = builtins.getFlake (toString repo);
+            flake = builtins.getFlake ("git+file://" + toString repo);
             renderers = import (repo + "/modules/common/ai-tools/agents.nix") {{
               inherit (flake.inputs.nixpkgs) lib;
             }};
@@ -609,7 +609,7 @@ class ModelRoutingTests(unittest.TestCase):
         return f"""
           let
             repo = builtins.toPath {repo};
-            flake = builtins.getFlake (toString repo);
+            flake = builtins.getFlake ("git+file://" + toString repo);
             modelRouting = {{
               modelsForRole = _role: {{
                 claude = {model_values["claude"]};
@@ -635,7 +635,7 @@ class ModelRoutingTests(unittest.TestCase):
         return f"""
           let
             repo = builtins.toPath {repo};
-            flake = builtins.getFlake (toString repo);
+            flake = builtins.getFlake ("git+file://" + toString repo);
             modelRouting = import (builtins.toPath {adapter}) {{
               inherit (flake.inputs.nixpkgs) lib;
             }};
@@ -649,7 +649,7 @@ class ModelRoutingTests(unittest.TestCase):
         return f"""
           let
             repo = builtins.toPath {repo};
-            flake = builtins.getFlake (toString repo);
+            flake = builtins.getFlake ("git+file://" + toString repo);
             lib = flake.inputs.nixpkgs.lib;
             home = flake.homeConfigurations."khaneliman@khanelinix".extendModules {{
               modules = [
