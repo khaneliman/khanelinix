@@ -14,7 +14,7 @@ let
       isCommand ? false,
     }:
     let
-      runCmd = if isCommand then dirPath else "cd ${dirPath}";
+      runCmd = if isCommand then dirPath else "cd -- ${dirPath}";
       description =
         if isCommand then
           desc
