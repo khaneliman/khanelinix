@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"target": "es2016",
 		"lib": ["es6"],
+		"types": ["node"],
 		"module": "commonjs",
 		"rootDir": "src",
 		"resolveJsonModule": true,
