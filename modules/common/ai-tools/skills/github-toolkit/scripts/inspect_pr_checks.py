@@ -226,15 +226,15 @@ def fetch_checks(pr_value: str, repo_root: Path) -> list[dict[str, Any]] | None:
                 ["pr", "checks", pr_value, "--json", ",".join(selected_fields)],
                 cwd=repo_root,
             )
-            if result.returncode != 0:
+            if result.returncode not in {0, 1, 8}:
                 message = (result.stderr or result.stdout or "").strip()
                 print(message or "Error: gh pr checks failed.", file=sys.stderr)
                 return None
-        else:
+        elif result.returncode not in {1, 8}:
             print(message or "Error: gh pr checks failed.", file=sys.stderr)
             return None
     try:
-        data = json.loads(result.stdout or "[]")
+        data = json.loads(result.stdout if result.returncode else result.stdout or "[]")
     except json.JSONDecodeError:
         print("Error: unable to parse checks JSON.", file=sys.stderr)
         return None
