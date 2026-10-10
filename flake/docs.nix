@@ -29,9 +29,6 @@
               (_: {
                 documentation.nixos.options.warningsAreErrors = false;
               })
-              (_: {
-                nixpkgs.pkgs = pkgsForDocs;
-              })
               inputs.self.nixosModules.default
             ];
             specialArgs = inputs.self.lib.system.moduleArgs {
@@ -52,9 +49,6 @@
               (_: {
                 documentation.doc.enable = false;
                 khanelinix.user.name = "docs";
-              })
-              (_: {
-                nixpkgs.pkgs = pkgsForDocs;
               })
               inputs.self.darwinModules.default
             ];
