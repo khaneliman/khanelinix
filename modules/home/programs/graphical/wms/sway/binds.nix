@@ -73,7 +73,7 @@ in
           # backslashes are doubled to reach the shell as \000.
           cliphist = "cliphist list | tr -d '\\\\000-\\\\010\\\\013-\\\\037\\\\177' | ${listOrFallback enabledDmenuLaunchers "rofi -dmenu"} | cliphist decode | wl-copy";
           smile = "smile";
-          window-inspector = "swaymsg -t get_tree | jq -r '.. | select(.focused? == true)' | notify-send 'Window Info' -t 5000";
+          window-inspector = "notify-send 'Window Info' \"$(swaymsg -t get_tree | jq -r '.. | select(.focused? == true)')\" -t 5000";
 
           inherit (config.khanelinix.programs.graphical) launchers;
           enabledLaunchers = lib.flatten [
@@ -114,8 +114,7 @@ in
               "${swayCfg.modifier}+l" = "exec ${screen-locker}";
               # TODO: enable after swayprop available
               # TODO: enable after swayprop available
-              "${swayCfg.modifier}+BackSpace" =
-                "exec pkill -SIGUSR1 swaylock || WAYLAND_DISPLAY=wayland-1 $screen-locker";
+              "${swayCfg.modifier}+BackSpace" = "exec pkill -SIGUSR1 swaylock || ${screen-locker}";
               "${swayCfg.modifier}+Return" = "exec ${mkStartCommand swayCfg.terminal}";
               "${swayCfg.modifier}+Shift+q" = "kill";
 
@@ -132,7 +131,7 @@ in
               "Super_L+Shift+E" = "exec ${mkStartCommand explorer}";
               # Background tools - use background slice for monitoring/file management
               "${swayCfg.modifier}+e" = "exec ${mkStartCommand { slice = "b"; } "${swayCfg.terminal} yazi"}";
-              "${swayCfg.modifier}+Control+l" = mkForce "exec ${screen-locker} --immediate";
+              "${swayCfg.modifier}+Control+l" = mkForce "exec ${screen-locker} --grace 0";
               "${swayCfg.modifier}+t" = "exec ${mkStartCommand { slice = "b"; } "${swayCfg.terminal} btop"}";
               "${swayCfg.modifier}+n" = "exec ${notification_center} -t -sw";
               "${swayCfg.modifier}+v" = "exec ${cliphist}";
