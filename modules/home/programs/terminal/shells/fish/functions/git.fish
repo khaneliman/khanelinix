@@ -39,7 +39,7 @@ function git
     set code $status
 
     # output commit length if successful
-    if test "$argv[1]" = commit && ! code
+    if test "$argv[1]" = commit && test "$code" -eq 0
         printf 'Commit subject length: '
         command git log -1 --format="%s" | tr -d '\n' | wc -m | awk '{print $1}'
     end
