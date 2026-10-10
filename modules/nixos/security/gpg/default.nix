@@ -25,7 +25,7 @@ in
 {
   options.khanelinix.security.gpg = with types; {
     enable = lib.mkEnableOption "GPG";
-    agentTimeout = mkOpt int 5 "The amount of time to wait before continuing with shell init.";
+    agentTimeout = mkOpt int 5 "Compatibility setting; unused by the managed NixOS GPG agent.";
     enableSSHSupport = lib.mkEnableOption "SSH support for GPG";
   };
 
