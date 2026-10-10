@@ -33,4 +33,4 @@ This template is _opinionated_ about the style guidelines it uses. The F#
 community at large tends to disagree with these guidelines, and you may wish to
 adjust the [editorconfig](./.editorconfig) file to suit your own needs.
 
-[NuGet](https://www.nuget.org)
+[NuGet]: https://www.nuget.org
