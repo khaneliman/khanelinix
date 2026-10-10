@@ -207,19 +207,29 @@ weather.temp:subscribe({ "routine", "forced", "system_woke", "weather_update" },
 		return
 	end
 
-	Sbar.exec("wttrbar --fahrenheit --ampm --location $(jq '.wttr.location' ~/weather_config.json)", function(forecast)
-		if IS_EMPTY(forecast) or IS_EMPTY(forecast.text) then
-			logger.warn("weather", "empty_forecast", {})
-			return
-		end
+	Sbar.exec(
+		[[LOCATION=$(jq -ers '
+      if length == 1 then .[0].wttr.location else null end
+      | if type == "string" then
+          if length > 0 and (test("[\u0000-\u001f\u007f]") | not) then .
+          else error("weather location must be nonempty and contain no control characters") end
+        else error("weather location must be a string") end
+    ' "$HOME/weather_config.json") || exit $?
+    exec wttrbar --fahrenheit --ampm --location="$LOCATION"]],
+		function(forecast)
+			if IS_EMPTY(forecast) or IS_EMPTY(forecast.text) then
+				logger.warn("weather", "empty_forecast", {})
+				return
+			end
 
-		local signature = forecast_signature(forecast)
-		latestForecast = forecast
-		apply_forecast_summary(forecast)
-		if popupVisible and signature ~= lastRenderedSignature then
-			render_forecast_tooltip()
+			local signature = forecast_signature(forecast)
+			latestForecast = forecast
+			apply_forecast_summary(forecast)
+			if popupVisible and signature ~= lastRenderedSignature then
+				render_forecast_tooltip()
+			end
 		end
-	end)
+	)
 end)
 
 SETUP_STANDARD_CLICKS(weather.temp, "weather_update")
