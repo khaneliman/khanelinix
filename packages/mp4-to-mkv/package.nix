@@ -38,6 +38,7 @@ python3.pkgs.buildPythonApplication rec {
   checkPhase = ''
     python -m py_compile ${src}
     ruff check ${src}
+    python ${./mp4-to-mkv_test.py} ${src}
   '';
 
   meta = {

@@ -30,6 +30,7 @@ import argparse
 import os
 import subprocess
 import sys
+import tempfile
 
 # Extensions to target
 TARGET_EXTS = {".mp4", ".m4v"}
@@ -48,7 +49,7 @@ def convert_to_mkv(filepath, delete_source=False, interactive=False):
             print(f"[SKIP] MKV exists: {filename}")
             return
         else:
-            print(f"[WARN] Partial MKV found. Overwriting: {filename}")
+            print(f"[WARN] Partial MKV found. Replacing after conversion: {filename}")
 
     # --- INTERACTIVE CHECK ---
     if interactive:
@@ -67,25 +68,35 @@ def convert_to_mkv(filepath, delete_source=False, interactive=False):
     print(f"[CONVERTING] {filename}...")
 
     try:
-        # -map 0 copies ALL streams (video, audio, subs, chapters)
-        # -c copy does strictly no re-encoding (Lossless)
-        # -y allows overwrite (we already checked for existing files above)
-        cmd = [
-            "ffmpeg",
-            "-v",
-            "error",
-            "-y",
-            "-i",
-            filepath,
-            "-map",
-            "0",
-            "-c",
-            "copy",
-            output_path,
-        ]
+        # Stage beside the destination so publication is an atomic rename.
+        with tempfile.TemporaryDirectory(
+            prefix=".mp4-to-mkv-", dir=os.path.dirname(os.path.abspath(output_path))
+        ) as temp_dir:
+            staged_path = os.path.join(temp_dir, "output.mkv")
+            # -map 0 copies ALL streams (video, audio, subs, chapters)
+            # -c copy does strictly no re-encoding (Lossless)
+            # -y allows overwrite inside the private staging directory
+            cmd = [
+                "ffmpeg",
+                "-v",
+                "error",
+                "-y",
+                "-i",
+                filepath,
+                "-map",
+                "0",
+                "-c",
+                "copy",
+                staged_path,
+            ]
 
-        # Run ffmpeg with no stdin to avoid conflicts with interactive mode
-        subprocess.run(cmd, check=True, stdin=subprocess.DEVNULL)
+            # Run ffmpeg with no stdin to avoid conflicts with interactive mode
+            subprocess.run(cmd, check=True, stdin=subprocess.DEVNULL)
+            if not os.path.exists(staged_path) or os.path.getsize(staged_path) <= 100:
+                print("   \033[91m[ERR]\033[0m Output missing/empty. Keeping source.")
+                return
+            os.replace(staged_path, output_path)
+
         print("   \033[92m[DONE]\033[0m Created MKV")
 
         # --- DELETE LOGIC ---
@@ -112,8 +123,6 @@ def convert_to_mkv(filepath, delete_source=False, interactive=False):
 
     except subprocess.CalledProcessError:
         print("   \033[91m[FAIL]\033[0m Conversion failed")
-        if os.path.exists(output_path):
-            os.remove(output_path)
     except (EOFError, OSError) as e:
         print(f"   \033[91m[ERR]\033[0m {e}")
 
