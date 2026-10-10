@@ -15,7 +15,7 @@ let
 
   cfg = config.khanelinix.display-managers.regreet;
   themeCfg = config.khanelinix.theme;
-  gtkCfg = config.khanelinix.desktop.addons.gtk;
+  gtkCfg = config.khanelinix.theme.gtk;
 
   # regreet remembers the last user in /var/lib/regreet/state.toml; seed it so
   # the very first login is already populated. The empty user_to_last_sess
@@ -58,17 +58,23 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [
-      themeCfg.cursor.package
-      themeCfg.icon.package
-      gtkCfg.theme.package
-    ];
-
     services = {
       displayManager.regreet = {
         # ReGreet documentation
         # See: https://github.com/rharish101/ReGreet
         enable = true;
+
+        cursorTheme = lib.mkIf (themeCfg.cursor.name != null) {
+          inherit (themeCfg.cursor) name package;
+        };
+        iconTheme = lib.mkIf (themeCfg.icon.name != null) {
+          inherit (themeCfg.icon) name package;
+        };
+        inherit (gtkCfg) theme;
+        font = {
+          name = "${config.khanelinix.system.fonts.default} *";
+          size = 12;
+        };
 
         settings = {
           background = {
@@ -81,10 +87,6 @@ in
 
           GTK = {
             application_prefer_dark_theme = true;
-            cursor_theme_name = "${themeCfg.cursor.name}";
-            font_name = "${config.khanelinix.system.fonts.default} * 12";
-            icon_theme_name = "${themeCfg.icon.name}";
-            theme_name = "${gtkCfg.theme.name}";
           };
         };
       };
