@@ -415,10 +415,12 @@ class ClosureAnalyzer:
         """Extract clean package name from Nix store path"""
         # Remove /nix/store/hash- prefix
         name = Path(path).name
-        # Remove hash prefix (32 hex chars + dash)
+        # Remove hash prefix (32 Nix base32 chars + dash)
         if "-" in name:
             parts = name.split("-", 1)
-            if len(parts[0]) == 32 and all(c in "0123456789abcdef" for c in parts[0]):
+            if len(parts[0]) == 32 and all(
+                c in "0123456789abcdfghijklmnpqrsvwxyz" for c in parts[0]
+            ):
                 name = parts[1]
         return name
 
@@ -969,10 +971,6 @@ def main():
         print("❌ No packages found in closure")
         sys.exit(1)
 
-    # Save to cache (unless disabled)
-    if not args.no_cache:
-        analyzer.save_analysis_cache(analysis)
-
     # Output results
     if args.json:
         # Enhanced JSON output for programmatic use
@@ -1050,6 +1048,10 @@ def main():
             print(f"📄 Report saved to: {args.output}")
         else:
             print(report)
+
+    # Save to cache (unless disabled)
+    if not args.no_cache:
+        analyzer.save_analysis_cache(analysis)
 
 
 if __name__ == "__main__":

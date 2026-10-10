@@ -26,6 +26,7 @@ python3Packages.buildPythonApplication rec {
   checkPhase = ''
     python -m py_compile ${src}
     ruff check ${src}
+    python ${./closure-analyzer_test.py} ${src}
   '';
 
   makeWrapperArgs = [
