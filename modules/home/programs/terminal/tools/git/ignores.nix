@@ -44,7 +44,7 @@
     ".venv"
     "*pyc"
     "*.egg-info/"
-    "__pycached__/"
+    "__pycache__/"
     ".mypy_cache"
   ];
 }
