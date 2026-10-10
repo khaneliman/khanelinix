@@ -34,6 +34,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import warnings
 
 # Suppress Whisper warnings
@@ -198,7 +199,7 @@ def extract_sample_audio(filepath, stream_index, output_wav):
         "16000",  # Mono 16k
         output_wav,
     ]
-    subprocess.run(cmd, stdout=subprocess.DEVNULL, check=False)
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, check=True)
 
 
 def detect_language(model, audio_path):
@@ -281,22 +282,24 @@ def main():
     print(f"Found {len(candidates)} UNDEF audio tracks to analyze.")
     print("-" * 80)
 
-    temp_wav = "temp_whisper_sample.wav"
-
     try:
         for item in candidates:
             filename = os.path.basename(item["path"])
             print(f"Analyzing: {filename} (Track #{item['mkv_num']})")
 
-            # Extract
-            extract_sample_audio(item["path"], item["index"], temp_wav)
+            with tempfile.TemporaryDirectory(prefix="auto-tag-language-") as temp_dir:
+                temp_wav = os.path.join(temp_dir, "sample.wav")
+                try:
+                    extract_sample_audio(item["path"], item["index"], temp_wav)
+                except (OSError, subprocess.CalledProcessError):
+                    print("      [ERROR] Audio extraction failed.")
+                    continue
 
-            if not os.path.exists(temp_wav):
-                print("      [ERROR] Audio extraction failed.")
-                continue
+                if not os.path.exists(temp_wav):
+                    print("      [ERROR] Audio extraction failed.")
+                    continue
 
-            # Detect
-            lang, prob = detect_language(model, temp_wav)
+                lang, prob = detect_language(model, temp_wav)
 
             # Output Result
             conf_str = f"{prob * 100:.1f}%"
@@ -351,10 +354,6 @@ def main():
 
     except KeyboardInterrupt:
         print("\n[INFO] Analysis interrupted by user.")
-    finally:
-        # Cleanup
-        if os.path.exists(temp_wav):
-            os.remove(temp_wav)
 
 
 if __name__ == "__main__":

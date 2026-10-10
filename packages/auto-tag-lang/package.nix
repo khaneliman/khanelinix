@@ -41,6 +41,7 @@ python3Packages.buildPythonApplication rec {
   checkPhase = ''
     python -m py_compile ${src}
     ruff check ${src}
+    python ${./auto-tag-language_test.py} ${src}
   '';
 
   postFixup = ''
