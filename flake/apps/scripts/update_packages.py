@@ -24,7 +24,6 @@ BRANCH_PACKAGES = {
     "colibri",
     "jj-hunk-tool",
     "lumen",
-    "tokyonight-gtk-theme",
 }
 
 ANTIGRAVITY_REGISTRY_URL = (

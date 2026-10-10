@@ -41,7 +41,7 @@ in
         khanelinix.theme = {
           enable = true;
           name = "tokyonight";
-          package = pkgs.khanelinix.tokyonight-gtk-theme;
+          package = pkgs.tokyonight-gtk-theme;
         };
 
         assertions = [
