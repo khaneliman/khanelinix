@@ -162,10 +162,19 @@ class ResolveCommandTest(unittest.TestCase):
         self.assertEqual(command[-1], ".#foo")
 
     def test_passes_an_explicit_command_through(self) -> None:
-        # argparse consumes the first `--`, so the leading word arrives
-        # separately and must be put back.
         command = self.resolve(["--", "nix", "build", ".#foo"])
         self.assertEqual(command, ["nix", "build", ".#foo"])
+
+    def test_one_word_command_and_options_pass_through(self) -> None:
+        self.assertEqual(self.resolve(["--", "false"]), ["false"])
+        self.assertEqual(self.resolve(["--json", "--", "false"]), ["false"])
+        self.assertEqual(
+            self.resolve(["--", "printf", "--", "-n"]), ["printf", "--", "-n"]
+        )
+
+    def test_empty_explicit_command_is_invalid(self) -> None:
+        with self.assertRaises(trace_eval.TraceEvalError):
+            self.resolve(["--"])
 
     def test_requires_a_target(self) -> None:
         with self.assertRaises(trace_eval.TraceEvalError):

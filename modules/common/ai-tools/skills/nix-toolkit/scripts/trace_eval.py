@@ -242,19 +242,28 @@ def parse_arguments(argv: Sequence[str]) -> argparse.Namespace:
         help="flake installable to evaluate, or omit and pass a command after --",
     )
     parser.add_argument("command", nargs=argparse.REMAINDER)
-    return parser.parse_args(list(argv))
+    if "--" in argv:
+        separator = list(argv).index("--")
+        arguments = parser.parse_args(list(argv[:separator]))
+        arguments.command = list(argv[separator + 1 :])
+        arguments.explicit_command = True
+    else:
+        arguments = parser.parse_args(list(argv))
+        arguments.explicit_command = False
+    return arguments
 
 
 def resolve_command(arguments: argparse.Namespace) -> list[str]:
     remainder = list(arguments.command)
-    if remainder and remainder[0] == "--":
+    if not arguments.explicit_command and remainder and remainder[0] == "--":
         remainder = remainder[1:]
 
-    # argparse consumes the first `--` itself, so the command's leading word
-    # lands in `installable`. Trailing words therefore mean an explicit command.
-    if remainder:
+    # Without `--`, retain the positional command shorthand.
+    if remainder or arguments.explicit_command:
         leading = [arguments.installable] if arguments.installable else []
-        return leading + remainder
+        if leading or remainder:
+            return leading + remainder
+        raise TraceEvalError("give an installable or a command after --")
     if arguments.installable:
         return [
             "nix",
