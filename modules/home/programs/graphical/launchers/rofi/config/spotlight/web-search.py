@@ -152,7 +152,7 @@ def main():
         icon_name += "ddg.svg"
 
     if search_string.startswith("!"):
-        search_string = search_string.rstrip("!").strip()
+        search_string = search_string[1:].strip()
         results = fetch_suggestions(search_string)
         for r in results:
             print(":wb " + html.unescape(r) + "\0icon\x1f" + icon_name + "\n")
