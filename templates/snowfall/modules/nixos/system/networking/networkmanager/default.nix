@@ -12,7 +12,7 @@ let
 in
 {
   config = mkIf cfg.enable {
-    khanelinix.user.extraGroups = [ "networkmanager" ];
+    ${namespace}.user.extraGroups = [ "networkmanager" ];
 
     networking.networkmanager = {
       enable = true;
