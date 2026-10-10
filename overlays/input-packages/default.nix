@@ -50,10 +50,10 @@ in
     };
   });
 
-  # TODO: re-enable after the 1.18.18 binary stops crashing `--version` inside
-  # the Darwin sandbox (passes outside it, so the artifact itself is fine).
+  # Darwin's sandbox crashes the binary's version check, although it runs
+  # outside the sandbox. Keep Linux's install check enabled.
   opencode = inputs.llm-agents.packages.${system}.opencode.overrideAttrs (_old: {
-    doInstallCheck = false;
+    doInstallCheck = !final.stdenv.hostPlatform.isDarwin;
   });
 
   # Treat an enabled V1 feature with V2 disabled as an explicit protocol
