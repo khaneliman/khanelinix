@@ -100,8 +100,8 @@ in
         default < meh - p : osascript -e 'tell app "loginwindow" to «event aevtrsdn»';
 
         # Reload yabai
-        default < ctrl + lalt + cmd - r : bash -c launchctl kickstart -k gui/"$(id -u)"/org.nixos.yabai
-        default < shift + lalt + cmd - r : bash -c launchctl kickstart -k gui/"$(id -u)"/org.nix-community.home.skhd
+        default < ctrl + lalt + cmd - r : launchctl kickstart -k gui/"$(id -u)"/org.nixos.yabai
+        default < shift + lalt + cmd - r : launchctl kickstart -k gui/"$(id -u)"/org.nix-community.home.skhd
 
         # Toggle sketchybar
         default < shift + lalt - space : ${sketchybar} --bar hidden=toggle
@@ -203,7 +203,7 @@ in
                            ${sketchybar} --trigger windows_on_spaces
 
         # Move windows to previous or next space
-        default < shift + lalt - p : ${yabai} -m window --space prev; \ ${yabai} -m space --focus prev; ${sketchybar} --trigger windows_on_spaces
+        default < shift + lalt - p : ${yabai} -m window --space prev; ${yabai} -m space --focus prev; ${sketchybar} --trigger windows_on_spaces
         default < shift + lalt - n : ${yabai} -m window --space next; ${yabai} -m space --focus next; ${sketchybar} --trigger windows_on_spaces
 
         # ░█░░░█▀█░█░█░█▀█░█░█░▀█▀
