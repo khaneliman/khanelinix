@@ -64,14 +64,6 @@ jobs:
           fi
 
           echo "locks_updated=true" >> "$GITHUB_OUTPUT"
-
-          if git diff flake.lock flake/dev/flake.lock | grep -E '"nixpkgs":|"nixpkgs-unstable":'; then
-            echo "nixpkgs_updated=true" >> "$GITHUB_OUTPUT"
-            echo "✓ nixpkgs or nixpkgs-unstable was updated"
-          else
-            echo "nixpkgs_updated=false" >> "$GITHUB_OUTPUT"
-            echo "✓ only non-nixpkgs inputs were updated"
-          fi
       - name: Commit changes
         if: steps.check-locks.outputs.locks_updated == 'true'
         run: |
