@@ -1,4 +1,4 @@
-"""Offline workflow checks. Run with --root TREE --scratch IGNORED_DIR --lua LUA54."""
+"""Offline workflow checks. Run with --root TREE --scratch IGNORED_DIR --lua LUA."""
 
 import argparse
 import contextlib
@@ -8,6 +8,7 @@ import os
 import shutil
 import subprocess
 import sys
+import textwrap
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -30,6 +31,46 @@ class Workflows(unittest.TestCase):
             [args.lua, str(root / "tests/graphical-workflows.lua"), str(root)],
             check=True,
         )
+
+    def test_media_stats_and_unicode(self):
+        case = scratch / "sketchybar-callbacks"
+        helpers = case / "helpers"
+        helpers.mkdir(parents=True, exist_ok=True)
+        # Use the generated fallback palette from its owner, not a copied palette.
+        colors = (
+            (bar / "default.nix")
+            .read_text()
+            .split("\"sketchybar/helpers/colors.lua\".text = lib.mkDefault ''", 1)[1]
+            .split("'';", 1)[0]
+        )
+        (helpers / "colors.lua").write_text(textwrap.dedent(colors).lstrip())
+        island = bar / "dynamic-island-sketchybar"
+        config_dir = case / "home/.config/dynamic-island-sketchybar"
+        config_dir.mkdir(parents=True, exist_ok=True)
+        lua_dir = config_dir / "lua"
+        if not lua_dir.exists():
+            lua_dir.symlink_to(island / "lua", target_is_directory=True)
+        (config_dir / "config.lua").write_text(
+            "local cfg = dofile(" + repr(str(island / "config.lua")) + ")\n"
+            "for name in pairs(cfg.enabled) do cfg.enabled[name] = false end\n"
+            "cfg.enabled.clipboard = true\n"
+            "cfg.islands.clipboard.maxPreviewLength = TEST_PREVIEW_LIMIT\n"
+            "return cfg\n"
+        )
+        for scenario in ["media", "stats", "helper", "clipboard"]:
+            with self.subTest(scenario=scenario):
+                subprocess.run(
+                    [
+                        args.lua,
+                        str(root / "tests/graphical-workflows-state.lua"),
+                        str(root),
+                        scenario,
+                        str(case),
+                    ],
+                    env=os.environ
+                    | {"HOME": str(case / "home"), "SKETCHYBAR_LOG_LEVEL": "off"},
+                    check=True,
+                )
 
     def test_web_main(self):
         spec = importlib.util.spec_from_file_location(
