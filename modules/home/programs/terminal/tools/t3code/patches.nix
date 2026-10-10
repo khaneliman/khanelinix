@@ -7,4 +7,6 @@
   ./desktop-attach-existing-backend.patch
   # Upstream #15198, adapted to provider-core and guarded against late logout reads.
   ./antigravity-usage-limits.patch
+  # Upstream #16716, with folder-root regression coverage.
+  ./host-folder-links.patch
 ]

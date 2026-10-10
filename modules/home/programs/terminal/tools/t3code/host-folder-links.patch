@@ -1,0 +1,361 @@
+diff --git a/apps/web/src/components/files/FileBrowserPanel.tsx b/apps/web/src/components/files/FileBrowserPanel.tsx
+index d9722303ab72e6dc27bdce3318df09c69cf71a88..23da918c2b2a301116af71d3bbd6ded4a6ad0230 100644
+--- a/apps/web/src/components/files/FileBrowserPanel.tsx
++++ b/apps/web/src/components/files/FileBrowserPanel.tsx
+@@ -7,7 +7,7 @@
+ import { FileTree, useFileTree, useFileTreeSearch, useFileTreeSelector } from "@pierre/trees/react";
+ import { serializeComposerFileLink } from "@t3tools/shared/composerTrigger";
+ import { ChevronsDownUp, ChevronsUpDown } from "lucide";
+-import { useEffect, useMemo, useRef, useState } from "react";
++import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+ 
+ import { Button } from "~/components/ui/button";
+ import { InputGroup, InputGroupInput } from "~/components/ui/input-group";
+@@ -28,11 +28,14 @@
+ import { buildFileTreePathUpdates } from "./fileTreePathReconciliation";
+ import { useDirectoryEntries } from "./useDirectoryEntries";
+ import { useProjectPathSearch } from "~/state/queries";
++import { joinWorkspacePath } from "~/terminal-links";
+ 
+ interface FileBrowserPanelProps {
+   environmentId: EnvironmentId;
+   cwd: string;
+   projectName: string;
++  /** An explorer outside the chat workspace emits absolute file and mention paths. */
++  absolutePaths?: boolean;
+   /** Entry currently open in the surface; revealed and selected in the tree. A directory is expanded. */
+   selectedPath: string | null;
+   /** Bumped when the same path should be revealed again (e.g. re-opened from search). */
+@@ -99,6 +102,7 @@
+   environmentId,
+   cwd,
+   projectName,
++  absolutePaths = false,
+   selectedPath,
+   selectedPathRevealId,
+   onOpenFile,
+@@ -108,6 +112,10 @@
+   const { resolvedTheme } = useTheme();
+   const composerRef = useComposerHandleContext();
+   const fileContextMenu = useFileContextMenu(environmentId);
++  const resolveEntryPath = useCallback(
++    (path: string) => (absolutePaths ? joinWorkspacePath(cwd, path) : path),
++    [absolutePaths, cwd],
++  );
+   const {
+     entries: directoryEntries,
+     load,
+@@ -172,7 +180,7 @@
+       return;
+     }
+     const relativePath = item.path.replace(/\/$/, "");
+-    const mention = serializeComposerFileLink(relativePath);
++    const mention = serializeComposerFileLink(resolveEntryPath(relativePath));
+     const pointer = contextMenuPointerRef.current;
+     const pointerIsFresh = pointer !== null && performance.now() - pointer.at < 1000;
+     const anchorRect = context.anchorElement.getBoundingClientRect();
+@@ -248,8 +256,9 @@
+     () =>
+       createFileTreeDragMentionController({
+         deselect: (path) => treeModelRef.current?.getItem(path)?.deselect(),
++        resolvePath: resolveEntryPath,
+       }),
+-    [],
++    [resolveEntryPath],
+   );
+   const { model } = useFileTree({
+     composition: {
+@@ -283,7 +292,7 @@
+       const selectedPath = selectedPaths.at(-1)?.replace(/\/$/, "");
+       if (selectedPath && entryKindsRef.current.get(selectedPath) === "file") {
+         treeSelectionPathRef.current = selectedPath;
+-        onOpenFile(selectedPath);
++        onOpenFile(resolveEntryPath(selectedPath));
+       }
+     },
+     paths: [],
+diff --git a/apps/web/src/components/files/FilePreviewPanel.test.ts b/apps/web/src/components/files/FilePreviewPanel.test.ts
+index 45304cb58639e33cc62cfd8016d0f921e992d7a4..c90f30471db2d1e842ad2d4cf05e6f770f8d7557 100644
+--- a/apps/web/src/components/files/FilePreviewPanel.test.ts
++++ b/apps/web/src/components/files/FilePreviewPanel.test.ts
+@@ -12,6 +12,7 @@
+   filePreviewReadErrorMessage,
+   isMarkdownPreviewFile,
+   resolveFilePreviewPath,
++  resolveFilePreviewLocation,
+   setMarkdownTaskChecked,
+   shouldShowFileExplorer,
+   workspaceAssetResource,
+@@ -156,6 +157,63 @@
+   });
+ });
+ 
++describe("resolveFilePreviewLocation", () => {
++  it.each([
++    ["/home/me/scratch", "/home/me/project"],
++    ["C:\\Users\\me\\scratch", "C:\\Users\\me\\project"],
++  ])("browses the host folder %s at its own root", (relativePath, cwd) => {
++    const location = resolveFilePreviewLocation({
++      cwd,
++      relativePath,
++      isNotFile: true,
++      attachmentOpen: false,
++    });
++    expect(location.explorerCwd).toBe(relativePath);
++    expect(location.hostDirectory).toBe(relativePath);
++    expect(location.previewPath).toBeNull();
++    expect(
++      shouldShowFileExplorer({
++        relativePath: location.previewPath,
++        explorerOpen: false,
++        attachmentOpen: false,
++      }),
++    ).toBe(true);
++  });
++
++  it("reveals a workspace folder in the workspace tree", () => {
++    expect(
++      resolveFilePreviewLocation({
++        cwd: "/project",
++        relativePath: "docs",
++        isNotFile: true,
++        attachmentOpen: false,
++      }),
++    ).toMatchObject({ explorerCwd: "/project", hostDirectory: null, previewPath: null });
++  });
++
++  it.each([false, true])("keeps a host file or attachment in its preview", (attachmentOpen) => {
++    const path = "/other/notes.md";
++    const location = resolveFilePreviewLocation({
++      cwd: "/project",
++      relativePath: path,
++      isNotFile: attachmentOpen,
++      attachmentOpen,
++    });
++    expect(location).toMatchObject({
++      explorerCwd: "/project",
++      hostDirectory: null,
++      previewPath: path,
++    });
++    expect(
++      shouldShowFileExplorer({
++        relativePath: location.previewPath,
++        explorerOpen: true,
++        attachmentOpen,
++      }),
++    ).toBe(false);
++  });
++});
++
+ describe("setMarkdownTaskChecked", () => {
+   const markdown = "- [ ] First\n- [x] Second\n";
+ 
+diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/components/files/FilePreviewPanel.tsx
+index efd7a7fbc90fb724e0145196490c82bc30f8c6b7..a2e40b5f0e10837754f2d7ad96a1930f88bace4b 100644
+--- a/apps/web/src/components/files/FilePreviewPanel.tsx
++++ b/apps/web/src/components/files/FilePreviewPanel.tsx
+@@ -37,6 +37,7 @@
+   squashAtomCommandFailure,
+ } from "@t3tools/client-runtime/state/runtime";
+ import { mediaFileReference } from "@t3tools/client-runtime/media-reference";
++import { fileBasename } from "@t3tools/shared/path";
+ import { FolderTree, Globe2, WrapTextIcon } from "lucide-react";
+ import { Code2, Eye, Table2 } from "lucide";
+ import * as Schema from "effect/Schema";
+@@ -104,6 +105,7 @@
+   filePreviewReadErrorMessage,
+   isMarkdownPreviewFile,
+   resolveFilePreviewPath,
++  resolveFilePreviewLocation,
+   setMarkdownTaskChecked,
+   shouldShowFileExplorer,
+   workspaceAssetResource,
+@@ -1087,10 +1089,14 @@
+   // a file surface and the read fails. Keep the breadcrumbs, drop the preview
+   // pane, and let the tree fill the surface with the folder revealed. Mutation
+   // refresh stays on so the surface notices if the path becomes a file. A host
+-  // path cannot be revealed in the workspace tree, so it keeps the read error.
+-  const isDirectory = file.isNotFile && !isHostFile;
+-  // Everything preview-related keys off previewPath; a folder has no preview.
+-  const previewPath = isDirectory ? null : relativePath;
++  // folder gets an explorer rooted at itself; its child paths stay absolute
++  // because the chat still belongs to the original workspace.
++  const { isDirectory, hostDirectory, explorerCwd, previewPath } = resolveFilePreviewLocation({
++    cwd,
++    relativePath,
++    isNotFile: file.isNotFile,
++    attachmentOpen: attachment !== undefined,
++  });
+   const [explorerOpen, setExplorerOpen] = useState(initialExplorerOpen);
+   const showExplorer = shouldShowFileExplorer({
+     relativePath: previewPath,
+@@ -1487,11 +1493,12 @@
+             )}
+           >
+             <FileBrowserPanel
+-              key={`${environmentId}:${cwd}`}
++              key={`${environmentId}:${explorerCwd}`}
+               environmentId={environmentId}
+-              cwd={cwd}
+-              projectName={projectName}
+-              selectedPath={relativePath}
++              cwd={explorerCwd}
++              projectName={hostDirectory ? fileBasename(hostDirectory) : projectName}
++              absolutePaths={hostDirectory !== null}
++              selectedPath={hostDirectory !== null ? null : relativePath}
+               selectedPathRevealId={revealRequestId}
+               onOpenFile={onOpenFile}
+               workspaceMutationId={workspaceMutationId}
+diff --git a/apps/web/src/components/files/filePreviewMode.ts b/apps/web/src/components/files/filePreviewMode.ts
+index 3d1ad62b68c4efc37a324296af17d0c5e46a81e0..19c307aea4e9c2a414d8ff9098f9ebfae9570c39 100644
+--- a/apps/web/src/components/files/filePreviewMode.ts
++++ b/apps/web/src/components/files/filePreviewMode.ts
+@@ -5,6 +5,26 @@
+ export function resolveFilePreviewPath(path: string | null, cwd: string): string | null {
+   if (path === null) return null;
+   return path === "." || workspaceRelativeFilePath(path, cwd) === "." ? null : path;
++}
++
++/** Host folders use their own explorer root without changing the thread's workspace. */
++export function resolveFilePreviewLocation(input: {
++  readonly cwd: string;
++  readonly relativePath: string | null;
++  readonly isNotFile: boolean;
++  readonly attachmentOpen: boolean;
++}) {
++  const isDirectory = input.isNotFile && !input.attachmentOpen;
++  const hostDirectory =
++    isDirectory && input.relativePath !== null && isAbsolutePath(input.relativePath)
++      ? input.relativePath
++      : null;
++  return {
++    isDirectory,
++    hostDirectory,
++    explorerCwd: hostDirectory ?? input.cwd,
++    previewPath: isDirectory ? null : input.relativePath,
++  };
+ }
+ 
+ export const isMarkdownPreviewFile = (path: string): boolean => /\.(?:md|mdx)$/i.test(path);
+diff --git a/apps/web/src/components/files/fileTreeDragMention.test.ts b/apps/web/src/components/files/fileTreeDragMention.test.ts
+index 812501ab5d144ddcb94b3198a93ec94b3ee92e98..122c02001b65e3bac00ef1470e0fa012822e34f9 100644
+--- a/apps/web/src/components/files/fileTreeDragMention.test.ts
++++ b/apps/web/src/components/files/fileTreeDragMention.test.ts
+@@ -1,6 +1,7 @@
+ import { describe, expect, it } from "@effect/vitest";
+ 
+ import { COMPOSER_MENTION_DRAG_TYPE } from "~/components/chat/composerMentionDrag";
++import { joinWorkspacePath } from "~/terminal-links";
+ import { createFileTreeDragMentionController } from "./fileTreeDragMention.ts";
+ 
+ const makeTransfer = (plainText = "") => {
+@@ -17,6 +18,25 @@
+ });
+ 
+ describe("createFileTreeDragMentionController", () => {
++  it("anchors external-tree mentions without changing the row paths used for deselection", () => {
++    const deselected: string[] = [];
++    const controller = createFileTreeDragMentionController({
++      deselect: (path) => deselected.push(path),
++      resolvePath: (path) => joinWorkspacePath("/other-project", path),
++    });
++    const transfer = makeTransfer();
++    controller.handleSelectionChange(["src/app.ts", "docs/"]);
++    controller.handleDragStart({
++      dataTransfer: transfer,
++      composedPath: () => [rowNode("src/app.ts")],
++    });
++    expect(transfer.getData(COMPOSER_MENTION_DRAG_TYPE)).toBe(
++      "[app.ts](/other-project/src/app.ts) [docs](/other-project/docs)",
++    );
++    controller.handleDragEnd();
++    expect(deselected).toEqual(["src/app.ts", "docs/"]);
++  });
++
+   it("tags a row drag with the mention payload and flags the drag", () => {
+     const controller = createFileTreeDragMentionController({ deselect: () => {} });
+     const transfer = makeTransfer();
+diff --git a/apps/web/src/components/files/fileTreeDragMention.ts b/apps/web/src/components/files/fileTreeDragMention.ts
+index 7c17639a649d1247cc0fb6354077646aad02ab53..f6d09075bd20421a4eea4b0ee29ede6eba987eb1 100644
+--- a/apps/web/src/components/files/fileTreeDragMention.ts
++++ b/apps/web/src/components/files/fileTreeDragMention.ts
+@@ -15,6 +15,8 @@
+ export interface FileTreeDragMentionHost {
+   /** Drop the tree's gesture-applied selection of the dragged row. */
+   deselect(treePath: string): void;
++  /** Keep mentions anchored when the tree has a different root from the chat. */
++  resolvePath?(treePath: string): string;
+ }
+ 
+ export interface FileTreeDragMentionController {
+@@ -74,7 +76,8 @@
+       // part of the current selection drags the whole selection.
+       const dragged = selection.includes(itemPath) ? selection : [itemPath];
+       const mentions = dragged
+-        .map((path) => composerMentionFromTreePath(path))
++        .map((path) => path.replace(/\/+$/, ""))
++        .map((path) => composerMentionFromTreePath(host.resolvePath?.(path) ?? path))
+         .filter((mention): mention is string => mention !== null);
+       if (mentions.length === 0) {
+         return;
+diff --git a/apps/web/src/terminal-links.test.ts b/apps/web/src/terminal-links.test.ts
+index 6dc750edeec1bbfa26d19ed4c8ce348f37c5b99e..33e67920ae4f81cc7ca6a3696e4cfddfc6cdd5b4 100644
+--- a/apps/web/src/terminal-links.test.ts
++++ b/apps/web/src/terminal-links.test.ts
+@@ -6,6 +6,7 @@
+   extractTerminalLinks,
+   isTerminalLinkActivation,
+   isTerminalUrl,
++  joinWorkspacePath,
+   type TerminalBufferLineLike,
+ } from "./terminal-links";
+ 
+@@ -243,3 +244,23 @@
+     ).toBe(false);
+   });
+ });
++
++describe("joinWorkspacePath", () => {
++  it.each(["/other/scratch\\", "/other/C:\\archive"])(
++    "preserves literal backslashes in the POSIX root %s",
++    (root) => {
++      expect(joinWorkspacePath(root, "readme.md")).toBe(`${root}/readme.md`);
++    },
++  );
++
++  it("joins entry names literally instead of as link syntax", () => {
++    expect(joinWorkspacePath("/home/me/other", "~/child.ts")).toBe("/home/me/other/~/child.ts");
++    expect(joinWorkspacePath("/home/me/other", "notes:12")).toBe("/home/me/other/notes:12");
++  });
++
++  it("uses backslashes under a Windows root", () => {
++    expect(joinWorkspacePath("C:\\Users\\me\\other\\", "docs/readme.md")).toBe(
++      "C:\\Users\\me\\other\\docs\\readme.md",
++    );
++  });
++});
+diff --git a/apps/web/src/terminal-links.ts b/apps/web/src/terminal-links.ts
+index 7ad2d83843de5ef051608cb8f48e54a0e6288971..37720bd04f5842b1125340063d5e37c5e93165ab 100644
+--- a/apps/web/src/terminal-links.ts
++++ b/apps/web/src/terminal-links.ts
+@@ -1,3 +1,5 @@
++import { isWindowsAbsolutePath } from "@t3tools/shared/path";
++
+ import { isMacPlatform } from "./lib/utils";
+ 
+ export type TerminalLinkKind = "url" | "path";
+@@ -93,6 +95,14 @@
+   return matches;
+ }
+ 
++/** Join a plain relative entry path to a root, without link syntax such as `~/` or `:line`. */
++export function joinWorkspacePath(root: string, relativePath: string): string {
++  if (isWindowsAbsolutePath(root)) {
++    return `${root.replace(/[\\/]+$/, "")}\\${relativePath.replaceAll("/", "\\")}`;
++  }
++  return `${root.replace(/\/+$/, "")}/${relativePath.replace(/^\/+/, "")}`;
++}
++
+ export function extractTerminalLinks(line: string): TerminalLinkMatch[] {
+   const urlMatches = collectMatches(line, "url", URL_PATTERN, []);
+   const pathMatches = collectMatches(line, "path", FILE_PATH_PATTERN, urlMatches);
