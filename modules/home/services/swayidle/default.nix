@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
 
   osConfig ? { },
   ...
@@ -19,7 +18,6 @@ in
       # Swayidle documentation
       # See: https://github.com/swaywm/swayidle
       enable = true;
-      package = pkgs.swayidle;
 
       systemdTargets = lib.mkIf (!(osConfig.programs.uwsm.enable or false)) [ "sway-session.target" ];
 
