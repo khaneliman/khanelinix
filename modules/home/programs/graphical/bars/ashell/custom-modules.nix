@@ -53,21 +53,33 @@
     name = "CustomWeather";
     icon = "󰖕 ";
     command = "${lib.getExe helpers.weatherDetailPopup}";
-    listen_cmd = "${
-      lib.getExe (
-        pkgs.wttrbar.overrideAttrs {
-          # Ashell needs `alt` instead of tooltip
-          postPatch = ''
-            substituteInPlace src/main.rs \
-            --replace-fail "data.insert(\"tooltip\", tooltip);" \
-                           "data.insert(\"alt\", tooltip);"
-          '';
+    listen_cmd = lib.getExe (
+      pkgs.writeShellScriptBin "ashell-weather-helper" ''
+        ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
+          LOCATION=$(${lib.getExe pkgs.jq} -ers '
+          if length == 1 then .[0].wttr.location else null end
+          | if type == "string" then
+              if length > 0 and (test("[\u0000-\u001f\u007f]") | not) then .
+              else error("weather location must be nonempty and contain no control characters") end
+            else error("weather location must be a string") end
+          ' ${lib.escapeShellArg "${config.home.homeDirectory}/weather_config.json"}) || exit $?
+        ''}
+        exec ${
+          lib.getExe (
+            pkgs.wttrbar.overrideAttrs {
+              # Ashell needs `alt` instead of tooltip
+              postPatch = ''
+                substituteInPlace src/main.rs \
+                --replace-fail "data.insert(\"tooltip\", tooltip);" \
+                               "data.insert(\"alt\", tooltip);"
+              '';
+            }
+          )
+        } --fahrenheit --ampm${
+          lib.optionalString (config.khanelinix.services.sops.enable or false) " --location=\"$LOCATION\""
         }
-      )
-    } --fahrenheit --ampm${
-      lib.optionalString (config.khanelinix.services.sops.enable or false
-      ) " --location $(jq '.wttr.location' ${config.home.homeDirectory}/weather_config.json)"
-    }";
+      ''
+    );
     icons = {
       "weather" = "󰖕";
       "none" = "󰖕";
