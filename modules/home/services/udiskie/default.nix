@@ -19,9 +19,6 @@ in
       # Udiskie documentation
       # See: https://github.com/coldfix/udiskie/wiki
       enable = true;
-      automount = true;
-      notify = true;
-      tray = "auto";
     };
 
     systemd.user.services.udiskie.Unit.ConditionEnvironment = "WAYLAND_DISPLAY";
