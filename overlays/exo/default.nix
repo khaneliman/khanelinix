@@ -114,11 +114,7 @@ let
     else
       prev.exo;
 
-  # nixpkgs versions the bindings by exo's git tag while the crate's pyproject
-  # keeps its own unrelated version, so the metadata check can never match.
-  pyo3-bindings = basePackage.exo-pyo3-bindings.overridePythonAttrs {
-    dontCheckPythonMetadata = true;
-  };
+  pyo3-bindings = basePackage.exo-pyo3-bindings;
 in
 {
   # exo imports the MLX stack, so it inherits the same sandbox GPU limitation.
