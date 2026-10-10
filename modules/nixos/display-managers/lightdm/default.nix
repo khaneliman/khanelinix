@@ -33,18 +33,15 @@ in
             enable = true;
 
             cursorTheme = {
-              inherit (config.khanelinix.desktop.addons.gtk.cursor) name;
-              package = config.khanelinix.desktop.addons.gtk.cursor.pkg;
+              inherit (config.khanelinix.theme.cursor) name package;
             };
 
             iconTheme = {
-              inherit (config.khanelinix.desktop.addons.gtk.icon) name;
-              package = config.khanelinix.desktop.addons.gtk.icon.pkg;
+              inherit (config.khanelinix.theme.icon) name package;
             };
 
             theme = {
-              name = "${config.khanelinix.desktop.addons.gtk.theme.name}";
-              package = config.khanelinix.desktop.addons.gtk.theme.pkg;
+              inherit (config.khanelinix.theme.gtk.theme) name package;
             };
           };
         };
