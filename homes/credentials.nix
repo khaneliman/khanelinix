@@ -19,7 +19,10 @@
         lib.mkIf
           (
             (config.khanelinix.services.sops.enable or false)
-            && config.khanelinix.programs.terminal.editors.neovim.enable
+            && (
+              config.khanelinix.programs.terminal.editors.neovim.enable
+              || config.khanelinix.programs.graphical.editors.vscode.enable
+            )
           )
           {
             wakatime = {
@@ -110,49 +113,11 @@
         lib.mkIf
           (
             (config.khanelinix.services.sops.enable or false)
-            && config.khanelinix.programs.graphical.editors.vscode.enable
-          )
-          {
-            wakatime = {
-              sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
-              path = "${config.home.homeDirectory}/.wakatime.cfg";
-            };
-          };
-    }
-    {
-      sops.secrets =
-        lib.mkIf
-          (
-            (config.khanelinix.services.sops.enable or false)
-            && config.khanelinix.programs.graphical.bars.waybar.enable
-          )
-          {
-            weather_config = {
-              sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
-              path = "${config.home.homeDirectory}/weather_config.json";
-            };
-          };
-    }
-    {
-      sops.secrets =
-        lib.mkIf
-          (
-            (config.khanelinix.services.sops.enable or false)
-            && config.khanelinix.programs.graphical.bars.ashell.enable
-          )
-          {
-            weather_config = {
-              sopsFile = lib.getFile "secrets/khaneliman/default.yaml";
-              path = "${config.home.homeDirectory}/weather_config.json";
-            };
-          };
-    }
-    {
-      sops.secrets =
-        lib.mkIf
-          (
-            (config.khanelinix.services.sops.enable or false)
-            && config.khanelinix.programs.graphical.bars.sketchybar.enable
+            && (
+              config.khanelinix.programs.graphical.bars.waybar.enable
+              || config.khanelinix.programs.graphical.bars.ashell.enable
+              || config.khanelinix.programs.graphical.bars.sketchybar.enable
+            )
           )
           {
             weather_config = {
