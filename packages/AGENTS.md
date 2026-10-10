@@ -3,8 +3,10 @@
 ## Discovery and Exposure
 
 - Package definitions use `package.nix`. `flake/packages.nix` discovers them
-  recursively and filters by host availability; support/cache-only directories
-  need not expose a package.
+  recursively and filters by host availability. Keep support directories inside
+  a directory with `package.nix`; root-level directories participate in
+  discovery and must resolve to package functions. Put repository-wide checks in
+  `tests/`.
 - `flake/overlays.nix` exposes locally defined packages under `pkgs.khanelinix`
   for modules; flake package outputs additionally filter by host availability.
 
