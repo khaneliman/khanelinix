@@ -191,7 +191,7 @@ in
           myip = "${getExe pkgs.curl} ifconfig.me";
 
           # Cryptography
-          genpass = "${getExe pkgs.openssl} rand - base64 20"; # Generate a random, 20-character password
+          genpass = "${getExe pkgs.openssl} rand -base64 20"; # Encode 20 random bytes as base64.
           sha = "shasum -a 256"; # Test checksum
         };
 
