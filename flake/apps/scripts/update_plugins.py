@@ -228,29 +228,30 @@ def setup_full_worktree(worktree_name: str):
 
 def run_update_in_worktree(task_name: str, task_details: dict, task_events: dict):
     """Runs the update script within its prepared worktree and commits the result."""
-    worktree_name = task_details["worktree"]
-    worktree_dir = Path(worktrees[worktree_name]["path"])
-    command = task_details["command"]
-    self_committing = task_details["self_committing"]
-    depends_on = task_details["depends_on"]
-    log_file = Path(f"/tmp/{task_name}-update.log")
-
-    # Wait for dependency if specified
-    if depends_on:
-        update_task_state(
-            task_name, status="PENDING", output=f"Waiting for {depends_on}..."
-        )
-        task_events[depends_on].wait()
-        update_task_state(
-            task_name, status="SETUP", output="Dependency complete, starting..."
-        )
-
-    update_task_state(task_name, status="RUNNING", output="Starting update...")
-    update_task_state(task_name, output=f"Full log: {log_file}")
-
     try:
-        with open(log_file, "w") as log:
-            process = subprocess.Popen(
+        worktree_name = task_details["worktree"]
+        worktree_dir = Path(worktrees[worktree_name]["path"])
+        command = task_details["command"]
+        self_committing = task_details["self_committing"]
+        depends_on = task_details["depends_on"]
+        log_file = Path(f"/tmp/{task_name}-update.log")
+
+        # Wait for dependency if specified
+        if depends_on:
+            update_task_state(
+                task_name, status="PENDING", output=f"Waiting for {depends_on}..."
+            )
+            task_events[depends_on].wait()
+            update_task_state(
+                task_name, status="SETUP", output="Dependency complete, starting..."
+            )
+
+        update_task_state(task_name, status="RUNNING", output="Starting update...")
+        update_task_state(task_name, output=f"Full log: {log_file}")
+
+        with (
+            open(log_file, "w") as log,
+            subprocess.Popen(
                 command,
                 shell=True,
                 cwd=worktree_dir,
@@ -258,16 +259,14 @@ def run_update_in_worktree(task_name: str, task_details: dict, task_events: dict
                 stderr=subprocess.STDOUT,
                 text=True,
                 env=os.environ.copy(),
-            )
-
+            ) as process,
+        ):
             for line in process.stdout:
                 line = line.strip()
                 if line:
                     log.write(line + "\n")
                     log.flush()
                     update_task_state(task_name, output=line)
-
-            process.wait()
 
         if process.returncode != 0:
             update_task_state(
@@ -281,19 +280,38 @@ def run_update_in_worktree(task_name: str, task_details: dict, task_events: dict
         # Only commit if the task command doesn't do it itself
         if not self_committing:
             update_task_state(task_name, output="Committing changes...")
-            run_command("git add -A", cwd=worktree_dir)
-            package_set = {"vim": "vimPlugins", "lua": "luaPackages"}[task_name]
-            commit_message = f"{package_set}: update {time.strftime('%Y-%m-%d')}"
-            commit_result = run_command(
-                f'git commit -m "{commit_message}"',
-                cwd=worktree_dir,
-                capture_output=True,
+            stage_result = run_command(
+                "git add -A", cwd=worktree_dir, capture_output=True
             )
-
-            if commit_result and commit_result.returncode == 0:
+            if stage_result.returncode != 0:
+                raise RuntimeError(
+                    f"git add failed ({stage_result.returncode}): "
+                    f"{stage_result.stdout}{stage_result.stderr}"
+                )
+            diff_result = run_command(
+                "git diff --cached --quiet", cwd=worktree_dir, capture_output=True
+            )
+            if diff_result.returncode == 0:
+                update_task_state(task_name, output="No changes to commit")
+            elif diff_result.returncode == 1:
+                package_set = {"vim": "vimPlugins", "lua": "luaPackages"}[task_name]
+                commit_message = f"{package_set}: update {time.strftime('%Y-%m-%d')}"
+                commit_result = run_command(
+                    f'git commit -m "{commit_message}"',
+                    cwd=worktree_dir,
+                    capture_output=True,
+                )
+                if commit_result.returncode != 0:
+                    raise RuntimeError(
+                        f"git commit failed ({commit_result.returncode}): "
+                        f"{commit_result.stdout}{commit_result.stderr}"
+                    )
                 update_task_state(task_name, output="Changes committed")
             else:
-                update_task_state(task_name, output="No changes to commit")
+                raise RuntimeError(
+                    f"git diff failed ({diff_result.returncode}): "
+                    f"{diff_result.stdout}{diff_result.stderr}"
+                )
 
         update_task_state(task_name, status="COMPLETE", output="Update complete!")
 
@@ -317,87 +335,84 @@ def main():
         )
         sys.exit(1)
 
-    # Get original branch
-    result = subprocess.run(
-        "git rev-parse --abbrev-ref HEAD",
-        shell=True,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    original_branch = result.stdout.strip()
-
     # Initialize task state
     for task_name in TASKS:
         update_task_state(task_name, status="PENDING")
 
-    try:
-        # Setup unique worktrees (tasks can share worktrees)
-        unique_worktrees = {task["worktree"] for task in TASKS.values()}
-        for worktree_name in unique_worktrees:
-            setup_full_worktree(worktree_name)
+    # Setup unique worktrees (tasks can share worktrees)
+    unique_worktrees = {task["worktree"] for task in TASKS.values()}
+    for worktree_name in unique_worktrees:
+        setup_full_worktree(worktree_name)
 
-        # Create events for task synchronization
-        task_events = {task_name: threading.Event() for task_name in TASKS}
+    # Create events for task synchronization
+    task_events = {task_name: threading.Event() for task_name in TASKS}
 
-        # Start all update tasks in threads
-        threads = []
-        for task_name, task_details in TASKS.items():
-            thread = threading.Thread(
-                target=run_update_in_worktree,
-                args=(task_name, task_details, task_events),
-            )
-            threads.append(thread)
-            thread.start()
+    # Start all update tasks in threads
+    threads = []
+    for task_name, task_details in TASKS.items():
+        thread = threading.Thread(
+            target=run_update_in_worktree,
+            args=(task_name, task_details, task_events),
+        )
+        threads.append(thread)
+        thread.start()
 
-        # Display live-updating table
-        with Live(generate_table(), console=console, refresh_per_second=4) as live:
-            while any(t.is_alive() for t in threads):
-                live.update(generate_table())
-                time.sleep(0.25)
-            # Final update after all threads complete
+    # Display live-updating table
+    with Live(generate_table(), console=console, refresh_per_second=4) as live:
+        while any(t.is_alive() for t in threads):
             live.update(generate_table())
+            time.sleep(0.25)
+        # Final update after all threads complete
+        live.update(generate_table())
 
-        # Summary
+    # Summary
+    has_failures = any(
+        task_state.get(name, {}).get("status") != "COMPLETE"
+        or task_state.get(name, {}).get("error", False)
+        for name in TASKS
+    )
+    if has_failures:
         console.print(
-            "\n[bold green]✅ All updates are complete and ready for individual PRs.[/bold green]"
+            "\n[bold red]Some updates failed. Review task output and worktrees.[/bold red]"
         )
-        console.print("[bold]Branches and worktrees:[/bold]")
+    else:
+        console.print(
+            "\n[bold green]All updates are complete and ready for individual PRs.[/bold green]"
+        )
+    console.print("[bold]Branches and worktrees:[/bold]")
 
-        # Group tasks by worktree
-        worktree_tasks = {}
-        for task_name, task_details in TASKS.items():
-            worktree_name = task_details["worktree"]
-            if worktree_name not in worktree_tasks:
-                worktree_tasks[worktree_name] = []
-            worktree_tasks[worktree_name].append(task_name)
+    # Group tasks by worktree
+    worktree_tasks = {}
+    for task_name, task_details in TASKS.items():
+        worktree_name = task_details["worktree"]
+        if worktree_name not in worktree_tasks:
+            worktree_tasks[worktree_name] = []
+        worktree_tasks[worktree_name].append(task_name)
 
-        # Display each worktree with its tasks
-        for worktree_name, task_names in worktree_tasks.items():
-            branch_name = worktrees[worktree_name]["branch"]
-            worktree_dir = Path(worktrees[worktree_name]["path"])
+    # Display each worktree with its tasks
+    for worktree_name, task_names in worktree_tasks.items():
+        branch_name = worktrees[worktree_name]["branch"]
+        worktree_dir = Path(worktrees[worktree_name]["path"])
 
-            # Check if any task had an error
-            has_error = any(
-                task_state.get(t, {}).get("error", False) for t in task_names
+        # Check if any task had an error
+        has_error = any(
+            task_state.get(t, {}).get("status") != "COMPLETE"
+            or task_state.get(t, {}).get("error", False)
+            for t in task_names
+        )
+        tasks_list = ", ".join(task_names)
+
+        if has_error:
+            console.print(
+                f"  [red]❌ {worktree_name}:[/red] [{tasks_list}] Branch: {branch_name}, Path: {worktree_dir}"
             )
-            tasks_list = ", ".join(task_names)
+        else:
+            console.print(
+                f"  [green]✅ {worktree_name}:[/green] [{tasks_list}] Branch: {branch_name}, Path: {worktree_dir}"
+            )
 
-            if has_error:
-                console.print(
-                    f"  [red]❌ {worktree_name}:[/red] [{tasks_list}] Branch: {branch_name}, Path: {worktree_dir}"
-                )
-            else:
-                console.print(
-                    f"  [green]✅ {worktree_name}:[/green] [{tasks_list}] Branch: {branch_name}, Path: {worktree_dir}"
-                )
-
-    finally:
-        console.print(
-            f"\n[bold]--- Returning you to your original branch: {original_branch} ---[/bold]"
-        )
-        run_command(f"git checkout {original_branch}")
+    return 1 if has_failures else 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
