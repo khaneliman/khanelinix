@@ -19,7 +19,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    assertions = lib.mkIf cfg.enable [
+    assertions = [
       {
         assertion = cfg.serverHostname != "";
         message = "khanelinix.environments.home-network.serverHostname must be set explicitly.";
