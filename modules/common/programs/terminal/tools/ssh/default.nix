@@ -72,6 +72,12 @@ in
   config = lib.mkIf cfg.enable {
     programs.ssh = {
       extraConfig = ''
+        ${other-hosts-config}${
+          lib.optionalString (cfg.extraConfig != "") ''
+
+            ${cfg.extraConfig}''
+        }
+
         Host *
           AddKeysToAgent yes
           ForwardAgent no
@@ -79,12 +85,6 @@ in
           ServerAliveCountMax 2
           StreamLocalBindUnlink yes
           ConnectTimeout 5
-
-        ${other-hosts-config}${
-          lib.optionalString (cfg.extraConfig != "") ''
-
-            ${cfg.extraConfig}''
-        }
       '';
 
       knownHosts = lib.mapAttrs (_: lib.mkForce) (
