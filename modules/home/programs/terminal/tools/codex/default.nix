@@ -414,7 +414,7 @@ in
                   ${lib.getExe pkgs.terminal-notifier} -title "Codex" -message "$summary" -group "codex-turn" >/dev/null 2>&1
                 ''}
                 ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
-                  ${lib.getExe pkgs.libnotify}/bin/notify-send "Codex" "$summary" >/dev/null 2>&1
+                  ${lib.getExe pkgs.libnotify} "Codex" "$summary" >/dev/null 2>&1
                 ''}
               '';
             };
