@@ -6,20 +6,23 @@
 }:
 let
   mainPkg = callPackage ./default.nix { };
-  mkNpxAlias = name: writeShellScriptBin name "npx ${name} \"$@\"";
+  mkLocalAlias =
+    name: binary: args:
+    writeShellScriptBin name ''
+      if [ ! -x ./node_modules/.bin/${binary} ]; then
+        echo "Run npm ci from the project root before using ${name}." >&2
+        exit 1
+      fi
+      exec ./node_modules/.bin/${binary} ${args} "$@"
+    '';
 in
 mainPkg.overrideAttrs (oa: {
   nativeBuildInputs = [
     eslint_d
     prettierd
-    (mkNpxAlias "tsc")
-    (mkNpxAlias "tsserver")
-    (mkNpxAlias "--package @angular/cli ng")
+    (mkLocalAlias "tsc" "tsc" "")
+    (mkLocalAlias "typescript-lsp" "tsc" "--lsp")
+    (mkLocalAlias "ng" "ng" "")
   ]
   ++ (oa.nativeBuildInputs or [ ]);
-
-  shellHook = ''
-    eslint_d start # start eslint daemon
-    eslint_d status # inform user about eslint daemon status
-  '';
 })

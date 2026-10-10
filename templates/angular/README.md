@@ -3,6 +3,24 @@
 This project was generated with
 [Angular CLI](https://github.com/angular/angular-cli) version 18.0.1.
 
+## Nix development shell
+
+Run `nix develop`, then `npm ci` from the project root. The shell's `ng` and
+`tsc` commands use the installed project binaries without implicit downloads.
+The current dependencies require attention before installation: Angular 22.0.6
+requires TypeScript `>=6.0 <6.1`, while this template pins TypeScript 7.0.2.
+The dependency declarations are unchanged.
+
+For a compatible installed project, configure an LSP-capable editor to run
+`typescript-lsp --stdio` from the project root. This invokes TypeScript 7's
+native language server, not the removed `tsserver` protocol. It is not a
+replacement for the Angular template language service or a drop-in command for
+editors configured to use `typescript-language-server`.
+
+`eslint_d` and `prettierd` remain available. Add your project's ESLint
+configuration before starting `eslint_d`; the shell does not start it
+automatically.
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The
