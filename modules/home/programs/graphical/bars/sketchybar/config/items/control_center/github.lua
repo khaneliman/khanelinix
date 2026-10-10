@@ -100,10 +100,7 @@ end
 
 local function notification_signature(sorted_notifications)
 	local parts = { tostring(#sorted_notifications) }
-	for index, notification in ipairs(sorted_notifications) do
-		if index > 16 then
-			break
-		end
+	for _, notification in ipairs(sorted_notifications) do
 		table.insert(parts, notification_thread_id(notification) or "")
 		table.insert(parts, tostring(notification.updated_at or ""))
 	end
