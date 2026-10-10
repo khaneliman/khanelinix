@@ -1,3 +1,5 @@
+local utf8 = require("utf8")
+
 return function(ctx)
 	local lastClipboard = nil
 	local inFlight = false
@@ -9,10 +11,13 @@ return function(ctx)
 	local maxPreviewLength = ctx.asNumber(ctx.get("islands.clipboard.maxPreviewLength", "120"), 120)
 
 	local function truncatePreview(value)
-		if #value <= maxPreviewLength then
+		local characters = utf8.len(value)
+		if (characters or #value) <= maxPreviewLength then
 			return value
 		end
-		return value:sub(1, maxPreviewLength - 1) .. "…"
+		local boundary = characters and maxPreviewLength > 0 and utf8.offset(value, maxPreviewLength)
+			or maxPreviewLength
+		return value:sub(1, boundary - 1) .. "…"
 	end
 
 	local textItem = ctx.Sbar.add("item", "island.clipboard_text", {

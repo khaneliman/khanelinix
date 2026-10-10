@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+local utf8 = require("utf8")
 local logger = require("helpers.logger")
 IS_SYSTEM_SLEEPING = false
 
@@ -138,7 +139,8 @@ TRUNCATE_TEXT = function(value, maxLength)
 
 	local text = tostring(value)
 	local limit = tonumber(maxLength)
-	if limit == nil or limit <= 0 or #text <= limit then
+	local characters = utf8.len(text)
+	if limit == nil or limit <= 0 or (characters or #text) <= limit then
 		return text
 	end
 
@@ -146,7 +148,8 @@ TRUNCATE_TEXT = function(value, maxLength)
 		return "…"
 	end
 
-	return text:sub(1, limit - 1) .. "…"
+	local boundary = characters and utf8.offset(text, limit) or limit
+	return text:sub(1, boundary - 1) .. "…"
 end
 
 SHELL_QUOTE = function(value)
