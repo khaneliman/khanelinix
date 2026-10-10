@@ -268,7 +268,7 @@
     context = "global";
     description = "Create conventional commit";
     loadingText = "Creating conventional commit...";
-    command = "git commit --message '{{.Form.Type}}{{ if .Form.Scope }}({{ .Form.Scope }}){{ end }}{{.Form.Breaking}}: {{.Form.Message}}'{{ if .Form.Body }} --message {{ .Form.Body | quote }}{{ end }}";
+    command = "git commit --message {{ $scope := \"\" }}{{ if .Form.Scope }}{{ $scope = printf \"(%s)\" .Form.Scope }}{{ end }}{{ printf \"%s%s%s: %s\" .Form.Type $scope .Form.Breaking .Form.Message | quote }}{{ if .Form.Body }} --message {{ .Form.Body | quote }}{{ end }}";
 
     prompts = [
       {
