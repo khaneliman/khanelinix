@@ -5,8 +5,9 @@ TMP_DIR="/tmp/rofi/${USER}/"
 PREV_LOC_FILE="${TMP_DIR}rofi_fb_prevloc"
 CURRENT_FILE="${TMP_DIR}rofi_fb_current_file"
 
-MY_PATH="$(realpath "$0" | xargs dirname)"
-HIST_FILE="${MY_PATH}/history.txt"
+MY_PATH="$(dirname "$(realpath "$0")")"
+STATE_DIR="${XDG_STATE_HOME:-${HOME}/.local/state}/rofi"
+HIST_FILE="${STATE_DIR}/history.txt"
 
 OPENER=xdg-open
 TERM_EMU=kitty
@@ -84,8 +85,15 @@ ALL_OPTIONS=("$(printf '%s\n' "${COMBINED_OPTIONS[@]}" | sort -u)")
 # Create tmp dir for rofi
 [ ! -d "$TMP_DIR" ] && mkdir -p "$TMP_DIR"
 
-# Create hist file if it doesn't exist
-[ ! -f "$HIST_FILE" ] && touch "$HIST_FILE"
+# Preserve history from older writable installations without replacing current state.
+mkdir -p "$STATE_DIR" || exit 1
+if [ ! -f "$HIST_FILE" ]; then
+    if [ -f "${MY_PATH}/history.txt" ]; then
+        cp "${MY_PATH}/history.txt" "$HIST_FILE" || exit 1
+    else
+        touch "$HIST_FILE" || exit 1
+    fi
+fi
 
 # Help message
 if [ "$*" != "" ] && [[ $* == ":help" ]]; then
