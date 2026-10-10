@@ -94,7 +94,8 @@ def fetch_issues(
     page = 1
 
     while len(results) < limit:
-        per_page = min(100, limit - len(results))
+        # Page offsets depend on a stable page size, including the last page.
+        per_page = 100
         command = [
             "api",
             "--method",

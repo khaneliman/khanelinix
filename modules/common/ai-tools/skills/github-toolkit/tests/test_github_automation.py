@@ -248,6 +248,44 @@ class SnapshotAndIssueScanTests(unittest.TestCase):
         self.assertEqual(status["truncation_reasons"], ["requested_limit"])
         self.assertEqual(status["total"], 500)
 
+    def test_issue_fetch_keeps_page_offsets_stable(self) -> None:
+        for limit in (1, 99, 100, 101, 150, 250, 1000):
+            with self.subTest(limit=limit):
+                client = mock.Mock()
+
+                def search(command: list[str]) -> dict[str, Any]:
+                    size = int(
+                        next(
+                            x.split("=", 1)[1]
+                            for x in command
+                            if x.startswith("per_page=")
+                        )
+                    )
+                    page = int(
+                        next(
+                            x.split("=", 1)[1] for x in command if x.startswith("page=")
+                        )
+                    )
+                    start = (page - 1) * size
+                    return {
+                        "total_count": 1200,
+                        "incomplete_results": False,
+                        "items": [
+                            {"number": n} for n in range(start + 1, start + size + 1)
+                        ],
+                    }
+
+                client.run_json.side_effect = search
+                total, incomplete, items = issue_scan.fetch_issues(
+                    client, "base/repo", "is:open", limit, "comments", "desc"
+                )
+                self.assertEqual(total, 1200)
+                self.assertFalse(incomplete)
+                self.assertEqual(
+                    [item["number"] for item in items], list(range(1, limit + 1))
+                )
+                self.assertEqual(client.run_json.call_count, (limit + 99) // 100)
+
     def test_issue_summary_reports_limit_and_search_cap_truncation(self) -> None:
         items = [
             {
