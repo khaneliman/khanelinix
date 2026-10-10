@@ -245,6 +245,12 @@ in
         '';
 
         shellAliases.t3-remote = lib.mkIf tailscaleEnabled (lib.getExe remoteCommand);
+
+        # Uses the logged-in desktop's keyring over SSH, without screen controls.
+        # Usage from another machine: ssh khanelinix t3-repair khanelimac.
+        file.".local/bin/t3-repair" = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+          source = lib.getExe (pkgs.callPackage ./repair-connection.nix { });
+        };
       };
 
       systemd.user.services.t3code-remote = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
