@@ -158,7 +158,11 @@ local function refresh_popup_details()
 				logger.warn("wifi", "popup_details_empty", {})
 				return
 			end
-			local parts = STR_SPLIT(result or "", "\n")
+			local parts = {}
+			-- Empty fields still occupy a line in the fixed-order shell response.
+			for part in (result or ""):gmatch("([^\n]*)\n") do
+				table.insert(parts, part)
+			end
 			hostname:set({ label = parts[1] or "" })
 			ip:set({ label = parts[2] or "" })
 			ssid:set({ label = parts[3] or "" })
