@@ -214,6 +214,8 @@ let
           source ${fishSessionVarsPath}
         end
       ''
+    else if hasWrappedFunction trimmed then
+      "${wrappedAliasValue value} $argv"
     else
       lib.concatMapStringsSep "\n" translateFishLine (lib.splitString "\n" body);
 
