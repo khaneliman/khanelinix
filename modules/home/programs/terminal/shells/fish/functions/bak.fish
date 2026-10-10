@@ -3,8 +3,9 @@ function bak
         echo "1 path must be supplied"
         return 1
     end
-    set file (basename $argv[1] '.bak')
-    set other "$file.bak"
+    set file (basename -- "$argv[1]" '.bak')
+    set directory (dirname -- "$argv[1]")
+    set other "$directory/$file.bak"
     if test -e $argv[1]
         if test -e $other
             mv $argv[1] $other.tmp
