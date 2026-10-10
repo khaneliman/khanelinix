@@ -109,7 +109,7 @@ let
     name':
     let
       name = if name' == "" then root-path else name';
-      stringAttrPath = if length attrs > 1 then root-path + "." + name else name;
+      stringAttrPath = if name' == "" then root-path else root-path + "." + name';
       attrPath = lib.splitString "." stringAttrPath;
       evaluatedPkg = tryEval (lib.attrByPath attrPath null pkgs);
       pkg = evaluatedPkg.value;
@@ -133,7 +133,7 @@ let
           [
             {
               name = (if output == "out" then name else "\${name}.\${output}");
-              path = pkg;
+              path = lib.getOutput output pkg;
             }
           ]
         else
