@@ -39,6 +39,12 @@ param(
 $ErrorActionPreference = "Stop"
 
 function Resolve-PlanFile {
+    if ($env:PWF_SESSION_ID) {
+        $attached = & (Join-Path $PSScriptRoot "resolve-plan-dir.ps1")
+        if (-not $attached) { throw "No attached plan found. Attach a plan first." }
+        return (Join-Path $attached "task_plan.md")
+    }
+
     $planRoot = Join-Path (Get-Location) ".planning"
 
     if ($env:PLAN_ID) {
@@ -109,6 +115,10 @@ for ($i = 0; $i -lt 50 -and -not $acquired; $i++) {
         Start-Sleep -Milliseconds 100
     }
 }
+if (-not $acquired) {
+    Write-Error "[phase-status] Timed out acquiring $lockFile."
+    exit 1
+}
 
 $tmpFile = $planFile + ".tmp." + $PID
 $rc = 0
@@ -165,7 +175,7 @@ try {
     $rc = 1
 } finally {
     if ($fs) { $fs.Close(); $fs.Dispose() }
-    if (Test-Path -LiteralPath $lockFile) { Remove-Item -LiteralPath $lockFile -Force -ErrorAction SilentlyContinue }
+    # Keep the sentinel stable for peers; releasing the handle releases the lock.
     if (Test-Path -LiteralPath $tmpFile) { Remove-Item -LiteralPath $tmpFile -Force -ErrorAction SilentlyContinue }
 }
 

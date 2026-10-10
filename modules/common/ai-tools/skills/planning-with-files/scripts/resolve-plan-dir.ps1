@@ -35,6 +35,25 @@ function Test-WithinRoot {
 
 $activeFile = Join-Path $PlanRoot ".active_plan"
 
+if ($env:PWF_SESSION_ID) {
+    if ($env:PWF_SESSION_ID -notmatch '^[A-Za-z0-9_][A-Za-z0-9._-]*$') { exit 0 }
+    $attachment = Join-Path (Join-Path $PlanRoot "sessions") ($env:PWF_SESSION_ID + ".attached")
+    if (-not (Test-Path -LiteralPath $attachment -PathType Leaf)) { exit 0 }
+    $planId = (Get-Content -LiteralPath $attachment -Raw) -replace '[\r\n]', ''
+    if ($planId -eq '.') {
+        if (Test-Path -LiteralPath (Join-Path $projectRoot "task_plan.md") -PathType Leaf) {
+            Write-Output $projectRoot
+        }
+        exit 0
+    }
+    if ($planId -notmatch '^[A-Za-z0-9_][A-Za-z0-9._-]*$') { exit 0 }
+    $candidate = Join-Path $PlanRoot $planId
+    if ((Test-Path -LiteralPath (Join-Path $candidate "task_plan.md") -PathType Leaf) -and (Test-WithinRoot $candidate)) {
+        Write-Output $candidate
+    }
+    exit 0
+}
+
 if ($env:PLAN_ID) {
     $candidate = Join-Path $PlanRoot $env:PLAN_ID
     if ((Test-Path $candidate -PathType Container) -and (Test-WithinRoot $candidate)) {

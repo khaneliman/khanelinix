@@ -39,6 +39,8 @@ resolve_plan_file() {
         printf "%s\n" "${plan_dir}/task_plan.md"
         return 0
     fi
+    # An explicit session must never write to an unrelated legacy plan.
+    [ -z "${PWF_SESSION_ID:-}" ] || return 1
     if [ -f "./task_plan.md" ]; then
         printf "%s\n" "./task_plan.md"
         return 0
@@ -132,18 +134,18 @@ do_write() {
         printf "[phase-status] No **Status:** line found for Phase %s.\n" "${PHASE_NUM}" >&2
         return 1
     fi
-    mv -f "${TMP_FILE}" "${PLAN_FILE}"
+    mv -f "${TMP_FILE}" "${PLAN_FILE}" || return 1
     return 0
 }
 
 rc=0
 if command -v flock >/dev/null 2>&1; then
     (
-        flock -w 5 9 || true
+        flock -w 5 9 || exit 1
         do_write
     ) 9>"${LOCK_FILE}" 2>/dev/null
     rc=$?
-    rm -f "${LOCK_FILE}" 2>/dev/null || true
+    # Keep the sentinel inode stable for peers that have already opened it.
 else
     do_write
     rc=$?

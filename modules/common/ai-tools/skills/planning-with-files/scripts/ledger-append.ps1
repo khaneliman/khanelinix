@@ -53,6 +53,12 @@ $ErrorActionPreference = "Stop"
 $validEvents = @("progress", "phase_complete", "error", "gate_block", "attest", "note")
 
 function Resolve-PlanDir {
+    if ($env:PWF_SESSION_ID) {
+        $attached = & (Join-Path $PSScriptRoot "resolve-plan-dir.ps1")
+        if (-not $attached) { throw "No attached plan found. Attach a plan first." }
+        return $attached
+    }
+
     $planRoot = Join-Path (Get-Location) ".planning"
 
     if ($env:PLAN_ID) {
@@ -164,6 +170,10 @@ for ($i = 0; $i -lt 50 -and -not $acquired; $i++) {
         Start-Sleep -Milliseconds 100
     }
 }
+if (-not $acquired) {
+    Write-Error "[ledger] Timed out acquiring $lockFile."
+    exit 1
+}
 
 try {
     $tick = (Get-MaxTick $planDir) + 1
@@ -171,7 +181,7 @@ try {
     Add-Content -LiteralPath $ledgerFile -Value $line -Encoding utf8
 } finally {
     if ($fs) { $fs.Close(); $fs.Dispose() }
-    if (Test-Path -LiteralPath $lockFile) { Remove-Item -LiteralPath $lockFile -Force -ErrorAction SilentlyContinue }
+    # Keep the sentinel stable for peers; releasing the handle releases the lock.
 }
 
 Write-Output ("[ledger] tick " + $tick + " -> " + $ledgerFile + " (event=" + $Event + " agent=" + $agentClean + ")")

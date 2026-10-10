@@ -29,6 +29,8 @@ resolve_plan_file() {
         printf "%s\n" "${plan_dir}/task_plan.md"
         return 0
     fi
+    # An explicit session must never write to an unrelated legacy plan.
+    [ -z "${PWF_SESSION_ID:-}" ] || return 1
     if [ -f "./task_plan.md" ]; then
         printf "%s\n" "./task_plan.md"
         return 0
@@ -148,39 +150,34 @@ attest)
         printf "[plan-attest] Failed to write %s\n" "${tmp_file}" >&2
         exit 1
     }
-    mv_ok=1
+    write_attestation() {
+        if ! mv -f "${tmp_file}" "${attestation_file}"; then
+            # Preserve the atomic retry, inside the same cooperative lock.
+            fb_tmp="${attestation_file}.fb.$$"
+            printf "%s\n" "${hash_val}" >"${fb_tmp}" 2>/dev/null &&
+                mv -f "${fb_tmp}" "${attestation_file}" 2>/dev/null || {
+                rm -f "${fb_tmp}" 2>/dev/null
+                return 1
+            }
+        fi
+    }
+
+    write_ok=1
     if command -v flock >/dev/null 2>&1; then
-        # Advisory lock around the rename. lock_dir is the dir containing
-        # the target file. The {} subshell pattern keeps the lock scoped to
-        # the mv call.
         lock_dir="$(dirname "${attestation_file}")"
         (
-            flock -w 5 9 || true
-            mv -f "${tmp_file}" "${attestation_file}"
-        ) 9>"${lock_dir}/.attestation.lock" 2>/dev/null || mv_ok=0
-        rm -f "${lock_dir}/.attestation.lock" 2>/dev/null
+            flock -w 5 9 || exit 1
+            write_attestation
+        ) 9>"${lock_dir}/.attestation.lock" 2>/dev/null || write_ok=0
+        # Keep the sentinel inode stable for peers that have already opened it.
     else
-        mv -f "${tmp_file}" "${attestation_file}" 2>/dev/null || mv_ok=0
-    fi
-
-    # Integrity gap fix (security A2.1): a failed atomic rename must not be
-    # allowed to silently leave a stale attestation when the target already
-    # existed. The old fallback only wrote when the file was absent, so a
-    # cross-device or permission-denied mv on an existing attestation left
-    # the OLD hash in place with a success exit. On mv failure we re-write
-    # the intended hash through a second atomic rename (never a bare
-    # redirect onto the live file, which would expose torn reads to
-    # concurrent verifiers), then verify the on-disk content.
-    if [ "${mv_ok}" -eq 0 ] || [ ! -f "${attestation_file}" ]; then
-        fb_tmp="${attestation_file}.fb.$$"
-        printf "%s\n" "${hash_val}" >"${fb_tmp}" 2>/dev/null &&
-            mv -f "${fb_tmp}" "${attestation_file}" 2>/dev/null || {
-            rm -f "${fb_tmp}" "${tmp_file}" 2>/dev/null
-            printf "[plan-attest] Failed to write attestation %s\n" "${attestation_file}" >&2
-            exit 1
-        }
+        write_attestation || write_ok=0
     fi
     rm -f "${tmp_file}" 2>/dev/null
+    if [ "${write_ok}" -eq 0 ]; then
+        printf "[plan-attest] Failed to write attestation %s\n" "${attestation_file}" >&2
+        exit 1
+    fi
 
     # Read-back verification. Both write paths above are atomic renames, so
     # a concurrent verifier always reads a complete 64-hex hash — either our

@@ -31,6 +31,12 @@ param(
 $ErrorActionPreference = "Stop"
 
 function Resolve-PlanFile {
+    if ($env:PWF_SESSION_ID) {
+        $attached = & (Join-Path $PSScriptRoot "resolve-plan-dir.ps1")
+        if (-not $attached) { throw "No attached plan found. Attach a plan first." }
+        return (Join-Path $attached "task_plan.md")
+    }
+
     $planRoot = Join-Path (Get-Location) ".planning"
 
     if ($env:PLAN_ID) {
@@ -117,16 +123,38 @@ if ($Clear) {
 }
 
 $hashVal = (Get-FileHash -LiteralPath $planFile -Algorithm SHA256).Hash.ToLowerInvariant()
-Set-Content -LiteralPath $attestationFile -Value $hashVal -NoNewline -Encoding ascii
-
-# Integrity verification (security A2.1): confirm the on-disk attestation
-# matches the intended hash before reporting success. A silent write failure
-# (permissions, full disk) must not leave a stale attestation and exit clean.
-$storedHash = (Get-Content -LiteralPath $attestationFile -Raw -ErrorAction SilentlyContinue)
-if ($null -ne $storedHash) { $storedHash = $storedHash.Trim() }
-if ($storedHash -ne $hashVal) {
-    Write-Error "[plan-attest] Attestation write verification FAILED for $attestationFile. Expected $hashVal, found $storedHash. The plan is NOT attested."
+# Serialize PowerShell attestation writers with an exclusive file handle.
+$lockFile = Join-Path (Split-Path -Parent $attestationFile) ".attestation.lock"
+$fs = $null
+$acquired = $false
+for ($i = 0; $i -lt 50 -and -not $acquired; $i++) {
+    try {
+        $fs = [System.IO.File]::Open($lockFile, [System.IO.FileMode]::OpenOrCreate, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None)
+        $acquired = $true
+    } catch {
+        Start-Sleep -Milliseconds 100
+    }
+}
+if (-not $acquired) {
+    Write-Error "[plan-attest] Timed out acquiring $lockFile."
     exit 1
+}
+
+try {
+    Set-Content -LiteralPath $attestationFile -Value $hashVal -NoNewline -Encoding ascii
+
+    # Integrity verification (security A2.1): confirm the on-disk attestation
+    # matches the intended hash before reporting success. A silent write failure
+    # (permissions, full disk) must not leave a stale attestation and exit clean.
+    $storedHash = (Get-Content -LiteralPath $attestationFile -Raw -ErrorAction SilentlyContinue)
+    if ($null -ne $storedHash) { $storedHash = $storedHash.Trim() }
+    if ($storedHash -ne $hashVal) {
+        Write-Error "[plan-attest] Attestation write verification FAILED for $attestationFile. Expected $hashVal, found $storedHash. The plan is NOT attested."
+        exit 1
+    }
+} finally {
+    if ($fs) { $fs.Close(); $fs.Dispose() }
+    # Keep the sentinel stable for peers; releasing the handle releases the lock.
 }
 
 $short = $hashVal.Substring(0, 12)

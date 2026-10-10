@@ -52,6 +52,8 @@ resolve_plan_dir() {
         printf "%s\n" "${plan_dir}"
         return 0
     fi
+    # An explicit session must never write to an unrelated legacy plan.
+    [ -z "${PWF_SESSION_ID:-}" ] || return 1
     # Legacy single-file mode: ledger lives beside ./task_plan.md at root.
     printf "%s\n" "."
     return 0
@@ -192,7 +194,10 @@ AGENT="$(sanitize_agent "${AGENT}")"
 # Truncate summary to 200 chars BEFORE escaping (200 is a source-text budget).
 SUMMARY="$(printf '%s' "${SUMMARY}" | cut -c1-200)"
 
-PLAN_DIR="$(resolve_plan_dir)"
+PLAN_DIR="$(resolve_plan_dir)" || {
+    printf "[ledger] No attached plan found. Attach a plan first.\n" >&2
+    exit 1
+}
 LEDGER_FILE="${PLAN_DIR}/ledger-${AGENT}.jsonl"
 LOCK_FILE="${PLAN_DIR}/.ledger_lock"
 
@@ -235,7 +240,7 @@ append_line() {
     tick=$((tick + 1))
     printf '{"tick":%s,"ts":"%s","agent":"%s","phase":"%s","event":"%s","summary":"%s","files":%s}\n' \
         "${tick}" "${TS}" "${AGENT}" "${PHASE_ESC}" "${EVENT}" "${SUMMARY_ESC}" "${FILES_JSON}" \
-        >>"${LEDGER_FILE}"
+        >>"${LEDGER_FILE}" || return 1
     printf '%s' "${tick}"
 }
 
@@ -244,13 +249,13 @@ if command -v flock >/dev/null 2>&1; then
     # not pick the same tick number. The subshell scopes fd 9 to the lock.
     written_tick="$(
         (
-            flock -w 5 9 || true
+            flock -w 5 9 || exit 1
             append_line
         ) 9>"${LOCK_FILE}" 2>/dev/null
-    )"
-    rm -f "${LOCK_FILE}" 2>/dev/null || true
+    )" || exit 1
+    # Keep the sentinel inode stable for peers that have already opened it.
 else
-    written_tick="$(append_line)"
+    written_tick="$(append_line)" || exit 1
 fi
 
 printf "[ledger] tick %s -> %s (event=%s agent=%s)\n" \
