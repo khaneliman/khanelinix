@@ -25,8 +25,7 @@ let
       if [ -s "$marker" ]; then
         IFS= read -r backup_dir < "$marker"
       else
-        backup_dir="$backup_root/compact-$(date +%Y%m%d-%H%M%S)"
-        mkdir -p "$backup_dir"
+        backup_dir=$(mktemp -d "$backup_root/compact-$session_key-$(date +%Y%m%d-%H%M%S)-XXXXXX")
       fi
 
       case "$backup_dir" in

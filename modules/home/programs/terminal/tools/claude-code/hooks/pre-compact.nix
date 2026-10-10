@@ -13,16 +13,16 @@ let
       pkgs.jq
     ];
     text = ''
-      mkdir -p ${config.xdg.dataHome}/claude-code/context-backups
+      backup_root=${lib.escapeShellArg "${config.xdg.dataHome}/claude-code/context-backups"}
+      mkdir -p "$backup_root"
       input=$(cat)
       session_id=$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null || true)
       session_key=$(printf '%s' "$session_id" | tr -c '[:alnum:]_-' '_')
       transcript_path=$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null || true)
       trigger=$(printf '%s' "$input" | jq -r '.trigger // "unknown"' 2>/dev/null || true)
 
-      backup_dir="${config.xdg.dataHome}/claude-code/context-backups/compact-$(date +%Y%m%d-%H%M%S)"
-      mkdir -p "$backup_dir"
-      printf '%s\n' "$backup_dir" > "${config.xdg.dataHome}/claude-code/context-backups/.latest-$session_key"
+      backup_dir=$(mktemp -d "$backup_root/compact-$session_key-$(date +%Y%m%d-%H%M%S)-XXXXXX")
+      printf '%s\n' "$backup_dir" > "$backup_root/.latest-$session_key"
 
       metadata_file="$backup_dir/metadata.txt"
       {
