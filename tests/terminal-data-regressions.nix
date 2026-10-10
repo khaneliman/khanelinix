@@ -19,16 +19,20 @@ let
   post =
     (builtins.head (builtins.head (import (hooks + "/post-compact.nix") args).PostCompact).hooks)
     .command;
+  sessionEnd =
+    (builtins.head (builtins.head (import (hooks + "/session-end.nix") args).SessionEnd).hooks).command;
   commands = import (root + "/modules/home/programs/terminal/tools/lazygit/custom-commands.nix");
 in
 {
   scripts = [
     pre
     post
+    sessionEnd
   ];
   rendered = {
     pre = "${pre}/bin/claude-pre-compact-backup";
     post = "${post}/bin/claude-post-compact-capture";
+    sessionEnd = "${sessionEnd}/bin/claude-session-end-log";
     commit =
       (builtins.head (
         builtins.filter (command: command.description == "Create conventional commit") commands
