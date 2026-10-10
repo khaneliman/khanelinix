@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -97,6 +98,7 @@ echo "/nix/store/33333333333333333333333333333333-dep-bin"
     stub_hyperfine = tmp_dir / "hyperfine"
     stub_hyperfine.write_text(
         """#!/usr/bin/env bash
+/bin/sh -c "${@: -1}" || exit "$?"
 echo "Benchmark 1: mock command"
 echo "  Time (mean ± σ):     100.0 ms ±   2.0 ms"
 """
@@ -385,6 +387,57 @@ class EvalBenchmarkTest(unittest.TestCase):
         )
         self.assertEqual(res.returncode, 2)
         self.assertIn("usage: eval-benchmark.sh", res.stderr)
+
+    def test_missing_option_values_exit_2(self) -> None:
+        for option in ("--runs", "--warmup"):
+            for remainder in ([], [""], ["--warmup", "2", "nix", "eval"]):
+                with self.subTest(option=option, remainder=remainder):
+                    res = subprocess.run(
+                        ["bash", str(self.script), option, *remainder],
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                    )
+                    self.assertEqual(res.returncode, 2)
+                    self.assertIn("usage: eval-benchmark.sh", res.stderr)
+
+    def test_benchmark_and_stats_preserve_argv(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_dir = Path(tmp)
+            env = create_stub_environment(tmp_dir)
+            capture = tmp_dir / "capture argv's.py"
+            capture.write_text(
+                "import json, os, sys\n"
+                "with open(os.environ['ARGV_LOG'], 'a') as log:\n"
+                "    log.write(json.dumps(sys.argv[1:]) + '\\n')\n"
+                "if 'NIX_SHOW_STATS_PATH' in os.environ:\n"
+                "    with open(os.environ['NIX_SHOW_STATS_PATH'], 'w') as stats:\n"
+                "        stats.write('{}')\n"
+            )
+            log = tmp_dir / "argv.jsonl"
+            env["ARGV_LOG"] = str(log)
+            args = [
+                "",
+                "two words",
+                "it's quoted",
+                "$HOME $(exit 42)",
+                "`exit 43`",
+                "line one\nline two\n",
+                "a; exit 44",
+                "*",
+                "back\\slash",
+            ]
+            res = subprocess.run(
+                ["bash", str(self.script), "--", sys.executable, str(capture), *args],
+                env=env,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(res.returncode, 0, res.stderr)
+            invocations = [json.loads(line) for line in log.read_text().splitlines()]
+            expected = args + ["--option", "eval-cache", "false"]
+            self.assertEqual(invocations, [expected, expected])
 
     def test_benchmark_execution_and_stats(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

@@ -20,10 +20,18 @@ warmup=3
 while [ "$#" -gt 0 ]; do
     case "$1" in
     --runs)
+        if [ "$#" -lt 2 ] || [ -z "$2" ] || [[ $2 == --* ]]; then
+            usage >&2
+            exit 2
+        fi
         runs="$2"
         shift 2
         ;;
     --warmup)
+        if [ "$#" -lt 2 ] || [ -z "$2" ] || [[ $2 == --* ]]; then
+            usage >&2
+            exit 2
+        fi
         warmup="$2"
         shift 2
         ;;
@@ -56,8 +64,15 @@ printf 'benchmark command:'
 printf ' %q' "$@"
 printf ' --option eval-cache false\n'
 
+# Hyperfine executes a shell command; %q can emit Bash-only $'...' quoting.
+benchmark_command=""
+for arg in "$@" --option eval-cache false; do
+    quoted_arg=${arg//\'/\'\\\'\'}
+    benchmark_command+=" '$quoted_arg'"
+done
+
 "${hyperfine_cmd[@]}" --warmup "$warmup" --runs "$runs" -- \
-    "$* --option eval-cache false"
+    "$benchmark_command"
 
 stats_file="$(mktemp)"
 trap 'rm -f "$stats_file"' EXIT
