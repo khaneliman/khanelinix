@@ -3,11 +3,6 @@ final: prev:
 let
   inherit (final.stdenv.hostPlatform) system;
 
-  # master = import inputs.nixpkgs-master {
-  #   inherit system;
-  #   inherit (prev) config;
-  # };
-
   useLldOnDarwin =
     package:
     if final.stdenv.hostPlatform.isDarwin then
@@ -92,9 +87,6 @@ in
   );
   pi-coding-agent = inputs.llm-agents.packages.${system}.pi;
 
-  #          ╭──────────────────────────────────────────────────────────╮
-  #          │ From nixpkgs-master (fast updating / want latest always) │
-  #          ╰──────────────────────────────────────────────────────────╯
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Darwin package overrides                 │
   #          ╰──────────────────────────────────────────────────────────╯
