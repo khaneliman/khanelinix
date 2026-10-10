@@ -34,7 +34,7 @@ in
         layout = [
           {
             label = "lock";
-            action = "saylock";
+            action = import ../../screenlockers/menu-command.nix { inherit config lib; };
             text = "Lock";
             keybind = "l";
           }
