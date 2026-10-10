@@ -16,14 +16,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    # NOTE: future reference for adding assertions
-    # assertions = [
-    #   {
-    #     assertion = cfg.autoconnect.enable -> cfg.autoconnect.key != "";
-    #     message = "khanelinix.services.cloudflared.autoconnect.key must be set";
-    #   }
-    # ];
-
     services.cloudflared = {
       # Cloudflared documentation
       # See: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/
