@@ -34,11 +34,20 @@ void handler(env env) {
       return;
     }
 
+    if (strlen(id) >= sizeof(((struct islandItem *)0)->identifier) ||
+        strlen(args) >= sizeof(((struct islandItem *)0)->args)) {
+      fprintf(stderr, "Dynamic island item exceeds queue field capacity\n");
+      return;
+    }
+
     // Create new queueable item
     struct islandItem *newItem =
         (struct islandItem *)malloc(sizeof(struct islandItem));
-    sprintf(newItem->identifier, "%s", id);
-    sprintf(newItem->args, "%s", args);
+    if (newItem == NULL) {
+      return;
+    }
+    strcpy(newItem->identifier, id);
+    strcpy(newItem->args, args);
 
     // Get item from queue and apply to dynamic island
     if (queue_island(&g_dynamic_island, newItem) == 1) {

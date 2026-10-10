@@ -116,7 +116,9 @@ static inline int queue_island(struct dynamicIsland *dynamic_island,
       }
     }
   }
-  current = newNode;
+  if (newNode->nextNode == NULL) {
+    current = newNode;
+  }
 
   if (head == NULL) {
     head = current;
