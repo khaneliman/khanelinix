@@ -32,15 +32,16 @@ in
       # See: https://git.sr.ht/~emersion/kanshi/tree/master/item/doc/kanshi.5.scd
       xdg.configFile."kanshi/config".source = ./config;
 
-      # configuring kanshi
       systemd.user.services.kanshi = {
-        description = "Kanshi output autoconfig ";
-        environment = {
-          XDG_CONFIG_HOME = config.xdg.configHome;
+        Unit = {
+          Description = "Kanshi output autoconfig";
+          PartOf = [ "graphical-session.target" ];
         };
-        partOf = [ "graphical-session.target" ];
-        wantedBy = [ "graphical-session.target" ];
-        serviceConfig = {
+        Install.WantedBy = [ "graphical-session.target" ];
+        Service = {
+          Environment = [
+            (lib.replaceStrings [ "%" ] [ "%%" ] (builtins.toJSON "XDG_CONFIG_HOME=${config.xdg.configHome}"))
+          ];
           ExecCondition = /* bash */ ''
             ${getExe pkgs.bash} -c '[ -n "$WAYLAND_DISPLAY" ]'
           '';
