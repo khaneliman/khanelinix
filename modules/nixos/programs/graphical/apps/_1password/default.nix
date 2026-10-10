@@ -1,8 +1,6 @@
 {
   config,
   lib,
-  pkgs,
-  getPkgsMaster,
   ...
 }:
 let
@@ -17,30 +15,22 @@ in
     enableSshSocket = lib.mkEnableOption "ssh-agent socket";
   };
 
-  config = mkIf cfg.enable (
-    let
-      # pkgsUnstable = getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
-      # TODO: remove after hits channel
-      pkgsMaster = getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
-    in
-    {
-      programs = {
-        _1password = enabled;
-        _1password-gui = {
-          # 1Password documentation
-          # See: https://support.1password.com/
-          enable = true;
-          package = pkgsMaster._1password-gui;
+  config = mkIf cfg.enable {
+    programs = {
+      _1password = enabled;
+      _1password-gui = {
+        # 1Password documentation
+        # See: https://support.1password.com/
+        enable = true;
 
-          polkitPolicyOwners = [ config.khanelinix.user.name ];
-        };
-
-        ssh.extraConfig = lib.optionalString cfg.enableSshSocket ''
-          Host *
-            AddKeysToAgent yes
-            IdentityAgent ~/.1password/agent.sock
-        '';
+        polkitPolicyOwners = [ config.khanelinix.user.name ];
       };
-    }
-  );
+
+      ssh.extraConfig = lib.optionalString cfg.enableSshSocket ''
+        Host *
+          AddKeysToAgent yes
+          IdentityAgent ~/.1password/agent.sock
+      '';
+    };
+  };
 }
