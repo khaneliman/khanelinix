@@ -39,7 +39,7 @@ writeShellApplication {
     echo "Processing '$input_file'..."
 
     # Run ffmpeg, and if it succeeds, replace the original file
-    if ffmpeg -i "$input_file" -c copy -metadata title="$new_title" -y "$temp_file"; then
+    if ffmpeg -i "$input_file" -map 0 -c copy -metadata title="$new_title" -y "$temp_file"; then
       mv "$temp_file" "$input_file"
       echo "✅ Title for '$input_file' was successfully set to: '$new_title'"
     else
