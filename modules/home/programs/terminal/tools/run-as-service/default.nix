@@ -8,19 +8,14 @@
 let
   inherit (lib) mkIf;
   inherit (lib.strings) optionalString;
-  inherit (lib.attrsets) mapAttrsToList;
 
   cfg = config.khanelinix.programs.terminal.tools.run-as-service;
 
   sessionPath = optionalString (config.home.sessionPath != [ ]) ''
-    export PATH=${lib.strings.concatStringsSep ":" config.home.sessionPath}:$PATH
+    export PATH="${lib.strings.concatStringsSep ":" config.home.sessionPath}:$PATH"
   '';
 
-  sessionVariables = lib.strings.concatStringsSep "\n" (
-    mapAttrsToList (key: value: ''
-      export ${key}="${toString value}"
-    '') config.home.sessionVariables
-  );
+  sessionVariables = config.lib.shell.exportAll config.home.sessionVariables;
 
   apply-hm-env = pkgs.writeShellScript "apply-hm-env" ''
     ${sessionPath}
