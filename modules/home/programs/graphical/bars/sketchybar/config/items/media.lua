@@ -25,6 +25,7 @@ media:subscribe("media_change", function(env)
 			label = (env.INFO.artist or "Unknown") .. ": " .. (env.INFO.title or "Unknown"),
 		})
 	else
+		media:set({ drawing = false })
 		logger.debug("media", "ignored_app", { app = tostring(app) })
 	end
 end)
