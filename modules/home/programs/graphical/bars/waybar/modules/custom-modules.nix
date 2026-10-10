@@ -143,9 +143,17 @@ let
   '';
 
   weatherHelper = pkgs.writeShellScriptBin "waybar-weather-helper" ''
+    ${lib.optionalString (config.khanelinix.services.sops.enable or false) ''
+      LOCATION=$(${lib.getExe pkgs.jq} -ers '
+      if length == 1 then .[0].wttr.location else null end
+      | if type == "string" then
+          if length > 0 and (test("[\u0000-\u001f\u007f]") | not) then .
+          else error("weather location must be nonempty and contain no control characters") end
+        else error("weather location must be a string") end
+      ' ${lib.escapeShellArg "${config.home.homeDirectory}/weather_config.json"}) || exit $?
+    ''}
     WEATHER_JSON="$(${getExe pkgs.wttrbar} --fahrenheit --ampm${
-      lib.optionalString (config.khanelinix.services.sops.enable or false
-      ) " --location $(jq '.wttr.location' ${config.home.homeDirectory}/weather_config.json)"
+      lib.optionalString (config.khanelinix.services.sops.enable or false) " --location=\"$LOCATION\""
     })"
 
     if ! echo "$WEATHER_JSON" | ${getExe pkgs.jq} -e . >/dev/null 2>&1; then
