@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import process from "node:process";
-import { DatabaseSync } from "node:sqlite";
+import { DatabaseSync, backup } from "node:sqlite";
 
 // Upstream renumbers inline sqlite migrations between revisions, but the
 // Effect migrator tracks applied migrations by numeric id only. A database
@@ -71,7 +71,19 @@ try {
 		process.exit(0);
 	}
 
-	fs.copyFileSync(databasePath, `${databasePath}.pre-reconcile.bak`);
+	// Committed rows may still be in the WAL; copying only state.sqlite
+	// would omit them from the recovery snapshot. Finish the SQLite backup
+	// before changing migration history. SQLite creates files using the umask,
+	// so keep the snapshot private until its permissions match the source.
+	const backupDirectory = fs.mkdtempSync(`${databasePath}.pre-reconcile-`);
+	try {
+		const snapshotPath = `${backupDirectory}/state.sqlite`;
+		await backup(database, snapshotPath);
+		fs.chmodSync(snapshotPath, fs.statSync(databasePath).mode & 0o777);
+		fs.renameSync(snapshotPath, `${databasePath}.pre-reconcile.bak`);
+	} finally {
+		fs.rmSync(backupDirectory, { recursive: true });
+	}
 
 	database.exec("BEGIN IMMEDIATE");
 	// Delete-then-reinsert avoids transient primary-key collisions while
