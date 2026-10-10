@@ -15,6 +15,66 @@ let
     ;
 
   cfg = config.khanelinix.programs.graphical.desktop-environment.gnome;
+  keybindings = removeAttrs cfg.desktop.wm.keybindings [
+    "enable-workspace-shortcuts"
+    "enable-move-to-workspace-shortcuts"
+  ];
+  isApplicationShortcut = name: lib.hasPrefix "switch-to-application-" name;
+  # The native WM schema has numbered workspace keys only for 1-12.
+  workspaceCount = lib.min 12 cfg.desktop.wm.preferences.num-workspaces;
+  workspaceKeybindings = {
+    switch-applications = [ "<Super><Tab>" ];
+    switch-applications-backward = [ "<Shift><Super><Tab>" ];
+  }
+  // lib.optionalAttrs cfg.desktop.wm.keybindings.enable-move-to-workspace-shortcuts (
+    {
+      move-to-workspace-right = [
+        "<Shift><Super>Right"
+        "<Shift><Super>l"
+      ];
+      move-to-workspace-left = [
+        "<Shift><Super>Left"
+        "<Shift><Super>h"
+      ];
+    }
+    // lib.mergeAttrsList (
+      map (
+        i:
+        let
+          num = if i == 10 then "0" else toString i;
+        in
+        {
+          "move-to-workspace-${toString i}" = [ "<Shift><Super>${num}" ];
+        }
+      ) (lib.range 1 workspaceCount)
+    )
+  )
+  // lib.optionalAttrs cfg.desktop.wm.keybindings.enable-workspace-shortcuts (
+    {
+      switch-to-workspace-right = [
+        "<Control><Alt>Right"
+        "<Control><Alt>l"
+      ];
+      switch-to-workspace-left = [
+        "<Control><Alt>Left"
+        "<Control><Alt>h"
+      ];
+    }
+    // lib.mergeAttrsList (
+      map (
+        i:
+        let
+          num = if i == 10 then "0" else toString i;
+        in
+        {
+          "switch-to-workspace-${toString i}" = [ "<Control><Alt>${num}" ];
+        }
+      ) (lib.range 1 workspaceCount)
+    )
+  );
+  applicationKeybindings = lib.mergeAttrsList (
+    map (i: { "switch-to-application-${toString i}" = [ "<Super>${toString i}" ]; }) (lib.range 1 9)
+  );
   flameshotEnabled = config.khanelinix.programs.graphical.addons.flameshot.enable;
 
   get-wallpaper = wallpaper: if lib.isDerivation wallpaper then toString wallpaper else wallpaper;
@@ -125,61 +185,13 @@ in
                 }
                 "Window manager preferences";
 
-            keybindings =
-              mkOpt
-                (types.submodule {
-                  freeformType = types.attrsOf types.anything;
-                  options = {
-                    enable-workspace-shortcuts = mkBoolOpt true "Enable workspace switching shortcuts";
-                    enable-move-to-workspace-shortcuts = mkBoolOpt true "Enable move to workspace shortcuts";
-                  };
-                })
-                (
-                  let
-                    workspaceCount = cfg.desktop.wm.preferences.num-workspaces or 10;
-                  in
-                  lib.attrsets.mergeAttrsList (
-                    [
-                      {
-                        "move-to-workspace-right" = [
-                          "<Shift><Super>Right"
-                          "<Shift><Super>l"
-                        ];
-                        "move-to-workspace-left" = [
-                          "<Shift><Super>Left"
-                          "<Shift><Super>h"
-                        ];
-                        "switch-to-workspace-right" = [
-                          "<Control><Alt>Right"
-                          "<Control><Alt>l"
-                        ];
-                        "switch-to-workspace-left" = [
-                          "<Control><Alt>Left"
-                          "<Control><Alt>h"
-                        ];
-                        "switch-applications" = [
-                          "<Super><Tab>"
-                        ];
-                        "switch-applications-backward" = [
-                          "<Shift><Super><Tab>"
-                        ];
-                      }
-                    ]
-                    ++ map (
-                      i:
-                      let
-                        num = if i == 10 then "0" else toString i;
-                      in
-                      {
-                        "move-to-workspace-${toString i}" = [ "<Shift><Super>${num}" ];
-                        "switch-to-application-${toString i}" = [ "<Super>${num}" ];
-                        "switch-to-workspace-${toString i}" = [ "<Control><Alt>${num}" ];
-                      }
-                    ) (lib.range 1 workspaceCount)
-                  )
-                )
-
-                "Window manager keybindings";
+            keybindings = mkOpt (types.submodule {
+              freeformType = types.attrsOf types.anything;
+              options = {
+                enable-workspace-shortcuts = mkBoolOpt true "Enable workspace switching shortcuts";
+                enable-move-to-workspace-shortcuts = mkBoolOpt true "Enable move to workspace shortcuts";
+              };
+            }) { } "Window manager keybindings";
           };
         }) { } "Window manager settings";
       };
@@ -310,7 +322,12 @@ in
         "org/gnome/desktop/wm/preferences" = default-attrs cfg.desktop.wm.preferences;
       }
       // lib.optionalAttrs (cfg.desktop.wm.keybindings != { }) {
-        "org/gnome/desktop/wm/keybindings" = default-attrs cfg.desktop.wm.keybindings;
+        "org/gnome/desktop/wm/keybindings" = default-attrs (
+          workspaceKeybindings // lib.filterAttrs (name: _: !isApplicationShortcut name) keybindings
+        );
+        "org/gnome/shell/keybindings" = default-attrs (
+          applicationKeybindings // lib.filterAttrs (name: _: isApplicationShortcut name) keybindings
+        );
       }
       // lib.optionalAttrs (cfg.mutter != { }) {
         "org/gnome/mutter" = default-attrs cfg.mutter;
