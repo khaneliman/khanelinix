@@ -111,6 +111,7 @@ in
       # See: https://docs.atuin.sh/configuration/config/
       settings = lib.mkMerge [
         {
+          auto_sync = cfg.sync.enable;
           enter_accept = true;
           # Filter modes can still be toggled via `ctrl-r`
           filter_mode = "workspace";
@@ -131,7 +132,6 @@ in
           ];
         }
         (mkIf cfg.sync.enable {
-          auto_sync = true;
           sync_address = "https://api.atuin.sh";
           sync_frequency = "30m";
         })
