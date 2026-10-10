@@ -256,7 +256,7 @@ in
         graphical = {
           apps = {
             claude-desktop.enable = mkDefault (cfg.aiEnable && !isWSL);
-            codex-desktop.enable = cfg.aiEnable && !isWSL;
+            codex-desktop.enable = mkDefault (cfg.aiEnable && !isWSL);
           };
 
           editors = {
@@ -279,7 +279,7 @@ in
 
           tools = {
             act = mkDefault enabled;
-            azure.developmentEnable = cfg.azureEnable;
+            azure.developmentEnable = mkDefault cfg.azureEnable;
             dotnet.enable = mkDefault cfg.dotnetEnable;
             claude-code.enable = mkDefault cfg.aiEnable;
             codex.enable = mkDefault cfg.aiEnable;
@@ -289,11 +289,11 @@ in
             gh = mkDefault enabled;
             git-crypt = mkDefault enabled;
             glab = mkDefault enabled;
-            go.enable = cfg.goEnable;
+            go.enable = mkDefault cfg.goEnable;
             jjui = mkDefault enabled;
             jujutsu = mkDefault enabled;
-            k9s.enable = cfg.kubernetesEnable;
-            lazydocker.enable = cfg.dockerEnable;
+            k9s.enable = mkDefault cfg.kubernetesEnable;
+            lazydocker.enable = mkDefault cfg.dockerEnable;
             lazygit = mkDefault enabled;
             lazyworktree = mkDefault enabled;
             mcp.enable = mkDefault cfg.aiEnable;
