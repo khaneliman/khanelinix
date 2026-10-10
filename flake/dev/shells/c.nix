@@ -23,7 +23,7 @@ let
     fi
     o=$1
     shift
-    $c -ggdb $i -o $o -lm -Wall $@
+    $c -ggdb "$i" -o "$o" -lm -Wall "$@"
   '';
 in
 mkShell {
