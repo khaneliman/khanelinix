@@ -21,7 +21,6 @@ in
       # Mpv documentation
       # See: https://mpv.io/manual/stable/
       enable = pkgs.stdenv.hostPlatform.isLinux;
-      package = pkgs.mpv;
 
       defaultProfiles = [ "gpu-hq" ];
 
