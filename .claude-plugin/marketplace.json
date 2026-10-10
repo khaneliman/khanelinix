@@ -309,7 +309,7 @@
 		{
 			"name": "security-toolkit",
 			"description": "Review repositories for explicit security requests.",
-			"version": "0.1.4",
+			"version": "0.1.5",
 			"author": {
 				"name": "khaneliman"
 			},

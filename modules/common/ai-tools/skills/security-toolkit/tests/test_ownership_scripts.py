@@ -54,7 +54,7 @@ class OwnershipScriptTests(unittest.TestCase):
             if build.returncode == 2 and "networkx is required" in build.stderr:
                 output.mkdir()
                 (output / "summary.json").write_text(
-                    json.dumps({"repository": str(root), "findings": []})
+                    json.dumps({"repo": str(root), "findings": []})
                 )
             else:
                 self.assertEqual(0, build.returncode, build.stderr)
@@ -74,7 +74,7 @@ class OwnershipScriptTests(unittest.TestCase):
             )
             self.assertEqual(0, query.returncode, query.stderr)
             report = json.loads(query.stdout)
-            self.assertIn("repository", report)
+            self.assertEqual(str(root), report["repo"])
 
 
 if __name__ == "__main__":
