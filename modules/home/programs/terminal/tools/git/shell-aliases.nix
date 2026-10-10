@@ -91,19 +91,19 @@
     gpdo = "git push -d origin";
     gpf = "git push --force";
     gpfo = "git push --force origin";
-    gpfl = "git push - -force-with-lease";
-    gpflo = "git push - -force-with-lease origin";
+    gpfl = "git push --force-with-lease";
+    gpflo = "git push --force-with-lease origin";
     gpo = "git push origin";
-    gpoa = "git push origin - -all";
-    gpu = "git push - u";
-    gpuo = "git push - u origin";
+    gpoa = "git push origin --all";
+    gpu = "git push -u";
+    gpuo = "git push -u origin";
 
     grb = "git rebase";
-    grba = "git rebase - -abort";
-    grbc = "git rebase - -continue";
-    grbi = "git rebase - i";
-    grbo = "git rebase - -onto";
-    grbs = "git rebase - -skip";
+    grba = "git rebase --abort";
+    grbc = "git rebase --continue";
+    grbi = "git rebase -i";
+    grbo = "git rebase --onto";
+    grbs = "git rebase --skip";
 
     gr = "git remote";
     gra = "git remote add";
