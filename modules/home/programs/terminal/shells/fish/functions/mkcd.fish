@@ -1,4 +1,4 @@
 function mkcd
-    mkdir -p $argv
+    mkdir -p $argv; or return
     cd $argv
 end
