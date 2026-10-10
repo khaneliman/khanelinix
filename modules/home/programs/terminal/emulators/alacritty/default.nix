@@ -106,10 +106,10 @@ in
           dynamic_padding = true;
           dynamic_title = true;
           opacity = 0.98;
-        };
-      }
-      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux { window.decorations = "None"; }
-      // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin { window.decorations = "Buttonless"; };
+        }
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux { decorations = "None"; }
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin { decorations = "Buttonless"; };
+      };
     };
   };
 }
