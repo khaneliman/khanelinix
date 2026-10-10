@@ -71,7 +71,7 @@ return function(ctx)
 		inFlight = true
 
 		ctx.Sbar.exec(
-			"ps -Ao %cpu,comm -r | awk 'BEGIN{IGNORECASE=1} $2 !~ /sketchybar/ && printed==0 {print; printed=1}'",
+			"ps -Ao %cpu,comm -r | awk 'BEGIN{IGNORECASE=1} NR > 1 && $2 !~ /sketchybar/ && printed==0 {print; printed=1}'",
 			function(result)
 				inFlight = false
 				if not result or result == "" then
