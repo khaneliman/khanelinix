@@ -94,8 +94,8 @@ that matches what needs to change.
    `overrideAttrs`. Modern nixpkgs supports both `oldAttrs: { ... }` and
    `(finalAttrs: previousAttrs: { ... })`.
 3. **Never use `overrideDerivation`.** It is a legacy primitive that directly
-   mutates derivation attributes after evaluation, bypassing `stdenv` setup
-   hooks, losing `passthru`, and risking silent build breakages.
+   mutates derivation attributes after evaluation, bypassing `stdenv` attribute
+   processing and risking silent build breakages.
 4. **Use package-specific override surfaces.** Ecosystem builders provide
    tailored override methods:
    - Python: `pkg.overridePythonAttrs (old: { ... })`

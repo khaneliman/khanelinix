@@ -6,17 +6,18 @@
 <path-to-skill>/scripts/closure-diff-report.sh nixpkgs#hello nixpkgs#hello
 ```
 
-Builds without linking, prints direct closure sizes, runs
-`nix store diff-closures`, shows added/removed store paths, lists largest
-entries.
+Builds without linking, prints closure sizes, runs `nix store diff-closures`,
+shows added/removed store paths, lists largest entries.
 
 ## Size Summary
+
+Use `-s` for one output's NAR size and `-S` for its full closure size.
 
 ```bash
 out="$(nix build --no-link --print-out-paths .#package)"
 
 nix path-info -Sh "$out"
-nix path-info -rSh "$out" | sort -h
+nix path-info -rSh "$out" | sort -h -k2,2
 nix path-info --json --json-format 1 --recursive --closure-size "$out" \
   | jq 'to_entries | sort_by(.value.closureSize) | reverse | .[:20][] | {
       path: .key,
@@ -26,7 +27,7 @@ nix path-info --json --json-format 1 --recursive --closure-size "$out" \
 ```
 
 For result symlinks:
-`nix path-info -Sh result && nix path-info -rSh result | sort -h`
+`nix path-info -Sh result && nix path-info -rSh result | sort -h -k2,2`
 
 ## Dependency Drift
 
@@ -42,7 +43,7 @@ change.
 
 ## Interpreting Size Regressions
 
-1. Direct output grew → `nix path-info -Sh`.
+1. Direct output grew → `nix path-info -sh`.
 2. Recursive grew but direct did not → inspect added closure paths.
 3. Dependency only in derivation graph → treat as build-time until runtime
    reference proves otherwise.

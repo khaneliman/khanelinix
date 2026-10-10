@@ -15,7 +15,7 @@ Every evaluated option carries metadata. These are attributes on
 
 | Attribute                  | Answers                                                   |
 | -------------------------- | --------------------------------------------------------- |
-| `files`                    | Which files declared or defined this option.              |
+| `files`                    | Which files supplied the winning definitions.             |
 | `definitionsWithLocations` | Each contributing file paired with the value it supplied. |
 | `definitions`              | The values alone, without locations.                      |
 | `isDefined`                | Whether any module supplied a definition.                 |

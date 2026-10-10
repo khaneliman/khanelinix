@@ -80,11 +80,10 @@ definition means `config`, so definitions read like plain values. Reach for
 | `description`                | The generated type description is unhelpful in documentation and errors.       |
 | `shorthandOnlyDefinesConfig` | Definitions must be able to declare options or set `imports`, not just config. |
 
-Do not reach for `submoduleWith { specialArgs = { inherit pkgs; }; }` on seeing
-`attribute 'pkgs' missing`. NixOS and Home Manager already propagate `pkgs` into
-submodules through `_module.args`; that error usually means the submodule is
-being evaluated outside such a host, or the argument name is wrong. Fix the
-propagation rather than pinning a second package set into the type.
+Submodules do not inherit their parent's `_module.args`, including `pkgs`. If a
+submodule needs the parent's package set, pass that same set explicitly through
+`specialArgs`, or close over it in the declaring module. Check any existing
+argument wiring first; do not instantiate a second package set.
 
 ## Open Schemas With `freeformType`
 
@@ -155,10 +154,10 @@ The consuming side imports it inside the target evaluation, where its arguments
 resolve against that evaluation's package set and module class rather than the
 declaring one.
 
-Two consequences worth remembering: contributions concatenate instead of
-overriding, so `mkForce` on a `deferredModule` option does not suppress other
-contributions the way it would for a scalar; and the option's own evaluation
-never type-checks the module body, so mistakes surface at the import site.
+Surviving contributions concatenate into `imports`; the module system applies
+priorities first, so `mkForce` suppresses lower-priority contributions as usual.
+The option's own evaluation does not type-check the module body, so mistakes
+surface at the import site.
 
 Use `deferredModuleWith { staticModules = [ ... ]; }` when the deferred module
 should always include a baseline and have its options appear in generated
