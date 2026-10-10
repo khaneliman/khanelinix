@@ -112,8 +112,6 @@ in
             )
             (lib.mkOptionDefault {
               "${swayCfg.modifier}+l" = "exec ${screen-locker}";
-              # TODO: enable after swayprop available
-              # TODO: enable after swayprop available
               "${swayCfg.modifier}+BackSpace" = "exec pkill -SIGUSR1 swaylock || ${screen-locker}";
               "${swayCfg.modifier}+Return" = "exec ${mkStartCommand swayCfg.terminal}";
               "${swayCfg.modifier}+Shift+q" = "kill";
