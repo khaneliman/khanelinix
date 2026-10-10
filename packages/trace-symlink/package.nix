@@ -16,9 +16,11 @@ writeShellApplication {
     readlinkWithPrint() {
         link=$(readlink "$1")
         p=$link
-        [ -n "$${p##/*}" ] && p=$(dirname "$1")/$link
+        [ -n "''${p##/*}" ] && p=$(dirname "$1")/$link
         echo "$p"
-        [ -h "$p" ] && readlinkWithPrint "$p"
+        if [ -h "$p" ]; then
+            readlinkWithPrint "$p"
+        fi
     }
 
     a=$1
