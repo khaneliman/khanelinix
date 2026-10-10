@@ -325,8 +325,6 @@ in
     menu-actions =
       let
         systemctl = getExe' pkgs.systemd "systemctl";
-        hyprlock = getExe config.programs.hyprlock.package;
-        swaylock = getExe config.programs.swaylock.package;
         poweroff = getExe' pkgs.systemd "poweroff";
         reboot = getExe' pkgs.systemd "reboot";
         terminal = getExe config.programs.kitty.package;
@@ -337,7 +335,7 @@ in
         shutdown = poweroff;
 
         hibernate = "${systemctl} hibernate";
-        lock = /* Bash */ ''([[ "$XDG_CURRENT_DESKTOP" == "sway" ]] && ${swaylock} -defF) || ([[ "$XDG_CURRENT_DESKTOP" == "Hyprland" ]] && ${hyprlock} --immediate)'';
+        lock = import ../../../screenlockers/menu-command.nix { inherit config lib; };
         suspend = "${systemctl} suspend";
         top = "${terminal} ${top}";
         logout = "wayland-session-stop";
