@@ -36,11 +36,13 @@ in
       xdg.configFile."mako/config".source = ./config;
 
       systemd.user.services.mako = {
-        after = [ "graphical-session.target" ];
-        description = "Mako notification daemon";
-        partOf = [ "graphical-session.target" ];
-        wantedBy = [ "graphical-session.target" ];
-        serviceConfig = {
+        Unit = {
+          After = [ "graphical-session.target" ];
+          Description = "Mako notification daemon";
+          PartOf = [ "graphical-session.target" ];
+        };
+        Install.WantedBy = [ "graphical-session.target" ];
+        Service = {
           Type = "dbus";
           BusName = "org.freedesktop.Notifications";
 
