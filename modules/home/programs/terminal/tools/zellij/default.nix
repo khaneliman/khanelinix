@@ -24,9 +24,9 @@ in
   config = lib.mkIf cfg.enable {
     home.shellAliases =
       let
-        zns = "zellij -s $(basename $(pwd)) options --default-cwd $(pwd)";
-        zas = "zellij a $(basename $(pwd))";
-        zds = "zellij delete-session $(basename $(pwd))";
+        zns = ''zellij -s "$(basename "$(pwd)")" options --default-cwd "$(pwd)"'';
+        zas = ''zellij a "$(basename "$(pwd)")"'';
+        zds = ''zellij delete-session "$(basename "$(pwd)")"'';
         zo = /* Bash */ ''
           session_name=$(basename "$(pwd)")
 
