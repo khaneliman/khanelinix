@@ -19,7 +19,11 @@ Steps:
 
 Implementation:
 
-- On Linux/macOS/Git Bash: `sh ${CLAUDE_PLUGIN_ROOT}/scripts/attest-plan.sh`
+Resolve `<path-to-skill>` to the installed `planning-with-files` skill directory.
+These commands are installed separately from plugins, so do not rely on
+`CLAUDE_PLUGIN_ROOT`. Run the helper with the project as the working directory.
+
+- On Linux/macOS/Git Bash: `sh "<path-to-skill>/scripts/attest-plan.sh"`
 - On Windows PowerShell:
   `& "$env:USERPROFILE\.claude\skills\planning-with-files\scripts\attest-plan.ps1"`
 

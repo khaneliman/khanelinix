@@ -2,8 +2,11 @@
 description: "Show current planning status at a glance - phases, progress, and any logged errors."
 ---
 
-Read task_plan.md from the current project directory and display a compact
-status summary.
+Resolve the selected plan using `scripts/resolve-plan-dir.sh` from the installed
+`planning-with-files` skill directory, with the project as the working directory.
+Read `task_plan.md` in the returned directory and display a compact status
+summary. An empty result means the repository-root legacy plan. Check findings
+and progress in the same resolved directory.
 
 ## What to Show
 
