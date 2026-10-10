@@ -29,7 +29,6 @@ in
         # Cliphist documentation
         # See: https://github.com/sentriz/cliphist
         enable = true;
-        allowImages = true;
         systemdTargets =
           cfg.systemdTargets
           ++ lib.optionals (
