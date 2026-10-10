@@ -1,6 +1,6 @@
 {
 	"name": "mcp-builder",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "Build MCP servers for external APIs and services.",
 	"author": {
 		"name": "khaneliman"

@@ -501,7 +501,7 @@ python scripts/evaluation.py \
   -t stdio \
   -c python \
   -a my_mcp_server.py \
-  evaluation.xml
+  -- evaluation.xml
 ```
 
 With environment variables:
@@ -511,9 +511,8 @@ python scripts/evaluation.py \
   -t stdio \
   -c python \
   -a my_mcp_server.py \
-  -e API_KEY=abc123 \
-  -e DEBUG=true \
-  evaluation.xml
+  -e API_KEY=abc123 DEBUG=true \
+  -- evaluation.xml
 ```
 
 ### 2. Server-Sent Events (SSE)
@@ -524,9 +523,8 @@ For SSE-based MCP servers (you must start the server first):
 python scripts/evaluation.py \
   -t sse \
   -u https://example.com/mcp \
-  -H "Authorization: Bearer token123" \
-  -H "X-Custom-Header: value" \
-  evaluation.xml
+  -H "Authorization: Bearer token123" "X-Custom-Header: value" \
+  -- evaluation.xml
 ```
 
 ### 3. HTTP (Streamable HTTP)
@@ -538,7 +536,7 @@ python scripts/evaluation.py \
   -t http \
   -u https://example.com/mcp \
   -H "Authorization: Bearer token123" \
-  evaluation.xml
+  -- evaluation.xml
 ```
 
 ## Command-Line Options
