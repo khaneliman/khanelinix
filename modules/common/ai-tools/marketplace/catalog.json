@@ -403,7 +403,7 @@
 			},
 			"displayName": "Skill Creator",
 			"description": "Create and update portable agent skills.",
-			"version": "0.1.7",
+			"version": "0.1.8",
 			"category": "Developer Tools"
 		},
 		{
