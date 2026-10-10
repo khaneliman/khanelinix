@@ -41,12 +41,12 @@ in
                 else
                   # For simple single-command aliases, apply nushell transformations
                   let
-                    # Handle commands that conflict with nushell builtins by prefixing with 'command'
+                    # Handle commands that conflict with nushell builtins by prefixing with '^'
                     # Only replace when these are standalone commands, not parts of paths
                     withCommandPrefix =
                       let
                         # Split on spaces to get words, then selectively replace
-                        words = lib.splitString " " value;
+                        words = lib.splitString " " (lib.trim value);
                         conflictingCommands = [
                           "cut"
                           "find"
@@ -58,8 +58,8 @@ in
                           "watch"
                           "wc"
                         ];
-                        transformedWords = map (
-                          word: if builtins.elem word conflictingCommands then "command " + word else word
+                        transformedWords = lib.imap0 (
+                          i: word: if i == 0 && builtins.elem word conflictingCommands then "^" + word else word
                         ) words;
                       in
                       lib.concatStringsSep " " transformedWords;
