@@ -1,32 +1,29 @@
 function cd --description 'change directory and run onefetch if a git directory'
-    set -l parent
-
     # navigate to root of git repo
-    if [ $argv = ":/" ]
-        set -l top (command git rev-parse --show-cdup)
-        builtin cd $top
+    if test (count $argv) -eq 1; and test "$argv[1]" = ":/"
+        set -l top (command git rev-parse --show-toplevel)
+        or return $status
+        builtin cd -- "$top[1]"
+    else if test (count $argv) -eq 1; and test -f "$argv[1]"
         # check if cd to file and route to parent
-    else if [ -f $argv ] && [ -e $argv ]
-        set parent (dirname $argv)
-        if [ "$parent" != . ] && [ -d "$parent" ]
-            builtin cd "$parent"
-        end
-        # if navigating to a directory, cd as usual
-    else if [ -d $argv ]
-        if test -n "$argv" &&
-                builtin cd "$argv"
-        else
-            builtin cd
-        end
+        builtin cd -- (dirname -- "$argv[1]")
+    else
+        builtin cd $argv
+    end
+
+    set -l cdStatus $status
+    if test $cdStatus -ne 0
+        return $cdStatus
     end
 
     # check for git information
-    git rev-parse 2>/dev/null
+    command git rev-parse 2>/dev/null
 
     if test $status -eq 0
-        if test -z "$LAST_REPO" -o "$LAST_REPO" != $(basename $(git rev-parse --show-toplevel))
+        if test -z "$LAST_REPO" -o "$LAST_REPO" != $(basename $(command git rev-parse --show-toplevel))
             onefetch
-            set -g LAST_REPO $(basename $(git rev-parse --show-toplevel))
+            set -g LAST_REPO $(basename $(command git rev-parse --show-toplevel))
         end
     end
+    return $cdStatus
 end
