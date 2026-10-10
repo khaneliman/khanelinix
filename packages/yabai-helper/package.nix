@@ -360,13 +360,12 @@ writeShellApplication {
     }
 
     auto_stack() {
-      INSTANCES=$(yabai -m query --windows | jq "[.[] |select(.\"app\"==\"$1\")| .\"id\"]| length")
-      if [[ $INSTANCES -eq 1 ]]; then
+      NEW_APP=$YABAI_WINDOW_ID
+      APP=$(yabai -m query --windows | jq -r --arg app "$1" --argjson id "$NEW_APP" \
+        '[.[] | select(.app == $app and .id != $id)][0].id // empty') || return 1
+      if [[ -z $APP ]]; then
         return 0
       fi
-
-      NEW_APP=$YABAI_WINDOW_ID
-      APP=$(yabai -m query --windows | jq "[.[] |select(.\"app\"==\"$1\" )|select(.\"id\"!=\"$NEW_APP\")][1].\"id\"")
       yabai -m window "$APP" --stack "$NEW_APP"
     }
 
