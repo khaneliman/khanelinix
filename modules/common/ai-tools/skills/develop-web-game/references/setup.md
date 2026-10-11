@@ -19,10 +19,11 @@ Do not assume a Codex, Claude, user, plugin, or system installation root.
 
 Ensure Playwright is available through project dependencies or repository
 tooling. In Nix environments, prefer the bundled `playwright-cli` closure. Use
-the bundled client:
+the bundled client against the local game URL (adjust the port):
 
 ```bash
-node "$WEB_GAME_CLIENT" --help
+node "$WEB_GAME_CLIENT" --url http://localhost:5173 \
+  --actions-file "$WEB_GAME_ACTIONS"
 ```
 
 Do not replace the client unless it cannot support required inputs.
