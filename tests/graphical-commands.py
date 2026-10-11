@@ -2,7 +2,6 @@
 
 Run with --nixpkgs SOURCE --home-manager SOURCE --niri SOURCE --scratch DIR.
 Optional --root tests unapplied copies; --repo supplies their library.
---baseline checks the old tree's known failures without launching any real locker.
 """
 
 import argparse
@@ -17,7 +16,6 @@ for option in ("nixpkgs", "home-manager", "niri", "scratch"):
     parser.add_argument("--" + option, type=Path, required=True)
 parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
 parser.add_argument("--repo", type=Path)
-parser.add_argument("--baseline", type=Path)
 parser.add_argument("--niri-bin", type=Path)
 args = parser.parse_args()
 scratch = args.scratch.resolve()
@@ -259,41 +257,6 @@ if args.niri_bin:
     config.write_text(data["niri"]["kdl"])
     subprocess.run([str(args.niri_bin), "validate", "-c", str(config)], check=True)
 
-if args.baseline:
-    old = evaluate(args.baseline.resolve())
-    assert all(
-        isinstance(old["niri"]["argv"][key][0], str)
-        and len(old["niri"]["argv"][key]) == 1
-        for key in expected
-    )
-    for key in ("Mod+V", "Mod+Shift+P", "Ctrl+Alt+Print"):
-        assert len(old["niri"]["argv"][key]) == 1
-    try:
-        run(old["niri"]["argv"]["Mod+Shift+Return"])
-    except FileNotFoundError:
-        pass
-    else:
-        raise AssertionError("old combined executable unexpectedly launched")
-    old_fallback = old["sway"]["binds"]["Mod4+BackSpace"]
-    assert (
-        "$screen-locker" in old_fallback and "WAYLAND_DISPLAY=wayland-1" in old_fallback
-    )
-    result, calls = run(
-        old_fallback.removeprefix("exec "), {"PKILL_RESULT": "1"}, check=False
-    )
-    assert result.returncode == 127 and [c["name"] for c in calls] == ["pkill"]
-    _, calls = run(old["sway"]["binds"]["Mod4+i"].removeprefix("exec "))
-    assert next(c for c in calls if c["name"] == "notify-send")["argv"] == [
-        "Window Info",
-        "-t",
-        "5000",
-    ]
-    assert "--immediate" in old["sway"]["binds"]["Mod4+Control+l"]
-    assert old["menus"][0]["wlogout"] == "saylock"
-    result, calls = run(
-        old["menus"][0]["waybar"], {"XDG_CURRENT_DESKTOP": "niri"}, check=False
-    )
-    assert result.returncode != 0 and not calls
 print(
-    "PASS: native HM/Niri renders, nine Niri actions, both annotation branches, Sway lock/inspector flows, 4 enablement x 8 desktop menu cases, real help-only flag parsing and old negative cases"
+    "PASS: native HM/Niri renders, nine Niri actions, both annotation branches, Sway lock/inspector flows, 4 enablement x 8 desktop menu cases and real help-only flag parsing"
 )

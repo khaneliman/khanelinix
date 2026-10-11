@@ -1,6 +1,7 @@
 """Run rendered selective-stash aliases only in disposable fixture repositories.
 
-Usage: python3 regression.py SOURCE_ROOT SCRATCH_DIRECTORY
+Usage: python3 tests/terminal-recovery.py SOURCE_ROOT SCRATCH_DIRECTORY
+Set FISH to the Fish executable; COMPRESS and SEVENZIP enable .Z/.7z fixtures.
 """
 
 import itertools
