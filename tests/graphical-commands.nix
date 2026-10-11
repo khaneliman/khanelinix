@@ -10,6 +10,15 @@ let
   pkgsBase = import nixpkgs { system = builtins.currentSystem; };
   baseLib = pkgsBase.lib;
   lib = (import (homeManager + "/modules/lib/stdlib-extended.nix") baseLib) // {
+    inherit
+      (
+        (import (repo + "/lib/file") {
+          inputs.nixpkgs.lib = baseLib;
+          self = root;
+        })
+      )
+      getFile
+      ;
     khanelinix = (import (repo + "/lib/module") { inputs.nixpkgs.lib = baseLib; }) // {
       userDir =
         _: _: fallback:

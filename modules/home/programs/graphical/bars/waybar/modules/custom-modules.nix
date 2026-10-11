@@ -335,7 +335,9 @@ in
         shutdown = poweroff;
 
         hibernate = "${systemctl} hibernate";
-        lock = import ../../../screenlockers/menu-command.nix { inherit config lib; };
+        lock = import (lib.getFile "modules/home/programs/graphical/screenlockers/menu-command.nix") {
+          inherit config lib;
+        };
         suspend = "${systemctl} suspend";
         top = "${terminal} ${top}";
         logout = "wayland-session-stop";
