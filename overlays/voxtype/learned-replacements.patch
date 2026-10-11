@@ -599,7 +599,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
              pairs.push((old_phrase, new_phrase));
          }
      }
-@@ -309,10 +455,246 @@
+@@ -309,10 +455,286 @@
      (best_i, best_j, best_size)
  }
  
@@ -648,10 +648,12 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
 +}
 +
 +fn merge_learned_replacements_at(path: &Path, pairs: &[(String, String)]) -> std::io::Result<()> {
-+    let mut file = std::fs::read_to_string(path)
-+        .ok()
-+        .and_then(|content| toml::from_str::<LearnedReplacements>(&content).ok())
-+        .unwrap_or_default();
++    let mut file = match std::fs::read_to_string(path) {
++        Ok(content) => toml::from_str::<LearnedReplacements>(&content)
++            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?,
++        Err(e) if e.kind() == std::io::ErrorKind::NotFound => LearnedReplacements::default(),
++        Err(e) => return Err(e),
++    };
 +    for (from, to) in pairs {
 +        file.replacements.insert(from.to_lowercase(), to.clone());
 +    }
@@ -716,6 +718,44 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
 +        assert_eq!(learned["hyperland"], "Hyprland!");
 +        assert_eq!(learned["cubec to"], "kubectl");
 +        assert!(load_learned_replacements_from(&dir.path().join("missing.toml")).is_empty());
++    }
++
++    #[test]
++    fn learned_replacements_merge_preserves_malformed_file() {
++        let dir = tempfile::tempdir().unwrap();
++        let path = dir.path().join("learned-replacements.toml");
++        let tmp = path.with_extension("toml.tmp");
++        for original in [
++            "[replacements]\nold = \"value\"\nbroken = [\n",
++            "[replacements]\nold = \"value\"\nwrong_type = 42\n",
++        ] {
++            std::fs::write(&path, original).unwrap();
++            std::fs::write(&tmp, b"previous temporary bytes").unwrap();
++            let error = merge_learned_replacements_at(
++                &path,
++                &[("Hyperland".into(), "Hyprland".into())],
++            )
++            .unwrap_err();
++            assert_eq!(error.kind(), std::io::ErrorKind::InvalidData);
++            assert_eq!(std::fs::read(&path).unwrap(), original.as_bytes());
++            assert_eq!(std::fs::read(&tmp).unwrap(), b"previous temporary bytes");
++        }
++    }
++
++    #[test]
++    fn learned_replacements_merge_preserves_non_utf8_file() {
++        let dir = tempfile::tempdir().unwrap();
++        let path = dir.path().join("learned-replacements.toml");
++        let original = b"[replacements]\nold = \"\xff\"\n";
++        std::fs::write(&path, original).unwrap();
++        let error = merge_learned_replacements_at(
++            &path,
++            &[("Hyperland".into(), "Hyprland".into())],
++        )
++        .unwrap_err();
++        assert_eq!(error.kind(), std::io::ErrorKind::InvalidData);
++        assert_eq!(std::fs::read(&path).unwrap(), original);
++        assert!(!path.with_extension("toml.tmp").exists());
 +    }
 +
 +    #[test]
@@ -846,7 +886,7 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
      #[test]
      fn example_omaar_gielen() {
          let transcript = "Het omaar gielen nu, doet het niet.";
-@@ -321,7 +703,7 @@
+@@ -321,7 +743,7 @@
              LearnDiff::Replacements(pairs) => {
                  assert_eq!(
                      pairs,
