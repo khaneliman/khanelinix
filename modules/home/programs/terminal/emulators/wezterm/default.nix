@@ -32,7 +32,8 @@ in
         in
         /* lua */ ''
           local act = wezterm.action
-          local custom = wezterm.color.get_builtin_schemes()[scheme_for_appearance(wezterm.gui.get_appearance())]
+          local custom = scheme_for_appearance
+            and wezterm.color.get_builtin_schemes()[scheme_for_appearance(wezterm.gui.get_appearance())]
           local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
           local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
 
@@ -101,10 +102,10 @@ in
             animation_fps = 1,
 
             -- Color scheme
-            color_schemes = {
+            color_schemes = custom and {
               ["Catppuccin"] = custom,
             },
-            color_scheme = "Catppuccin",
+            color_scheme = custom and "Catppuccin",
 
             -- Cursor
             cursor_blink_ease_in = 'Constant',
