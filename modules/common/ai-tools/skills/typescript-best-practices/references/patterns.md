@@ -86,16 +86,17 @@ A time range, as start plus duration:
 // Don't: a comment holds the invariant
 type TimeRange = { start: Date; end: Date }; // start <= end
 
-// Do: a negative range can't be written; derive end when needed
+// Store one endpoint and derive the other from the duration
 type TimeRange = { start: Date; durationMs: number };
 ```
 
-Keep `durationMs` a plain number. Brand it (per Branded types) only if a raw
-number could be passed where a duration is expected, not by reflex. A `Pairs<T>`
-is an even-length list under the interpretation you give it, the same way
-`{ start, durationMs }` is a range. Pick the representation that makes the bad
-state unconstructable, then expose the reading you need on top (`pairs.flat()`,
-a `rangeEnd()` helper).
+A plain `number` still permits negative and non-finite durations. If the range
+must be ordered, validate a finite, non-negative duration at its creation
+boundary; this shape alone does not enforce that invariant. Brand it (per
+Branded types) when callers need to distinguish a validated duration from a raw
+number. `Pairs<T>` represents an even-length list of elements, while
+`{ start, durationMs }` avoids storing two independently editable endpoints.
+Expose the reading you need on top (`pairs.flat()`, a `rangeEnd()` helper).
 
 ## Simplest total type
 
