@@ -152,6 +152,49 @@ class StashTests(unittest.TestCase):
             self.assertEqual(self.state(), before)
             self.assertEqual(list((self.repo / ".git").glob("stash-selected.*")), [])
 
+    def test_separate_changes_in_one_file(self):
+        path = self.repo / "staged space.txt"
+        base = b"".join(f"line {i}\n".encode() for i in range(20))
+        path.write_bytes(base)
+        self.git("add", ".")
+        self.git("commit", "-qm", "separated hunks")
+        staged = base.replace(b"line 0\n", b"staged first\n")
+        unstaged = base.replace(b"line 19\n", b"unstaged last\n")
+        both = staged.replace(b"line 19\n", b"unstaged last\n")
+        for mode in ("staged", "unstaged"):
+            with self.subTest(mode=mode):
+                path.write_bytes(staged)
+                self.git("add", ".")
+                path.write_bytes(both)
+                before = self.state()
+                self.git("stash-" + mode, input=b"yes\n")
+                self.assertEqual(
+                    self.git("show", "stash:staged space.txt").stdout,
+                    staged if mode == "staged" else unstaged,
+                )
+                self.assertEqual(
+                    path.read_bytes(), unstaged if mode == "staged" else staged
+                )
+                self.assertEqual(
+                    self.git("show", ":staged space.txt").stdout,
+                    base if mode == "staged" else staged,
+                )
+                self.assertEqual(
+                    list((self.repo / ".git").glob("stash-selected.*")), []
+                )
+                if mode == "staged":
+                    # Native stash cannot merge over unstaged edits in the same
+                    # file. Restore that retained patch after the selected index.
+                    retained = self.git("diff", "--binary").stdout
+                    self.git("reset", "--hard", "-q")
+                    self.git("stash", "apply", "--index")
+                    self.git("apply", "--whitespace=nowarn", input=retained)
+                else:
+                    self.git("stash", "apply")
+                self.assertEqual(self.state(), before)
+                self.git("reset", "--hard", "-q")
+                self.git("stash", "clear")
+
     def test_failure_recovery(self):
         for mode, setting in itertools.product(
             ("staged", "unstaged"),

@@ -31,8 +31,9 @@ y | Y | yes | YES) ;;
     return 1
     ;;
 esac
-# Reverse the saved patches rather than discard files with reset --hard.
+# Worktree-only apply leaves stale index stat data; --index requires agreement.
 if git -c apply.ignoreWhitespace=no apply -p1 --whitespace=nowarn --reverse "$recovery/unstaged.diff" &&
+    git update-index -q --refresh &&
     git -c apply.ignoreWhitespace=no apply -p1 --whitespace=nowarn --reverse --index "$recovery/staged.diff"; then
     if [ "$mode" = staged ]; then
         if git -c apply.ignoreWhitespace=no apply -p1 --whitespace=nowarn --index "$recovery/staged.diff" &&
