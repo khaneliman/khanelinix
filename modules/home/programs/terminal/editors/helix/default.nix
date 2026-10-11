@@ -72,7 +72,6 @@ in
 
           indent-guides = {
             render = true;
-            rainbow-option = "dim";
           };
 
           line-number = "relative";
