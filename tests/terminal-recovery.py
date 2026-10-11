@@ -284,7 +284,7 @@ class FishTests(unittest.TestCase):
         self.cwd.mkdir()
         self.out.mkdir()
 
-    def fish(self, function, argument=None, *, env_extra=None):
+    def fish(self, function, argument=None, *, env_extra=None, umask=-1):
         import shlex
 
         executable = os.environ["FISH"]
@@ -309,6 +309,7 @@ class FishTests(unittest.TestCase):
             env=environment,
             capture_output=True,
             check=False,
+            umask=umask,
         )
 
     def test_bak_outside_cwd(self):
@@ -587,6 +588,127 @@ class FishTests(unittest.TestCase):
         result = self.fish("ex", archive)
         self.assertEqual(result.returncode, 0, result.stderr.decode())
         self.assertEqual((self.cwd / "seven space" / file.name).read_bytes(), payload)
+
+    def test_ex_failed_stream_preserves_prior_output(self):
+        for extension in ("gz", "bz2", "Z"):
+            with self.subTest(extension=extension):
+                archive = self.out / ("prior." + extension)
+                archive.write_bytes(b"corrupt archive")
+                directory = self.cwd / "prior"
+                directory.mkdir(exist_ok=True)
+                destination = directory / "prior"
+                destination.write_bytes(b"valuable prior output")
+                result = self.fish("ex", archive)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(destination.read_bytes(), b"valuable prior output")
+                self.assertEqual(archive.read_bytes(), b"corrupt archive")
+                self.assertEqual(list(directory.iterdir()), [destination])
+
+    def test_ex_stream_preserves_regular_output_permissions(self):
+        import bz2
+        import gzip
+
+        payload = b"private executable payload\n"
+        compressors = [("gz", gzip.compress), ("bz2", bz2.compress)]
+        if os.environ.get("COMPRESS"):
+            compressors.append(
+                (
+                    "Z",
+                    lambda data: subprocess.check_output(
+                        [os.environ["COMPRESS"], "-cf"], input=data
+                    ),
+                )
+            )
+        for (extension, compress), mode in itertools.product(
+            compressors, (None, 0o600, 0o750)
+        ):
+            with self.subTest(extension=extension, mode=mode):
+                stem = f"permissions {extension} {mode}"
+                archive = self.out / (stem + "." + extension)
+                compressed = compress(payload)
+                archive.write_bytes(compressed)
+                directory = self.cwd / stem
+                directory.mkdir()
+                destination = directory / stem
+                if mode is not None:
+                    destination.write_bytes(b"prior output")
+                    destination.chmod(mode)
+                result = self.fish("ex", archive, umask=0o022)
+                self.assertEqual(result.returncode, 0, result.stderr.decode())
+                self.assertEqual(destination.stat().st_mode & 0o777, mode or 0o644)
+                self.assertEqual(destination.read_bytes(), payload)
+                self.assertEqual(archive.read_bytes(), compressed)
+                self.assertEqual(list(directory.iterdir()), [destination])
+
+    def test_ex_metadata_copy_failure_preserves_output(self):
+        import gzip
+
+        archive = self.out / "metadata.gz"
+        compressed = gzip.compress(b"replacement")
+        archive.write_bytes(compressed)
+        directory = self.cwd / "metadata"
+        directory.mkdir()
+        destination = directory / "metadata"
+        destination.write_bytes(b"private prior output")
+        destination.chmod(0o600)
+        bindir = self.root / "bin"
+        bindir.mkdir()
+        copier = bindir / "cp"
+        copier.write_text("#!/bin/sh\nexit 71\n")
+        copier.chmod(0o755)
+        result = self.fish(
+            "ex",
+            archive,
+            env_extra={"PATH": str(bindir) + os.pathsep + os.environ["PATH"]},
+        )
+        self.assertEqual(result.returncode, 71)
+        self.assertEqual(destination.read_bytes(), b"private prior output")
+        self.assertEqual(destination.stat().st_mode & 0o777, 0o600)
+        self.assertEqual(archive.read_bytes(), compressed)
+        self.assertEqual(list(directory.iterdir()), [destination])
+
+    def test_ex_stream_replaces_symlink_not_its_referent(self):
+        import bz2
+        import gzip
+
+        payload = b"replacement payload\n\x00binary"
+        for extension, compress in (("gz", gzip.compress), ("bz2", bz2.compress)):
+            with self.subTest(extension=extension):
+                stem = "linked " + extension
+                archive = self.out / (stem + "." + extension)
+                compressed = compress(payload)
+                archive.write_bytes(compressed)
+                directory = self.cwd / stem
+                directory.mkdir(exist_ok=True)
+                destination = directory / stem
+                sentinel = self.out / ("sentinel." + extension)
+                sentinel.write_bytes(b"untouched referent")
+                destination.symlink_to(sentinel)
+                result = self.fish("ex", archive)
+                self.assertEqual(result.returncode, 0, result.stderr.decode())
+                self.assertFalse(destination.is_symlink())
+                self.assertEqual(destination.read_bytes(), payload)
+                self.assertEqual(sentinel.read_bytes(), b"untouched referent")
+                self.assertEqual(archive.read_bytes(), compressed)
+                self.assertEqual(list(directory.iterdir()), [destination])
+                destination.unlink()
+
+    def test_ex_stream_rejects_directory_destination(self):
+        import gzip
+
+        archive = self.out / "occupied.gz"
+        compressed = gzip.compress(b"payload")
+        archive.write_bytes(compressed)
+        directory = self.cwd / "occupied"
+        destination = directory / "occupied"
+        destination.mkdir(parents=True)
+        sentinel = destination / "sentinel"
+        sentinel.write_bytes(b"untouched directory")
+        self.assertNotEqual(self.fish("ex", archive).returncode, 0)
+        self.assertEqual(sentinel.read_bytes(), b"untouched directory")
+        self.assertEqual(list(destination.iterdir()), [sentinel])
+        self.assertEqual(list(directory.iterdir()), [destination])
+        self.assertEqual(archive.read_bytes(), compressed)
 
 
 if __name__ == "__main__":

@@ -12,12 +12,43 @@ function ex
                 tar xjf $argv[1] -C $foldername
             case '*.tar.gz'
                 tar xzf $argv[1] -C $foldername
-            case '*.bz2'
-                bunzip2 -c -- "$argv[1]" >"./$foldername/"(basename -- "$argv[1]" .bz2)
+            case '*.bz2' '*.gz' '*.Z'
+                set -l destination "./$foldername/"(string replace -r '\.(bz2|gz|Z)$' '' -- "$filename")
+                set -l temporary "$(command mktemp -d -- "./$foldername/.ex.XXXXXXXXXX")"
+                or return 1
+                # Seed regular-file permissions and ACLs before writing new bytes.
+                if test -f "$destination"; and not test -L "$destination"
+                    command cp -p "$destination" "$temporary/output"
+                    set -l copied $status
+                    if test $copied -ne 0
+                        command rm -f -- "$temporary/output"
+                        command rmdir -- "$temporary"
+                        return $copied
+                    end
+                end
+                switch $argv[1]
+                    case '*.bz2'
+                        bunzip2 -c -- "$argv[1]" >"$temporary/output"
+                    case '*.gz'
+                        gunzip -c -- "$argv[1]" >"$temporary/output"
+                    case '*.Z'
+                        uncompress -c "$argv[1]" >"$temporary/output"
+                end
+                set -l result $status
+                if test $result -eq 0
+                    if test -d "$destination"
+                        printf 'ex: "%s" is a directory\n' "$destination" >&2
+                        set result 1
+                    else
+                        command mv -- "$temporary/output" "$destination"
+                        set result $status
+                    end
+                end
+                command rm -f -- "$temporary/output"
+                command rmdir -- "$temporary"
+                return $result
             case '*.rar'
                 unrar x $argv[1] ./$foldername/
-            case '*.gz'
-                gunzip -c -- "$argv[1]" >"./$foldername/"(basename -- "$argv[1]" .gz)
             case '*.tar'
                 tar xf $argv[1] -C ./$foldername/
             case '*.tbz2'
@@ -26,8 +57,6 @@ function ex
                 tar xzf $argv[1] -C ./$foldername/
             case '*.zip'
                 unzip -d "./$foldername/" "$argv[1]"
-            case '*.Z'
-                uncompress -c "$argv[1]" >"./$foldername/"(basename -- "$argv[1]" .Z)
             case '*.7z'
                 7z x "$argv[1]" "-o./$foldername/"
             case '*'
