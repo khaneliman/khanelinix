@@ -1,9 +1,10 @@
-"""Native Atuin/Yazi/Helix regressions on Linux, with isolated HOME/XDG and PTYs.
+"""Native Atuin/Yazi/Helix/WezTerm regressions on Linux, with isolated HOME/XDG and PTYs.
 
 Run: python3 tests/native-tool-regressions.py /locked/nixpkgs /locked/home-manager ignored-scratch-dir
 --source-root selects a scratch source tree for pre-integration checks.
 Helix probes replay captured initialization options in real clangd with no compilation database.
 Both Yazi platform branches are generated on Linux, not Darwin runtime tested.
+WezTerm reads real HM Lua headlessly; font-family inputs are fixture-owned.
 No sync, history, accounts, daemon, live trash or host/flake checks are invoked.
 """
 
@@ -57,7 +58,9 @@ def run(argv, **kwargs):
     return result.stdout.strip()
 
 
-def expression(fixture, sync=False, darwin=False, helix_recorder=False):
+def expression(
+    fixture, sync=False, darwin=False, helix_recorder=False, wezterm_settings=False
+):
     paths = {
         "nixpkgs": args.nixpkgs,
         "homeManager": args.home_manager,
@@ -67,7 +70,7 @@ def expression(fixture, sync=False, darwin=False, helix_recorder=False):
         f"{key} = builtins.toPath {json.dumps(str(value.resolve()))};"
         for key, value in paths.items()
     )
-    return f"import (builtins.toPath {json.dumps(str(HERE / 'native-tool-regressions.nix'))}) {{ {parameters} fixture = {json.dumps(str(fixture))}; sync = {str(sync).lower()}; darwin = {str(darwin).lower()}; helixRecorder = {str(helix_recorder).lower()}; }}"
+    return f"import (builtins.toPath {json.dumps(str(HERE / 'native-tool-regressions.nix'))}) {{ {parameters} fixture = {json.dumps(str(fixture))}; sync = {str(sync).lower()}; darwin = {str(darwin).lower()}; helixRecorder = {str(helix_recorder).lower()}; weztermWithSettings = {str(wezterm_settings).lower()}; }}"
 
 
 def evaluate(expr, attribute):
@@ -151,6 +154,59 @@ def atuin_case(sync):
         assert settings["sync_frequency"] == "30m"
     else:
         assert "sync_address" not in settings and "sync_frequency" not in settings
+
+
+def wezterm_case(with_settings):
+    fixture = work / f"wezterm-{with_settings}"
+    env = environment(fixture)
+    expr = expression(fixture, wezterm_settings=with_settings)
+    settings = evaluate(expr, "wezterm.settings")
+    assert bool(settings) is with_settings, settings
+    config = fixture / "generated.lua"
+    shutil.copyfile(generated(expr, "wezterm"), config)
+    status = fixture / "reader.json"
+    observer = fixture / "observer.lua"
+    # show-keys can exit 0 with defaults after storing a config error. Observe the
+    # generated chunk without changing its result, then require the native binding.
+    observer.write_text(
+        "local wezterm = require 'wezterm'\n"
+        f"local ok, result = pcall(function() return assert(loadfile({json.dumps(str(config))}))() end)\n"
+        """
+local record = { ok = ok }
+if ok then
+  for _, key in ipairs({ 'color_scheme', 'color_schemes', 'colors',
+                         'font_size', 'scrollback_lines' }) do
+    record[key] = result[key]
+  end
+  record.fonts_present = result.font ~= nil and #result.font_rules == 3
+else
+  record.error = tostring(result)
+end
+"""
+        f"local file = assert(io.open({json.dumps(str(status))}, 'w'))\n"
+        "file:write(wezterm.json_encode(record)); file:close()\n"
+        "if not ok then error(result) end\nreturn result\n"
+    )
+    bindings = run(
+        [binaries["wezterm"], "--config-file", str(observer), "show-keys", "--lua"],
+        env=env,
+        cwd=fixture,
+    )
+    (fixture / "bindings.lua").write_text(bindings + "\n")
+    assert status.exists(), "WezTerm observer did not run"
+    record = json.loads(status.read_text())
+    assert record["ok"] is True, record
+    assert re.search(
+        r"\{\s*key = 'S',\s*mods = 'CTRL',\s*action = act\.PasteFrom 'PrimarySelection'\s*\}",
+        bindings,
+    ), "WezTerm used default keys instead of the wrapper's primary-selection binding"
+    assert record["font_size"] == 13 and record["scrollback_lines"] == 10000, record
+    assert record["fonts_present"] is True, record
+    for key in ("color_scheme", "color_schemes", "colors"):
+        if key in settings:
+            assert record.get(key) == settings[key], (key, record, settings)
+        else:
+            assert key not in record, (key, record)
 
 
 def drain(master, seconds):
@@ -503,5 +559,10 @@ for darwin in (False, True):
                 binaries["yazi"], fixture, env, key, expected
             ),
         )
+for with_settings in (False, True):
+    check(
+        f"WezTerm settings={with_settings}: native load/bindings and exact colors",
+        lambda with_settings=with_settings: wezterm_case(with_settings),
+    )
 print(f"{checked - len(failures)}/{checked} groups passed; artifacts: {work}")
 raise SystemExit(bool(failures))

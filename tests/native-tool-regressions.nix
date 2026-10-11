@@ -1,4 +1,4 @@
-# Isolated owners and real Home Manager TOML, without host evaluation.
+# Isolated owners and real Home Manager serializers, without host evaluation.
 {
   nixpkgs,
   homeManager,
@@ -8,6 +8,7 @@
   darwin ? false,
   system ? builtins.currentSystem,
   helixRecorder ? false,
+  weztermWithSettings ? false,
 }:
 let
   pkgs = import nixpkgs {
@@ -27,6 +28,11 @@ let
     modules: configuration:
     (import (homeManager + "/modules") {
       inherit pkgs;
+      lib = pkgs.lib.extend (
+        _: _: {
+          getFile = path: root + "/${path}";
+        }
+      );
       configuration = {
         inherit home;
         imports = modules;
@@ -46,6 +52,34 @@ let
       clangd-cpp.command = lib.mkForce "${fixture}/clangd-cpp-recorder";
     };
   };
+  wezterm =
+    evaluate
+      [
+        (root + "/modules/home/programs/terminal/emulators/wezterm")
+        # Only font-family inputs are fixture-owned; HM owns its option types and Lua.
+        ({ lib, ... }: {
+          options.khanelinix.fonts = lib.mkOption {
+            type = lib.types.attrs;
+            default.monaspace.families = {
+              kryptonVar = "Monaspace Krypton Var";
+              neonVar = "Monaspace Neon Var";
+              radonVar = "Monaspace Radon Var";
+              xenonVar = "Monaspace Xenon Var";
+            };
+          };
+        })
+      ]
+      {
+        khanelinix.programs.terminal.emulators.wezterm.enable = true;
+        programs.wezterm.settings = lib.optionalAttrs weztermWithSettings {
+          color_scheme = "Fixture User";
+          color_schemes."Fixture User" = {
+            background = "#112233";
+            foreground = "#aabbcc";
+          };
+          colors.cursor_bg = "#445566";
+        };
+      };
   baseline = evaluate [ ] { };
   disabled =
     evaluate
@@ -101,6 +135,7 @@ in
     pkgs.helix-unwrapped
     pkgs.clang-tools
     pkgs.coreutils
+    pkgs.wezterm
   ];
   binaries = {
     atuin = lib.getExe pkgs.atuin;
@@ -108,6 +143,7 @@ in
     helix = lib.getExe pkgs.helix-unwrapped;
     clangd = lib.getExe' pkgs.clang-tools "clangd";
     coreutils = "${pkgs.coreutils}/bin";
+    wezterm = lib.getExe pkgs.wezterm;
   };
   gates =
     assert outputs disabled == outputs baseline;
@@ -131,4 +167,9 @@ in
     inherit keymap;
     generated = (pkgs.formats.toml { }).generate "goto-keymap.toml" { mgr = keymap; };
   };
+  wezterm = {
+    settings = wezterm.programs.wezterm.settings;
+    generated = wezterm.xdg.configFile."wezterm/wezterm.lua".source;
+  };
+
 }
