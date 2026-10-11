@@ -597,8 +597,10 @@ Fix:
 
 Severity: Medium
 
-NOTE: It is most important to set the CSP's script-src. All other directives are
-not as important and can generally be excluded for the ease of development.
+NOTE: `script-src` constrains scripts; other directives protect different
+surfaces, such as `frame-ancestors` for framing and `form-action` for form
+submissions. Choose controls for the application rather than omitting them
+solely for ease of development.
 
 Required:
 
@@ -1197,7 +1199,7 @@ Required:
   - login, password reset, signup
   - expensive Server Actions
   - webhook ingestion
-- MUST implement request size limits (see NEXT-LIMITS-001).
+- MUST implement request size limits (see §3.2 and NEXT-FILES-001).
 - If self-hosting, MUST rely on reverse proxy for additional protections.
   ([Next.js][8])
 

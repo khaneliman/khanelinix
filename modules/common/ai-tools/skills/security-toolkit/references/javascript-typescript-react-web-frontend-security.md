@@ -812,7 +812,9 @@ Detection hints:
 
 Fix:
 
-- Only allow relative paths (`/^\/[^\s]*$/`) or allowlisted origins.
+- Resolve the target with `new URL(value, window.location.href)` and compare its
+  `origin` with `window.location.origin` or an explicit origin allowlist. A
+  leading `/` alone does not exclude protocol-relative or backslash targets.
 - Fall back to a safe default (e.g., `/`) when invalid.
 
 Notes:

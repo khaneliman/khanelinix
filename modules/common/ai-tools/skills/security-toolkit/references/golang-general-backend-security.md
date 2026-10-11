@@ -456,9 +456,10 @@ Severity: Medium
 Required (typical web app serving browsers):
 
 - SHOULD set:
-  - `Content-Security-Policy` (CSP) appropriate to the app. NOTE: It is most
-    important to set the CSP's script-src. All other directives are not as
-    important and can generally be excluded for the ease of development.
+  - `Content-Security-Policy` (CSP) appropriate to the app. `script-src`
+    constrains scripts, not framing or form submission. Choose other directives
+    for the application rather than omitting them solely for ease of
+    development.
   - `X-Content-Type-Options: nosniff`
   - Clickjacking protection (`X-Frame-Options` and/or CSP `frame-ancestors`)
   - `Referrer-Policy` and `Permissions-Policy` where appropriate
@@ -797,7 +798,7 @@ Fix:
 
 Notes:
 
-- The Go `os/exec` package intentionally does invoke a shell; introducing
+- The Go `os/exec` package intentionally does not invoke a shell; introducing
   `sh -c` reintroduces shell injection hazards.
 
 ---

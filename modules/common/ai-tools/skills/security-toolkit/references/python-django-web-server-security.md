@@ -821,8 +821,10 @@ NOTE:
 
 Severity: Medium (High for apps rendering untrusted content)
 
-NOTE: It is most important to set the CSP's script-src. All other directives are
-not as important and can generally be excluded for the ease of development.
+NOTE: `script-src` constrains scripts; other directives protect different
+surfaces, such as `frame-ancestors` for framing and `form-action` for form
+submissions. Choose controls for the application rather than omitting them
+solely for ease of development.
 
 Required:
 

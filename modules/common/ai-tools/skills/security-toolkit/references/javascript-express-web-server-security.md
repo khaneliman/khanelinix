@@ -262,8 +262,9 @@ Required:
 - SHOULD set `X-Content-Type-Options: nosniff`, clickjacking defenses
   (`X-Frame-Options` or CSP `frame-ancestors`), and appropriate referrer policy.
 
-NOTE: It is most important to set the CSP's script-src. All other directives are
-not as important and can generally be excluded for the ease of development.
+NOTE: `script-src` constrains scripts; other directives protect different
+surfaces, such as `frame-ancestors` for framing and `form-action` for form
+submissions. Do not omit those controls solely for ease of development.
 
 Insecure patterns:
 
@@ -615,7 +616,8 @@ Required:
 
 Insecure patterns:
 
-- No explicit body limits (accepting arbitrarily large JSON/urlencoded).
+- Body limits that are too large for the endpoint, whether configured explicitly
+  or inherited from parser defaults.
 - Global parsers applied to all routes when only some need bodies.
 - `parameterLimit` very high without justification (DoS potential).
 

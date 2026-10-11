@@ -381,7 +381,7 @@
 			},
 			"displayName": "Security Toolkit",
 			"description": "Review repositories for explicit security requests.",
-			"version": "0.1.6",
+			"version": "0.1.7",
 			"category": "Developer Tools"
 		},
 		{

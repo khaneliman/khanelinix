@@ -177,9 +177,10 @@ security failures.
   (especially `script-src` restrictions and avoiding `unsafe-inline`). If not
   done through HTTP server, this can be done through the
   `<meta http-equiv="Content-Security-Policy" content="...">` tag.
-  ([OWASP Cheat Sheet Series][9]) NOTE: It is most important to set the CSP's
-  script-src. All other directives are not as important and can generally be
-  excluded for the ease of development.
+  ([OWASP Cheat Sheet Series][9]) `script-src` constrains scripts, not framing
+  or form submission. Choose other directives, such as `frame-ancestors` and
+  `form-action`, for the application rather than omitting them solely for ease
+  of development.
 - SHOULD consider Trusted Types as a strong defense-in-depth against DOM XSS.
   ([W3C][10])
 - If you deploy the CSP directive `require-trusted-types-for`, then code MUST

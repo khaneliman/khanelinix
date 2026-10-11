@@ -489,8 +489,10 @@ Fix:
 Severity: Medium to High (depends on threat model; High when handling untrusted
 content)
 
-NOTE: It is most important to set the CSP's script-src. All other directives are
-not as important and can generally be excluded for the ease of development.
+NOTE: `script-src` constrains scripts; other directives protect different
+surfaces, such as `frame-ancestors` for framing and `form-action` for form
+submissions. Choose controls for the application rather than omitting them
+solely for ease of development.
 
 Required:
 
@@ -538,8 +540,10 @@ Fix:
 
 Severity: Medium
 
-NOTE: It is most important to set the CSP's script-src. All other directives are
-not as important and can generally be excluded for the ease of development.
+NOTE: `script-src` constrains scripts; other directives protect different
+surfaces, such as `frame-ancestors` for framing and `form-action` for form
+submissions. Choose controls for the application rather than omitting them
+solely for ease of development.
 
 Required:
 
@@ -814,8 +818,8 @@ Fix:
 
 - Store config in module-scoped constants (not on `window`/`document`) and pass
   it explicitly.
-- Validate any URL-like config with protocol/origin allowlists (see
-  FEJS-URL-001). ([OWASP Cheat Sheet Series][8])
+- Validate any URL-like config with protocol/origin allowlists (see JS-URL-001).
+  ([OWASP Cheat Sheet Series][8])
 - Consider hardening: sanitization, CSP, and (in limited cases) freezing
   sensitive objects, but treat these as defense-in-depth, not a substitute for
   safe coding patterns. ([OWASP Cheat Sheet Series][8])
