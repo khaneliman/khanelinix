@@ -27,7 +27,7 @@ severity keys such as P1, and evidence packets are not the user's words.
 ## Review threads
 
 Digest format: `## S<n> | agent | date | project | skills | turns`, then
-`T<k> USER:` prompts and `T<k> AGENT:` final replies truncated to 600 chars.
+`T<k> USER:` prompts and `T<k> AGENT:` final replies truncated to 700 chars.
 
 Labels, applied to each USER turn from T1 that reacts to the agent or steers the
 review: `relayed-report`, `publish-pending` (create or update a pending review
