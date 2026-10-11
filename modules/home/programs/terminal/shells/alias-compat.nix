@@ -132,12 +132,11 @@ let
     command:
     let
       translatedArgs = replaceFishArgs command;
-      translatedSubs = lib.replaceStrings [ "$(" ] [ "(" ] translatedArgs;
       restoredAwkFields = lib.replaceStrings (map (index: "{print $argv[${index}]}") positionalIndexes) (
         map
           (index: "{print $" + index + "}")
           positionalIndexes
-      ) translatedSubs;
+      ) translatedArgs;
     in
     lib.replaceStrings [ " && " " || " ] [ "\nand " "\nor " ] restoredAwkFields;
 

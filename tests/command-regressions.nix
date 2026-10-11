@@ -106,6 +106,7 @@ in
     pkgs.nushell
     pkgs.bash
     pkgs.coreutils
+    pkgs.gawk
     launcher
     compilerHelper
   ];
@@ -115,6 +116,23 @@ in
     inherit environment;
     sessionEnd = data.rendered.sessionEnd;
     zellijAliases = zellij.config.content.home.shellAliases;
+    zellijFishFunctions = compat.translateFishFunctions zellij.config.content.home.shellAliases;
+    fishSubstitutions = compat.translateFishFunctions {
+      quoted = ''printf '%s\n' "$(printf 'one two')"'';
+      unquoted = ''printf '%s\n' $(printf 'one\ntwo\n')'';
+      assignment = ''
+        value=$(printf 'one two')
+        printf '%s\n' "$value"
+      '';
+      loop = ''
+        for value in $(printf 'one\ntwo\n'); do
+          printf '%s\n' "$value"
+        done
+      '';
+      awk = ''printf '%s\n' "$(printf 'one two' | ${lib.getExe pkgs.gawk} '{print $2}')"'';
+      positional = ''printf '%s\n' "$1" "$(printf 'computed')" "$@"'';
+      chained = ''printf 'one\n' && printf '%s\n' "$(printf 'two three')" || false'';
+    };
     nuAliases = nushell.config.content.programs.nushell.shellAliases.content;
     complexBridge = compat.translatedAliasValue config.home.shellAliases.complex;
     fish = lib.getExe pkgs.fish;

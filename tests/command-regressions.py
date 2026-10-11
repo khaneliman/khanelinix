@@ -145,6 +145,14 @@ for name, expected in {
     "zns": ["-s", project.name, "options", "--default-cwd", str(project)],
     "zas": ["a", project.name],
     "zds": ["delete-session", project.name],
+    "zo": [
+        "attach",
+        "--create",
+        project.name,
+        "options",
+        "--default-cwd",
+        str(project),
+    ],
 }.items():
     run(
         [r["bash"], "--noprofile", "--norc", "-c", r["zellijAliases"][name]],
@@ -152,7 +160,41 @@ for name, expected in {
         env=env,
     )
     assert json.loads(Path(env["ARGV_FILE"]).read_text()) == expected
-passed("three actual Zellij aliases preserve exact argv without sessions")
+    Path(env["ARGV_FILE"]).unlink()
+    run(
+        [r["fish"], "--no-config", "-c", r["zellijFishFunctions"][name]["body"]],
+        cwd=project,
+        env=env,
+    )
+    assert json.loads(Path(env["ARGV_FILE"]).read_text()) == expected
+passed(
+    "four actual Zellij aliases preserve exact argv through Bash and Fish without sessions"
+)
+
+for name, expected in {
+    "quoted": ["one two"],
+    "unquoted": ["one", "two"],
+    "assignment": ["one two"],
+    "loop": ["one", "two"],
+    "awk": ["two"],
+    "positional": ["arg space", "computed", "arg space", "second"],
+    "chained": ["one", "two three"],
+}.items():
+    body = r["fishSubstitutions"][name]["body"]
+    output = run(
+        [
+            r["fish"],
+            "--no-config",
+            "-c",
+            f"function probe\n{body}\nend\nprobe 'arg space' second",
+        ],
+        cwd=project,
+        env=env,
+    )
+    assert output.splitlines() == expected, (name, output, expected)
+passed(
+    "Fish translator preserves quoted/unquoted substitution, assignment, loops, AWK and arguments"
+)
 
 # Execute the actual helper referenced by the built launcher's source. Neither
 # systemd-run nor its login-shell wrapper needs to start for exporter semantics.
