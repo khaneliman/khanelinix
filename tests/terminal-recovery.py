@@ -284,7 +284,7 @@ class FishTests(unittest.TestCase):
         self.cwd.mkdir()
         self.out.mkdir()
 
-    def fish(self, function, argument=None):
+    def fish(self, function, argument=None, *, env_extra=None):
         import shlex
 
         executable = os.environ["FISH"]
@@ -296,7 +296,7 @@ class FishTests(unittest.TestCase):
         command = "source " + shlex.quote(str(source)) + "; " + function
         if argument is not None:
             command += " " + shlex.quote(str(argument))
-        environment = os.environ.copy()
+        environment = os.environ | (env_extra or {})
         if environment.get("SEVENZIP"):
             environment["PATH"] = (
                 str(Path(environment["SEVENZIP"]).parent)
@@ -328,6 +328,202 @@ class FishTests(unittest.TestCase):
         self.assertEqual(backup.read_bytes(), b"original")
         self.assertEqual(decoy.read_bytes(), b"decoy")
         self.assertNotEqual(self.fish("bak").returncode, 0)
+
+    def bak_entry(self, path):
+        if path.is_symlink():
+            referent = self.bak_entry(path.resolve()) if path.exists() else None
+            return ("link", os.readlink(path), referent)
+        if path.is_dir():
+            return (
+                "directory",
+                tuple((p.name, self.bak_entry(p)) for p in sorted(path.iterdir())),
+            )
+        return ("file", path.read_bytes())
+
+    def bak_fixture(self, path, kind, payload):
+        if kind == "file":
+            path.write_bytes(payload)
+        elif kind == "directory":
+            path.mkdir()
+            (path / "payload").write_bytes(payload)
+        else:
+            referent = self.root / (kind + "-" + payload.decode())
+            if kind == "link-file":
+                referent.write_bytes(payload)
+            elif kind == "link-directory":
+                referent.mkdir(exist_ok=True)
+                (referent / "payload").write_bytes(payload)
+            path.symlink_to(referent)
+
+    def test_bak_collision_and_path_types(self):
+        kinds = ("file", "directory", "link-file", "link-directory", "dangling")
+        for number, (target_kind, backup_kind) in enumerate(
+            itertools.product(kinds, repeat=2)
+        ):
+            with self.subTest(target=target_kind, backup=backup_kind):
+                parent = self.out / str(number)
+                parent.mkdir()
+                target = parent / "-file space"
+                backup = parent / "-file space.bak"
+                collision = parent / "-file space.bak.tmp"
+                self.bak_fixture(target, target_kind, b"original")
+                self.bak_fixture(collision, backup_kind, b"collision")
+                original = self.bak_entry(target)
+                untouched = self.bak_entry(collision)
+                # Exercise a relative path outside cwd as well as absolute paths.
+                argument = os.path.relpath(target, self.cwd) if number % 2 else target
+                for _ in range(2):
+                    result = self.fish("bak", argument)
+                    self.assertEqual(result.returncode, 0, result.stderr.decode())
+                self.assertEqual(self.bak_entry(target), original)
+                self.assertFalse(backup.exists() or backup.is_symlink())
+                self.bak_fixture(backup, backup_kind, b"backup")
+                other = self.bak_entry(backup)
+                result = self.fish("bak", argument)
+                self.assertEqual(result.returncode, 0, result.stderr.decode())
+                self.assertEqual(self.bak_entry(target), other)
+                self.assertEqual(self.bak_entry(backup), original)
+                self.assertEqual(self.bak_entry(collision), untouched)
+                self.assertEqual(list(parent.glob(".bak.*")), [])
+
+    def test_bak_move_failures(self):
+        import shutil
+
+        native_mv = shutil.which("mv")
+        bindir = self.root / "bin"
+        bindir.mkdir()
+        # Fail before selected moves, delegate all others to the real platform mv.
+        (bindir / "mv").write_text(
+            "#!" + sys.executable + "\n"
+            "import json,os,subprocess,sys\n"
+            "from pathlib import Path\n"
+            "log=Path(os.environ['MOVE_LOG'])\n"
+            "calls=json.loads(log.read_text()) if log.exists() else []\n"
+            "calls.append(sys.argv[1:]); log.write_text(json.dumps(calls))\n"
+            "if len(calls) in json.loads(os.environ['FAIL_MOVES']): sys.exit(71)\n"
+            "sys.exit(subprocess.run([os.environ['NATIVE_MV'],*sys.argv[1:]],check=False).returncode)\n"
+        )
+        (bindir / "mv").chmod(0o755)
+        failures = ((1,), (2,), (3,), (2, 3), (3, 4), (3, 5))
+        kinds = ("file", "directory", "link-file", "link-directory", "dangling")
+        for number, (kind, fail_moves) in enumerate(itertools.product(kinds, failures)):
+            with self.subTest(kind=kind, fail_moves=fail_moves):
+                parent = self.out / str(number)
+                parent.mkdir()
+                target = parent / "file space"
+                backup = parent / "file space.bak"
+                self.bak_fixture(target, kind, b"original")
+                self.bak_fixture(backup, kind, b"backup")
+                original, other = self.bak_entry(target), self.bak_entry(backup)
+                log = parent / "moves.json"
+                result = self.fish(
+                    "bak",
+                    target,
+                    env_extra={
+                        "PATH": str(bindir) + os.pathsep + os.environ["PATH"],
+                        "NATIVE_MV": native_mv,
+                        "MOVE_LOG": str(log),
+                        "FAIL_MOVES": json.dumps(fail_moves),
+                    },
+                )
+                self.assertNotEqual(result.returncode, 0)
+                recovery = list(parent.glob(".bak.*"))
+                calls = json.loads(log.read_text())
+                expected_calls = (
+                    {1: 1, 2: 3, 3: 5}[fail_moves[0]]
+                    if len(fail_moves) == 1
+                    else fail_moves[-1]
+                )
+                self.assertEqual(len(calls), expected_calls)
+                if len(fail_moves) == 1:
+                    self.assertEqual(self.bak_entry(target), original)
+                    self.assertEqual(self.bak_entry(backup), other)
+                    self.assertEqual(recovery, [])
+                else:
+                    (retained,) = recovery
+                    self.assertEqual(retained.stat().st_mode & 0o777, 0o700)
+                    self.assertIn(str(retained).encode(), result.stderr)
+                    self.assertEqual(self.bak_entry(retained / "original"), original)
+                    location = target if fail_moves == (3, 4) else backup
+                    vacant = backup if location == target else target
+                    self.assertEqual(self.bak_entry(location), other)
+                    self.assertFalse(vacant.exists() or vacant.is_symlink())
+
+    def test_bak_suffix_and_directory_slashes(self):
+        target = self.out / "file.bak"
+        target.write_bytes(b"suffix original")
+        result = self.fish("bak", target)
+        # The historical suffix mapping chooses the same path, not file or .bak.bak.
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(target.read_bytes(), b"suffix original")
+        self.assertEqual(list(self.out.iterdir()), [target])
+        hidden = self.out / ".bak"
+        hidden.write_bytes(b"hidden")
+        self.assertEqual(self.fish("bak", hidden).returncode, 0)
+        self.assertEqual((self.out / ".bak.bak").read_bytes(), b"hidden")
+        directory = self.out / "folder space"
+        directory.mkdir()
+        (directory / "payload").write_bytes(b"directory")
+        argument = str(directory) + "///"
+        for _ in range(2):
+            result = self.fish("bak", argument)
+            self.assertEqual(result.returncode, 0, result.stderr.decode())
+        backup = self.out / "folder space.bak"
+        backup.mkdir()
+        (backup / "payload").write_bytes(b"backup directory")
+        result = self.fish("bak", argument)
+        self.assertEqual(result.returncode, 0, result.stderr.decode())
+        self.assertEqual((directory / "payload").read_bytes(), b"backup directory")
+        self.assertEqual((backup / "payload").read_bytes(), b"directory")
+
+    def test_bak_temp_creation_failure(self):
+        bindir = self.root / "bin"
+        bindir.mkdir()
+        (bindir / "mktemp").write_text(
+            "#!" + sys.executable + "\nimport sys\nsys.exit(71)\n"
+        )
+        (bindir / "mktemp").chmod(0o755)
+        target, backup = self.out / "file", self.out / "file.bak"
+        target.write_bytes(b"original")
+        backup.write_bytes(b"backup")
+        result = self.fish(
+            "bak",
+            target,
+            env_extra={
+                "PATH": str(bindir) + os.pathsep + os.environ["PATH"],
+            },
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(target.read_bytes(), b"original")
+        self.assertEqual(backup.read_bytes(), b"backup")
+        self.assertEqual(list(self.out.glob(".bak.*")), [])
+
+    def test_bak_dash_and_newline_names(self):
+        for name in ("-file space", "file\nspace\n"):
+            with self.subTest(name=name):
+                target = self.cwd / name
+                backup = self.cwd / (name + ".bak")
+                target.write_bytes(b"original")
+                for _ in range(2):
+                    self.assertEqual(self.fish("bak", name).returncode, 0)
+                backup.write_bytes(b"backup")
+                self.assertEqual(self.fish("bak", name).returncode, 0)
+                self.assertEqual(target.read_bytes(), b"backup")
+                self.assertEqual(backup.read_bytes(), b"original")
+
+    def test_bak_relative_symlinks(self):
+        target, backup = self.out / "file", self.out / "file.bak"
+        (self.out / "original").write_bytes(b"original")
+        (self.out / "backup").write_bytes(b"backup")
+        target.symlink_to("original")
+        backup.symlink_to("backup")
+        self.assertEqual(self.fish("bak", target).returncode, 0)
+        self.assertEqual(os.readlink(target), "backup")
+        self.assertEqual(os.readlink(backup), "original")
+        self.assertEqual(target.read_bytes(), b"backup")
+        self.assertEqual(backup.read_bytes(), b"original")
+        self.assertEqual((self.out / "original").read_bytes(), b"original")
+        self.assertEqual((self.out / "backup").read_bytes(), b"backup")
 
     def test_ex_outside_cwd(self):
         import bz2
