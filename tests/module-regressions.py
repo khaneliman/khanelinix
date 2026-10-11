@@ -37,6 +37,10 @@ result = json.loads(
 assert len(result["credentials"]) == 64 and all(result["credentials"])
 assert len(result["suite"]) == 10 and all(result["suite"])
 assert result["wsl"]
+assert result["dolphin"] == {
+    "enabled": {"emulator": True, "controllers": True},
+    "disabled": {"emulator": False, "controllers": False},
+}
 for mode, greeter in result["lightdm"].items():
     assert greeter["enable"]
     for theme in ("cursor", "icon"):
@@ -90,5 +94,5 @@ for mode, rendered in result["ssh"].items():
         == "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl"
     )
 print(
-    "PASS: 64 credential combinations, 10 suite baselines and overrides, WSL gate, 13 SSH resolutions, 4 LightDM theme selections"
+    "PASS: 64 credential combinations, 10 suite baselines and overrides, WSL gate, 13 SSH resolutions, 4 LightDM theme selections, Dolphin enablement"
 )

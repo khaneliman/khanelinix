@@ -276,6 +276,26 @@ let
       extraConfig = evaluated.environment.etc."ssh/ssh_config".text;
       knownHosts = evaluated.programs.ssh.knownHosts;
     };
+  dolphin =
+    enabled:
+    let
+      evaluated = import (nixpkgs + "/nixos/lib/eval-config.nix") {
+        system = builtins.currentSystem;
+        modules = [
+          (root + "/modules/nixos/programs/graphical/file-managers/dolphin")
+          {
+            khanelinix.programs.graphical.file-managers.dolphin.enable = enabled;
+            system.stateVersion = "26.11";
+          }
+        ];
+      };
+      inherit (evaluated) config;
+      package = evaluated.pkgs.dolphin-emu;
+    in
+    {
+      emulator = builtins.elem package config.environment.systemPackages;
+      controllers = builtins.elem package config.services.udev.packages;
+    };
   lightdm =
     cursor: icon:
     let
@@ -369,5 +389,9 @@ in
     cursor = lightdm true false;
     icon = lightdm false true;
     custom = lightdm true true;
+  };
+  dolphin = {
+    enabled = dolphin true;
+    disabled = dolphin false;
   };
 }
