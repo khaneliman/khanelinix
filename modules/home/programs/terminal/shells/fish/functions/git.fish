@@ -14,7 +14,11 @@ function git
             s/^((?:(?:\e\[[^m]*m)+(?:.|$)|.(?:\e\[[^m]*m)*|$(*SKIP)(*FAIL)){$truncate})(?=(?:(?:\e\[[^m]*m)+(?:.|$)|.(?:\e\[[^m]*m)*|$(*SKIP)(*FAIL)){15}).*/$1\e\[m...(truncated)/
         }'
 
-        return
+        set -l grepStatuses $pipestatus
+        if test $grepStatuses[1] -ne 0
+            return $grepStatuses[1]
+        end
+        return $grepStatuses[2]
     end
 
     # Prevent accidental git commit -a
