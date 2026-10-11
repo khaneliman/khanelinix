@@ -245,8 +245,12 @@ def parse_arguments(argv: Sequence[str]) -> argparse.Namespace:
     if "--" in argv:
         separator = list(argv).index("--")
         arguments = parser.parse_args(list(argv[:separator]))
-        arguments.command = list(argv[separator + 1 :])
-        arguments.explicit_command = True
+        if arguments.command:
+            arguments.command += ["--", *argv[separator + 1 :]]
+            arguments.explicit_command = False
+        else:
+            arguments.command = list(argv[separator + 1 :])
+            arguments.explicit_command = True
     else:
         arguments = parser.parse_args(list(argv))
         arguments.explicit_command = False

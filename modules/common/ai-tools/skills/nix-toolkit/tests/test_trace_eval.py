@@ -176,6 +176,20 @@ class ResolveCommandTest(unittest.TestCase):
         with self.assertRaises(trace_eval.TraceEvalError):
             self.resolve(["--"])
 
+    def test_positional_command_keeps_its_own_separator(self) -> None:
+        for command in (
+            ["nix", "eval", "--", ".#foo"],
+            ["printf", "%s", "--", "hello"],
+            ["printf", "%s", "hello", "--"],
+        ):
+            with self.subTest(command=command):
+                self.assertEqual(self.resolve(command), command)
+                self.assertEqual(self.resolve(["--json", *command]), command)
+
+    def test_positional_command_without_separator(self) -> None:
+        command = ["printf", "%s", "hello"]
+        self.assertEqual(self.resolve(command), command)
+
     def test_requires_a_target(self) -> None:
         with self.assertRaises(trace_eval.TraceEvalError):
             self.resolve([])
