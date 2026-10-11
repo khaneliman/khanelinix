@@ -6,9 +6,14 @@
   fixture,
   sync ? false,
   darwin ? false,
+  system ? builtins.currentSystem,
+  helixRecorder ? false,
 }:
 let
-  pkgs = import nixpkgs { system = builtins.currentSystem; };
+  pkgs = import nixpkgs {
+    inherit system;
+    config.allowAliases = false;
+  };
   lib = pkgs.lib // {
     khanelinix = import (root + "/lib/module") { inputs.nixpkgs.lib = pkgs.lib; };
   };
@@ -32,6 +37,13 @@ let
     khanelinix.programs.terminal.tools.atuin = {
       enable = true;
       sync.enable = sync;
+    };
+  };
+  helix = evaluate [ (root + "/modules/home/programs/terminal/editors/helix") ] {
+    khanelinix.programs.terminal.editors.helix.enable = true;
+    programs.helix.languages.language-server = lib.mkIf helixRecorder {
+      clangd.command = lib.mkForce "${fixture}/clangd-recorder";
+      clangd-cpp.command = lib.mkForce "${fixture}/clangd-cpp-recorder";
     };
   };
   baseline = evaluate [ ] { };
@@ -86,10 +98,16 @@ in
   packages = [
     pkgs.atuin
     pkgs.yazi-unwrapped
+    pkgs.helix-unwrapped
+    pkgs.clang-tools
+    pkgs.coreutils
   ];
   binaries = {
     atuin = lib.getExe pkgs.atuin;
     yazi = lib.getExe pkgs.yazi-unwrapped;
+    helix = lib.getExe pkgs.helix-unwrapped;
+    clangd = lib.getExe' pkgs.clang-tools "clangd";
+    coreutils = "${pkgs.coreutils}/bin";
   };
   gates =
     assert outputs disabled == outputs baseline;
@@ -97,6 +115,17 @@ in
   atuin = {
     settings = atuin.programs.atuin.settings;
     generated = atuin.xdg.configFile."atuin/config.toml".source;
+  };
+  helix = {
+    settings = helix.programs.helix.settings;
+    generated = helix.xdg.configFile."helix/config.toml".source;
+    languages = helix.xdg.configFile."helix/languages.toml".source;
+    snapshot = {
+      inherit (helix.programs.helix) settings languages extraPackages;
+      package = toString helix.programs.helix.package;
+      wrapperArgs = helix.programs.helix.package.makeWrapperArgs;
+      packages = map toString helix.home.packages;
+    };
   };
   yazi = {
     inherit keymap;

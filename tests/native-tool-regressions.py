@@ -1,7 +1,8 @@
-"""Native Atuin/Yazi regressions on Linux, with isolated HOME/XDG and PTYs.
+"""Native Atuin/Yazi/Helix regressions on Linux, with isolated HOME/XDG and PTYs.
 
 Run: python3 tests/native-tool-regressions.py /locked/nixpkgs /locked/home-manager ignored-scratch-dir
 --source-root selects a scratch source tree for pre-integration checks.
+Helix probes replay captured initialization options in real clangd with no compilation database.
 Both Yazi platform branches are generated on Linux, not Darwin runtime tested.
 No sync, history, accounts, daemon, live trash or host/flake checks are invoked.
 """
@@ -11,12 +12,17 @@ import fcntl
 import json
 import os
 import pty
+import queue
+import re
 import select
 import shutil
+import signal
 import struct
 import subprocess
+import sys
 import tempfile
 import termios
+import threading
 import time
 from pathlib import Path
 
@@ -31,6 +37,7 @@ args.scratch.mkdir(parents=True, exist_ok=True)
 work = Path(tempfile.mkdtemp(prefix="native-tools-", dir=args.scratch.resolve()))
 commands = []
 failures = []
+checked = 0
 
 
 def run(argv, **kwargs):
@@ -50,7 +57,7 @@ def run(argv, **kwargs):
     return result.stdout.strip()
 
 
-def expression(fixture, sync=False, darwin=False):
+def expression(fixture, sync=False, darwin=False, helix_recorder=False):
     paths = {
         "nixpkgs": args.nixpkgs,
         "homeManager": args.home_manager,
@@ -60,7 +67,7 @@ def expression(fixture, sync=False, darwin=False):
         f"{key} = builtins.toPath {json.dumps(str(value.resolve()))};"
         for key, value in paths.items()
     )
-    return f"import (builtins.toPath {json.dumps(str(HERE / 'native-tool-regressions.nix'))}) {{ {parameters} fixture = {json.dumps(str(fixture))}; sync = {str(sync).lower()}; darwin = {str(darwin).lower()}; }}"
+    return f"import (builtins.toPath {json.dumps(str(HERE / 'native-tool-regressions.nix'))}) {{ {parameters} fixture = {json.dumps(str(fixture))}; sync = {str(sync).lower()}; darwin = {str(darwin).lower()}; helixRecorder = {str(helix_recorder).lower()}; }}"
 
 
 def evaluate(expr, attribute):
@@ -87,7 +94,7 @@ def generated(expr, tool):
 
 def environment(fixture):
     env = {
-        "PATH": "/usr/bin:/bin",
+        "PATH": binaries["coreutils"] + ":/usr/bin:/bin",
         "TERM": "xterm-256color",
         "LANG": "C.UTF-8",
         "HOME": str(fixture / "home space"),
@@ -108,6 +115,8 @@ def environment(fixture):
 
 
 def check(name, test):
+    global checked
+    checked += 1
     try:
         test()
         print("PASS:", name, flush=True)
@@ -210,6 +219,249 @@ def navigate(binary, fixture, env, key, expected):
         (fixture / f"{key}-terminal.log").write_bytes(output)
 
 
+def clangd_diagnostics(fixture, env, initialize, document):
+    """Replay Helix's captured options and document against the actual clangd."""
+    messages = []
+    responses = queue.Queue()
+    stderr = (fixture / "clangd.log").open("w")
+    argv = [
+        binaries["clangd"],
+        "--enable-config=0",
+        "--background-index=0",
+        "--clang-tidy=0",
+        "--log=verbose",
+        f"--compile-commands-dir={fixture}",
+    ]
+    proc = subprocess.Popen(
+        argv,
+        cwd=fixture,
+        env=env,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=stderr,
+    )
+
+    def reader():
+        while True:
+            headers = {}
+            while True:
+                line = proc.stdout.readline()
+                if not line:
+                    return
+                if line in (b"\r\n", b"\n"):
+                    break
+                key, value = line.decode().split(":", 1)
+                headers[key.lower()] = value.strip()
+            message = json.loads(proc.stdout.read(int(headers["content-length"])))
+            messages.append(message)
+            responses.put(message)
+
+    thread = threading.Thread(target=reader, daemon=True)
+    thread.start()
+
+    def send(message):
+        data = json.dumps({"jsonrpc": "2.0", **message}).encode()
+        proc.stdin.write(f"Content-Length: {len(data)}\r\n\r\n".encode() + data)
+        proc.stdin.flush()
+
+    def wait_for(predicate):
+        deadline = time.monotonic() + 15
+        while time.monotonic() < deadline:
+            try:
+                message = responses.get(timeout=max(0.01, deadline - time.monotonic()))
+            except queue.Empty:
+                break
+            if predicate(message):
+                return message
+        raise AssertionError("clangd did not return the expected response")
+
+    try:
+        params = {
+            "processId": None,
+            "rootUri": fixture.as_uri(),
+            "capabilities": {},
+        }
+        if "initializationOptions" in initialize["params"]:
+            params["initializationOptions"] = initialize["params"][
+                "initializationOptions"
+            ]
+        send({"id": 1, "method": "initialize", "params": params})
+        assert "result" in wait_for(lambda m: m.get("id") == 1)
+        send({"method": "initialized", "params": {}})
+        send({"method": "textDocument/didOpen", "params": document["params"]})
+        diagnostics = wait_for(
+            lambda m: (
+                m.get("method") == "textDocument/publishDiagnostics"
+                and m["params"]["uri"] == document["params"]["textDocument"]["uri"]
+            )
+        )["params"]["diagnostics"]
+        send({"id": 2, "method": "shutdown", "params": None})
+        wait_for(lambda m: m.get("id") == 2)
+        send({"method": "exit", "params": None})
+        proc.wait(timeout=5)
+        assert proc.returncode == 0, f"clangd exit {proc.returncode}"
+        (fixture / "clangd-result.json").write_text(
+            json.dumps(
+                {
+                    "argv": argv,
+                    "initialize": params,
+                    "diagnostics": diagnostics,
+                    "exit": proc.returncode,
+                },
+                indent=2,
+            )
+        )
+        assert not [d for d in diagnostics if d.get("severity") == 1], diagnostics
+    finally:
+        if proc.poll() is None:
+            proc.kill()
+            proc.wait()
+        thread.join(timeout=2)
+        proc.stdin.close()
+        proc.stdout.close()
+        stderr.close()
+        (fixture / "clangd-messages.json").write_text(json.dumps(messages, indent=2))
+
+
+def helix_case(language, suffix, text):
+    fixture = work / f"helix-{language}"
+    env = environment(fixture)
+    env["HELIX_PROBE_LOG"] = str(fixture / "lsp.jsonl")
+    for server in ("clangd", "clangd-cpp"):
+        recorder = fixture / f"{server}-recorder"
+        recorder.write_text(
+            "#!" + sys.executable + "\n" + (HERE / "helix-lsp-recorder.py").read_text()
+        )
+        recorder.chmod(0o755)
+    expr = expression(fixture, helix_recorder=True)
+    config = Path(env["XDG_CONFIG_HOME"]) / "helix"
+    config.mkdir()
+    shutil.copyfile(generated(expr, "helix"), config / "config.toml")
+    language_file = Path(
+        run(
+            [
+                "nix",
+                "build",
+                "--impure",
+                "--no-link",
+                "--print-out-paths",
+                "--expr",
+                f"({expr}).helix.languages",
+            ]
+        )
+    )
+    shutil.copyfile(language_file, config / "languages.toml")
+    settings = evaluate(expr, "helix.settings")
+    source = fixture / f"probe.{suffix}"
+    source.write_text(text)
+    run([binaries["helix"], "--health", language], env=env, cwd=fixture)
+    master, slave = pty.openpty()
+    proc = None
+    output = bytearray()
+    log = fixture / "hx.log"
+    try:
+        fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 30, 120, 0, 0))
+        argv = [binaries["helix"], "--log", str(log), "-vv", str(source)]
+        (fixture / "helix-command.json").write_text(json.dumps(argv))
+        proc = subprocess.Popen(
+            argv,
+            env=env,
+            cwd=fixture,
+            stdin=slave,
+            stdout=slave,
+            stderr=slave,
+            start_new_session=True,
+        )
+        os.close(slave)
+        slave = None
+        deadline = time.monotonic() + 15
+        phase = 0
+        messages = []
+        while time.monotonic() < deadline and proc.poll() is None:
+            if select.select([master], [], [], 0.05)[0]:
+                try:
+                    chunk = os.read(master, 65536)
+                except OSError:
+                    break
+                output.extend(chunk)
+                if b"\x1b[6n" in chunk:
+                    os.write(master, b"\x1b[1;1R")
+            capture = Path(env["HELIX_PROBE_LOG"])
+            if capture.exists():
+                messages = [
+                    json.loads(line)
+                    for line in capture.read_text().splitlines(keepends=True)
+                    if line.endswith("\n")
+                ]
+            status = log.read_text() if log.exists() else ""
+            if phase == 0 and any(
+                m.get("method") == "textDocument/didOpen" for m in messages
+            ):
+                os.write(master, b":get indent-guides\r")
+                phase = 1
+            elif phase == 1 and "editor status:" in status:
+                os.write(master, b":indent-style\r")
+                phase = 2
+            elif phase == 2 and (
+                language == "opencl" or "editor status: 2 spaces" in status
+            ):
+                os.write(master, b":quit!\r")
+                phase = 3
+        assert phase == 3, (
+            "Helix did not consume config, detect language and inherit indentation"
+        )
+        proc.wait(timeout=3)
+        assert proc.returncode == 0, output.decode(errors="replace")
+        assert b"Bad config:" not in output, output.decode(errors="replace")
+        initialize = next(m for m in messages if m.get("method") == "initialize")
+        document = next(
+            m for m in messages if m.get("method") == "textDocument/didOpen"
+        )
+        assert document["params"]["textDocument"]["languageId"] == language, document
+        runtime_guides = json.loads(
+            re.search(r"editor status: (\{[^\n]+\})", log.read_text())[1]
+        )
+        assert runtime_guides["render"] is True
+        assert {
+            key: runtime_guides.get(key) for key in settings["editor"]["indent-guides"]
+        } == settings["editor"]["indent-guides"], runtime_guides
+        # Diagnose the real document before checking flags, so a shared-flag mutation
+        # exposes the C compiler regression as well as the dispatch mismatch.
+        clangd_diagnostics(fixture, env, initialize, document)
+        expected_server = "clangd-cpp" if language == "cpp" else "clangd"
+        assert initialize["recorder"] == expected_server + "-recorder", initialize
+        expected_options = (
+            {"fallbackFlags": ["-std=c++2b"]} if language == "cpp" else None
+        )
+        assert initialize["params"].get("initializationOptions") == expected_options, (
+            initialize
+        )
+    finally:
+        if proc is not None and proc.poll() is None:
+            os.killpg(proc.pid, signal.SIGTERM)
+            proc.wait(timeout=3)
+        if slave is not None:
+            os.close(slave)
+        os.close(master)
+        (fixture / "terminal.log").write_bytes(output)
+
+
+for language, suffix, text in [
+    ("c", "c", "int main(void) { return 0; }\n"),
+    (
+        "cpp",
+        "cpp",
+        'static_assert(__cplusplus > 202002L, "C++23 fallback flags required");\n',
+    ),
+    ("opencl", "cl", "__kernel void probe(__global int *out) { out[0] = 1; }\n"),
+]:
+    check(
+        f"Helix {language}: native dispatch/options and real clangd diagnostics",
+        lambda language=language, suffix=suffix, text=text: helix_case(
+            language, suffix, text
+        ),
+    )
+
 for sync in (False, True):
 
     def gates(sync=sync):
@@ -251,5 +503,5 @@ for darwin in (False, True):
                 binaries["yazi"], fixture, env, key, expected
             ),
         )
-print(f"{11 - len(failures)}/11 groups passed; artifacts: {work}")
+print(f"{checked - len(failures)}/{checked} groups passed; artifacts: {work}")
 raise SystemExit(bool(failures))
