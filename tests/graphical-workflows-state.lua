@@ -5,6 +5,7 @@ local bar = root .. "/modules/home/programs/graphical/bars/sketchybar/"
 package.path = scratch .. "/?.lua;" .. bar .. "config/?.lua;" .. bar .. "config/?/init.lua;" .. package.path
 local items, timers, commands = {}, {}, {}
 local payload
+local barSettings = {}
 local function noop(...) end
 Sbar = {
 	add = function(_, name, options)
@@ -49,10 +50,12 @@ Sbar = {
 	exec = function(command, callback)
 		commands[#commands + 1] = command
 		if callback then
-			if command == "pbpaste" then
+			if command:find("osascript", 1, true) and TEST_MUSIC_ENABLED then
+				callback("playing|||Artist - Track", 0)
+			elseif command == "pbpaste" then
 				callback(payload)
 			else
-				callback("")
+				callback(command:find("ps -ww", 1, true) and payload or "", 0)
 			end
 		end
 	end,
@@ -66,7 +69,11 @@ Sbar = {
 	query = function(_)
 		return { frame = { w = 1728 } }
 	end,
-	bar = noop,
+	bar = function(values)
+		for key, value in pairs(values) do
+			barSettings[key] = value
+		end
+	end,
 	default = noop,
 	set_bar_name = noop,
 }
@@ -146,6 +153,68 @@ elseif scenario == "helper" then
 	assert(TRUNCATE_TEXT("a\255b", 3) == "a\255b")
 	assert(TRUNCATE_TEXT("a\255bc", 0) == "a\255bc")
 	assert(TRUNCATE_TEXT("a\255bc", -1) == "a\255bc")
+elseif scenario == "cpu" or scenario == "cpu_music" then
+	TEST_CPU_ENABLED = true
+	TEST_MUSIC_ENABLED = scenario == "cpu_music"
+	local now = 0
+	rawset(os, "time", function()
+		return now
+	end)
+	dofile(bar .. "dynamic-island-sketchybar/init.lua")
+	local function drain()
+		for _ = 1, 10 do
+			if #timers == 0 then
+				return
+			end
+			local queued = timers
+			timers = {}
+			for _, timer in ipairs(queued) do
+				timer[2]()
+			end
+		end
+		error("island timers did not settle")
+	end
+	local music = items["island.music_title"]
+	local musicHeight
+	if music then
+		items.musicListener.callbacks.spotify_update({ SENDER = "spotify_update" })
+		drain()
+		assert(music.drawing)
+		musicHeight = barSettings.height
+	end
+	payload = "42 99.5 Sun Oct 11 09:00:00 2026 /Applications/Busy App"
+	for at = 0, 120, 30 do
+		now = at
+		items.cpuPanicListener.callbacks.routine()
+	end
+	local title, detail = items["island.cpu_panic_text"], items["island.cpu_panic_detail"]
+	assert(title.drawing and detail.drawing)
+	if music then
+		assert(not music.drawing)
+	end
+	assert(title.label.string:find("CPU busy", 1, true))
+	assert(detail.label.string:find("Activity Monitor", 1, true))
+	-- An unrelated island interrupts both lines; its older timers cannot replay the CPU notice.
+	items.githubIslandListener.callbacks.github_notification({ COUNT = "1", TITLE = "Review", REPO = "khanelinix" })
+	assert(not title.drawing and not detail.drawing)
+	if music then
+		assert(not music.drawing, "do not restore beneath the successor")
+	end
+	local oldTimers = timers
+	timers = {}
+	for _, timer in ipairs(oldTimers) do
+		timer[2]()
+	end
+	assert(not title.drawing and not detail.drawing)
+	drain()
+	if music then
+		assert(music.drawing, "successor must restore persistent music")
+		assert(barSettings.height == musicHeight, "collapse must not overwrite restored geometry")
+		assert(not items["island.github_text"].drawing)
+	end
+	now = 150
+	items.cpuPanicListener.callbacks.routine()
+	assert(not title.drawing and not detail.drawing)
 elseif scenario == "clipboard" then
 	local island = bar .. "dynamic-island-sketchybar/"
 	local cfg = dofile(island .. "config.lua")

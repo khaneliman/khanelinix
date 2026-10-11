@@ -184,6 +184,8 @@ return {
 			cornerRadius = 15,
 			pollInterval = 30,
 			threshold = 90,
+			sustainedSeconds = 120,
+			cooldownSeconds = 900,
 		},
 		clipboard = {
 			maxExpandWidth = 185,

@@ -390,6 +390,7 @@ local islandState = {
 	persistentOwner = nil,
 	persistentRestore = nil,
 	persistentHide = nil,
+	persistentHidden = false,
 	isSleeping = false,
 }
 
@@ -440,6 +441,8 @@ end
 local function isIslandAnimationCurrent(token)
 	return token ~= nil and token == islandAnimationToken
 end
+
+local restorePersistentIsland
 
 local function animateIsland(options)
 	interruptActiveIsland(options.owner)
@@ -537,6 +540,10 @@ local function animateIsland(options)
 			end
 			restorePrivacy()
 
+			-- Hidden persistent content belongs to the whole transient chain, not its first owner.
+			if islandState.persistentHidden and restorePersistentIsland(options.owner) then
+				return
+			end
 			if not options.preventCollapse then
 				Sbar.animate("tanh", layout.animation.collapseDuration, function()
 					if current ~= islandAnimationToken then
@@ -580,6 +587,7 @@ local function clearPersistentIsland(owner)
 	islandState.persistentOwner = nil
 	islandState.persistentRestore = nil
 	islandState.persistentHide = nil
+	islandState.persistentHidden = false
 	logDebug("[init] persistent island cleared")
 end
 
@@ -591,11 +599,12 @@ local function hidePersistentIsland(excludedOwner)
 		return false
 	end
 
+	islandState.persistentHidden = true
 	islandState.persistentHide()
 	return true
 end
 
-local function restorePersistentIsland(excludedOwner)
+restorePersistentIsland = function(excludedOwner)
 	if islandState.persistentOwner == nil or islandState.persistentOwner == excludedOwner then
 		return false
 	end
@@ -603,6 +612,7 @@ local function restorePersistentIsland(excludedOwner)
 		return false
 	end
 
+	islandState.persistentHidden = false
 	islandState.persistentRestore()
 	return true
 end

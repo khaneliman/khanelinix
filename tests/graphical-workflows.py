@@ -54,10 +54,13 @@ class Workflows(unittest.TestCase):
             "local cfg = dofile(" + repr(str(island / "config.lua")) + ")\n"
             "for name in pairs(cfg.enabled) do cfg.enabled[name] = false end\n"
             "cfg.enabled.clipboard = true\n"
+            "cfg.enabled.cpu_panic = TEST_CPU_ENABLED or false\n"
+            "cfg.enabled.github = TEST_CPU_ENABLED or false\n"
+            "cfg.enabled.music = TEST_MUSIC_ENABLED or false\n"
             "cfg.islands.clipboard.maxPreviewLength = TEST_PREVIEW_LIMIT\n"
             "return cfg\n"
         )
-        for scenario in ["media", "stats", "helper", "clipboard"]:
+        for scenario in ["media", "stats", "helper", "clipboard", "cpu", "cpu_music"]:
             with self.subTest(scenario=scenario):
                 subprocess.run(
                     [
@@ -268,7 +271,7 @@ class Workflows(unittest.TestCase):
         bin_dir.mkdir(exist_ok=True)
         ps = bin_dir / "ps"
         ps.write_text(
-            "#!/usr/bin/env bash\nprintf '%s\\n' ' %CPU COMM' ' 100 /bin/sketchybar' ' 99.5 /Applications/Busy App' ' 10 /bin/idle'\n"
+            "#!/usr/bin/env bash\nprintf '%s\\n' '1 100 Sun Oct 11 09:00:00 2026 /bin/SketchyBar' '42 99.5 Sun Oct 11 09:00:00 2026 /Applications/Busy App' '43 10 Sun Oct 11 09:00:00 2026 /bin/idle'\n"
         )
         ps.chmod(0o755)
         subprocess.run(
