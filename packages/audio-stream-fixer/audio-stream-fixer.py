@@ -47,6 +47,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 
 # Extensions to scan
 EXTENSIONS = {".mkv", ".mp4", ".avi", ".m4v"}
@@ -180,34 +181,35 @@ def apply_fix(item):
 
     # --- STRATEGY 2: SLOW (FFmpeg) ---
     print("      \033[93m[BUSY]\033[0m Running FFmpeg copy (Slow)...")
-    temp_file = filepath + ".tmp" + os.path.splitext(filepath)[1]
-
     try:
-        cmd = [
-            "ffmpeg",
-            "-v",
-            "error",
-            "-y",
-            "-i",
-            filepath,
-            "-map",
-            "0",
-            "-c",
-            "copy",
-            f"-disposition:{good_idx}",
-            "default",
-            f"-disposition:{bad_idx}",
-            "0",
-            temp_file,
-        ]
-        subprocess.run(cmd, check=True)
-        os.replace(temp_file, filepath)
-        print("      \033[92m[FIXED]\033[0m FFmpeg copy complete.")
-        return True
+        with tempfile.TemporaryDirectory(
+            prefix=".audio-stream-fixer-",
+            dir=os.path.dirname(os.path.abspath(filepath)),
+        ) as temp_dir:
+            temp_file = os.path.join(temp_dir, os.path.basename(filepath))
+            cmd = [
+                "ffmpeg",
+                "-v",
+                "error",
+                "-y",
+                "-i",
+                filepath,
+                "-map",
+                "0",
+                "-c",
+                "copy",
+                f"-disposition:{good_idx}",
+                "+default",
+                f"-disposition:{bad_idx}",
+                "-default",
+                temp_file,
+            ]
+            subprocess.run(cmd, check=True)
+            os.replace(temp_file, filepath)
+            print("      \033[92m[FIXED]\033[0m FFmpeg copy complete.")
+            return True
     except (OSError, subprocess.SubprocessError) as e:
         print(f"      \033[91m[FAIL]\033[0m FFmpeg error: {e}")
-        if os.path.exists(temp_file):
-            os.remove(temp_file)
         return False
 
 
