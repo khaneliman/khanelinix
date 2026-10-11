@@ -26,8 +26,7 @@
           else
               printf '%s\n' main;
           fi;
-      }; f
-    '';
+      }; f'';
 
     ## Git Flow Operations
     ### Commit all, commit all with message, add and commit all, amend commit
@@ -58,8 +57,7 @@
               y|Y|yes|YES) git reset --hard;;
               *) echo 'Not resetting.'; return 1;;
           esac;
-      }; f
-    '';
+      }; f'';
     ### Pushes current branch
     mr = "push -u origin HEAD";
     ### Create a silent savepoint commit and reset back a commit
@@ -71,8 +69,7 @@
               y|Y|yes|YES) git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard;;
               *) echo 'Not wiping.'; return 1;;
           esac;
-      }; f
-    '';
+      }; f'';
     ### Add all, commit, and push in one
     rdone = "!f() { git ac \"$1\"; git done; };f";
     ### Branch Delete:
@@ -81,8 +78,7 @@
       !f() {
           local base=$(git default-branch);
           git checkout "$base" && git branch --merged | grep -v '\*' | xargs -n 1 git branch -d;
-      }; f
-    '';
+      }; f'';
     ### Branch Delete Here:
     #> Deletes all local branches that have already been merged to the branch that you're currently on
     brdhere = "!sh -c \"git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d\"";
@@ -96,8 +92,7 @@
           git merge --no-commit --no-ff "$1";
           git merge --abort;
           echo "Merge aborted";
-      }; f
-    '';
+      }; f'';
     ### Rebase interactive against default branch and dev
     ria = "!git rebase -i $(git merge-base HEAD $(git default-branch))";
     rid = "!git rebase -i $(git merge-base HEAD develop)";
@@ -141,8 +136,7 @@
 
         echo "Re-checking...";
         git fsck --full;
-      }; f
-    '';
+      }; f'';
 
     ### Forced Pull:
     #> You have a local branch (e.g. for reviewing), but someone else did a forced push update on the remote branch. A regular git pull will fail, but this will just set the local branch to match the remote branch. BEWARE: this will overwrite any local commits you have made on this branch that haven't been pushed.
@@ -155,16 +149,14 @@
               y|Y|yes|YES) git fetch origin "$b" && git reset --hard "origin/$b";;
               *) echo 'Not resetting.'; return 1;;
           esac;
-      }; f
-    '';
+      }; f'';
 
     ### Pull only the current branch and dont update refs of all remotes
     pullhead = /* Bash */ ''
       !f() {
           local b=''${1:-$(git rev-parse --abbrev-ref HEAD)};
           git pull origin $b;
-      }; f
-    '';
+      }; f'';
 
     ### Blow up local branch and repull from remote
     smash = /* Bash */ ''
@@ -182,8 +174,7 @@
                   ;;
               *) echo 'Not deleting branch.'; return 1;;
           esac;
-      }; f
-    '';
+      }; f'';
 
     ### Rebase current branch off default branch
     rbm = /* Bash */ ''
@@ -201,8 +192,7 @@
                   ;;
               *) echo 'Not rebasing.'; return 1;;
           esac;
-      }; f
-    '';
+      }; f'';
 
     ### Rebase current branch off develop
     rbd = /* Bash */ ''
@@ -219,8 +209,7 @@
                   ;;
               *) echo 'Not rebasing.'; return 1;;
           esac;
-      }; f
-    '';
+      }; f'';
 
     # Sort branch by date
     # Usage: git bd [-a] [-<line_limit>]
@@ -251,17 +240,15 @@
               sort -n -k1,1 |
               cut -d' ' -f2- |
               tail ''${@:--n+0};
-      }; f
-    '';
+      }; f'';
 
     fetch-pr = /* Bash */ ''
       !f() {
-          git remote get-url $1 >/dev/null 2>&1 || { printf >&2 'Usage: git fetch-pr <remote> [<pr-number>]\n'; exit 1; };
+          git remote get-url "$1" >/dev/null 2>&1 || { printf >&2 'Usage: git fetch-pr <remote> [<pr-number>]\n'; exit 1; };
           pr=$2;
-          [ -z $pr ] && pr='*';
-          git fetch $1 '+refs/pull/$pr/head:refs/remotes/$1/pr/$pr';
-      }; f
-    '';
+          [ -z "$pr" ] && pr='*';
+          git fetch "$1" "+refs/pull/$pr/head:refs/remotes/$1/pr/$pr";
+      }; f'';
 
     stash-staged = "!f() { ${builtins.readFile ./stash-selected.sh} }; f staged";
     stash-unstaged = "!f() { ${builtins.readFile ./stash-selected.sh} }; f unstaged";
