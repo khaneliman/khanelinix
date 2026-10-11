@@ -37,7 +37,7 @@ in
               nil
               nixd
               nixfmt
-              nodePackages.prettier
+              prettier
               rust-analyzer
               rustfmt
               shellcheck

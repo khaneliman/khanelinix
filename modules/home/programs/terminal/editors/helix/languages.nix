@@ -17,7 +17,7 @@ in
         };
 
         prettier = lang: {
-          command = getExe pkgs.nodePackages.prettier;
+          command = getExe pkgs.prettier;
           args = [
             "--parser"
             lang
@@ -133,13 +133,13 @@ in
       nil = {
         command = getExe pkgs.nil;
         config.nil.formatting.command = [
-          "${getExe pkgs.nixfmt-rfc-style}"
+          "${getExe pkgs.nixfmt}"
           "-q"
         ];
       };
 
       typescript-language-server = {
-        command = getExe pkgs.nodePackages.typescript-language-server;
+        command = getExe pkgs.typescript-language-server;
         args = [ "--stdio" ];
         config =
           let
