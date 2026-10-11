@@ -62,6 +62,10 @@ in
           ];
         }
         {
+          name = "cpp";
+          language-servers = [ "clangd-cpp" ];
+        }
+        {
           name = "javascript";
           auto-format = true;
           language-servers = [
@@ -97,7 +101,11 @@ in
 
       clangd = {
         command = getExe' pkgs.clang-tools "clangd";
-        clangd.fallbackFlags = [ "-std=c++2b" ];
+      };
+
+      clangd-cpp = {
+        command = getExe' pkgs.clang-tools "clangd";
+        config.fallbackFlags = [ "-std=c++2b" ];
       };
 
       deno-lsp = {
