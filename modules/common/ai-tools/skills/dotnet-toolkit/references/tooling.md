@@ -179,8 +179,8 @@ packaging workflow.
 
 1. A `PackageReference` carrying a bare `Version` in a repository using central
    package management, which raises NU1008.
-2. A package added with `dotnet add package` under central package management,
-   which writes the wrong shape.
+2. A package addition under central package management that puts `Version` on
+   `PackageReference` instead of `PackageVersion` in `Directory.Packages.props`.
 3. Inherited properties read as if every ancestor `Directory.Build.props`
    merged.
 4. Coverage flags chosen from the SDK version rather than the detected runner.

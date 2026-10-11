@@ -174,10 +174,10 @@ the default as fatal to the whole process, not to one worker.
   `StoppingAsync`/`StoppedAsync` hooks around `StartAsync`/`StopAsync`, with no
   separate base class; implement the interface directly alongside or instead of
   `BackgroundService`.
-- `HostOptions.ShutdownTimeout` defaults to 5 seconds for the Generic Host.
-  `StopAsync` simply does not finish if it expires, silently skipping cleanup.
-  It has historically behaved additively across hosted services rather than as
-  one global cap. (unverified precise version that changed this)
+- `HostOptions.ShutdownTimeout` defaults to 30 seconds for the Generic Host in
+  .NET 8, 9, and 10. Hosted services share one shutdown cancellation token; the
+  timeout is not a separate allowance per service. Services that ignore
+  cancellation can outlast the timeout, so cleanup must handle it explicitly.
 - Call `IHostApplicationLifetime.StopApplication()` to initiate graceful
   shutdown from application code. Never call `Environment.Exit()` on an ASP.NET
   Core host; it bypasses graceful shutdown entirely.

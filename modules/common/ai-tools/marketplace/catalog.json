@@ -110,7 +110,7 @@
 			},
 			"displayName": ".NET Toolkit",
 			"description": "Build and maintain .NET web apps, APIs, and Blazor front ends.",
-			"version": "0.1.1",
+			"version": "0.1.2",
 			"category": "Developer Tools"
 		},
 		{

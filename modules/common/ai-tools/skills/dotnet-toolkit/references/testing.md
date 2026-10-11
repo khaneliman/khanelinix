@@ -90,12 +90,11 @@ coverage advice below applies.
 
 ## Integration Testing
 
-- `WebApplicationFactory<TEntryPoint>` needs `Program` to be public. Add
-  `public partial class Program { }` at the bottom of `Program.cs`; newer SDKs
-  auto-emit this through a source generator unless the app already declares
-  `internal partial class Program {}`. `InternalsVisibleTo` alone does not fix
-  it for xUnit, since the fixture constructor must be public while `Program`
-  stays internal, so most teams still need the marker regardless.
+- Expose the application's entry-point type to the test project. For top-level
+  statements, add `public partial class Program { }` at the bottom of
+  `Program.cs`, or expose internal types with `InternalsVisibleTo`. Choose test
+  class and fixture visibility compatible with the runner and the entry-point
+  type; a public signature cannot expose an internal type.
   https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests ,
   https://github.com/dotnet/AspNetCore.Docs/issues/26670
 - Pin `Microsoft.AspNetCore.Mvc.Testing` to match the SUT project's target

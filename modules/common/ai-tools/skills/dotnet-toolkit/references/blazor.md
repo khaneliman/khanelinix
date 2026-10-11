@@ -13,9 +13,11 @@ exist. Those three facts select most of the rules below.
 - Treat static server rendering as the default for any component without
   `@rendermode`. Blazor event handling does not run in the browser under static
   rendering, so a form must use normal POST semantics rather than event binding.
-- Apply `@rendermode` on routable page components or globally through
-  `MapRazorComponents`. A child component inherits its parent's mode. A static
-  parent cannot host an interactive child directly.
+- Apply `@rendermode` on routable page components or globally to the `Routes`
+  and `HeadOutlet` components. A child without an explicit mode inherits its
+  parent's mode. A static parent can host a child with an explicit interactive
+  mode; `MapRazorComponents` registers endpoint support rather than selecting
+  the global component render mode.
 - Register interactivity in `Program.cs` through
   `AddInteractiveServerComponents` or `AddInteractiveWebAssemblyComponents`, and
   the matching `AddInteractiveServerRenderMode` or

@@ -26,12 +26,13 @@ Sources:
 
 ## GC and Container Memory
 
-Workstation GC is the default (`System.GC.Server=false`), even for ASP.NET Core
-apps; enable Server GC via `ServerGarbageCollection=true` or `DOTNET_gcServer=1`
-for CPU-bound, multi-core throughput workloads. Background GC is on by default
-in both modes. Dynamic adaptation, set through `GCDynamicAdaptationMode`, is
-opt-in on .NET 8 and on by default from .NET 9 for Server GC only. It sizes the
-heap to the app's long-lived data instead of scaling with machine memory. Set
+Workstation GC is the runtime default (`System.GC.Server=false`), but the
+ASP.NET Core Web SDK defaults `ServerGarbageCollection` to `true` when unset.
+Inspect the generated runtime configuration and deployment overrides before
+changing GC mode for a workload. Background GC is on by default in both modes.
+Dynamic adaptation, set through `GCDynamicAdaptationMode`, is opt-in on .NET 8
+and on by default from .NET 9 for Server GC only. It sizes the heap to the app's
+long-lived data instead of scaling with machine memory. Set
 `DOTNET_GCDynamicAdaptationMode=0` to disable it when a stable dataset
 regresses.
 
@@ -245,10 +246,11 @@ Source:
 | Cost per additional parameter at 4,000 repeats                 | roughly 15 ms (one measured case)                   |
 | Gain from overriding `SetParametersAsync` at 10,000+ instances | under 10% in .NET 10                                |
 
-Give components immutable or record parameter types so default change detection
-can skip a rerender on equal references, or override `ShouldRender() => false`
-when state has not materially changed. Use `Virtualize<TItem>` for a large list,
-the single biggest lever for large-list cost. Avoid decomposing a UI into
+Use parameter types recognized by Blazor as immutable, such as `string`, `int`,
+and `DateTime`, so unchanged values can skip child rerendering. Custom immutable
+classes and records are not automatically recognized; override `ShouldRender()`
+when their state has not materially changed. Use `Virtualize<TItem>` for a large
+list, the single biggest lever for large-list cost. Avoid decomposing a UI into
 thousands of tiny components, and bundle related values into one class parameter
 on a heavily repeated component, given the instantiation and per-parameter costs
 above. A non-primitive parameter always triggers a rerender when the parent

@@ -83,8 +83,10 @@ hold there.
   with owned entities.
   [EF Core 10 complex-type JSON writeup](https://milanjovanovic.tech/blog/whats-new-in-ef-core-10-leftjoin-and-rightjoin-operators-in-linq)
 - `HasQueryFilter` applies automatically through `Include()`, so a missing index
-  on the filtered column, `IsDeleted` or `TenantId`, turns every query including
-  `FindAsync` into a full table scan.
+  on the filtered column, `IsDeleted` or `TenantId`, can affect query
+  performance; inspect the actual query plan rather than assuming a full table
+  scan. `FindAsync` returns an already tracked entity without querying the
+  database.
   [Global query filters guide](https://codewithmukesh.com/blog/global-query-filters-efcore/)
 - `IgnoreQueryFilters()` used to be all-or-nothing, disabling tenancy filters
   when only soft-delete bypass was intended. EF Core 10 adds named query filters
@@ -100,17 +102,17 @@ hold there.
   default `timestamptz` mapping. Npgsql 6+ accepts only `Kind=Utc`; EF decides
   the mapping purely by CLR type, never by the instance's runtime `Kind`.
   Convert to UTC before saving, or add a value converter that forces it. The
-  InMemory provider will not catch this; test against SQLite/Testcontainers
-  instead.
+  InMemory and SQLite providers will not catch this Npgsql-specific behavior;
+  test against PostgreSQL, for example using Testcontainers.
   [DateTime/timestamptz issue thread](https://github.com/npgsql/efcore.pg/issues/2479)
 - Since EF Core 7, nulling a nullable FK no longer deletes the dependent; only
   deleting the principal still cascades. Misconfigured paths surface at
   migration time as "may cause cycles or multiple cascade paths."
   [Cascade Delete](https://learn.microsoft.com/en-us/ef/core/saving/cascade-delete)
-- EF Core 9+ defaults `Guid` primary keys to sequential UUIDv7 values on
-  providers that support it. Npgsql has historically opted out; confirm current
-  behavior before assuming it applies. (unverified: exact version not confirmed)
-  [Npgsql UUIDv7 tracking issue](https://github.com/npgsql/efcore.pg/issues/2909)
+- GUID key generation is provider-specific. Npgsql 9+ generates sequential
+  UUIDv7 keys client-side by default; earlier Npgsql versions generated random
+  GUIDs. Do not assume that every EF provider uses UUIDv7.
+  [Npgsql GUID generation](https://www.npgsql.org/efcore/modeling/generated-properties.html#guiduuid-generation)
 
 ## Migrations
 
@@ -211,17 +213,19 @@ hold there.
   [EF8 preview 4 announcement](https://devblogs.microsoft.com/dotnet/announcing-ef8-preview-4/)
 - EF Core 9 (STS until 2026-11-10) found OPENJSON-by-default regressed a
   minority of queries into timeouts, so it made the strategy configurable via
-  `UseParameterizedCollectionMode(...)` (`Constant`/`SingleJsonParameter`/
-  `MultipleParameters`).
+  `TranslateParameterizedCollectionsToConstants()` or
+  `TranslateParameterizedCollectionsToParameters()`, with per-query overrides.
   [What's New in EF Core 9](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-9.0/whatsnew)
 - EF Core 10 (requires .NET 10, LTS until 2028-11) defaults parameterized
   collections back to multiple scalar parameters
   (`WHERE Id IN (@ids1, @ids2, @ids3)`); very large collections can still
-  approach SQL Server's 2100 parameter limit via `EF.Constant(ids)`.
+  approach SQL Server's 2100 parameter limit with that default.
+  `EF.Constant(ids)` instead inlines constants; EF10 also exposes
+  `UseParameterizedCollectionMode(...)` for global strategy selection.
   `ExecuteUpdate`'s setter changed from an expression tree to a plain
   `Func<...>`-style argument, so code building expression trees for setters no
   longer compiles.
-  [EF Core 10 smarter parameterized collections](https://bartwullems.blogspot.com/2026/05/ef-core-10smarter-parameterized.html),
+  [EF Core 10 parameterized collections](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-10.0/whatsnew#improved-translation-of-parameterized-collection),
   [Breaking changes in EF Core 10](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-10.0/breaking-changes)
 - An EF8 to EF10 upgrade hits EF9's breaking changes too, even skipping 9
   directly, because those changes carry forward.
