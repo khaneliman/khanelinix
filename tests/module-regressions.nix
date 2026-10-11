@@ -276,6 +276,51 @@ let
       extraConfig = evaluated.environment.etc."ssh/ssh_config".text;
       knownHosts = evaluated.programs.ssh.knownHosts;
     };
+  lightdm =
+    cursor: icon:
+    let
+      pkgs = import nixpkgs { system = builtins.currentSystem; };
+      greeter =
+        (lib.evalModules {
+          specialArgs = { inherit lib pkgs; };
+          modules = [
+            (root + "/modules/nixos/theme")
+            (root + "/modules/nixos/theme/gtk")
+            (root + "/modules/nixos/display-managers/lightdm")
+            (nixpkgs + "/nixos/modules/services/x11/display-managers/lightdm-greeters/gtk.nix")
+            {
+              # The real greeter schema checks theme names and packages; other
+              # display-manager outputs need a complete host to evaluate.
+              config._module.check = false;
+              config.khanelinix = {
+                display-managers.lightdm.enable = true;
+                theme =
+                  lib.optionalAttrs cursor {
+                    cursor = {
+                      name = "Custom Cursor";
+                      package = pkgs.emptyDirectory;
+                    };
+                  }
+                  // lib.optionalAttrs icon {
+                    icon = {
+                      name = "Custom Icon";
+                      package = pkgs.emptyDirectory;
+                    };
+                  };
+              };
+            }
+          ];
+        }).config.services.xserver.displayManager.lightdm.greeters.gtk;
+    in
+    {
+      inherit (greeter) enable;
+      cursor = greeter.cursorTheme.name;
+      icon = greeter.iconTheme.name;
+      cursorPackage = greeter.cursorTheme.package.outPath;
+      iconPackage = greeter.iconTheme.package.outPath;
+      defaultPackage = pkgs.adwaita-icon-theme.outPath;
+      customPackage = pkgs.emptyDirectory.outPath;
+    };
 in
 {
   credentials =
@@ -318,5 +363,11 @@ in
   ssh = {
     enabled = ssh true;
     disabled = ssh false;
+  };
+  lightdm = {
+    default = lightdm false false;
+    cursor = lightdm true false;
+    icon = lightdm false true;
+    custom = lightdm true true;
   };
 }

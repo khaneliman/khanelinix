@@ -32,11 +32,11 @@ in
           gtk = {
             enable = true;
 
-            cursorTheme = {
+            cursorTheme = mkIf (config.khanelinix.theme.cursor.name != null) {
               inherit (config.khanelinix.theme.cursor) name package;
             };
 
-            iconTheme = {
+            iconTheme = mkIf (config.khanelinix.theme.icon.name != null) {
               inherit (config.khanelinix.theme.icon) name package;
             };
 

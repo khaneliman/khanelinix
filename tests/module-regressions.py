@@ -37,6 +37,15 @@ result = json.loads(
 assert len(result["credentials"]) == 64 and all(result["credentials"])
 assert len(result["suite"]) == 10 and all(result["suite"])
 assert result["wsl"]
+for mode, greeter in result["lightdm"].items():
+    assert greeter["enable"]
+    for theme in ("cursor", "icon"):
+        custom = mode in (theme, "custom")
+        assert greeter[theme] == ("Custom " + theme.title() if custom else "Adwaita")
+        assert (
+            greeter[theme + "Package"]
+            == greeter["customPackage" if custom else "defaultPackage"]
+        )
 for mode, rendered in result["ssh"].items():
     config = args.scratch / (mode + "-ssh.conf")
     config.write_text(rendered["extraConfig"])
@@ -81,5 +90,5 @@ for mode, rendered in result["ssh"].items():
         == "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl"
     )
 print(
-    "PASS: 64 credential combinations, 10 suite baselines and overrides, WSL gate, 13 SSH resolutions"
+    "PASS: 64 credential combinations, 10 suite baselines and overrides, WSL gate, 13 SSH resolutions, 4 LightDM theme selections"
 )
