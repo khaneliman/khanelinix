@@ -219,7 +219,7 @@ diff -ruN btop-src-orig/src/osx/btop_collect.cpp btop-src-mod/src/osx/btop_colle
  					if (cmp_less(core + 1, current_cpu.temp.size())) {
  						current_cpu.temp.at(core + 1).push_back(temp);
  						if (current_cpu.temp.at(core + 1).size() > 20)
-@@ -856,10 +883,9 @@
+@@ -856,10 +883,11 @@
  					}
  				}
  			}
@@ -228,7 +228,9 @@ diff -ruN btop-src-orig/src/osx/btop_collect.cpp btop-src-mod/src/osx/btop_colle
 -			Logger::error("failed getting CPU temp");
  		}
 +
-+		sensor_future = std::async(std::launch::async, collect_sensors);
++		if (not sensor_future.valid()) {
++			sensor_future = std::async(std::launch::async, collect_sensors);
++		}
  	}
  
  	string get_cpuHz() {
