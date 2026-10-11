@@ -895,3 +895,42 @@ diff --git a/src/text/learn.rs b/src/text/learn.rs
                  );
              }
              other => panic!("expected replacements, got {other:?}"),
+diff --git a/src/cli/commands.rs b/src/cli/commands.rs
+--- a/src/cli/commands.rs
++++ b/src/cli/commands.rs
+@@ -169,18 +169,19 @@
+         action: MeetingAction,
+     },
+ 
+-    /// Teach [text.replacements] from an edited dictation
++    /// Teach replacements from an edited dictation
+     ///
+     /// Diffs the corrected text against the last transcript and merges
+-    /// only word/phrase replacements into the config file. Inserts and
++    /// only word/phrase replacements into the learned state file. Inserts and
+     /// deletes are ignored. Low-similarity selections are refused so a
+     /// random highlight cannot poison the dictionary.
+     #[command(long_about = "\
+-        Teach [text.replacements] from an edited dictation\n\n\
+-        Reads the corrected text (Wayland primary selection by default, \
+-        falling back to the clipboard), diffs it against the last \
+-        transcript, and writes replace-opcode phrases into \
+-        [text.replacements], preserving comments.\n\n\
++        Teach replacements from an edited dictation\n\n\
++        Reads corrected text from the primary selection and clipboard by \
++        default, choosing whichever best matches the last dictation. \
++        Writes word/phrase replacements to learned-replacements.toml in \
++        the state directory, layered over [text.replacements] for the \
++        next dictation.\n\n\
+         The last transcript is the file the daemon writes after each \
+         dictation ($XDG_RUNTIME_DIR/voxtype/last-transcript). If that \
+         file is missing, the last tracing line `Transcribed: \"...\"` \
+@@ -196,6 +197,6 @@
+         Hyprland: bind = SUPER SHIFT, F12, exec, voxtype learn --from-selection")]
+     Learn {
+-        /// Read corrected text from the Wayland primary selection (default).
+-        /// Falls back to the clipboard if the selection is empty.
++        /// Read primary selection and clipboard (default).
++        /// Use whichever best matches the last dictation.
+         #[arg(long)]
+         from_selection: bool,
