@@ -76,8 +76,9 @@ pwcli open https://example.com/checkout
 
 ## Configuration file
 
-By default, the CLI reads `playwright-cli.json` from the current directory. Use
-`--config` to point at a specific file.
+By default, the CLI reads `.playwright/cli.config.json` relative to the current
+directory and merges global settings from `~/.playwright/cli.config.json`. Use
+`--config` to point at a specific project file.
 
 Minimal example:
 
