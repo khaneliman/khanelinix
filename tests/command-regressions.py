@@ -284,7 +284,7 @@ for stem, extension in [("hello", "c"), ("hello world", "c"), ("hello world", "c
     for path in work.glob("*.c*"):
         path.unlink()
     (work / (stem + "." + extension)).write_text("")
-    flags = ["-DVALUE=two words", "-Iinclude *", "", "single'quote", "$HOME"]
+    flags = ["-DVALUE=two words", "-I./include *", "", "single'quote", "$HOME"]
     run(
         [r["compilerHelper"], stem, *flags],
         cwd=work,
