@@ -36,7 +36,7 @@ corruption serious risks.
      assignments.
 
 2. **Small Object and Small String Optimization (SSO)**:
-   - For string operations, utilize standard library SSO. If a string is under
-     architecture limits (typically 15-22 chars), it remains entirely on the
-     stack.
-   - Bypasses the heap and guarantees perfect cache locality.
+   - Small string optimization stores short-string characters inside the string
+     object; the size limit depends on the standard library implementation.
+   - This avoids a separate allocation for the characters, not an allocation for
+     the string object itself, and does not guarantee cache locality.
