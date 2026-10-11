@@ -72,6 +72,7 @@ var playwrightCliResolved;
 var playwrightCliRoot;
 var playwrightPackagePath;
 var playwrightWrapperText;
+var playwrightEnvWrapper;
 var playwrightBrowsersMatch;
 
 try {
@@ -92,7 +93,16 @@ try {
     "lib/node_modules/@playwright/cli/node_modules/playwright",
   );
 
-  playwrightWrapperText = nodeFs.readFileSync(playwrightCliResolved, "utf8");
+  playwrightEnvWrapper = nodePath.join(
+    nodePath.dirname(playwrightCliResolved),
+    ".playwright-cli-env",
+  );
+  playwrightWrapperText = nodeFs.readFileSync(
+    nodeFs.existsSync(playwrightEnvWrapper)
+      ? playwrightEnvWrapper
+      : playwrightCliResolved,
+    "utf8",
+  );
   playwrightBrowsersMatch = playwrightWrapperText.match(
     /PLAYWRIGHT_BROWSERS_PATH=\$\{PLAYWRIGHT_BROWSERS_PATH-'([^']+)'\}/,
   );
