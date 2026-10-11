@@ -164,7 +164,7 @@ Example pagination response:
 | **Deployment** | Local  | Remote          |
 | **Clients**    | Single | Multiple        |
 | **Complexity** | Low    | Medium          |
-| **Real-time**  | No     | Yes             |
+| **Real-time**  | Yes    | Yes             |
 
 ---
 

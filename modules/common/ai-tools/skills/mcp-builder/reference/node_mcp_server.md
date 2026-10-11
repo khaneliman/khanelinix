@@ -5,7 +5,8 @@
 This document provides Node/TypeScript-specific best practices and examples for
 implementing MCP servers using the MCP TypeScript SDK. It covers project
 structure, server setup, tool registration patterns, input validation with Zod,
-error handling, and complete working examples.
+error handling, and implementation examples. These examples target the SDK 1.26
+API; check the consuming project's locked SDK before adapting them.
 
 ---
 
@@ -579,12 +580,14 @@ async function getUser(id: string): Promise<any> {
     "node": ">=18"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.6.1",
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "express": "^4.21.2",
     "axios": "^1.7.9",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "@types/express": "^4.17.21",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
@@ -616,7 +619,10 @@ async function getUser(id: string): Promise<any> {
 }
 ```
 
-## Complete Example
+## Server Skeleton
+
+Fill in the tool handler and service-specific authentication before building.
+The HTTP path creates a separate server and transport for each request.
 
 ```typescript
 #!/usr/bin/env node
@@ -631,6 +637,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import axios, { AxiosError } from "axios";
+import express from "express";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 
 // Constants
 const API_BASE_URL = "https://api.example.com/v1";
@@ -715,30 +723,33 @@ function handleApiError(error: unknown): string {
   }`;
 }
 
-// Create MCP server instance
-const server = new McpServer({
-  name: "example-mcp",
-  version: "1.0.0",
-});
+function createServer() {
+  // Create MCP server instance
+  const server = new McpServer({
+    name: "example-mcp",
+    version: "1.0.0",
+  });
 
-// Register tools
-server.registerTool(
-  "example_search_users",
-  {
-    title: "Search Example Users",
-    description: `[Full description as shown above]`,
-    inputSchema: UserSearchInputSchema,
-    annotations: {
-      readOnlyHint: true,
-      destructiveHint: false,
-      idempotentHint: true,
-      openWorldHint: true,
+  // Register tools
+  server.registerTool(
+    "example_search_users",
+    {
+      title: "Search Example Users",
+      description: `[Full description as shown above]`,
+      inputSchema: UserSearchInputSchema,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
     },
-  },
-  async (params: UserSearchInput) => {
-    // Implementation as shown above
-  },
-);
+    async (params: UserSearchInput) => {
+      // Implementation as shown above
+    },
+  );
+  return server;
+}
 
 // Main function
 // For stdio (local):
@@ -748,6 +759,7 @@ async function runStdio() {
     process.exit(1);
   }
 
+  const server = createServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("MCP server running via stdio");
@@ -764,11 +776,15 @@ async function runHTTP() {
   app.use(express.json());
 
   app.post("/mcp", async (req, res) => {
+    const server = createServer();
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: undefined,
       enableJsonResponse: true,
     });
-    res.on("close", () => transport.close());
+    res.on("close", () => {
+      void transport.close();
+      void server.close();
+    });
     await server.connect(transport);
     await transport.handleRequest(req, res, req.body);
   });
@@ -803,48 +819,42 @@ if (transport === "http") {
 Expose data as resources for efficient, URI-based access:
 
 ```typescript
-import { ResourceTemplate } from "@modelcontextprotocol/sdk/types.js";
+import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 
-// Register a resource with URI template
 server.registerResource(
+  "documents",
+  new ResourceTemplate("file://documents/{name}", {
+    list: async () => {
+      const documents = await getAvailableDocuments();
+      return {
+        resources: documents.map((doc) => ({
+          uri: `file://documents/${encodeURIComponent(doc.name)}`,
+          name: doc.name,
+          mimeType: "text/plain",
+          description: doc.description,
+        })),
+      };
+    },
+  }),
   {
-    uri: "file://documents/{name}",
-    name: "Document Resource",
     description: "Access documents by name",
     mimeType: "text/plain",
   },
-  async (uri: string) => {
-    // Extract parameter from URI
-    const match = uri.match(/^file:\/\/documents\/(.+)$/);
-    if (!match) {
-      throw new Error("Invalid URI format");
+  async (uri, { name }) => {
+    if (typeof name !== "string") {
+      throw new Error("Expected one document name");
     }
-
-    const documentName = match[1];
-    const content = await loadDocument(documentName);
-
+    // SDK 1.26 leaves template variables percent-encoded.
+    const content = await loadDocument(decodeURIComponent(name));
     return {
       contents: [{
-        uri,
+        uri: uri.href,
         mimeType: "text/plain",
         text: content,
       }],
     };
   },
 );
-
-// List available resources dynamically
-server.registerResourceList(async () => {
-  const documents = await getAvailableDocuments();
-  return {
-    resources: documents.map((doc) => ({
-      uri: `file://documents/${doc.name}`,
-      name: doc.name,
-      mimeType: "text/plain",
-      description: doc.description,
-    })),
-  };
-});
 ```
 
 **When to use Resources vs Tools:**
@@ -868,13 +878,18 @@ const app = express();
 app.use(express.json());
 
 app.post("/mcp", async (req, res) => {
+  // Use the factory from the server skeleton; each request owns a server.
+  const server = createServer();
   // Create new transport for each request (stateless, prevents request ID collisions)
   const transport = new StreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
     enableJsonResponse: true,
   });
 
-  res.on("close", () => transport.close());
+  res.on("close", () => {
+    void transport.close();
+    void server.close();
+  });
 
   await server.connect(transport);
   await transport.handleRequest(req, res, req.body);
@@ -903,14 +918,10 @@ Notify clients when server state changes:
 
 ```typescript
 // Notify when tools list changes
-server.notification({
-  method: "notifications/tools/list_changed",
-});
+server.sendToolListChanged();
 
 // Notify when resources change
-server.notification({
-  method: "notifications/resources/list_changed",
-});
+server.sendResourceListChanged();
 ```
 
 Use notifications sparingly - only when server capabilities genuinely change.

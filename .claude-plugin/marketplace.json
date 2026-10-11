@@ -189,7 +189,7 @@
 		{
 			"name": "mcp-builder",
 			"description": "Build MCP servers for external APIs and services.",
-			"version": "0.1.5",
+			"version": "0.1.6",
 			"author": {
 				"name": "khaneliman"
 			},

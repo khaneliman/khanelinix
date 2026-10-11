@@ -364,7 +364,7 @@ from pydantic import BaseModel, Field, field_validator, ConfigDict
 from mcp.server.fastmcp import FastMCP
 
 # Initialize the MCP server
-mcp = FastMCP("example_mcp")
+mcp = FastMCP("example_mcp", port=8000)
 
 # Constants
 API_BASE_URL = "https://api.example.com/v1"
@@ -499,7 +499,9 @@ capabilities like logging, progress reporting, resource reading, and user
 interaction:
 
 ```python
+from datetime import datetime
 from mcp.server.fastmcp import FastMCP, Context
+from pydantic import BaseModel, Field
 
 mcp = FastMCP("example_mcp")
 
@@ -508,14 +510,14 @@ async def advanced_search(query: str, ctx: Context) -> str:
     '''Advanced tool with context access for logging and progress.'''
 
     # Report progress for long operations
-    await ctx.report_progress(0.25, "Starting search...")
+    await ctx.report_progress(0.25, message="Starting search...")
 
     # Log information for debugging
-    await ctx.log_info("Processing query", {"query": query, "timestamp": datetime.now()})
+    await ctx.info(f"Processing query: {query} at {datetime.now().isoformat()}")
 
     # Perform search
     results = await search_api(query)
-    await ctx.report_progress(0.75, "Formatting results...")
+    await ctx.report_progress(0.75, message="Formatting results...")
 
     # Access server configuration
     server_name = ctx.fastmcp.name
@@ -526,22 +528,23 @@ async def advanced_search(query: str, ctx: Context) -> str:
 async def interactive_tool(resource_id: str, ctx: Context) -> str:
     '''Tool that can request additional input from users.'''
 
-    # Request sensitive information when needed
-    api_key = await ctx.elicit(
-        prompt="Please provide your API key:",
-        input_type="password"
-    )
+    class Confirmation(BaseModel):
+        confirm: bool = Field(description="Continue with this operation?")
 
-    # Use the provided key
-    return await api_call(resource_id, api_key)
+    result = await ctx.elicit("Confirm this operation", schema=Confirmation)
+    if result.action != "accept" or result.data is None or not result.data.confirm:
+        return "Operation cancelled."
+
+    # Authentication comes from server configuration, not form elicitation.
+    return await api_call(resource_id)
 ```
 
 **Context capabilities:**
 
-- `ctx.report_progress(progress, message)` - Report progress for long operations
-- `ctx.log_info(message, data)` / `ctx.log_error()` / `ctx.log_debug()` -
+- `ctx.report_progress(progress, total=None, message=None)` - Report progress for long operations
+- `ctx.info(message)` / `ctx.error(message)` / `ctx.debug(message)` -
   Logging
-- `ctx.elicit(prompt, input_type)` - Request input from users
+- `ctx.elicit(message, schema)` - Request non-sensitive, schema-validated input
 - `ctx.fastmcp.name` - Access server configuration
 - `ctx.read_resource(uri)` - Read MCP resources
 
@@ -616,7 +619,7 @@ Initialize resources that persist across requests:
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
-async def app_lifespan():
+async def app_lifespan(server: FastMCP):
     '''Manage resources that live for the server's lifetime.'''
     # Initialize connections, load config, etc.
     db = await connect_to_database()
@@ -633,14 +636,18 @@ mcp = FastMCP("example_mcp", lifespan=app_lifespan)
 @mcp.tool()
 async def query_data(query: str, ctx: Context) -> str:
     '''Access lifespan resources through context.'''
-    db = ctx.request_context.lifespan_state["db"]
+    db = ctx.request_context.lifespan_context["db"]
     results = await db.query(query)
     return format_results(results)
 ```
 
 ### Transport Options
 
-FastMCP supports two main transport mechanisms:
+FastMCP supports two main transport mechanisms. Set `port=8000` on the
+original `FastMCP` constructor, before registering tools, as in the complete
+example. Keep any existing authentication and lifespan configuration on that
+constructor; do not create a new server just to select a transport. Choose one
+of these entry points:
 
 ```python
 # stdio transport (for local tools) - default
@@ -649,7 +656,7 @@ if __name__ == "__main__":
 
 # Streamable HTTP transport (for remote servers)
 if __name__ == "__main__":
-    mcp.run(transport="streamable_http", port=8000)
+    mcp.run(transport="streamable-http")
 ```
 
 **Transport selection:**
@@ -749,7 +756,7 @@ Before finalizing your Python MCP server implementation, ensure:
 
 ### Testing
 
-- [ ] Server runs successfully: `python your_server.py --help`
+- [ ] MCP Inspector connects and lists the server tools; `mcp.run()` does not parse `--help`
 - [ ] All imports resolve correctly
 - [ ] Sample tool calls work as expected
 - [ ] Error scenarios handled gracefully
