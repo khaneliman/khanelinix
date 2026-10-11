@@ -5,7 +5,7 @@
   # now owns the PATH walk, so only editor and command probes run concurrently.
   ./perf-concurrent-command-resolution.patch
   ./desktop-attach-existing-backend.patch
-  # Upstream #15198, adapted to provider-core and guarded against late logout reads.
+  # Keep quota reads nonblocking and discard stale account limits after upstream #15198.
   ./antigravity-usage-limits.patch
   # Upstream #16716, with folder-root regression coverage.
   ./host-folder-links.patch
