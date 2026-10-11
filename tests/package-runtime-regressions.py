@@ -3,8 +3,11 @@ python3 /path/to/repo/tests/package-runtime-regressions.py /path/to/locked/nixpk
 
 Requires Nix and access to its store. Builds only the tested wrappers and FFmpeg;
 intercepts build-by-path's build drivers, not its Nix expression evaluation.
+Audio fallback tests use generated media; only failure/interruption and
+mkvpropedit discovery are injected, not successful FFmpeg remuxing.
 """
 
+import importlib.util
 import json
 import os
 import shutil
@@ -12,6 +15,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 PACKAGES = Path(__file__).resolve().parents[1] / "packages"
 NIXPKGS = Path(sys.argv[1]).resolve()
@@ -280,3 +284,117 @@ in {{ out = toString p.out; dev = toString p.dev; }}
     print(
         "PASS ff-title: video, two audio tracks, subtitle, attachment, tags and packet hashes preserved; title updated"
     )
+
+    # Import only the tool body; force the fallback without mkvpropedit or PATH
+    # discovery, but execute the locked FFmpeg/ffprobe on generated media.
+    spec = importlib.util.spec_from_file_location(
+        "audio_stream_fixer", PACKAGES / "audio-stream-fixer/audio-stream-fixer.py"
+    )
+    fixer = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(fixer)
+    run(
+        ff,
+        "-v",
+        "error",
+        "-i",
+        str(media),
+        "-map",
+        "0",
+        "-c",
+        "copy",
+        "-metadata:s:a:0",
+        "language=fra",
+        "-metadata:s:a:1",
+        "language=eng",
+        "-disposition:a:0",
+        "default+visual_impaired",
+        "-disposition:a:1",
+        "hearing_impaired",
+        str(work / "audio base.mkv"),
+    )
+    shutil.copyfile(work / "audio base.mkv", media)
+    before = inspect()
+    payloads = packets()
+    sentinel = Path(str(media) + ".tmp.mkv")
+    sentinel.write_bytes(b"unrelated existing content")
+    original_run = subprocess.run
+
+    def ffmpeg_run(command, **kwargs):
+        command = list(command)
+        command[0] = {"ffmpeg": ff, "ffprobe": probe}[command[0]]
+        return original_run(command, **kwargs)
+
+    with (
+        patch.object(fixer.shutil, "which", return_value=None),
+        patch.object(fixer.subprocess, "run", side_effect=ffmpeg_run),
+    ):
+        item = fixer.analyze_file(str(media), [])
+        assert item["status"] == "fixable", item
+        assert fixer.apply_fix(item)
+    after = inspect()
+    expected = [dict(s["disposition"]) for s in before["streams"]]
+    expected[item["current_index"]]["default"] = 0
+    expected[item["eng_index"]]["default"] = 1
+    assert [s["disposition"] for s in after["streams"]] == expected, (
+        "only the two default flags may change",
+        expected,
+        after["streams"],
+    )
+    for key in ("codec_type", "codec_name", "extradata_hash"):
+        assert [s.get(key) for s in before["streams"]] == [
+            s.get(key) for s in after["streams"]
+        ], key
+    assert tags(before["streams"]) == tags(after["streams"])
+    assert packets() == payloads, "stream packet payloads changed"
+    assert (
+        sentinel.exists() and sentinel.read_bytes() == b"unrelated existing content"
+    ), "predictable temporary file sentinel was overwritten or deleted"
+    assert not list(work.glob(".audio-stream-fixer-*"))
+    print(
+        "PASS audio fixer: only default flags changed; streams, tags, packets and temp sentinel preserved"
+    )
+
+    for failure in (
+        subprocess.CalledProcessError(1, ["ffmpeg"]),
+        OSError("cannot execute"),
+        KeyboardInterrupt(),
+    ):
+        original = media.read_bytes()
+        entries = set(work.iterdir())
+
+        def fail(command, failure=failure, **kwargs):
+            Path(command[-1]).write_bytes(b"partial output")
+            raise failure
+
+        with (
+            patch.object(fixer.shutil, "which", return_value=None),
+            patch.object(fixer.subprocess, "run", side_effect=fail),
+        ):
+            try:
+                result = fixer.apply_fix(item)
+            except KeyboardInterrupt:
+                assert isinstance(failure, KeyboardInterrupt)
+            else:
+                assert not isinstance(failure, KeyboardInterrupt)
+                assert result is False
+        assert media.read_bytes() == original
+        assert (
+            sentinel.exists() and sentinel.read_bytes() == b"unrelated existing content"
+        ), "predictable temporary file sentinel was overwritten or deleted"
+        assert set(work.iterdir()) == entries, "partial staging survived failure"
+    print(
+        "PASS audio fixer: command failure, OS error and interruption preserve original and clean staging"
+    )
+
+    original = media.read_bytes()
+    entries = set(work.iterdir())
+    with (
+        patch.object(fixer.shutil, "which", return_value=None),
+        patch.object(fixer.subprocess, "run", side_effect=ffmpeg_run),
+        patch.object(fixer.os, "replace", side_effect=OSError("cannot publish")),
+    ):
+        assert fixer.apply_fix(item) is False
+    assert media.read_bytes() == original
+    assert set(work.iterdir()) == entries
+    assert sentinel.read_bytes() == b"unrelated existing content"
+    print("PASS audio fixer: publication failure preserves source and cleans staging")
