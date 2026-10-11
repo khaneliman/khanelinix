@@ -16,6 +16,7 @@ import pty
 import queue
 import re
 import select
+import shlex
 import shutil
 import signal
 import struct
@@ -33,6 +34,7 @@ parser.add_argument("nixpkgs", type=Path)
 parser.add_argument("home_manager", type=Path)
 parser.add_argument("scratch", type=Path)
 parser.add_argument("--source-root", type=Path, default=HERE.parent)
+parser.add_argument("--helix-wrapper-only", action="store_true")
 args = parser.parse_args()
 args.scratch.mkdir(parents=True, exist_ok=True)
 work = Path(tempfile.mkdtemp(prefix="native-tools-", dir=args.scratch.resolve()))
@@ -126,6 +128,151 @@ def check(name, test):
     except AssertionError as error:
         failures.append(name)
         print("FAIL:", name, error, flush=True)
+
+
+def helix_wrapper_case():
+    fixture = work / "helix-wrapper"
+    env = {
+        "HOME": str(fixture / "home space"),
+        "XDG_CONFIG_HOME": str(fixture / "config"),
+        "XDG_CACHE_HOME": str(fixture / "cache"),
+        "XDG_DATA_HOME": str(fixture / "data"),
+        "XDG_STATE_HOME": str(fixture / "state"),
+        "PATH": "/no-executables",
+        "HELIX_RUNTIME": "/no-runtime",
+        "TERM": "xterm-256color",
+        "LANG": "C.UTF-8",
+    }
+    for key, value in env.items():
+        if key == "HOME" or key.startswith("XDG_"):
+            Path(value).mkdir(parents=True, exist_ok=True)
+    expr = expression(fixture)
+    summary = evaluate(expr, "helixWrapper.summary")
+    run(
+        [
+            "nix",
+            "build",
+            "--impure",
+            "--no-link",
+            "--expr",
+            f"({expr}).helixWrapper.packages",
+        ]
+    )
+    config = Path(env["XDG_CONFIG_HOME"]) / "helix"
+    config.mkdir()
+    shutil.copyfile(summary["config"], config / "config.toml")
+    shutil.copyfile(summary["languages"], config / "languages.toml")
+    assert run([summary["binary"], "--version"], env=env).startswith(
+        "helix " + summary["version"]
+    )
+    run([summary["binary"], "--health"], env=env)
+    # Only the probe shell is absolute; PATH is inherited solely from hx.
+    original = (config / "config.toml").read_text()
+    (config / "config.toml").write_text(
+        original.replace(
+            "[editor]\n",
+            "[editor]\nshell = [" + json.dumps(summary["bash"]) + ', "-c"]\n',
+        )
+    )
+    tools = [
+        "bash-language-server",
+        "clangd",
+        "marksman",
+        "nil",
+        "nixd",
+        "nixfmt",
+        "prettier",
+        "rust-analyzer",
+        "rustfmt",
+        "shellcheck",
+        "vscode-css-language-server",
+    ]
+    probe = fixture / "environment.bash"
+    output_file = fixture / "environment.tsv"
+    probe.write_text(
+        "{\n  printf 'PATH\\t%s\\n' \"$PATH\"\n"
+        "  printf 'HELIX_RUNTIME\\t%s\\n' \"$HELIX_RUNTIME\"\n"
+        '  [[ -f "$HELIX_RUNTIME/grammars/rust.so" && -f "$HELIX_RUNTIME/queries/rust/highlights.scm" ]] && printf \'runtime\\tFOUND\\n\'\n'
+        + "".join(
+            "  printf '%s\\t%s\\n' "
+            + tool
+            + ' "$(command -v '
+            + tool
+            + ' || printf MISSING)"\n'
+            for tool in tools
+        )
+        + "} > "
+        + shlex.quote(str(output_file))
+        + "\n"
+    )
+    document = fixture / "probe.rs"
+    document.write_text("fn main() {}\n")
+    master, slave = pty.openpty()
+    proc = None
+    terminal = b""
+
+    def read_terminal():
+        nonlocal terminal
+        if select.select([master], [], [], 0.05)[0]:
+            try:
+                terminal += os.read(master, 65536)
+            except OSError:
+                pass
+
+    try:
+        fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 35, 160, 0, 0))
+        proc = subprocess.Popen(
+            [summary["binary"], str(document)],
+            stdin=slave,
+            stdout=slave,
+            stderr=slave,
+            env=env,
+            cwd=fixture,
+            start_new_session=True,
+        )
+        os.close(slave)
+        slave = None
+        deadline = time.monotonic() + 10
+        while b"probe.rs" not in terminal and time.monotonic() < deadline:
+            read_terminal()
+        assert b"probe.rs" in terminal, terminal.decode(errors="replace")
+        os.write(master, (":sh source " + shlex.quote(str(probe)) + "\r").encode())
+        deadline = time.monotonic() + 10
+        while not output_file.exists() and time.monotonic() < deadline:
+            read_terminal()
+        assert output_file.exists(), terminal.decode(errors="replace")
+        os.write(master, b":quit!\r")
+        deadline = time.monotonic() + 5
+        while proc.poll() is None and time.monotonic() < deadline:
+            read_terminal()
+        assert proc.poll() == 0, terminal.decode(errors="replace")
+        assert b"Bad config:" not in terminal, terminal.decode(errors="replace")
+        found = dict(
+            line.split("\t", 1) for line in output_file.read_text().splitlines()
+        )
+        assert found["PATH"] == "/no-executables:" + summary["suffix"]
+        assert (
+            found["HELIX_RUNTIME"] == summary["runtime"] and found["runtime"] == "FOUND"
+        )
+        assert all(found[tool] != "MISSING" for tool in tools), found
+        for tool, directory in zip(tools, summary["suffix"].split(":"), strict=True):
+            assert found[tool] == directory + "/" + tool, (tool, found[tool], directory)
+    finally:
+        if proc is not None and proc.poll() is None:
+            proc.kill()
+            proc.wait()
+        if slave is not None:
+            os.close(slave)
+        os.close(master)
+        (fixture / "terminal.log").write_bytes(terminal)
+
+
+check(
+    "Helix: native HM wrapper, PATH/runtime, custom package and merge gates",
+    helix_wrapper_case,
+)
+if args.helix_wrapper_only:
+    raise SystemExit(bool(failures))
 
 
 expr = expression(work)
