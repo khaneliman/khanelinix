@@ -300,7 +300,7 @@
 			},
 			"displayName": "Planning With Files",
 			"description": "Persist task plans for long-running work.",
-			"version": "0.1.8",
+			"version": "0.1.9",
 			"category": "Developer Tools"
 		},
 		{

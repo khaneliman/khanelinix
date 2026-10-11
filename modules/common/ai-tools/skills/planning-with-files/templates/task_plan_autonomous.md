@@ -18,8 +18,8 @@
 
 <!--
   WHAT: The rules this run operates under. The orchestrating agent reads this once at the
-        top of the run and the gate honors it. None of these change v2 behavior unless a
-        mode is explicitly set; default-everything here equals legacy semantics.
+        top of the run. The gate reads the .mode marker and PWF_GATE_CAP environment variable,
+        not this block. With no mode marker, gate behavior remains advisory.
   WHY: An unattended run needs its termination and ownership rules stated in the artifact,
         not in chat history that gets compacted away.
   WHEN: Fill this in at init. init-session --autonomous / --gated writes the .mode file that
@@ -41,9 +41,9 @@
 - **Attestation policy:** default-on
   <!-- In autonomous and gated modes attestation is on by default: task_plan.md is hashed at
        init and prompt hooks warn when content diverges from the attested hash.
-       Re-attest with scripts/attest-plan.sh after any intentional edit. This is what makes an
-       AcceptanceCheck command safe to run: only allowlisted commands from an attested plan
-       reach the gate. -->
+       Re-attest with scripts/attest-plan.sh after any intentional edit. A mismatch produces
+       a prompt-hook warning, not an execution restriction. The gate neither checks the
+       attestation nor executes AcceptanceCheck commands. -->
 - **Single-writer rule:** the orchestrator owns this file.
   <!-- The orchestrating agent is the ONLY writer of task_plan.md. Worker subagents NEVER edit
        it; they append to their own per-agent ledger (.planning/<id>/ledger-<agent>.jsonl) and
@@ -78,9 +78,9 @@ Phase 1
   WHEN: Update status after completing each phase: pending → in_progress → complete
 
   AUTONOMOUS EXTRAS (all optional, all default to legacy behavior if omitted):
-  - **DependsOn:** lists phases that must be complete before this one is unblocked.
+  - **DependsOn:** lists prerequisites for the orchestrator to check; the gate ignores it.
   - **Owner:** names the agent responsible for this phase (multi-agent runs).
-  - **AcceptanceCheck:** a shell command the gate MAY run to decide the phase is done.
+  - **AcceptanceCheck:** a command for the orchestrator to run manually; the gate ignores it.
   These lines live alongside the existing - **Status:** line; they never replace it, so
   check-complete still counts the phase headings and complete-status lines exactly as before.
 -->
@@ -122,9 +122,8 @@ Phase 1
 - **DependsOn:** Phase 1
   <!-- WHAT: phases that must be complete before this one can start. Omit if the phase has no
             prerequisites.
-       WHY: the gate uses this to tell "progressing" (some unblocked phase is in_progress) from
-            "stuck" (every pending phase is still blocked by an unfinished dependency), and
-            surfaces "stuck" in the gate reason instead of looping. -->
+       WHY: lets the orchestrator check prerequisites before starting a phase. The gate
+            checks status counts, not dependency completion. -->
 
 ### Phase 3: Implementation
 
@@ -154,12 +153,10 @@ Phase 1
 - **DependsOn:** Phase 3
 - **AcceptanceCheck:** `python -m pytest tests/ -q`
   <!-- WHAT: a shell command that returns 0 when this phase's acceptance condition holds.
-       WHY: lets a gated run confirm "done" against the artifact, not the transcript.
-       SECURITY: the gate runs this command ONLY if it is allowlisted at attest time, and
-            NEVER runs any command from an unattested plan. A tampered plan cannot smuggle a
-            new command into the gate, because changing this line breaks the attestation hash
-            and the hooks refuse the plan until it is re-attested. This is the precise reason
-            attestation is default-on in autonomous and gated modes. -->
+       WHY: records the check the orchestrator should run before marking this phase complete.
+       SECURITY: the gate does not execute this command or maintain a command allowlist.
+            Review it before manual execution. Attestation records the plan hash and prompt
+            hooks warn on changes; they do not approve commands or refuse a changed plan. -->
 
 ### Phase 5: Delivery
 
