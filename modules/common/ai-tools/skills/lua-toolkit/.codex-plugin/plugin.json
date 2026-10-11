@@ -1,13 +1,13 @@
 {
 	"name": "lua-toolkit",
-	"version": "0.1.5",
-	"description": "Build and maintain Neovim Lua plugins.",
+	"version": "0.2.0",
+	"description": "Build Neovim plugins and migrate Lua programs.",
 	"author": {
 		"name": "khaneliman"
 	},
 	"skills": "./.",
 	"interface": {
 		"displayName": "Lua Toolkit",
-		"shortDescription": "Build and maintain Neovim Lua plugins."
+		"shortDescription": "Build Neovim plugins and migrate Lua programs."
 	}
 }

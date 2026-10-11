@@ -1,7 +1,10 @@
 # Tooling and Quality
 
-All tooling targets Lua 5.1 / LuaJIT. LuaCATS + lua-ls is the primary
-correctness tool. It catches problems that a linter may miss.
+This reference covers Neovim plugins targeting Lua 5.1 / LuaJIT. For standalone
+or embedded Lua version checks, use
+[lua-compatibility-verification.md](lua-compatibility-verification.md).
+LuaCATS + lua-ls is the primary correctness tool. It catches problems that a
+linter may miss.
 
 ## Priority: LuaCATS + lua-ls
 

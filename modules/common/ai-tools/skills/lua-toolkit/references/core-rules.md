@@ -1,5 +1,7 @@
 # Lua Toolkit Core Rules
 
+These rules apply to Neovim plugins, not standalone Lua version migrations.
+
 ## Runtime
 
 - Target Lua 5.1 / LuaJIT 2.1. No 5.2+ dialect: no new `goto` scoping, no

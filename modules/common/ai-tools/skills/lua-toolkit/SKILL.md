@@ -1,19 +1,29 @@
 ---
 name: lua-toolkit
-description: Create, refactor, test, or release Neovim Lua plugins. Not a general Lua application workflow.
+description: Create, refactor, test, or release Neovim Lua plugins; assess Lua 5.1-5.5 compatibility and migrate standalone or embedded Lua programs.
 ---
 
 # Lua Toolkit
 
-Authoring and refactoring Neovim Lua plugins targeting LuaJIT/Lua 5.1.
-Conventions are LuaRocks-first, type-safe, self-lazy-loading, no forced
-`setup()`. Neovim-plugin specific; for general embedded Lua, only the tooling
-and runtime guardrails transfer.
+For Neovim plugins, target LuaJIT/Lua 5.1 with LuaRocks-first distribution,
+LuaCATS types, self-lazy-loading, and no forced `setup()`. For standalone or
+embedded programs, provide Lua version migration and compatibility verification
+without imposing Neovim architecture or APIs.
 
 ## Routing (progressive disclosure)
 
 Route to one mode and load only that reference unless work crosses boundaries.
-If intent is unclear, ask first.
+Identify the actual interpreter or embedding host and the versions the project
+must retain before choosing syntax, library replacements, or checks.
+
+- **Lua version migration or compatibility audit:** read
+  [lua-version-migration.md](references/lua-version-migration.md), then
+  [lua-compatibility-verification.md](references/lua-compatibility-verification.md)
+  for runnable checks and evidence requirements. Cover every intervening
+  boundary from the starting version to 5.5. Keep Neovim/LuaJIT support when
+  required; installing standalone Lua 5.5 does not upgrade an embedding host.
+- **Neovim plugin work:** select the relevant reference below. These modes
+  retain their Lua 5.1 target and plugin-specific conventions.
 
 1. [plugin-architecture.md](references/plugin-architecture.md): runtimepath
    directory model, `plugin/` vs `lua/` separation, deferred-`require` loading,
@@ -41,7 +51,7 @@ If intent is unclear, ask first.
    `busted`+`nlua` (`neorocksTest` for Nix), stable/nightly CI matrix,
    vimcats/panvimdoc generation, SemVer `.rockspec`/`luarocks-tag-release`.
 
-## Core Rules (apply in every mode)
+## Neovim Plugin Rules
 
 Target Lua 5.1 / LuaJIT 2.1, avoid globals, self-lazy-load, prefer lazy
 `vim.g.<plugin>` config over forced `setup()`, expose one scoped command plus
