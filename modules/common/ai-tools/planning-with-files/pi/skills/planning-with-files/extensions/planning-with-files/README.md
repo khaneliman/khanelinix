@@ -5,7 +5,7 @@ in Pi.
 
 ## Events mapped
 
-- `session_start` -> session catchup
+- `session_start` -> reset session continuation state and execution approvals
 - `before_agent_start` -> plan reminder/injection
 - `tool_call` -> pre-tool recitation equivalent
 - `tool_result` -> post-write reminder
