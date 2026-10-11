@@ -61,9 +61,9 @@ git-surgeon discard <id1> <id2> ...
 git-surgeon discard <id> --lines 5-30
 
 # Fold a commit into an earlier commit (default: HEAD into target)
-git-surgeon fixup <target>
-git-surgeon fixup <target> --from <commit>
-git-surgeon fixup <target> --from <commit1> <commit2> <commit3>
+git-surgeon fold <target>
+git-surgeon fold <target> --from <commit>
+git-surgeon fold <target> --from <commit1> <commit2> <commit3>
 
 # Fold staged changes into an earlier commit
 git-surgeon amend <commit>
@@ -143,14 +143,13 @@ branch checked out elsewhere (e.g., main):
 
 ## Folding fix commits into earlier commits
 
-`fixup` folds one or more commits into an earlier one. The source(s) (default:
+`fold` folds one or more commits into an earlier one. The source(s) (default:
 HEAD) are removed from history and their changes merge into the target.
 Intermediate commits stay untouched. Dirty working tree is autostashed.
 
-- `git-surgeon fixup <target>` -- fold HEAD into target (most common)
-- `git-surgeon fixup <target> --from <commit>` -- fold a specific non-HEAD
-  commit
-- `git-surgeon fixup <target> --from <c1> <c2> <c3>` -- fold multiple commits in
+- `git-surgeon fold <target>` -- fold HEAD into target (most common)
+- `git-surgeon fold <target> --from <commit>` -- fold a specific non-HEAD commit
+- `git-surgeon fold <target> --from <c1> <c2> <c3>` -- fold multiple commits in
   one pass
 - Fails if the range contains merge commits
 
@@ -178,7 +177,7 @@ added. If your new lines belong with that change:
 
 ```bash
 git-surgeon commit a1b2c3d -m "add login logging"
-git-surgeon fixup 8922b52
+git-surgeon fold 8922b52
 ```
 
 ## Amending earlier commits with staged changes
@@ -193,7 +192,7 @@ for older commits, uses autosquash rebase. Unstaged changes are preserved.
 
 Squash collapses ALL commits from the target through HEAD into a single commit.
 Every intermediate commit in the range is merged. To fold one commit into a
-non-adjacent earlier commit without collapsing the range, use `fixup` instead.
+non-adjacent earlier commit without collapsing the range, use `fold` instead.
 
 1. Squash commits from a target commit through HEAD:
    `git-surgeon squash HEAD~2 -m "combined"`
