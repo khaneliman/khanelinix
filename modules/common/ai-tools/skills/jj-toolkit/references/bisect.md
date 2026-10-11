@@ -32,9 +32,8 @@ jj bisect run --range v1.0..main -- cargo nextest run
 # Find which commit broke a specific test
 jj bisect run --range v1.0..main -- cargo nextest run -E 'test(my_test)'
 
-# Complex check via shell one-liner
-jj bisect run --range abc..xyz -- bash -c \
-  'cargo build 2>&1 | grep -q "error" && exit 1 || exit 0'
+# Check compilation using the build exit status
+jj bisect run --range abc..xyz -- cargo build
 
 # Interactive: drop into a shell, test manually, exit 0 or 1
 jj bisect run --range v1.0..main -- bash
