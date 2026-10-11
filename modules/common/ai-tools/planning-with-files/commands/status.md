@@ -5,8 +5,10 @@ description: "Show current planning status at a glance - phases, progress, and a
 Resolve the selected plan using `scripts/resolve-plan-dir.sh` from the installed
 `planning-with-files` skill directory, with the project as the working directory.
 Read `task_plan.md` in the returned directory and display a compact status
-summary. An empty result means the repository-root legacy plan. Check findings
-and progress in the same resolved directory.
+summary. If the result is empty and `PWF_SESSION_ID` is set, report that no plan
+is attached and do not fall back to another plan. Without an explicit session
+ID, an empty result permits the legacy `./task_plan.md` fallback if that file
+exists. Check findings and progress in the same selected directory.
 
 ## What to Show
 
