@@ -22,29 +22,19 @@ in
   config = mkIf cfg.enable {
     programs.helix = {
       enable = true;
-      package = pkgs.helix.overrideAttrs (self: {
-        makeWrapperArgs =
-          with pkgs;
-          self.makeWrapperArgs or [ ]
-          ++ [
-            "--suffix"
-            "PATH"
-            ":"
-            (lib.makeBinPath [
-              bash-language-server
-              clang-tools
-              marksman
-              nil
-              nixd
-              nixfmt
-              prettier
-              rust-analyzer
-              rustfmt
-              shellcheck
-              vscode-langservers-extracted
-            ])
-          ];
-      });
+      extraPackages = with pkgs; [
+        bash-language-server
+        clang-tools
+        marksman
+        nil
+        nixd
+        nixfmt
+        prettier
+        rust-analyzer
+        rustfmt
+        shellcheck
+        vscode-langservers-extracted
+      ];
 
       # Helix configuration
       # See: https://docs.helix-editor.com/configuration.html
