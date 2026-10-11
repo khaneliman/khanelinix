@@ -8,6 +8,8 @@ Temporary files stay under $XDG_CACHE_HOME (default: ~/.cache); no host or
 whole-flake evaluation, desktop notification, activation or lock update occurs.
 Codex/OpenCode/editor doubles record argv and status; Git check-ignore and cd
 repository discovery use real Git in a temporary, uncommitted repository.
+Grep and !alias expansion use locked Git; nested alias commands are recorded
+with GIT_EXEC_PATH isolated and all Git network protocols denied.
 Darwin window settings are rendered on Linux, not tested on a Darwin runtime.
 """
 
@@ -352,6 +354,112 @@ with tempfile.TemporaryDirectory(prefix="runtime-", dir=cache) as directory:
 
     git_body = (SOURCE / "shells/fish/functions/git.fish").read_text()
 
+    def grep_status():
+        native_env = env | {
+            "PATH": str(Path(render["git"]).parent)
+            + ":"
+            + str(Path(render["perl"]).parent)
+        }
+        (repository / "grep fixture.txt").write_text("needle " + "x" * 700 + "\n")
+        for arguments, expected in (
+            (["grep", "--no-index", "needle", "--", "grep fixture.txt"], 0),
+            (["grep", "--no-index", "absent", "--", "grep fixture.txt"], 1),
+            (["grep", "--invalid-regression-option"], 129),
+        ):
+            native = run([render["git"], *arguments], env=native_env, cwd=repository)
+            assert native.returncode == expected, native.stderr
+            script = work / "grep.fish"
+            script.write_text(
+                git_body
+                + "\ngit "
+                + " ".join(map(shlex.quote, arguments))
+                + "\nexit $status\n"
+            )
+            actual = run(
+                [fish, "--no-config", str(script)], env=native_env, cwd=repository
+            )
+            assert actual.returncode == native.returncode, (
+                arguments,
+                actual.returncode,
+                native.returncode,
+            )
+            if expected == 0:
+                assert "...(truncated)" in actual.stdout
+                assert len(actual.stdout) < len(native.stdout)
+
+    check("Fish grep native match/no-match/error status and truncation", grep_status)
+
+    def command_aliases():
+        # Git itself expands !aliases. Its nested git commands hit a recorder,
+        # never a real fetch/reset/pull. All protocols are also denied.
+        calls = work / "git-calls.jsonl"
+        recorder = work / "git-recorder"
+        recorder.mkdir()
+        command = recorder / "git"
+        command.write_text(
+            "#!" + sys.executable + "\n"
+            "import json, os, sys\n"
+            "with open(os.environ['GIT_CALLS'], 'a') as log: log.write(json.dumps(sys.argv[1:]) + '\\n')\n"
+            "if sys.argv[1:3] == ['remote', 'get-url']: print('https://example.invalid/repository')\n"
+        )
+        command.chmod(0o755)
+        alias_env = env | {
+            "PATH": str(recorder),
+            "GIT_CALLS": str(calls),
+            "GIT_ALLOW_PROTOCOL": "",
+            "GIT_EXEC_PATH": str(recorder),
+        }
+
+        def invoke(name, arguments, expected, stdin=None):
+            calls.unlink(missing_ok=True)
+            result = run(
+                [
+                    render["git"],
+                    "-c",
+                    f"alias.{name}={render['commandAliases'][name]}",
+                    name,
+                    *arguments,
+                ],
+                cwd=repository,
+                env=alias_env,
+                input=stdin,
+            )
+            assert result.returncode == 0, (name, result.stderr)
+            actual = [json.loads(line) for line in calls.read_text().splitlines()]
+            assert actual == expected, (name, actual, expected)
+
+        # Newlines in caller arguments must remain data, not shell commands.
+        argument = "topic with spaces\nsecond line"
+        invoke("pullhead", ["topic"], [["pull", "origin", "topic"]])
+        invoke(
+            "mergetest",
+            [argument],
+            [["merge", "--no-commit", "--no-ff", argument], ["merge", "--abort"]],
+        )
+        invoke(
+            "pullf",
+            [argument],
+            [["fetch", "origin", argument], ["reset", "--hard", "origin/" + argument]],
+            "y\n",
+        )
+        for remote, number in (("origin", "42"), ("origin", ""), ("upstream", "731")):
+            invoke(
+                "fetch-pr",
+                [remote] + ([number] if number else []),
+                [
+                    ["remote", "get-url", remote],
+                    [
+                        "fetch",
+                        remote,
+                        f"+refs/pull/{number or '*'}/head:refs/remotes/{remote}/pr/{number or '*'}",
+                    ],
+                ],
+            )
+
+    check(
+        "Git native multiline !alias argv and inert fetch-pr refspec", command_aliases
+    )
+
     def git_status():
         Path(env["ARGS_FILE"]).unlink(missing_ok=True)
         result = execute(
@@ -376,5 +484,5 @@ with tempfile.TemporaryDirectory(prefix="runtime-", dir=cache) as directory:
 
     check("Fish git saved exit status, without invoking code", git_status)
 
-print(f"{11 - len(failures)}/11 groups passed; failures: {failures}")
+print(f"{13 - len(failures)}/13 groups passed; failures: {failures}")
 raise SystemExit(bool(failures))

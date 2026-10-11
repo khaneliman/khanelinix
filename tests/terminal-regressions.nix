@@ -84,6 +84,8 @@ in
   packages = [
     pkgs.fish
     pkgs.bash
+    pkgs.git
+    pkgs.perl
     pkgs.libnotify
   ];
   notifyDrvs = map (path: builtins.head (builtins.attrNames (builtins.getContext path))) (
@@ -94,6 +96,9 @@ in
   bashAliases = compat.translateAliasMap aliases;
   gitAliases =
     (import (source + "/tools/git/shell-aliases.nix") { inherit config lib pkgs; }).shellAliases;
+  commandAliases = (import (source + "/tools/git/aliases.nix")).aliases;
+  git = lib.getExe pkgs.git;
+  perl = lib.getExe pkgs.perl;
   inherit (import (source + "/tools/git/ignores.nix")) ignores;
   windows = {
     linux = alacritty "linux";
