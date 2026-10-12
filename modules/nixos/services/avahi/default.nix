@@ -34,9 +34,10 @@ in
 
       hostName = config.system.name;
 
-      # resolve .local domains
+      # Resolve .local domains over IPv4 only. Responders with no IPv6 address,
+      # such as AustinServer, never answer AAAA queries, so nssmdns6 stalls
+      # each lookup for 5 s and can fail it.
       nssmdns4 = true;
-      nssmdns6 = true;
 
       # pass avahi port(s) to the firewall
       openFirewall = true;
