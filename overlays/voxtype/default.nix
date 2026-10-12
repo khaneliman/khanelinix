@@ -48,17 +48,9 @@ _: final: prev: {
           ./learned-replacements.patch
         ];
 
-      # fetchCargoVendor recurses forever into an ancestor symlink inside the
-      # openvino-rs Git checkout; importCargoLock tolerates it. The lockfile is
-      # the patched tree's Cargo.lock.
+      # The lockfile includes both the inherited Cargo patches and our patches.
       cargoDeps = final.rustPlatform.importCargoLock {
         lockFile = ./Cargo.lock;
-        outputHashes = final.lib.genAttrs [
-          "openvino-finder-0.11.0"
-          "openvino-genai-0.11.0"
-          "openvino-genai-sys-0.11.0"
-          "openvino-sys-0.11.0"
-        ] (_: "sha256-nQWeHNdLlRk+owh3B6VpArAG2dr66HeBI2RHfDhyvvU=");
       };
     }
   );
