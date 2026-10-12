@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  getPkgsUnstable,
   ...
 }:
 let
@@ -37,6 +38,10 @@ in
 
     programs.sesh = {
       enable = true;
+      # TODO: remove after hits channel. sesh builds go-mockery 3.8.0, which
+      # cannot read Go 1.27.2 export data; nixpkgs-unstable is still on Go
+      # 1.27.1 and master lacks the 3.8.1 bump (NixOS/nixpkgs#573101).
+      package = (getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; }).sesh;
       # The tmux module owns the sesh key bindings alongside its other binds.
       enableTmuxIntegration = false;
 
