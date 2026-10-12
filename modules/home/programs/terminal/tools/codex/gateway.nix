@@ -7,7 +7,8 @@
 let
   cfg = config.khanelinix.services.cliproxyapi;
   provider = config.programs.codex.settings.model_providers.cliproxyapi;
-  catalogDir = "${config.xdg.cacheHome}/codex/models-${lib.getVersion package}";
+  catalogPrefix = "${config.xdg.cacheHome}/codex/models-";
+  catalogDir = "${catalogPrefix}${lib.getVersion package}";
   catalogPath = "${catalogDir}/cliproxyapi.json";
   bundledCatalogPath = "${catalogDir}/bundled.json";
   modelAlias =
@@ -46,11 +47,9 @@ let
   direct = pkgs.writeShellApplication {
     name = "codex-direct";
     text = ''
-      ${refreshCommand} --bundled-only
       ${extractSubcommand}
       exec ${lib.getExe package} --no-daemon "''${subcommand[@]}" \
         -c 'model_provider="openai"' \
-        -c ${lib.escapeShellArg "model_catalog_json=${builtins.toJSON bundledCatalogPath}"} \
         "$@"
     '';
   };
@@ -70,6 +69,7 @@ let
 in
 {
   inherit
+    catalogPrefix
     catalogPath
     bundledCatalogPath
     modelAlias

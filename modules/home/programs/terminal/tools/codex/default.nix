@@ -187,6 +187,28 @@ in
               || echo "Codex plugin install failed: ${plugin}; retry codex plugin add ${plugin}" >&2
           '') (lib.attrNames aiTools.codex.plugins)
         );
+
+        # Mutable settings keep keys dropped from `settings`. A retained local
+        # catalog replaces the account catalog and hides entitled models.
+        codexDropManagedCatalog = lib.hm.dag.entryAfter [ "codexMutableSettings" ] (
+          lib.hm.generators.mkImpureConfigMerger {
+            inherit pkgs;
+            format = "toml";
+            empty = "{}";
+            jqOperation = ''
+              $dynamic
+              | if (.model_catalog_json // "" | startswith(${builtins.toJSON gateway.catalogPrefix})) then
+                del(.model_catalog_json)
+              else
+                .
+              end
+            '';
+            path = "${codexConfigPath}/config.toml";
+            staticSettings = tomlFormat.generate "codex-no-settings" { };
+            mode = "600";
+            verboseMsg = "Removing the managed model catalog from Codex settings";
+          }
+        );
       }
       // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
         # Codex plugin caches are mutable content downloaded at runtime, so
@@ -320,7 +342,6 @@ in
         # No service_tier: Astra is costly enough on the default tier.
         model = defaultModel;
         model_provider = "openai";
-        model_catalog_json = mkIf gatewayEnabled gateway.bundledCatalogPath;
         model_reasoning_effort = "low";
         plan_mode_reasoning_effort = "low";
         web_search = defaultWebSearch;
