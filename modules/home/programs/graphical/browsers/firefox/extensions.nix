@@ -13,6 +13,9 @@ let
     inherit package;
     settings.updates_disabled = true;
   }) extensionPackages;
+
+  userAgentSwitcherId = pkgs.firefox-addons.user-agent-string-switcher.addonId;
+  firefoxVersion = "${lib.versions.major config.programs.firefox.package.version}.0";
 in
 {
   options.khanelinix.programs.graphical.browsers.firefox = {
@@ -89,6 +92,40 @@ in
       (lib.mkIf (cfg.extensions.installMethod == "policy") {
         programs.firefox.globalExtensions = globalExtensions;
       })
+
+      # Only Linux needs a Windows identity for work sign-in. The extension
+      # copies this managed JSON into its preferences at every startup.
+      (lib.mkIf
+        (
+          pkgs.stdenv.hostPlatform.isLinux
+          && lib.any (package: (package.addonId or null) == userAgentSwitcherId) extensionPackages
+        )
+        {
+          programs.firefox.policies."3rdparty".Extensions.${userAgentSwitcherId}.json = builtins.toJSON {
+            "json-guid" = "khanelinix";
+            "json-forced" = true;
+            mode = "whitelist";
+            ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:${firefoxVersion}) Gecko/20100101 Firefox/${firefoxVersion}";
+            # Each entry matches its host and subdomains; wildcards add nothing.
+            # Background requests are spoofed only when started by a listed
+            # page, so app origins are listed for their token refreshes.
+            whitelist = [
+              # Entra ID and Microsoft account sign-in
+              "microsoftonline.com"
+              "login.microsoft.com"
+              "login.windows.net"
+              "login.live.com"
+              "microsoftazuread-sso.com"
+              # Microsoft 365 web apps
+              "cloud.microsoft"
+              "office.com"
+              "office365.com"
+              "sharepoint.com"
+              "teams.microsoft.com"
+            ];
+          };
+        }
+      )
     ]
   );
 }
