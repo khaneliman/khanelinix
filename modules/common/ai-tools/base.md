@@ -105,9 +105,14 @@ good change reads as if the surrounding code was designed for it.
 - When a simplification has a limit current inputs do not reach, such as a
   global lock, a quadratic scan, or a naive heuristic, comment the limit near
   the code and name what should trigger replacing it.
-- For changed non-trivial logic, such as a parser, a data transformation, or a
-  money or security path, add or update the smallest runnable check that would
-  catch a regression, using the project's existing test conventions.
+- Match the repository's existing test infrastructure. For changed non-trivial
+  logic, add or update a focused regression test using its existing framework,
+  runners, fixtures, and targets. Do not add new test infrastructure, including
+  standalone harnesses or new runners and targets, unless the user explicitly
+  asks for it. A bug fix, coverage request, or review does not imply that
+  authorization. If suitable infrastructure is absent, use existing builds,
+  checks, or a bounded local reproduction kept out of the contribution, and
+  report the remaining verification gap.
 - Keep pragmatic choices visible. Name anything a reader might expect that you
   skipped, such as a cache, option, or retry, and what would justify adding it.
   When an explicit request looks heavier than an existing alternative, build
