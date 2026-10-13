@@ -34,11 +34,11 @@ to mid-stack PRs too.
 
 ## Availability
 
-Requires the `github/gh-stack` extension. In this repository, add `gh-stack` to
-`programs.gh.extensions` in
-`modules/home/programs/terminal/tools/gh/default.nix` and rebuild.
-`pkgs.gh-stack` is the official extension. Do not run `gh extension install`;
-that leaves imperative state Home Manager does not own.
+Requires the `github/gh-stack` extension:
+`gh extension install github/gh-stack`. When `gh` is managed declaratively, add
+the extension there instead, for example `pkgs.gh-stack` in Home Manager's
+`programs.gh.extensions`, because an imperative install leaves state the
+configuration does not own.
 
 Exit code 9 means stacked pull requests are not enabled for the repository. An
 empty `repos/<owner>/<repo>/stacks` response does not prove the feature is off;
