@@ -1,84 +1,65 @@
-# Standards for Subagents
+# Standards for Subagents and Custom Agents
 
-Use subagents to isolate state, run parallel operations, or prevent context
-pollution.
+Use subagents to isolate context, run independent work in parallel, or give a
+narrow role its own tools.
 
 ## Design Constraints
 
-1. **Context Isolation:** Do not copy the entire global conversation history
-   into a subagent's prompt. Provide only the immediate task, input variables,
-   and exit criteria.
-2. **Narrow Scope/Role:** Define a specific, single-responsibility role (e.g.,
-   "Nix Build Debugger", "Rust Clippy Auditor") instead of a general helper.
-3. **Clear Exit Criteria:** State exactly what the subagent must output and when
-   it should stop (e.g., "Return only the diff of the fix, then exit").
-4. **Tool Gating:** Equip the subagent only with the tools necessary for its job
-   (e.g., read-only tools for research, write tools only if modifying files is
-   required).
-5. **No Chatty Loops:** Exchange parent/child messages only at major
-   checkpoints. Avoid interactive chatting between parent and child agents
-   unless resolving a specific block.
+1. **Self-contained packet.** A subagent sees no conversation history. Give the
+   task, inputs, verified context, constraints, and exit criteria in its prompt.
+2. **One narrow role.** Define a single-responsibility role, such as "Nix build
+   debugger", not a general helper.
+3. **Clear exit criteria.** State exactly what to return and when to stop. Ask
+   for a condensed result; a summary of one or two thousand tokens keeps the
+   parent's context clean.
+4. **Least privilege.** Grant only the tools the role needs: read-only tools for
+   research and review, write tools only for changes. Omit the delegation tool
+   from read-only reviewers so they cannot spawn further agents.
+5. **Few checkpoints.** Exchange messages only at major checkpoints, not in a
+   chatty loop.
+6. **Short descriptions.** Descriptions load on every turn; keep detail in the
+   agent body, which loads only when the agent runs.
 
----
+## Claude Code
 
-## Claude-Specific Context Behaviors
+- Agents are markdown files in `.claude/agents/` (project) or
+  `~/.claude/agents/` (user). `name` (up to 256 characters, no `:`) and
+  `description` are required; optional fields include `tools`, `model`, and
+  `skills`. Agent fields are camelCase.
+- The body is the agent's entire system prompt, replacing the Claude Code system
+  prompt. Agents still receive `CLAUDE.md` unless `omitClaudeMd` is set.
+- Omitting `tools` grants every tool. `model` accepts `sonnet`, `opus`, `haiku`,
+  a full model ID, or `inherit`.
+- `skills` preloads full skill content; skills with
+  `disable-model-invocation: true` cannot be preloaded.
+- Agents can nest; remove the `Agent` tool from roles that must not delegate.
+- Delegate large reads and research to a subagent so the main session avoids
+  compaction; only the result returns to the parent.
 
-- **Definition Format:** Subagents are markdown files in `.claude/agents/`
-  (project) or `~/.claude/agents/` (user) with YAML frontmatter: `name`,
-  `description`, and optional `tools` and `model`. The main session spawns them
-  through the `Agent` tool; the `description` frontmatter determines when Claude
-  delegates automatically.
-- **Context Pollution Shield:** Reading large files in the main session quickly
-  fills the context window and triggers automatic compaction. Delegate large
-  file reads or research tasks to a subagent.
-- **Compaction Avoidance:** The subagent performs the heavy read operations in
-  its own separate context window. Once complete, only the summary and a small
-  metadata trailer are returned to the parent agent, keeping the main session's
-  context footprint clean.
+## Codex
 
----
+- Custom agents are TOML files in `~/.codex/agents/` or `.codex/agents/`.
+  Required: `name`, `description`, `developer_instructions`. Optional:
+  `nickname_candidates`, `model`, `model_reasoning_effort`, `sandbox_mode`,
+  `mcp_servers`, and `skills.config`. Keep each agent narrow and opinionated.
+- `config.toml` sets `agents.max_threads` (concurrent threads),
+  `agents.max_depth` (nesting, default 1), and `agents.job_max_runtime_seconds`
+  (batch timeout).
+- `spawn_agents_on_csv` runs one worker per CSV row; each worker reports with
+  `report_agent_job_result`.
 
-## Codex Subagents & Instructions (AGENTS.md)
+## GitHub Copilot
 
-Codex reads `AGENTS.md` instruction chains and spawns subagents to parallelize
-complex tasks.
+- Custom agents are markdown files in `.github/agents/` (repository,
+  organization, or enterprise) and `~/.copilot/agents/` for the CLI.
+  `description` is required; `name`, `tools`, `model`,
+  `disable-model-invocation`, `user-invocable`, `mcp-servers`, and `metadata`
+  are optional. The prompt is limited to 30,000 characters.
+- Unknown tool names are ignored, so one profile can list tools for several
+  hosts. Claude names map to Copilot aliases, such as `Bash` to execute and
+  `Read` to read.
 
-### Instruction Chain Discovery (AGENTS.md)
+## Output
 
-- **Precedence:**
-  1. Global scope: `~/.codex/AGENTS.override.md` -> `~/.codex/AGENTS.md` (only
-     first non-empty loads).
-  2. Project scope: walks down from project root to current working directory
-     checking for `AGENTS.override.md` -> `AGENTS.md` -> fallback names
-     configured via `project_doc_fallback_filenames` (e.g. `TEAM_GUIDE.md`). At
-     most one file loads per directory.
-- **Merge Order:** Concatenated from root down. Files closer to CWD override
-  earlier files.
-- **Size Limit:** Combined text capped at 32 KiB (`project_doc_max_bytes`). Once
-  the cap is reached, Codex stops adding further files; raise the cap or
-  redistribute instructions across nested directories to preserve critical
-  content.
-
-### Codex Custom Agent Configuration
-
-- **Location:** Defined in standalone TOML files under `~/.codex/agents/`
-  (global) or `.codex/agents/` (project-scoped).
-- **Required TOML Fields:** `name`, `description`, `developer_instructions`.
-- **Optional Fields:** `nickname_candidates` (pool of presentation nicknames to
-  distinguish multiple worker runs), `model`, `model_reasoning_effort`,
-  `sandbox_mode`, `mcp_servers`, and `skills.config`.
-- **Global Agent Settings (in `config.toml`):**
-  - `agents.max_threads`: Concurrent thread cap (default `6`).
-  - `agents.max_depth`: Spawning nesting depth (default `1` to prevent recursive
-    delegation loops).
-  - `agents.job_max_runtime_seconds`: Timeout per worker for CSV batch jobs.
-
-### CSV Batch Processing (Experimental)
-
-- Use `spawn_agents_on_csv` to run audits/reviews of multiple items in parallel
-  (one agent per CSV row). Output is aggregated and exported to a target CSV.
-  Each worker must report results via `report_agent_job_result`.
-
-**Actionable Advice Output:** Provide the exact `.claude/agents/*.md` definition
-with frontmatter (Claude) or custom agent TOML structure (Codex). Explain how
-boundary limits prevent context bloating or recursive loops.
+Provide the exact agent file for each target host and explain how its tool
+limits and exit criteria keep context small and prevent recursive delegation.

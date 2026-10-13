@@ -4,6 +4,12 @@ Use this method before changing skill triggers, workflow ownership, provider
 routes, model defaults, or reasoning effort. Generic benchmarks can suggest a
 candidate. Only representative local tasks can justify promotion.
 
+Contents: [Separate Evaluation Questions](#separate-evaluation-questions) ·
+[Freeze the Corpus](#freeze-the-corpus) · [Blind the Run](#blind-the-run) ·
+[Hold Environment Constant](#hold-environment-constant) ·
+[Retain Evidence](#retain-evidence) ·
+[Decide Before Unblinding](#decide-before-unblinding)
+
 ## Separate Evaluation Questions
 
 Evaluate one declared question at a time when practical:
@@ -47,11 +53,10 @@ use separate cases for tuning. Once holdout cases or their results inform a
 change, treat those cases as tuning evidence and use a fresh untouched holdout
 for the next promotion decision. Freeze and blind that holdout in the same way.
 
-The canonical routing corpus lives at
-`modules/common/ai-tools/eval/workflow-routing-baseline.json`. Keep every corpus
-outside the skill directory. A corpus carries expected answers, so it must never
-ship inside the installed skill package. Record `source_revision` as provenance
-only; do not treat it as a pin that consumers must resolve.
+Keep every corpus outside the skill directory, such as in an `eval/` directory
+of the repository that owns the tooling. A corpus carries expected answers, so
+it must never ship inside the installed skill package. Record `source_revision`
+as provenance only; do not treat it as a pin that consumers must resolve.
 
 ## Blind the Run
 

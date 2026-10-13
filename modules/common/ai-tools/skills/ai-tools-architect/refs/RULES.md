@@ -1,54 +1,63 @@
-# Standards for Path-Gated Rules
+# Standards for Instruction Files and Path-Gated Rules
 
-When advising the user on creating rules, enforce the following constraints to
-ensure maximum token efficiency and safety.
+Instruction files load on every turn or whenever their path matches, so every
+line is a recurring cost. "Rules" also mean different things per host: Claude
+rules are path-gated guidance, while Codex `.rules` files are command execution
+policy.
 
-> [!IMPORTANT]
-> "Rules" are different mechanisms per platform. Claude rules are path-gated
-> context/style guidance. Codex `.rules` files are command execution policy for
-> the sandbox. For directory-scoped _guidance_ on Codex, use nested `AGENTS.md`
-> files instead. See [SUBAGENTS.md](SUBAGENTS.md).
+## Writing Instruction Files
 
-## Claude-Specific Rules
+- Keep each always-loaded file short; for `CLAUDE.md`, stay under 200 lines.
+  Codex stops adding `AGENTS.md` text past 32 KiB by default.
+- Write short, concrete, verifiable statements. Test each line: would removing
+  it cause a mistake? Leave out what the agent can learn from the code.
+- Use emphasis rarely; when many lines are emphasized, none stands out.
+- Remove contradictions; an agent may pick either side.
+- Move procedures into skills and area-specific notes into path-gated rules or
+  nested files. Imports do not reduce context cost.
+- Rules state how to write code or format output, not which tools to call; tool
+  orchestration belongs in skills and agents.
 
-1. **Default to Path-Gating:** Instruct the user to bind the rule to a specific
-   directory or file extension (e.g., `*.rs`, `flake.nix`, `src/frontend/`) so
-   it loads only when relevant. Leave a rule unscoped only when it must apply
-   universally or survive compaction (see Context Behaviors below).
-2. **Context Isolation:** The rule should only contain conventions, syntax
-   formatting, or architectural constraints relevant to that specific path.
-3. **No Tool Logic:** Rules dictate _how_ to write code or format output; they
-   should not instruct the LLM on _which_ tools to use. Tool orchestration
-   belongs in Subagents or Skills.
+## Claude Code
 
-### Context Behaviors
-
-- **Compaction Loss:** Rules with `paths:` frontmatter and nested `CLAUDE.md`
-  files load into message history when their trigger file is read. Therefore,
-  when the session compacts, they are summarized away. They will only reload
-  once a matching file is read again.
-- **Persistent Rules:** If a rule must persist across compaction, instruct the
-  user to drop the `paths:` frontmatter or move it to the project-root
+- Path-gate rules with `paths:` frontmatter (for example `*.rs` or
+  `src/frontend/`) so they load only when relevant. Leave a rule unscoped only
+  when it must apply everywhere.
+- Path-gated rules and nested `CLAUDE.md` files load when a matching file is
+  read and are summarized away at compaction; they reload only when a matching
+  file is read again. Move a rule that must survive compaction to the root
   `CLAUDE.md`.
+- `CLAUDE.md` arrives as a user message after the system prompt. Claude Code
+  also loads `AGENTS.md` where it would load `CLAUDE.md`, but only when no
+  project `CLAUDE.md` exists; see [INITIALIZATION.md](INITIALIZATION.md).
 
----
+## Codex Instruction Chain (AGENTS.md)
 
-## Codex Rules (.rules)
+- Global scope: `~/.codex/AGENTS.override.md`, then `~/.codex/AGENTS.md`; only
+  the first non-empty file loads.
+- Project scope: from the repository root down to the working directory, each
+  directory contributes at most one of `AGENTS.override.md`, `AGENTS.md`, or a
+  name in `project_doc_fallback_filenames`.
+- Files are concatenated root first, so closer files override earlier ones. Past
+  `project_doc_max_bytes` (32 KiB by default), Codex adds no more files; raise
+  the cap or move guidance into nested directories.
 
-Codex uses `.rules` files to control which commands can be run outside the
-sandbox.
+## GitHub Copilot
 
-### Design Guidelines
+- `.github/copilot-instructions.md` applies repository-wide.
+  `.github/instructions/*.instructions.md` files apply by `applyTo` glob and
+  combine with the repository-wide file; `excludeAgent` limits which agents read
+  them.
+- The nearest `AGENTS.md` takes precedence; a root `CLAUDE.md` or `GEMINI.md`
+  also works. Support differs by surface: the cloud agent and CLI read all
+  three, VS Code Chat reads `AGENTS.md`.
 
-- **Locations:** Scanned at startup under `~/.codex/rules/` (user layer) and
-  `<repo>/.codex/rules/` (project layer, loaded only if trusted).
-- **Format:** Written in Starlark (Python-like safe dialect).
-- **Core Function:** Uses `prefix_rule(...)` to match command argument lists.
-- **Conflict Resolution:** When multiple rules match a command, the most
-  restrictive decision wins.
-- **TUI Writes:** Commands the user allows interactively are persisted as
-  `prefix_rule` entries in `~/.codex/rules/default.rules`; review these when
-  auditing the user layer.
+## Codex Command Rules (.rules)
+
+- Codex reads `.rules` files from `~/.codex/rules/` and, in trusted projects,
+  `<repo>/.codex/rules/`. They are Starlark and decide which commands may run
+  outside the sandbox. The most restrictive matching decision wins, and commands
+  approved in the TUI are saved to `~/.codex/rules/default.rules`.
 
 ```python
 prefix_rule(
@@ -60,23 +69,13 @@ prefix_rule(
 )
 ```
 
-### Shell Wrappers and Splitting
+- Plain command chains joined by `&&`, `||`, `;`, or `|` are split and checked
+  one by one. Commands with variables, redirects, substitutions, wildcards, or
+  control flow are checked as one `bash -c` invocation.
+- Test a policy with
+  `codex execpolicy check --pretty --rules <rule_file> -- <command>`.
 
-- **Safe Splitting:** Linear chains of commands using only plain words (no vars,
-  wildcards) joined by safe operators (`&&`, `||`, `;`, `|`) are split and
-  checked individually (e.g. `git add . && rm -rf /` checks both).
-- **Unsplit Compound:** Commands using env vars, redirects (`>`, `<`),
-  substitutions (`$(...)`), wildcards (`*`), or control flow (`if`, `for`) are
-  treated as a single invocation (e.g. `["bash", "-c", "..."]`) and evaluated as
-  one unit.
+## Output
 
-### Testing Rules
-
-- Test policies using:
-  ```shell
-  codex execpolicy check --pretty --rules <rule_file> -- <command>
-  ```
-
-**Actionable Advice Output:** When proposing a rule, specify the exact
-path-gating syntax (Claude) or `prefix_rule` Starlark syntax (Codex), explain
-the security implication, and specify how it reduces global context overhead.
+Give the exact path-gating syntax or `prefix_rule` for the target host, its
+security effect, and how it reduces always-loaded context.

@@ -17,20 +17,22 @@ rules, agents, commands, or skills.
    transformations to commands. Read the matching component reference before
    editing that surface.
 5. Preserve useful existing rules. Do not add vendor banners, generic
-   engineering advice, directory listings, or arbitrary line limits.
+   engineering advice, directory listings, or line limits beyond host guidance.
+   Keep skills, agents, and plugins meant for reuse portable; see the standards
+   in [../SKILL.md](../SKILL.md).
 6. Validate links, loading gates, and precedence. Report what stayed global,
    what moved behind a gate, what was deleted, and any unresolved conflict.
 
 ## Claude Code and AGENTS.md
 
-Claude Code 2.1.289 loads `AGENTS.md` and `.claude/AGENTS.md` wherever it would
-load `CLAUDE.md`, but only when no project `CLAUDE.md` exists at the session
-root or above it. A `CLAUDE.md` that only imports `@AGENTS.md` therefore turns
-the loader off; delete such shims instead of adding them. The loader reads no
+Claude Code loads `AGENTS.md` and `.claude/AGENTS.md` wherever it would load
+`CLAUDE.md`, but only when no project `CLAUDE.md` exists at the session root or
+above it. A `CLAUDE.md` that only imports `@AGENTS.md` therefore turns the
+loader off; delete such shims instead of adding them. The loader reads no
 user-level `AGENTS.md`, so user instructions still need `CLAUDE.md` in the
 Claude config directory. Do not name reference files `AGENTS.md`: nested ones
 load as instructions when Claude reads a sibling file.
 
-Anthropic gates this loader behind a remote flag. When instructions seem
-missing, run `claude -p --debug` and look for
-`no CLAUDE.md found; AGENTS.md loaded` in the debug log.
+When instructions seem missing, run `claude -p --debug` and look for
+`no CLAUDE.md found; AGENTS.md loaded` in the debug log; the loader can be gated
+remotely.
