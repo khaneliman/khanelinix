@@ -35,6 +35,12 @@ RESOURCE_MENTION_RE = re.compile(
 )
 TOP_LEVEL_YAML_RE = re.compile(r"^([A-Za-z0-9_-]+):(?:\s*(.*))?$")
 FENCE_RE = re.compile(r"^\s*(`{3,}|~{3,})")
+INLINE_CODE_RE = re.compile(r"`([^`\s]+)`")
+# Absolute home paths tie a skill to one machine and account.
+USER_HOME_RE = re.compile(
+    r"(?<![\w/])(?:/home/[a-z_][a-z0-9_.-]*/|/Users/[A-Za-z][\w.-]*/"
+    r"|[A-Za-z]:\\{1,2}Users\\{1,2}[A-Za-z])"
+)
 NON_STRING_YAML_SCALARS = {"false", "null", "true", "~"}
 NUMBER_YAML_RE = re.compile(
     r"^[+-]?(?:0|[1-9][0-9_]*)(?:\.[0-9_]+)?(?:[eE][+-]?[0-9]+)?$"
@@ -745,6 +751,70 @@ def is_invocable_script(resource: Path) -> bool:
     return not resource.suffix or resource.suffix.lower() in INTERPRETER_SCRIPT_SUFFIXES
 
 
+def find_repository_root(path: Path) -> Path | None:
+    for candidate in (path, *path.parents):
+        if (candidate / ".git").exists():
+            return candidate
+    return None
+
+
+def iter_inline_code(path: Path) -> Iterable[tuple[int, str]]:
+    fence: str | None = None
+    for line_number, line in enumerate(read_text(path).splitlines(), start=1):
+        fence_match = FENCE_RE.match(line)
+        if fence_match:
+            marker = fence_match.group(1)[0]
+            if fence is None:
+                fence = marker
+            elif fence == marker:
+                fence = None
+            continue
+        if fence is None:
+            for match in INLINE_CODE_RE.finditer(line):
+                yield line_number, match.group(1)
+
+
+def host_repository_references(
+    skill_dir: Path, repository: Path
+) -> Iterable[tuple[Path, int, str]]:
+    """Yield inline paths that name files in the host repository.
+
+    Requiring two separators skips bare names such as `flake.nix` that many
+    projects share; a path that exists only outside the skill still couples
+    the skill to this repository.
+    """
+    skill_root = skill_dir.resolve()
+    for markdown in markdown_files(skill_dir):
+        for line_number, raw in iter_inline_code(markdown):
+            reference = raw.rstrip(".,:;)")
+            if (
+                reference.count("/") < 2
+                or reference.startswith(("/", "~", "$", ".", "<"))
+                or "://" in reference
+                or any(character in reference for character in "*<>{}|")
+            ):
+                continue
+            target = repository / reference
+            if not target.exists() or (skill_dir / reference).exists():
+                continue
+            if target.resolve().is_relative_to(skill_root):
+                continue
+            yield markdown, line_number, reference
+
+
+def iter_user_home_paths(paths: Iterable[Path]) -> Iterable[tuple[Path, int]]:
+    for path in paths:
+        try:
+            head = path.read_bytes()[:4096]
+        except OSError:
+            continue
+        if b"\0" in head:
+            continue
+        for line_number, line in enumerate(read_text(path).splitlines(), start=1):
+            if USER_HOME_RE.search(line):
+                yield path, line_number
+
+
 def iter_prose_blocks(path: Path, minimum_characters: int) -> Iterable[ProseBlock]:
     lines = read_text(path).splitlines()
     index = 0
@@ -801,7 +871,10 @@ def iter_prose_blocks(path: Path, minimum_characters: int) -> Iterable[ProseBloc
 
 
 def audit_skill(
-    skill_dir: Path, root: Path, line_budget: int
+    skill_dir: Path,
+    root: Path,
+    line_budget: int,
+    repository: Path | None = None,
 ) -> tuple[SkillRecord, list[Finding]]:
     findings: list[Finding] = []
     skill_file = skill_dir / "SKILL.md"
@@ -965,8 +1038,36 @@ def audit_skill(
                     )
                 )
 
+    if repository is not None:
+        for markdown, line_number, reference in host_repository_references(
+            skill_dir, repository
+        ):
+            findings.append(
+                Finding(
+                    "warning",
+                    "host_repository_reference",
+                    display_path(markdown, root),
+                    f"`{reference}` is a path in the host repository; a portable "
+                    "skill must carry or describe what it needs",
+                    line_number,
+                )
+            )
+
     resources = resource_files(skill_dir)
     referenced = referenced_resources(skill_dir)
+    for path, line_number in iter_user_home_paths(
+        [*markdown_files(skill_dir), *resources]
+    ):
+        findings.append(
+            Finding(
+                "warning",
+                "user_home_path",
+                display_path(path, root),
+                "absolute user-home path; use `~`, an environment variable, "
+                "or a placeholder",
+                line_number,
+            )
+        )
     for resource in resources:
         resource_path = display_path(resource, root)
         relative = resource.relative_to(skill_dir).as_posix()
@@ -1045,8 +1146,9 @@ def audit_root(
 
     duplicate_blocks: dict[str, list[ProseBlock]] = defaultdict(list)
     block_skills: dict[Path, Path] = {}
+    repository = find_repository_root(root)
     for skill_dir in skills:
-        record, skill_findings = audit_skill(skill_dir, root, line_budget)
+        record, skill_findings = audit_skill(skill_dir, root, line_budget, repository)
         records.append(record)
         findings.extend(skill_findings)
         for markdown in markdown_files(skill_dir):

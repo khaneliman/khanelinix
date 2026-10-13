@@ -365,6 +365,77 @@ class AuditAiToolsTests(unittest.TestCase):
             self.assertIsNone(error)
             self.assertEqual(frontmatter["description"], "---")
 
+    def test_host_repository_references_are_portability_warnings(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repository = Path(temporary)
+            (repository / ".git").mkdir()
+            module = repository / "modules" / "tools" / "gh.nix"
+            module.parent.mkdir(parents=True)
+            module.write_text("{ }\n", encoding="utf-8")
+            (repository / "flake.nix").write_text("{ }\n", encoding="utf-8")
+            root = repository / "skills"
+            skill = write_skill(
+                root,
+                "coupled-skill",
+                "Edit `modules/tools/gh.nix`, run `scripts/tools/run.sh`, read\n"
+                "`flake.nix`, and see `https://example.com/a/b`.\n\n"
+                "```sh\ncat modules/tools/gh.nix\n```",
+            )
+            run = skill / "scripts" / "tools" / "run.sh"
+            run.parent.mkdir(parents=True)
+            run.write_text("echo ok\n", encoding="utf-8")
+
+            report = audit_ai_tools.audit_root(root)
+            references = [
+                finding
+                for finding in report["findings"]
+                if finding["code"] == "host_repository_reference"
+            ]
+
+            self.assertEqual(len(references), 1)
+            self.assertIn("modules/tools/gh.nix", references[0]["message"])
+            self.assertEqual(references[0]["severity"], "warning")
+
+    def test_host_repository_check_skips_trees_outside_git(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "modules" / "tools").mkdir(parents=True)
+            (root / "modules" / "tools" / "gh.nix").write_text(
+                "{ }\n", encoding="utf-8"
+            )
+            write_skill(root / "skills", "loose-skill", "Edit `modules/tools/gh.nix`.")
+
+            report = audit_ai_tools.audit_root(root / "skills")
+            codes = {finding["code"] for finding in report["findings"]}
+
+            self.assertNotIn("host_repository_reference", codes)
+
+    def test_user_home_paths_are_portability_warnings(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            skill = write_skill(
+                root,
+                "home-skill",
+                "Config lives in `/home/alice/.config/tool` or `~/.config/tool`.",
+            )
+            (skill / "scripts").mkdir()
+            (skill / "scripts" / "tool.py").write_text(
+                'PATH = "C:\\\\Users\\\\bob\\\\tool"\nEXAMPLE = "C:\\\\Users\\\\..."\n',
+                encoding="utf-8",
+            )
+
+            report = audit_ai_tools.audit_root(root)
+            homes = sorted(
+                (finding["path"], finding["line"])
+                for finding in report["findings"]
+                if finding["code"] == "user_home_path"
+            )
+
+            self.assertEqual(
+                homes,
+                [("home-skill/SKILL.md", 8), ("home-skill/scripts/tool.py", 1)],
+            )
+
     def test_orphan_and_non_executable_script_are_warnings(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
