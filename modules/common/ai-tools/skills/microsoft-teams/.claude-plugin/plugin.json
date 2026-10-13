@@ -1,0 +1,10 @@
+{
+	"name": "microsoft-teams",
+	"displayName": "Microsoft Teams",
+	"description": "Read and search Microsoft Teams through the signed-in client.",
+	"version": "0.1.0",
+	"author": {
+		"name": "khaneliman"
+	},
+	"skills": "./"
+}

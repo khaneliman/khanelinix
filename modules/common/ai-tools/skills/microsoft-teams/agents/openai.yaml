@@ -1,0 +1,4 @@
+interface:
+  display_name: "Microsoft Teams"
+  short_description: "Read and search Teams through the signed-in client"
+  default_prompt: "Use $microsoft-teams to find these Teams messages through my signed-in Teams client without sending anything."

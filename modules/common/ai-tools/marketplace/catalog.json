@@ -260,6 +260,17 @@
 			"category": "Developer Tools"
 		},
 		{
+			"name": "microsoft-teams",
+			"dependencies": {
+				"required": [],
+				"optional": []
+			},
+			"displayName": "Microsoft Teams",
+			"description": "Read and search Microsoft Teams through the signed-in client.",
+			"version": "0.1.0",
+			"category": "Developer Tools"
+		},
+		{
 			"name": "nix-toolkit",
 			"dependencies": {
 				"required": [],

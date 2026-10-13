@@ -207,6 +207,16 @@
 			"source": "./modules/common/ai-tools/skills/memory-profiler"
 		},
 		{
+			"name": "microsoft-teams",
+			"description": "Read and search Microsoft Teams through the signed-in client.",
+			"version": "0.1.0",
+			"author": {
+				"name": "khaneliman"
+			},
+			"category": "developer-tools",
+			"source": "./modules/common/ai-tools/skills/microsoft-teams"
+		},
+		{
 			"name": "nix-toolkit",
 			"description": "Author Nix code and diagnose builds, flakes, and evaluation.",
 			"version": "0.4.11",
