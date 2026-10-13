@@ -9,16 +9,16 @@
 
 buildNpmPackage rec {
   pname = "codeburn";
-  version = "0.9.25";
+  version = "0.9.27";
 
   src = fetchFromGitHub {
     owner = "getagentseal";
     repo = "codeburn";
     tag = "v${version}";
-    hash = "sha256-MVgXl+fN9qZZmXhlgLXTX0toldDM1oH99Mc5bxScu7g=";
+    hash = "sha256-P00axAx78eVa6O2P+5F0aqooPCtX9G1phg3ZgEDFNPE=";
   };
 
-  npmDepsHash = "sha256-ucqpt5HTi8d8sD9eUl9ja7PyG0kyy1TASXgii/0xaNk=";
+  npmDepsHash = "sha256-dz5S3Sajk3QllMDGQu1GO2ws6IAq5dYN3HqDyJI5ryM=";
 
   nativeBuildInputs = [ makeWrapper ];
 
