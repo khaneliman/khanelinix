@@ -1,5 +1,5 @@
 {
-  config,
+  claudeNotify,
   lib,
   pkgs,
   ...
@@ -11,13 +11,16 @@ let
       pkgs.coreutils
       pkgs.gawk
       pkgs.jq
-    ]
-    ++ lib.optionals (!pkgs.stdenv.hostPlatform.isDarwin) [
-      pkgs.libnotify
     ];
     text = ''
       input=$(cat)
-      agent_type=$(printf '%s' "$input" | jq -r '.agent_type // "subagent"' 2>/dev/null || true)
+      agent_type=$(printf '%s' "$input" | jq -r '.agent_type // empty' 2>/dev/null || true)
+      # Claude's own background agents, such as compaction, have no type and
+      # no one is waiting on them.
+      if [ -z "$agent_type" ]; then
+        exit 0
+      fi
+      cwd=$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null || true)
       message=$(printf '%s' "$input" | jq -r '.last_assistant_message // empty' 2>/dev/null || true)
 
       if [ -n "$message" ]; then
@@ -28,23 +31,7 @@ let
         notify_msg="$agent_type completed"
       fi
 
-      ${
-        if pkgs.stdenv.hostPlatform.isDarwin then
-          ''
-            if command -v terminal-notifier >/dev/null 2>&1; then
-              terminal-notifier -title "Claude Code" -message "$notify_msg" -sender "com.anthropic.claude-code" -sound default >/dev/null 2>&1 || \
-              terminal-notifier -title "Claude Code" -message "$notify_msg" -sound default >/dev/null 2>&1 || true
-            else
-              osascript \
-                -e 'on run argv' \
-                -e 'display notification (item 1 of argv) with title "Claude Code"' \
-                -e 'end run' \
-                "$notify_msg" >/dev/null 2>&1 || true
-            fi
-          ''
-        else
-          ''notify-send -a "Claude Code" -i "${config.xdg.dataHome}/icons/claude.ico" "Claude Code" "$notify_msg" >/dev/null 2>&1 || true''
-      }
+      ${lib.getExe claudeNotify} "$cwd" "$notify_msg"
     '';
   };
 in

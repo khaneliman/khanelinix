@@ -43,6 +43,7 @@ let
     xdg = {
       configHome = "/home/test/.config";
       cacheHome = "/home/test/.cache";
+      dataHome = "/home/test/.local/share";
     };
     programs.gh.enable = false;
   };
@@ -65,6 +66,17 @@ let
     }
   );
   testNotify = builtins.head testCodex.config.content.programs.codex.settings.notify;
+  claudeNotify = import (source + "/tools/claude-code/notify.nix") {
+    inherit config lib;
+    pkgs = pkgs // {
+      libnotify = notifier;
+    };
+  };
+  subagentStop = import (source + "/tools/claude-code/hooks/subagent-stop.nix") {
+    inherit claudeNotify lib pkgs;
+  };
+  testClaudeNotify = lib.getExe claudeNotify;
+  testSubagentStop = (builtins.head (builtins.head subagentStop.SubagentStop).hooks).command;
   aliases = codex.config.content.home.shellAliases // opencode.config.content.home.shellAliases;
   compat = import (source + "/shells/alias-compat.nix") { inherit lib pkgs; };
   alacritty =
@@ -80,7 +92,12 @@ let
     }).config.content.programs.alacritty.settings.window;
 in
 {
-  inherit aliases testNotify;
+  inherit
+    aliases
+    testClaudeNotify
+    testNotify
+    testSubagentStop
+    ;
   packages = [
     pkgs.fish
     pkgs.bash
@@ -89,7 +106,12 @@ in
     pkgs.libnotify
   ];
   notifyDrvs = map (path: builtins.head (builtins.attrNames (builtins.getContext path))) (
-    codex.config.content.programs.codex.settings.notify ++ [ testNotify ]
+    codex.config.content.programs.codex.settings.notify
+    ++ [
+      testNotify
+      testClaudeNotify
+      testSubagentStop
+    ]
   );
   wrapped = lib.filterAttrs (_: value: lib.hasPrefix "f(){" value) aliases;
   functions = compat.translateFishFunctions aliases;

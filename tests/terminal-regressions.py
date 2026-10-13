@@ -194,6 +194,76 @@ with tempfile.TemporaryDirectory(prefix="runtime-", dir=cache) as directory:
         "Codex real notification helper build and executable resolution", notification
     )
 
+    def claude_notification():
+        git = render["git"]
+        claude_repository = work / "claude-repository"
+        worktree = work / "feature-branch"
+        for command in [
+            ["init", "-q", str(claude_repository)],
+            ["-C", str(claude_repository), "-c", "user.name=Test"]
+            + ["-c", "user.email=test@example.com"]
+            + ["commit", "-q", "--allow-empty", "-m", "init"],
+            ["-C", str(claude_repository), "worktree", "add", "-q", str(worktree)],
+        ]:
+            result = run([git, *command], env=env)
+            assert result.returncode == 0, result.stderr
+        log = work / "claude-notify-argv"
+        notification_env = env | {"NOTIFY_LOG": str(log)}
+        header = [
+            "--app-name=Claude Code",
+            "--icon=/home/test/.local/share/icons/claude.ico",
+            "--",
+        ]
+
+        def notify(cwd, message):
+            result = run(
+                [render["testClaudeNotify"], cwd, message], env=notification_env
+            )
+            assert result.returncode == 0, result.stderr
+            return log.read_text().splitlines()
+
+        # A linked worktree is named after its branch, not its repository.
+        assert notify(str(worktree), "Kept Vec<T> & B") == header + [
+            "claude-repository",
+            "Kept Vec&lt;T&gt; &amp; B",
+        ]
+        assert notify("/project/space dir", "- bullet") == header + [
+            "space dir",
+            "- bullet",
+        ]
+        log.unlink()
+
+        def stop(payload):
+            result = run(
+                [render["testSubagentStop"]],
+                env=notification_env,
+                input=json.dumps(payload),
+            )
+            assert result.returncode == 0, result.stderr
+
+        # Compaction and other internal agents report an empty agent type.
+        stop(
+            {
+                "agent_type": "",
+                "cwd": str(worktree),
+                "last_assistant_message": "<analysis>",
+            }
+        )
+        assert not log.exists()
+        stop(
+            {
+                "agent_type": "reviewer",
+                "cwd": str(worktree),
+                "last_assistant_message": "\nNo findings.\nDetails",
+            }
+        )
+        assert log.read_text().splitlines() == header + [
+            "claude-repository",
+            "reviewer: No findings.",
+        ]
+
+    check("Claude notifications name the repository", claude_notification)
+
     def aliases():
         expected = {
             "gpfl": "git push --force-with-lease",
@@ -492,5 +562,5 @@ with tempfile.TemporaryDirectory(prefix="runtime-", dir=cache) as directory:
 
     check("Fish git saved exit status, without invoking code", git_status)
 
-print(f"{13 - len(failures)}/13 groups passed; failures: {failures}")
+print(f"{14 - len(failures)}/14 groups passed; failures: {failures}")
 raise SystemExit(bool(failures))

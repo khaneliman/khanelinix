@@ -21,6 +21,7 @@ let
     lib.importFiles ./hooks {
       inherit
         aiTools
+        claudeNotify
         config
         lib
         pkgs
@@ -29,6 +30,7 @@ let
   );
 
   claudeIcon = ./assets/claude.ico;
+  claudeNotify = import ./notify.nix { inherit config lib pkgs; };
 
   # Codex-style status line: model+reasoning, session/worktree, context, limits.
   # Rate-limit fields only appear for Claude.ai subscribers, so guard for null.
