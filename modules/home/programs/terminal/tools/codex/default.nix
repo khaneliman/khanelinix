@@ -394,6 +394,31 @@ in
 
         notify =
           let
+            # Notifications show a short plain-text preview, where Markdown
+            # markers and long file links are noise.
+            messagePreview = pkgs.writeText "codex-notify-preview.jq" ''
+              def plain:
+                gsub("(?m)^[ \t]*```.*$"; "")
+                | gsub("(?m)^\\s*#+\\s+"; "")
+                | gsub("\\[(?<text>[^\\]]+)\\]\\([^)]*\\)"; "\(.text)")
+                | gsub("\\*\\*(?<text>[^*]+)\\*\\*"; "\(.text)")
+                | gsub("`(?<text>[^`]+)`"; "\(.text)")
+                | gsub("[ \t]+"; " ")
+                | gsub(" ?\n\\s*"; "\n")
+                | gsub("^\\s+|\\s+$"; "");
+              def clip($max):
+                if length <= $max then . else .[:$max] | sub("\\s+\\S*$"; "") + "…" end;
+              # notify-send bodies are Pango markup, so escape literal text.
+              def pango: gsub("&"; "&amp;") | gsub("<"; "&lt;") | gsub(">"; "&gt;");
+
+              (.["last-assistant-message"] // "" | plain | clip(180)) as $preview
+              | (if $preview == "" then "Turn complete" else $preview end)
+              | if $markup then pango else . end
+            '';
+            # The desktop app installs the only Codex icon in the icon theme.
+            iconArg = lib.optionalString (config.khanelinix.programs.graphical.apps.codex-desktop.enable
+              or false
+            ) "--icon=codex-desktop";
             codexNotify = pkgs.writeShellApplication {
               name = "codex-notify";
               runtimeInputs = [
@@ -403,26 +428,22 @@ in
               ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ pkgs.terminal-notifier ];
               text = ''
                 payload="$1"
-                eventType="$(printf '%s' "$payload" | jq -r '.type // ""')"
-                [ "$eventType" = "agent-turn-complete" ] || exit 0
+                # `codex exec` callers, such as T3 Code title generation, read the
+                # final message themselves, so no one is waiting on that turn.
+                printf '%s' "$payload" \
+                  | jq -e '.type == "agent-turn-complete" and .client != "codex_exec"' >/dev/null \
+                  || exit 0
 
                 cwd="$(printf '%s' "$payload" | jq -r '.cwd // .workspace.current_dir // empty')"
                 if [ -z "$cwd" ]; then
                   cwd="$PWD"
                 fi
-                dirName="''${cwd##*/}"
+                project="''${cwd##*/}"
+                project="''${project:-$cwd}"
 
-                message="$(printf '%s' "$payload" | jq -r '.["last-assistant-message"] // empty')"
-                if [ -z "$message" ]; then
-                  message="Turn complete"
-                fi
-                summary="''${message:0:180}"
-
-                if [ -n "$dirName" ] && [ "$dirName" != "$cwd" ]; then
-                  summary="[$dirName] $summary"
-                elif [ -n "$cwd" ]; then
-                  summary="[$cwd] $summary"
-                fi
+                preview="$(printf '%s' "$payload" | jq -r \
+                  --argjson markup ${lib.boolToString pkgs.stdenv.hostPlatform.isLinux} \
+                  -f ${messagePreview})"
 
                 if [ -n "$cwd" ]; then
                   printf '\nCodex awaiting input: %s\n' "$cwd" > /dev/tty 2>/dev/null || true
@@ -431,11 +452,11 @@ in
                 fi
 
                 ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
-                  ${lib.getExe pkgs.terminal-notifier} -title "Codex" -message "$summary" -group "codex-turn" -sender "com.openai.codex" >/dev/null 2>&1 || \
-                  ${lib.getExe pkgs.terminal-notifier} -title "Codex" -message "$summary" -group "codex-turn" >/dev/null 2>&1
+                  ${lib.getExe pkgs.terminal-notifier} -title "Codex" -subtitle "$project" -message "$preview" -group "codex-turn" -sender "com.openai.codex" >/dev/null 2>&1 || \
+                  ${lib.getExe pkgs.terminal-notifier} -title "Codex" -subtitle "$project" -message "$preview" -group "codex-turn" >/dev/null 2>&1
                 ''}
                 ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
-                  ${lib.getExe pkgs.libnotify} "Codex" "$summary" >/dev/null 2>&1
+                  ${lib.getExe pkgs.libnotify} --app-name=Codex ${iconArg} -- "$project" "$preview" >/dev/null 2>&1
                 ''}
               '';
             };

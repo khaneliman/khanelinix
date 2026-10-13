@@ -158,28 +158,36 @@ with tempfile.TemporaryDirectory(prefix="runtime-", dir=cache) as directory:
         # exercises the generated executable without a desktop or D-Bus session.
         log = work / "notify-argv"
         notification_env = env | {"NOTIFY_LOG": str(log)}
-        result = run(
-            [
-                render["testNotify"],
-                json.dumps(
-                    {
-                        "type": "agent-turn-complete",
-                        "cwd": "/project/space dir",
-                        "last-assistant-message": "ready",
-                    }
-                ),
-            ],
-            env=notification_env,
-        )
-        assert result.returncode == 0, result.stderr
-        assert log.read_text().splitlines() == ["Codex", "[space dir] ready"]
+
+        def notify(payload):
+            result = run(
+                [render["testNotify"], json.dumps(payload)], env=notification_env
+            )
+            assert result.returncode == 0, result.stderr
+
+        turn = {
+            "type": "agent-turn-complete",
+            "client": "codex-tui",
+            "cwd": "/project/space dir",
+            "last-assistant-message": (
+                "- Fixed **A & B** in [notify](/project/default.nix:1)\n\n"
+                "- Kept `Vec<T>`\n"
+                "  ```nix\n  x = 1;\n  ```"
+            ),
+        }
+        notify(turn)
+        # A bullet-led body must not be parsed as a notify-send option.
+        assert log.read_text().splitlines() == [
+            "--app-name=Codex",
+            "--",
+            "space dir",
+            "- Fixed A &amp; B in notify",
+            "- Kept Vec&lt;T&gt;",
+            "x = 1;",
+        ]
         log.unlink()
-        assert (
-            run(
-                [render["testNotify"], '{"type":"other-event"}'], env=notification_env
-            ).returncode
-            == 0
-        )
+        notify({"type": "other-event"})
+        notify(turn | {"client": "codex_exec"})
         assert not log.exists()
 
     check(
