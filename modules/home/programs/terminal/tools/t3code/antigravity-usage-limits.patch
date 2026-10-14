@@ -786,23 +786,12 @@ diff --git a/apps/server/src/provider/Drivers/AntigravityDriver.ts b/apps/server
 diff --git a/apps/server/src/provider/antigravityUsageLimits.ts b/apps/server/src/provider/antigravityUsageLimits.ts
 --- a/apps/server/src/provider/antigravityUsageLimits.ts
 +++ b/apps/server/src/provider/antigravityUsageLimits.ts
-@@ -178,6 +178,30 @@
+@@ -191,6 +191,19 @@
        Effect.flatMap((response) => response.json),
        Effect.timeout("10 seconds"),
      );
 +  const fingerprintForToken = (token: typeof TokenFile.Type) =>
-+    crypto
-+      .digest(
-+        "SHA-256",
-+        new TextEncoder().encode(
-+          `${token.client_id}\0${token.refresh_token}\0${token.project_id ?? ""}`,
-+        ),
-+      )
-+      .pipe(
-+        Effect.map((bytes) =>
-+          Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join(""),
-+        ),
-+      );
++    sha256(`${token.client_id}\0${token.refresh_token}\0${token.project_id ?? ""}`);
 +  const credentialFingerprint = Effect.gen(function* () {
 +    if (!(yield* fs.exists(tokenPath))) return undefined;
 +    const token = yield* fs.readFileString(tokenPath).pipe(Effect.flatMap(decodeTokenFile));
@@ -817,24 +806,18 @@ diff --git a/apps/server/src/provider/antigravityUsageLimits.ts b/apps/server/sr
    const read = Effect.gen(function* () {
      const startedGeneration = generation;
      const checkedAt = DateTime.formatIso(yield* DateTime.now);
-@@ -193,15 +217,7 @@
+@@ -206,9 +219,7 @@
        });
      }
      const token = yield* fs.readFileString(tokenPath).pipe(Effect.flatMap(decodeTokenFile));
--    const fingerprint = Array.from(
--      yield* crypto.digest(
--        "SHA-256",
--        new TextEncoder().encode(
--          `${token.client_id}\0${token.refresh_token}\0${token.project_id ?? ""}`,
--        ),
--      ),
--      (byte) => byte.toString(16).padStart(2, "0"),
--    ).join("");
+-    const fingerprint = yield* sha256(
+-      `${token.client_id}\0${token.refresh_token}\0${token.project_id ?? ""}`,
+-    );
 +    const fingerprint = yield* fingerprintForToken(token);
      const now = yield* Clock.currentTimeMillis;
      let accessToken: string;
-     if (cached?.fingerprint !== fingerprint || cached.expiresAt <= now + 60_000) {
-@@ -275,6 +291,7 @@
+     let account: string;
+@@ -300,6 +311,7 @@
    );
    return {
      probe,

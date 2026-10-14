@@ -42,27 +42,27 @@ index 74e95b9ddcc47de09f9cf951405a1c63331db0b1..b92821f8ed8748a9d526214eb34f5747
  
  const resolveBrowserLaunch = Effect.fn("externalLauncher.resolveBrowserLaunch")(function* (
 diff --git a/packages/shared/src/editor.ts b/packages/shared/src/editor.ts
-index 3017e5bb8a30fd5b1a9d813134e451377115e47e..75aa06b4e6b9c8a4fb2936b064bcc7381aed2b95 100644
 --- a/packages/shared/src/editor.ts
 +++ b/packages/shared/src/editor.ts
-@@ -33,9 +33,17 @@ export const resolveEditorCommand = Effect.fn("editor.resolveEditorCommand")(fun
- ) {
-   if (editor.commands === null) return Option.none();
-   const baseArgs = "baseArgs" in editor ? editor.baseArgs : [];
--  for (const command of editor.commands) {
--    if (yield* isCommandAvailable(command, { env })) return Option.some({ command, baseArgs });
--  }
-+  const results = yield* Effect.all(
-+    editor.commands.map((command) =>
-+      isCommandAvailable(command, { env }).pipe(
-+        Effect.map((available) => ({ command, available })),
+@@ -38,10 +38,18 @@ export const resolveEditorCommand = Effect.fn("editor.resolveEditorCommand")(fun
+   // so a PATH entry for the ZFS Event Daemon cannot take over editor opens.
+   const preferBundle = platform === "darwin" && editor.id === "zed";
+   if (!preferBundle) {
+-    for (const command of editor.commands) {
+-      if (yield* isCommandAvailable(command, { env })) return Option.some({ command, baseArgs });
+-    }
++    const results = yield* Effect.all(
++      editor.commands.map((command) =>
++        isCommandAvailable(command, { env }).pipe(
++          Effect.map((available) => ({ command, available })),
++        ),
 +      ),
-+    ),
-+    { concurrency: "unbounded" },
-+  );
-+  // Preserve command preference even when probes complete out of order.
-+  const match = results.find((result) => result.available);
-+  if (match !== undefined) return Option.some({ command: match.command, baseArgs });
++      { concurrency: "unbounded" },
++    );
++    // Preserve command preference even when probes complete out of order.
++    const match = results.find((result) => result.available);
++    if (match !== undefined) return Option.some({ command: match.command, baseArgs });
+   }
  
-   const platform = yield* HostProcess.Platform;
    const path = yield* Path.Path;
+   const fs = yield* FileSystem.FileSystem;
