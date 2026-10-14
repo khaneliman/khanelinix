@@ -36,7 +36,7 @@ base_tip=''
 safe_worktree() {
     local path=$1 status entry marker
     [ -d "$path" ] || return 1
-    status=$(git -C "$path" status --porcelain=v1 --untracked-files=all --ignored --ignore-submodules=none) || return 1
+    status=$(git -C "$path" status --porcelain=v1 --untracked-files=no --ignore-submodules=untracked) || return 1
     [ -z "$status" ] || return 1
     git -C "$path" ls-files -v -z >"$scratch/index" || return 1
     while IFS= read -r -d '' entry; do
@@ -44,7 +44,7 @@ safe_worktree() {
         S* | [a-z]*) return 1 ;;
         esac
     done <"$scratch/index"
-    for marker in index.lock rebase-merge rebase-apply MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD sequencer BISECT_START; do
+    for marker in locked index.lock rebase-merge rebase-apply MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD sequencer BISECT_START; do
         marker=$(git -C "$path" rev-parse --path-format=absolute --git-path "$marker") || return 1
         [ ! -e "$marker" ] || return 1
     done
@@ -133,7 +133,7 @@ if [ "${#worktree_paths[@]}" -eq 0 ] && [ "${#branch_refs[@]}" -eq 0 ]; then
 fi
 [ "$dry_run" = false ] || exit 0
 # Git cannot prevent editors or workers from writing into a listed checkout.
-printf 'Close tools using these worktrees. Apply this local cleanup? [y/N]: '
+printf 'Close tools using these worktrees. Untracked and ignored files will be discarded. Apply this local cleanup? [y/N]: '
 IFS= read -r response || response=''
 case "$response" in
 y | Y | yes | YES) ;;
@@ -170,7 +170,9 @@ for ((i = 0; i < ${#worktree_paths[@]}; i++)); do
             continue
         }
     fi
-    if ! git worktree remove -- "$path"; then
+    # Remove non-tracked content first so worktree remove can still refuse any
+    # tracked changes introduced since the check, without forcing removal.
+    if ! git -C "$path" clean -ffdx || ! git worktree remove -- "$path"; then
         printf 'Keeping worktree %q and its branch\n' "$path" >&2
         result=1
     fi

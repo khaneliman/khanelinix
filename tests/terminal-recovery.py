@@ -401,14 +401,16 @@ class GoneTests(unittest.TestCase):
         self.assertEqual(self.git("rev-parse", "deleted-upstream").stdout, gone_tip)
 
     def test_preserve_dirty_locked_and_in_progress_worktrees(self):
-        for kind in ("tracked", "untracked", "ignored", "hidden", "locked", "busy"):
+        for kind in ("tracked", "staged", "hidden", "locked", "busy"):
             with self.subTest(kind=kind):
                 path = self.worktree(kind)
-                if kind in ("tracked", "untracked", "ignored", "hidden"):
-                    name = "tracked" if kind == "hidden" else kind
+                if kind in ("tracked", "staged", "hidden"):
+                    name = "tracked"
                     if kind == "hidden":
                         self.git("update-index", "--assume-unchanged", name, cwd=path)
                     (path / name).write_text("keep me\n")
+                    if kind == "staged":
+                        self.git("add", name, cwd=path)
                 elif kind == "locked":
                     self.git("worktree", "lock", str(path))
                 else:
@@ -427,8 +429,29 @@ class GoneTests(unittest.TestCase):
                 self.git("gone", input=b"yes\n")
                 self.assertTrue(path.is_dir())
                 self.git("show-ref", "--verify", "refs/heads/" + kind)
-                if kind in ("tracked", "untracked", "ignored", "hidden"):
+                if kind in ("tracked", "staged", "hidden"):
                     self.assertEqual((path / name).read_text(), "keep me\n")
+
+    def test_discard_non_tracked_content_only_after_confirmation(self):
+        path = self.worktree("local-only")
+        tip = self.commit(path)
+        untracked = path / "untracked"
+        ignored = path / "ignored"
+        untracked.write_text("disposable\n")
+        ignored.symlink_to(self.remote, target_is_directory=True)
+        nested = path / "nested-repo"
+        self.git("init", "-q", str(nested))
+        for args, answer in ((["--dry-run"], b""), ([], b"n\n")):
+            result = self.git("gone", *args, input=answer, ok=False)
+            self.assertEqual(result.returncode, 0 if args else 1)
+            self.assertEqual(untracked.read_text(), "disposable\n")
+            self.assertTrue(ignored.is_symlink())
+            self.assertTrue((nested / ".git").is_dir())
+        result = self.git("gone", input=b"yes\n")
+        self.assertIn(b"Untracked and ignored files will be discarded", result.stdout)
+        self.assertFalse(path.exists())
+        self.assertTrue(self.remote.is_dir())
+        self.assertEqual(self.git("rev-parse", "local-only").stdout, tip)
 
     def test_detached_commits_and_current_checkout(self):
         covered = self.worktree("covered", detached=True)
@@ -458,27 +481,42 @@ class GoneTests(unittest.TestCase):
         self.assertTrue(self.repo.is_dir())
 
     def test_recheck_after_confirmation(self):
-        path = self.worktree("merged")
-        process = subprocess.Popen(
-            ["git", "gone"],
-            cwd=self.repo,
-            env=self.env,
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        self.addCleanup(lambda: process.kill() if process.poll() is None else None)
-        output = b""
-        while not output.endswith(b"[y/N]: "):
-            byte = process.stdout.read(1)
-            self.assertTrue(byte, output.decode())
-            output += byte
-        (path / "tracked").write_text("changed after preview\n")
-        _, error = process.communicate(b"yes\n", timeout=10)
-        self.assertEqual(process.returncode, 1, error.decode())
-        self.assertTrue(path.is_dir())
-        self.assertEqual((path / "tracked").read_text(), "changed after preview\n")
-        self.git("show-ref", "--verify", "refs/heads/merged")
+        for kind in ("tracked", "locked"):
+            with self.subTest(kind=kind):
+                branch = "confirmation-" + kind
+                path = self.worktree(branch)
+                (path / "untracked").write_text("keep me\n")
+                process = subprocess.Popen(
+                    ["git", "gone"],
+                    cwd=self.repo,
+                    env=self.env,
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                )
+                self.addCleanup(
+                    lambda process=process: (
+                        process.kill() if process.poll() is None else None
+                    )
+                )
+                output = b""
+                while not output.endswith(b"[y/N]: "):
+                    byte = process.stdout.read(1)
+                    self.assertTrue(byte, output.decode())
+                    output += byte
+                if kind == "tracked":
+                    (path / "tracked").write_text("changed after preview\n")
+                else:
+                    self.git("worktree", "lock", str(path))
+                _, error = process.communicate(b"yes\n", timeout=10)
+                self.assertEqual(process.returncode, 1, error.decode())
+                self.assertTrue(path.is_dir())
+                self.assertEqual((path / "untracked").read_text(), "keep me\n")
+                self.assertEqual(
+                    (path / "tracked").read_text(),
+                    "changed after preview\n" if kind == "tracked" else "base\n",
+                )
+                self.git("show-ref", "--verify", "refs/heads/" + branch)
 
     def test_dry_run_does_not_prune_custom_local_refspecs(self):
         tip = (
@@ -528,6 +566,35 @@ class GoneTests(unittest.TestCase):
         result = self.git("gone", input=b"yes\n", ok=False)
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(self.git("rev-parse", "merged").stdout.strip().decode(), tip)
+
+    def test_removal_refuses_tracked_edits_after_cleanup(self):
+        import shutil
+
+        path = self.worktree("merged")
+        (path / "untracked").write_text("disposable\n")
+        bindir = self.root / "bin"
+        bindir.mkdir()
+        wrapper = bindir / "git"
+        wrapper.write_text(
+            "#!/bin/sh\n"
+            'if [ "$1:$2" = worktree:remove ]; then\n'
+            '    printf "late edit\\n" > "$GONE_RACE_WORKTREE/tracked"\n'
+            "fi\n"
+            'exec "$GONE_NATIVE_GIT" "$@"\n'
+        )
+        wrapper.chmod(0o755)
+        self.env |= {
+            "GONE_NATIVE_GIT": shutil.which("git"),
+            "GONE_RACE_WORKTREE": str(path),
+            "GIT_EXEC_PATH": str(bindir),
+            "PATH": str(bindir) + os.pathsep + self.env["PATH"],
+        }
+        result = self.git("gone", input=b"yes\n", ok=False)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertTrue(path.is_dir())
+        self.assertEqual((path / "tracked").read_text(), "late edit\n")
+        self.assertFalse((path / "untracked").exists())
+        self.git("show-ref", "--verify", "refs/heads/merged")
 
 
 class FishTests(unittest.TestCase):
