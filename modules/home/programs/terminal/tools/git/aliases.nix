@@ -82,6 +82,25 @@
     ### Branch Delete Here:
     #> Deletes all local branches that have already been merged to the branch that you're currently on
     brdhere = "!sh -c \"git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d\"";
+    ### Branch Delete Gone:
+    #> Fetches with prune, then force deletes local branches whose upstream was deleted on the remote. Unlike brd, this catches squash and rebase merges. Branches checked out in a worktree are skipped.
+    gone = /* Bash */ ''
+      !f() {
+          git fetch --all --prune --quiet || return 1;
+          local branches=$(git for-each-ref --format='%(refname:short)%09%(upstream:track)%09%(worktreepath)' refs/heads |
+              awk -F '\t' '$2 == "[gone]" { if ($3 == "") print $1; else printf "Skipping %s (checked out in %s)\n", $1, $3 > "/dev/stderr" }');
+          if [ -z "$branches" ]; then
+              echo 'No local branches with a deleted upstream.';
+              return 0;
+          fi;
+          printf '%s\n' "$branches";
+          printf 'Force delete these branches? [y/N]: ';
+          IFS= read -r response;
+          case "$response" in
+              y|Y|yes|YES) printf '%s\n' "$branches" | xargs git branch -D;;
+              *) echo 'Not deleting branches.'; return 1;;
+          esac;
+      }; f'';
     ### Push everything to remote
     pushitgood = "push -u origin --all";
     ### Push current to remote
