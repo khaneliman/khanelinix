@@ -460,11 +460,52 @@ class GoneTests(unittest.TestCase):
         current = self.worktree("current")
         self.git("gone", input=b"yes\n", cwd=current)
         self.assertFalse(covered.exists())
-        self.assertTrue(unique.is_dir())
-        self.assertEqual(self.git("rev-parse", "HEAD", cwd=unique).stdout, unique_tip)
+        self.assertFalse(unique.exists())
+        self.assertEqual(
+            self.git(
+                "rev-parse", "gone/detached/" + unique_tip.strip().decode()
+            ).stdout,
+            unique_tip,
+        )
         self.assertTrue(current.is_dir())
         self.git("show-ref", "--verify", "refs/heads/current")
         self.git("show-ref", "--verify", "refs/heads/main")
+
+    def test_detached_backup_is_created_only_after_confirmation(self):
+        path = self.worktree("unique", detached=True)
+        tip = self.commit(path).strip().decode()
+        backup = "refs/heads/gone/detached/" + tip
+        for args, answer in ((["--dry-run"], b""), ([], b"n\n")):
+            result = self.git("gone", *args, input=answer, ok=False)
+            self.assertEqual(result.returncode, 0 if args else 1)
+            self.assertTrue(path.is_dir())
+            self.assertNotEqual(
+                self.git("show-ref", "--verify", backup, ok=False).returncode, 0
+            )
+        self.git("gone", input=b"yes\n")
+        self.assertFalse(path.exists())
+        self.assertEqual(self.git("rev-parse", backup).stdout.strip().decode(), tip)
+
+    def test_detached_backup_collision_preserves_checkout(self):
+        path = self.worktree("unique", detached=True)
+        tip = self.commit(path).strip().decode()
+        backup = "gone/detached/" + tip
+        other_tip = (
+            self.git(
+                "commit-tree", "main^{tree}", "-p", "main", "-m", "unrelated backup"
+            )
+            .stdout.strip()
+            .decode()
+        )
+        self.git("branch", backup, other_tip)
+        original = self.git("rev-parse", backup).stdout
+        result = self.git("gone", input=b"yes\n", ok=False)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertTrue(path.is_dir())
+        self.assertEqual(self.git("rev-parse", backup).stdout, original)
+        self.assertEqual(
+            self.git("rev-parse", "HEAD", cwd=path).stdout.strip().decode(), tip
+        )
 
     def test_dry_run_and_refusal(self):
         path = self.worktree("merged")

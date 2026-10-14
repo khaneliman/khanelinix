@@ -79,8 +79,7 @@ plan_worktree() {
     else
         git for-each-ref --contains "$tip" --format='%(refname)' refs/heads refs/remotes >"$scratch/coverage"
         if [ ! -s "$scratch/coverage" ]; then
-            printf 'Keeping worktree %q (detached-only commits)\n' "$path"
-            return
+            printf 'Preserve detached commit %s on a local backup branch\n' "$tip"
         fi
     fi
     worktree_paths+=("$path")
@@ -165,10 +164,15 @@ for ((i = 0; i < ${#worktree_paths[@]}; i++)); do
         }
     else
         git for-each-ref --contains "$tip" --format='%(refname)' refs/heads refs/remotes >"$scratch/coverage"
-        [ -s "$scratch/coverage" ] || {
-            result=1
-            continue
-        }
+        if [ ! -s "$scratch/coverage" ]; then
+            # An empty expected old value creates the backup only if absent.
+            # Preserve the checkout if the name is already owned by another tip.
+            if ! git update-ref --no-deref "refs/heads/gone/detached/$tip" "$tip" ''; then
+                result=1
+                continue
+            fi
+            printf 'Preserved detached commits on branch gone/detached/%s\n' "$tip"
+        fi
     fi
     # Remove non-tracked content first so worktree remove can still refuse any
     # tracked changes introduced since the check, without forcing removal.
