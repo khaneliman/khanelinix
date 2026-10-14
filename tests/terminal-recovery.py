@@ -507,6 +507,69 @@ class GoneTests(unittest.TestCase):
             self.git("rev-parse", "HEAD", cwd=path).stdout.strip().decode(), tip
         )
 
+    def test_detached_review_caches_do_not_create_backups(self):
+        for run in ("pr-42-1", "rev-abcdef", "wip"):
+            with self.subTest(run=run):
+                path = self.worktree(
+                    f"cache/nixpkgs-review/{run}/nixpkgs", detached=True
+                )
+                tip = self.commit(path).strip().decode()
+                before = self.git("show-ref").stdout
+                for args, answer in ((["--dry-run"], b""), ([], b"n\n")):
+                    result = self.git("gone", *args, input=answer, ok=False)
+                    self.assertEqual(result.returncode, 0 if args else 1)
+                    self.assertIn(
+                        b"Discard detached nixpkgs-review commit", result.stdout
+                    )
+                    self.assertNotIn(b"on a local backup branch", result.stdout)
+                    self.assertTrue(path.is_dir())
+                    self.assertEqual(self.git("show-ref").stdout, before)
+                self.git("gone", input=b"yes\n")
+                self.assertFalse(path.exists())
+                self.assertEqual(self.git("show-ref").stdout, before)
+                self.assertNotEqual(
+                    self.git(
+                        "show-ref",
+                        "--verify",
+                        "refs/heads/gone/detached/" + tip,
+                        ok=False,
+                    ).returncode,
+                    0,
+                )
+
+    def test_review_caches_preserve_tracked_edits_and_named_branches(self):
+        dirty = self.worktree("cache/nixpkgs-review/pr-42/nixpkgs", detached=True)
+        self.commit(dirty)
+        (dirty / "tracked").write_text("keep these edits\n")
+        named = self.root / "cache/nixpkgs-review/pr-43/nixpkgs"
+        self.git("worktree", "add", "-qb", "review-work", str(named), "main")
+        tip = self.commit(named)
+        self.git("gone", input=b"yes\n")
+        self.assertEqual((dirty / "tracked").read_text(), "keep these edits\n")
+        self.assertFalse(named.exists())
+        self.assertEqual(self.git("rev-parse", "review-work").stdout, tip)
+        self.assertEqual(self.git("for-each-ref", "refs/heads/gone").stdout, b"")
+
+    def test_review_path_lookalikes_still_create_backups(self):
+        for name in (
+            "cache/nixpkgs-review-other/pr-42/nixpkgs",
+            "cache/nixpkgs-review/pr-42/worktrees/nixpkgs",
+            "cache/nixpkgs-review/pr-42/other-repo",
+        ):
+            with self.subTest(name=name):
+                path = self.worktree(name, detached=True)
+                (path / "tracked").write_text(f"feature {name}\n")
+                self.git("commit", "-qam", name, cwd=path)
+                tip = self.git("rev-parse", "HEAD", cwd=path).stdout
+                self.git("gone", input=b"yes\n")
+                self.assertFalse(path.exists())
+                self.assertEqual(
+                    self.git(
+                        "rev-parse", "gone/detached/" + tip.strip().decode()
+                    ).stdout,
+                    tip,
+                )
+
     def test_dry_run_and_refusal(self):
         path = self.worktree("merged")
         for args, answer in ((["--dry-run"], b"yes\n"), ([], b"n\n"), ([], b"")):

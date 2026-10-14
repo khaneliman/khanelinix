@@ -33,6 +33,12 @@ primary_branch=''
 base=${1:-}
 base_tip=''
 
+disposable_review() {
+    local parent=${1%/nixpkgs}
+    # nixpkgs-review puts disposable checkouts directly under each cache run.
+    [[ $parent != "$1" && ${parent%/*} == */nixpkgs-review ]]
+}
+
 safe_worktree() {
     local path=$1 status entry marker
     [ -d "$path" ] || return 1
@@ -76,6 +82,8 @@ plan_worktree() {
     fi
     if [ -n "$branch" ]; then
         [ "$(git rev-parse --verify "$branch")" = "$tip" ] || return 1
+    elif disposable_review "$path"; then
+        printf 'Discard detached nixpkgs-review commit %s\n' "$tip"
     else
         git for-each-ref --contains "$tip" --format='%(refname)' refs/heads refs/remotes >"$scratch/coverage"
         if [ ! -s "$scratch/coverage" ]; then
@@ -162,7 +170,7 @@ for ((i = 0; i < ${#worktree_paths[@]}; i++)); do
             result=1
             continue
         }
-    else
+    elif ! disposable_review "$path"; then
         git for-each-ref --contains "$tip" --format='%(refname)' refs/heads refs/remotes >"$scratch/coverage"
         if [ ! -s "$scratch/coverage" ]; then
             # An empty expected old value creates the backup only if absent.

@@ -83,7 +83,7 @@
     #> Deletes all local branches that have already been merged to the branch that you're currently on
     brdhere = "!sh -c \"git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d\"";
     ### Local branch and worktree cleanup:
-    #> git gone [--dry-run] [base] previews worktree removal and merged branch deletion using existing local refs. Tracked changes prevent worktree removal. Unmerged branches are kept, and detached-only commits are saved on gone/detached/<commit> branches before removal; untracked and ignored files in removed worktrees are discarded. The base defaults to upstream/HEAD, origin/HEAD, or the primary checkout's branch; squash/rebase landings need separate verification.
+    #> git gone [--dry-run] [base] previews worktree removal and merged branch deletion using existing local refs. Tracked changes prevent worktree removal. Unmerged branches are kept, and detached-only commits are saved on gone/detached/<commit> branches before removal, except disposable nixpkgs-review cache checkouts. Untracked and ignored files in removed worktrees are discarded. The base defaults to upstream/HEAD, origin/HEAD, or the primary checkout's branch; squash/rebase landings need separate verification.
     gone = "!bash ${./gone.sh}";
     ### Push everything to remote
     pushitgood = "push -u origin --all";
