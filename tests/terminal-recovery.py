@@ -1,4 +1,4 @@
-"""Run rendered selective-stash aliases only in disposable fixture repositories.
+"""Run rendered Git recovery and cleanup aliases in disposable repositories.
 
 Usage: python3 tests/terminal-recovery.py SOURCE_ROOT SCRATCH_DIRECTORY
 Set FISH to the Fish executable; COMPRESS and SEVENZIP enable .Z/.7z fixtures.
@@ -316,6 +316,218 @@ class StashTests(unittest.TestCase):
         self.git("apply", "--index", str(recovery / "staged.diff"))
         self.git("apply", str(recovery / "unstaged.diff"))
         self.assertEqual(self.state(), before)
+
+
+class GoneTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(dir=SCRATCH)
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.repo = self.root / "repo"
+        self.repo.mkdir()
+        self.env = ENV | {"XDG_CACHE_HOME": str(self.root / "cache")}
+        self.git("init", "-qb", "main")
+        (self.repo / "tracked").write_text("base\n")
+        (self.repo / ".gitignore").write_text("ignored\n")
+        self.git("add", ".")
+        self.git("commit", "-qm", "base")
+        self.git("config", "alias.gone", ALIASES["gone"])
+        self.remote = self.root / "remote.git"
+        self.git("init", "--bare", "-qb", "main", str(self.remote))
+        self.git("remote", "add", "origin", str(self.remote))
+        self.git("push", "-qu", "origin", "main")
+        self.git("remote", "set-head", "origin", "main")
+
+    def git(self, *args, cwd=None, input=None, ok=True):
+        result = subprocess.run(
+            ["git", *args],
+            cwd=cwd or self.repo,
+            env=self.env,
+            input=input,
+            capture_output=True,
+            check=False,
+        )
+        if ok:
+            self.assertEqual(result.returncode, 0, result.stderr.decode())
+        return result
+
+    def worktree(self, name, *, detached=False):
+        path = self.root / name
+        args = ["--detach"] if detached else ["-b", name]
+        self.git("worktree", "add", "-q", *args, str(path), "main")
+        return path
+
+    def commit(self, path):
+        (path / "tracked").write_text(f"feature {path.name}\n")
+        self.git("commit", "-qam", "feature", cwd=path)
+        return self.git("rev-parse", "HEAD", cwd=path).stdout
+
+    def test_remove_checkouts_keep_unmerged_branches(self):
+        published = self.worktree("published")
+        published_tip = self.commit(published)
+        self.git("push", "-qu", "origin", "published")
+        local = self.worktree("local-only")
+        local_tip = self.commit(local)
+        unusual = self.root / "space\ttab\nquote'$(touch sentinel)"
+        self.git("worktree", "add", "-qb", "unusual", str(unusual), "main")
+        self.git("gone", input=b"yes\n")
+        for path in (published, local, unusual):
+            self.assertFalse(path.exists())
+        self.assertEqual(self.git("rev-parse", "published").stdout, published_tip)
+        self.assertEqual(self.git("rev-parse", "local-only").stdout, local_tip)
+        self.assertTrue(self.repo.is_dir())
+        self.assertFalse((self.repo / "sentinel").exists())
+        self.assertEqual(
+            self.git("rev-parse", "published").stdout,
+            self.git("rev-parse", "origin/published").stdout,
+        )
+
+    def test_delete_only_confirmed_merged_branches(self):
+        merged = self.worktree("merged")
+        merged_tip = self.commit(merged).strip().decode()
+        self.git("merge", "--ff-only", "merged")
+        gone = self.worktree("deleted-upstream")
+        gone_tip = self.commit(gone)
+        self.git("push", "-qu", "origin", "deleted-upstream")
+        self.git("push", "-q", "origin", "--delete", "deleted-upstream")
+        self.git("gone", "main", input=b"yes\n")
+        self.assertFalse(merged.exists())
+        self.assertNotEqual(
+            self.git("show-ref", "--verify", "refs/heads/merged", ok=False).returncode,
+            0,
+        )
+        self.git("merge-base", "--is-ancestor", merged_tip, "main")
+        self.assertFalse(gone.exists())
+        self.assertEqual(self.git("rev-parse", "deleted-upstream").stdout, gone_tip)
+
+    def test_preserve_dirty_locked_and_in_progress_worktrees(self):
+        for kind in ("tracked", "untracked", "ignored", "hidden", "locked", "busy"):
+            with self.subTest(kind=kind):
+                path = self.worktree(kind)
+                if kind in ("tracked", "untracked", "ignored", "hidden"):
+                    name = "tracked" if kind == "hidden" else kind
+                    if kind == "hidden":
+                        self.git("update-index", "--assume-unchanged", name, cwd=path)
+                    (path / name).write_text("keep me\n")
+                elif kind == "locked":
+                    self.git("worktree", "lock", str(path))
+                else:
+                    marker = (
+                        self.git(
+                            "rev-parse",
+                            "--path-format=absolute",
+                            "--git-path",
+                            "sequencer",
+                            cwd=path,
+                        )
+                        .stdout.strip()
+                        .decode()
+                    )
+                    Path(marker).mkdir()
+                self.git("gone", input=b"yes\n")
+                self.assertTrue(path.is_dir())
+                self.git("show-ref", "--verify", "refs/heads/" + kind)
+                if kind in ("tracked", "untracked", "ignored", "hidden"):
+                    self.assertEqual((path / name).read_text(), "keep me\n")
+
+    def test_detached_commits_and_current_checkout(self):
+        covered = self.worktree("covered", detached=True)
+        unique = self.worktree("unique", detached=True)
+        unique_tip = self.commit(unique)
+        current = self.worktree("current")
+        self.git("gone", input=b"yes\n", cwd=current)
+        self.assertFalse(covered.exists())
+        self.assertTrue(unique.is_dir())
+        self.assertEqual(self.git("rev-parse", "HEAD", cwd=unique).stdout, unique_tip)
+        self.assertTrue(current.is_dir())
+        self.git("show-ref", "--verify", "refs/heads/current")
+        self.git("show-ref", "--verify", "refs/heads/main")
+
+    def test_dry_run_and_refusal(self):
+        path = self.worktree("merged")
+        for args, answer in ((["--dry-run"], b"yes\n"), ([], b"n\n"), ([], b"")):
+            with self.subTest(args=args, answer=answer):
+                result = self.git("gone", *args, input=answer, ok=False)
+                self.assertEqual(result.returncode, 0 if args else 1)
+                self.assertTrue(path.is_dir())
+                self.git("show-ref", "--verify", "refs/heads/merged")
+        child = self.repo / "child"
+        child.mkdir()
+        self.git("gone", input=b"yes\n", cwd=child)
+        self.assertFalse(path.exists())
+        self.assertTrue(self.repo.is_dir())
+
+    def test_recheck_after_confirmation(self):
+        path = self.worktree("merged")
+        process = subprocess.Popen(
+            ["git", "gone"],
+            cwd=self.repo,
+            env=self.env,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        self.addCleanup(lambda: process.kill() if process.poll() is None else None)
+        output = b""
+        while not output.endswith(b"[y/N]: "):
+            byte = process.stdout.read(1)
+            self.assertTrue(byte, output.decode())
+            output += byte
+        (path / "tracked").write_text("changed after preview\n")
+        _, error = process.communicate(b"yes\n", timeout=10)
+        self.assertEqual(process.returncode, 1, error.decode())
+        self.assertTrue(path.is_dir())
+        self.assertEqual((path / "tracked").read_text(), "changed after preview\n")
+        self.git("show-ref", "--verify", "refs/heads/merged")
+
+    def test_dry_run_does_not_prune_custom_local_refspecs(self):
+        tip = (
+            self.git("commit-tree", "HEAD^{tree}", "-p", "HEAD", "-m", "private commit")
+            .stdout.strip()
+            .decode()
+        )
+        self.git("branch", "work/private", tip)
+        self.git("remote", "add", "custom", str(self.remote))
+        self.git(
+            "config", "remote.custom.fetch", "+refs/heads/work/*:refs/heads/work/*"
+        )
+        self.git("gone", "--dry-run", "main")
+        self.assertEqual(
+            self.git("rev-parse", "work/private").stdout.strip().decode(), tip
+        )
+
+    def test_atomic_branch_deletion_preserves_concurrent_commit(self):
+        import shutil
+
+        self.git("branch", "merged")
+        tip = (
+            self.git(
+                "commit-tree", "HEAD^{tree}", "-p", "HEAD", "-m", "concurrent commit"
+            )
+            .stdout.strip()
+            .decode()
+        )
+        bindir = self.root / "bin"
+        bindir.mkdir()
+        wrapper = bindir / "git"
+        wrapper.write_text(
+            "#!/bin/sh\n"
+            'case "$1:$2" in\n'
+            "branch:-D|update-ref:--no-deref)\n"
+            '    "$GONE_NATIVE_GIT" update-ref refs/heads/merged "$GONE_RACE_TIP";;\n'
+            "esac\n"
+            'exec "$GONE_NATIVE_GIT" "$@"\n'
+        )
+        wrapper.chmod(0o755)
+        self.env |= {
+            "GONE_NATIVE_GIT": shutil.which("git"),
+            "GONE_RACE_TIP": tip,
+            "GIT_EXEC_PATH": str(bindir),
+            "PATH": str(bindir) + os.pathsep + self.env["PATH"],
+        }
+        result = self.git("gone", input=b"yes\n", ok=False)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(self.git("rev-parse", "merged").stdout.strip().decode(), tip)
 
 
 class FishTests(unittest.TestCase):

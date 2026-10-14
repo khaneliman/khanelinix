@@ -82,36 +82,9 @@
     ### Branch Delete Here:
     #> Deletes all local branches that have already been merged to the branch that you're currently on
     brdhere = "!sh -c \"git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d\"";
-    ### Branch Delete Gone:
-    #> Fetches with prune, then force deletes local branches whose upstream was deleted on the remote, removing any linked worktree that has one checked out. Unlike brd, this catches squash and rebase merges. Worktrees with uncommitted or untracked files, the main worktree, and the current worktree are kept, along with their branches.
-    gone = /* Bash */ ''
-      !f() {
-          git fetch --all --prune --quiet || return 1;
-          git worktree prune --verbose;
-          local stale=$(git for-each-ref --format='%(refname:short)%09%(upstream:track)%09%(worktreepath)' refs/heads |
-              main=$(git worktree list --porcelain | sed -n '1s/^worktree //p') here=$(git rev-parse --show-toplevel) awk -F '\t' '
-                  $2 != "[gone]" { next }
-                  $3 == ENVIRON["main"] || $3 == ENVIRON["here"] { printf "Skipping %s (checked out in %s)\n", $1, $3 > "/dev/stderr"; next }
-                  { print $1 "\t" $3 }');
-          if [ -z "$stale" ]; then
-              echo 'No local branches with a deleted upstream.';
-              return 0;
-          fi;
-          printf '%s\n' "$stale" | awk -F '\t' '{ print $1 ($2 == "" ? "" : " (worktree " $2 ")") }';
-          printf 'Remove these worktrees and force delete these branches? [y/N]: ';
-          IFS= read -r response;
-          case "$response" in
-              y|Y|yes|YES) ;;
-              *) echo 'Not deleting branches.'; return 1;;
-          esac;
-          printf '%s\n' "$stale" | while IFS="$(printf '\t')" read -r branch path; do
-              if [ -n "$path" ]; then
-                  git worktree remove "$path" || { echo "Keeping branch $branch"; continue; };
-                  echo "Removed worktree $path";
-              fi;
-              git branch -D "$branch";
-          done;
-      }; f'';
+    ### Local branch and worktree cleanup:
+    #> git gone [--dry-run] [base] previews clean worktree removal and merged branch deletion using existing local refs. Unmerged branches and detached-only commits are kept. The base defaults to upstream/HEAD, origin/HEAD, or the primary checkout's branch; squash/rebase landings need separate verification.
+    gone = "!bash ${./gone.sh}";
     ### Push everything to remote
     pushitgood = "push -u origin --all";
     ### Push current to remote
