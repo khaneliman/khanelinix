@@ -41,9 +41,9 @@ in
         "agy-unsafe" = "agy --dangerously-skip-permissions";
 
         # Task shortcuts
-        "agy-deep" = "agy --model \"Gemini 3.8 Flash (High)\"";
-        "agy-quick" = "agy --model \"Gemini 3.5 Flash (High)\"";
-        "agy-nano" = "agy --model \"Gemini 3.5 Flash (Low)\"";
+        "agy-deep" = "agy --model \"Gemini 4 Argon (High)\"";
+        "agy-quick" = "agy --model \"Gemini 3.8 Flash (High)\"";
+        "agy-nano" = "agy --model \"Gemini 3.8 Flash (Low)\"";
       };
     };
 
@@ -92,7 +92,7 @@ in
           # runningLightSpeed, toolPermission, and verbosity on every save, so
           # declaring them here only holds until the first write. The sandbox
           # flag already lives in the editor's config.json.
-          model = "Gemini 3.8 Flash (High)";
+          model = "Gemini 4 Argon (High)";
           historySize = 5000;
           allowNonWorkspaceAccess = true;
           altScreenMode = "always";

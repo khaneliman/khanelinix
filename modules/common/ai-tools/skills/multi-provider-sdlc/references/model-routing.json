@@ -17,6 +17,7 @@
 				"gpt-oss-120b",
 				"google-opus-5-5",
 				"google-sonnet-5-5",
+				"gemini-4-argon",
 				"gemini-3-8-flash",
 				"gemini-3-1-pro"
 			]
@@ -83,6 +84,20 @@
 			"workspace_write": false,
 			"publish_alias": true
 		},
+		"gemini-4-argon": {
+			"subscription": "google",
+			"model_family": "google-gemini",
+			"quota_pool": "gemini",
+			"upstream_provider": "antigravity",
+			"upstream_model": "gemini-4-argon-high",
+			"gateway_alias": "claude-gemini-4-argon",
+			"display_name": "Google · Gemini 4 Argon",
+			"description": "Google Gemini 4 Argon gateway worker for multimodal analysis, agentic implementation and reproduction fallbacks, diagnosis and review fallbacks, and Google deliberation seats.",
+			"reasoning_effort": null,
+			"write": true,
+			"workspace_write": true,
+			"publish_alias": true
+		},
 		"gemini-3-8-flash": {
 			"subscription": "google",
 			"model_family": "google-gemini",
@@ -91,7 +106,7 @@
 			"upstream_model": "gemini-3.8-flash-high",
 			"gateway_alias": "claude-gemini-3.8-flash",
 			"display_name": "Google · Gemini 3.8 Flash",
-			"description": "Google Gemini 3.8 Flash gateway worker for multimodal analysis, bounded overflow work, and independent test ideas that require verification.",
+			"description": "Google Gemini 3.8 Flash gateway worker for narrow lookup, discovery, and validation fallbacks where long-context reading matters more than agentic depth.",
 			"reasoning_effort": null,
 			"write": true,
 			"workspace_write": true,
@@ -215,6 +230,7 @@
 		"gpt-6-astra",
 		"gpt-5-6-terra",
 		"gpt-6-luna",
+		"gemini-4-argon",
 		"gemini-3-8-flash",
 		"gemini-3-1-pro",
 		"google-sonnet-5-5",
@@ -224,7 +240,7 @@
 	"gateway_defaults": {
 		"claude": "opus-5-5",
 		"codex": "gpt-6-astra",
-		"gemini": "gemini-3-8-flash"
+		"gemini": "gemini-4-argon"
 	},
 	"semantic_roles": {
 		"mechanic": {
@@ -376,7 +392,7 @@
 		{
 			"need": "bounded reproduction",
 			"preferred": ["gpt-6-luna"],
-			"fallbacks": ["haiku-5-5", "gpt-6-1-sol", "opus-5-5", "gemini-3-8-flash"],
+			"fallbacks": ["haiku-5-5", "gpt-6-1-sol", "opus-5-5", "gemini-4-argon"],
 			"semantic_role": "probe-runner",
 			"write_policy": "build artifacts only"
 		},
@@ -397,21 +413,21 @@
 		{
 			"need": "implementation",
 			"preferred": ["gpt-6-1-sol"],
-			"fallbacks": ["opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-3-8-flash"],
+			"fallbacks": ["opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-argon"],
 			"semantic_role": "implementer",
 			"write_policy": "workspace write"
 		},
 		{
 			"need": "difficult implementation",
 			"preferred": ["gpt-6-1-sol", "opus-5-5"],
-			"fallbacks": ["gpt-6-luna", "haiku-5-5", "gemini-3-8-flash"],
+			"fallbacks": ["gpt-6-luna", "haiku-5-5", "gemini-4-argon"],
 			"semantic_role": "implementer",
 			"write_policy": "workspace write"
 		},
 		{
 			"need": "ambiguous diagnosis",
 			"preferred": ["gpt-6-1-sol"],
-			"fallbacks": ["opus-5-5", "gemini-3-8-flash"],
+			"fallbacks": ["opus-5-5", "gemini-4-argon"],
 			"semantic_role": "debugger",
 			"write_policy": "read-only"
 		},
@@ -425,7 +441,7 @@
 		{
 			"need": "routine code review",
 			"preferred": ["gpt-6-1-sol"],
-			"fallbacks": ["opus-5-5", "gemini-3-8-flash"],
+			"fallbacks": ["opus-5-5", "gemini-4-argon"],
 			"semantic_role": "reviewer",
 			"write_policy": "read-only"
 		},
@@ -438,7 +454,7 @@
 		},
 		{
 			"need": "multimodal analysis",
-			"preferred": ["gemini-3-8-flash"],
+			"preferred": ["gemini-4-argon"],
 			"fallbacks": ["gpt-6-1-sol", "opus-5-5"],
 			"semantic_role": "fact-finder",
 			"write_policy": "read-only"
@@ -446,7 +462,7 @@
 	],
 	"deliberation": {
 		"anthropic": "opus-5-5",
-		"google": "gemini-3-8-flash",
+		"google": "gemini-4-argon",
 		"google_fallback": "google-opus-5-5",
 		"openai": "gpt-6-astra"
 	},

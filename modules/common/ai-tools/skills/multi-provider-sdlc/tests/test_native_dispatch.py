@@ -52,7 +52,7 @@ class NativeDispatchTests(unittest.TestCase):
                     "claudeAgent",
                     ["claude-opus-5-5", "claude-haiku-5-5"],
                 ),
-                provider("work-google", "antigravity", ["gemini-3.8-flash-high"]),
+                provider("work-google", "antigravity", ["gemini-4-argon-high"]),
             ]
         }
 
@@ -90,7 +90,7 @@ class NativeDispatchTests(unittest.TestCase):
         )
         self.assertEqual(
             result["target"],
-            {"providerInstanceId": "work-google", "model": "gemini-3.8-flash-high"},
+            {"providerInstanceId": "work-google", "model": "gemini-4-argon-high"},
         )
         self.assertIsNone(result["reasoning_effort"])
 

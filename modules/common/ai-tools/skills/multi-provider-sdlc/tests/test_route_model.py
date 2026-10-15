@@ -118,7 +118,7 @@ class RouteModelTests(unittest.TestCase):
             "routine code review": ("gpt-6-1-sol", "read-only"),
             "plan or code review": ("opus-5-5", "read-only"),
             "bounded Sonnet trial": ("sonnet-5-5", "workspace write"),
-            "multimodal analysis": ("gemini-3-8-flash", "read-only"),
+            "multimodal analysis": ("gemini-4-argon", "read-only"),
             "noisy validation": ("gpt-6-luna", "build artifacts only"),
         }
         for task, (model, policy) in cases.items():

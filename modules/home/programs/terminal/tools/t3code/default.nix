@@ -385,7 +385,7 @@ in
             }
             {
               provider = "antigravity";
-              model = "gemini-3.8-flash-medium";
+              model = "gemini-4-argon-medium";
             }
           ];
           fontFamilyCode = "";
