@@ -1,0 +1,15 @@
+--- a/pkg/gui/editors.go
++++ b/pkg/gui/editors.go
+@@ -5,6 +5,12 @@
+ )
+ 
+ func (gui *Gui) handleEditorKeypress(v *gocui.View, key gocui.Key, allowMultiline bool) bool {
++	if (v == gui.Views.CommitMessage || v == gui.Views.CommitDescription) &&
++		key.Equals(gocui.NewKeyStrMod("x", gocui.ModCtrl)) {
++		v.ClearTextArea()
++		return true
++	}
++
+ 	if key.Equals(gocui.NewKeyName(gocui.KeyEnter)) && allowMultiline {
+ 		v.TextArea.TypeCharacter("\n")
+ 		v.RenderTextArea()
