@@ -18,7 +18,7 @@
 }:
 
 let
-  version = "0.69.0";
+  version = "0.75.0";
 
   # Without a usable token, agy print mode runs xdg-open (it ignores $BROWSER)
   # and waits 60 seconds for the OAuth callback, past codexbar-waybar's
@@ -34,19 +34,19 @@ let
   sources = {
     x86_64-linux = {
       url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-linux-x86_64.tar.gz";
-      hash = "sha256-YjuJTGmpbqNdt4qTJbsJf6u+dOX8PqkKu2B7ycK4gwE=";
+      hash = "sha256-/4kabV9PWY2lz0XgzT4zB/D+pZPdyORBwVR0mGFci5E=";
     };
     aarch64-linux = {
       url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-linux-aarch64.tar.gz";
-      hash = "sha256-/c9MhfrQHkk8LaPVZtQ2spGm3kg4vR6HbAFUvR3hvls=";
+      hash = "sha256-HMMwTuvbXRXQnSzt5o9sg9iaxd/gC3Y7c+ms8EQPkZI=";
     };
     aarch64-darwin = {
       url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-macos-arm64.tar.gz";
-      hash = "sha256-CBa/19pW2BEmVyA0FnzITtrhJCnPlRkkg7V3XSKnx7g=";
+      hash = "sha256-fEgrdKpV24kn8R2IEFj4hcFAsk+SigqWi8fUudfQLf8=";
     };
     x86_64-darwin = {
       url = "https://github.com/steipete/CodexBar/releases/download/v${version}/CodexBarCLI-v${version}-macos-x86_64.tar.gz";
-      hash = "sha256-ClEsI5ORJvseYjeaN32HrO8yLwlkIPAaEu996RAW0Ss=";
+      hash = "sha256-NJopdWlqEQFsd2C8SDyEN/oIIzo0pzZ93bRxyyfM5Kk=";
     };
   };
 
@@ -80,6 +80,8 @@ stdenv.mkDerivation {
 
     install -Dm0755 CodexBarCLI $out/bin/.codexbar-wrapped
     install -Dm0644 VERSION $out/share/codexbar-cli/VERSION
+    cp -r CodexBar_CodexBarCore.bundle $out/share/codexbar-cli/
+    ln -s ../share/codexbar-cli/CodexBar_CodexBarCore.bundle $out/bin/CodexBar_CodexBarCore.bundle
     ln -s ../share/codexbar-cli/VERSION $out/bin/VERSION
 
     ${lib.optionalString stdenv.hostPlatform.isLinux ''
