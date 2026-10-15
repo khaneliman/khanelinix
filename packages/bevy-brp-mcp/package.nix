@@ -10,13 +10,13 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "bevy_brp_mcp";
-  version = "0.22.8";
+  version = "0.22.10";
 
   src = fetchFromGitHub {
     owner = "natepiano";
     repo = "bevy_brp";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-HsA4C41ao3I1eiVTZOcChv8KAY2gdSqVrUD7goJp8p8=";
+    hash = "sha256-Vzlsbb7P5FrhckEI0l2/pHikzfiZHmSGZXIkSDBoQFE=";
   };
 
   patches = [
@@ -25,7 +25,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   buildAndTestSubdir = "mcp";
 
-  cargoHash = "sha256-BggAqEJ/rmzabLqlIN71l3FDHwrhzyEyhHJ64iqxyl8=";
+  cargoHash = "sha256-Y8sBIYlA9NAljrZvS3/AsgISUGx4lRyajtE/e1mcCjw=";
 
   nativeBuildInputs = [
     makeWrapper
