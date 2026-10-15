@@ -8,13 +8,13 @@
 
 buildGoModule (finalAttrs: {
   pname = "cliproxyapi";
-  version = "7.3.12-1";
+  version = "7.3.12-3";
 
   src = fetchFromGitHub {
     owner = "kaitranntt";
     repo = "CLIProxyAPIPlus";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-ux5WhKCApQDcxcnDsKGoBNy5dnTHinNxC8Jdh5rU0JI=";
+    hash = "sha256-/kP9lO9Zi/7sfYjWiJho8F1p4rSOZH8K1b6RgxOZiqE=";
   };
 
   # Agent SDK requests must not inherit the proxy's older CLI version.
@@ -31,8 +31,8 @@ buildGoModule (finalAttrs: {
     "-s"
     "-w"
     "-X main.Version=${finalAttrs.version}"
-    "-X main.Commit=04048d8"
-    "-X main.BuildDate=2026-09-23T00:18:15Z"
+    "-X main.Commit=8f22abc"
+    "-X main.BuildDate=2026-10-13T17:54:25Z"
   ];
 
   preCheck = ''
