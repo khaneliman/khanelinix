@@ -126,6 +126,13 @@ let
     }) aiTools.codex.agents;
   codexSkills = aiTools.codex.skillSources;
   codexProfiles = {
+    # Daybreak Blue is available on Sol, but not the default Astra model.
+    daybreak = {
+      daybreak = true;
+      model = "gpt-6-sol";
+      model_provider = "openai";
+    };
+
     # Deep analysis. Intentionally expensive.
     deep = {
       model = defaultModel;
@@ -237,6 +244,7 @@ in
         pkgs.khanelinix.codex-browser-use-linux-chromium
       ];
       shellAliases = {
+        codex-daybreak = "codex --strict-config --profile daybreak";
         codex-deep = "codex --strict-config --profile deep";
         codex-doctor = "codex doctor --summary";
         codex-long = "codex --strict-config --profile long -c model_context_window=1000000 -c model_auto_compact_token_limit=850000";
@@ -311,6 +319,8 @@ in
         mcp_oauth_credentials_store = if pkgs.stdenv.hostPlatform.isDarwin then "file" else "auto";
 
         features = {
+          # Expose /daybreak without enabling Daybreak for ordinary threads.
+          cli_daybreak = true;
           memories = !aiTools.codex.okfMemoryEnabled;
           multi_agent = true;
           multi_agent_v2 = false;
