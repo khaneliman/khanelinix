@@ -5,15 +5,15 @@
   ...
 }:
 
-python3Packages.buildPythonApplication {
+python3Packages.buildPythonApplication (finalAttrs: {
   pname = "freecad-mcp";
   version = "0.1.27";
 
   src = fetchFromGitHub {
     owner = "neka-nat";
     repo = "freecad-mcp";
-    rev = "751974609a401660a58a1772ef16f3afbeba9ba1";
-    hash = "sha256-zo9FZ+hhD2DwT5zg2KKBrD52Q/doLTOIQtJfY2z2KLU=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-BGxa7+wa9QwiR1R2fs//ksMVfhzqklr0sybPwHYgIYQ=";
   };
 
   pyproject = true;
@@ -22,6 +22,14 @@ python3Packages.buildPythonApplication {
     mcp
     validators
   ];
+
+  # MCP filters the subprocess environment, hiding Nix's Python dependencies.
+  postPatch = ''
+    substituteInPlace tests/test_tool_errors.py \
+      --replace-fail 'import json' $'import json\nimport os' \
+      --replace-fail 'args=[str(Path(__file__))])' \
+        'args=[str(Path(__file__))], env={"PYTHONPATH": os.pathsep.join(sys.path)})'
+  '';
 
   nativeCheckInputs = [ python3Packages.pytestCheckHook ];
   pythonImportsCheck = [ "freecad_mcp.server" ];
@@ -46,4 +54,4 @@ python3Packages.buildPythonApplication {
     maintainers = [ lib.maintainers.khaneliman ];
     platforms = lib.platforms.unix;
   };
-}
+})
