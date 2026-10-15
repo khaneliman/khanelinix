@@ -17,7 +17,7 @@ let
     ];
 
     shellHook = versionLabel: ''
-      export NUGET_PLUGIN_PATHS=${pkgs.khanelinix.artifacts-credprovider}/bin/netcore/CredentialProvider.Microsoft/CredentialProvider.Microsoft.dll
+      export NUGET_PLUGIN_PATHS=${pkgs.azure-artifacts-credprovider}/lib/azure-artifacts-credprovider/CredentialProvider.Microsoft.dll
       export PATH="$PATH:$HOME/.dotnet/tools"
 
       echo "🔨 ${versionLabel}"
