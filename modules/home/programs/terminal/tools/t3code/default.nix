@@ -337,7 +337,7 @@ in
             // {
               antigravity = {
                 enabled = true;
-                binaryPath = lib.getExe pkgs.khanelinix.antigravity-acp;
+                binaryPath = lib.getExe pkgs.antigravity-acp;
               };
             };
 
