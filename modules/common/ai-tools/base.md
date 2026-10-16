@@ -203,6 +203,18 @@ completion or authority from their caller.
 
 ## Durable Memory
 
+- When the user corrects behavior or expresses frustration, inspect the relevant
+  instructions, skills, and memory for guidance that caused or reinforced the
+  mistake.
+- When the correction is clear, you have standing authority to make the smallest
+  local repair without a separate request to "fix memory" or permission to edit
+  skills. Fix the canonical owner: workflow rules in skills or shared
+  instructions, facts and preferences in the matching OKF concept. Replace
+  conflicting or superseded text rather than append a competing rule.
+- Keep the repair within the demonstrated correction. Do not turn a
+  task-specific objection into a global preference or assume every mistake needs
+  a new rule. Validate the edit, briefly report what changed, and continue the
+  active task. Existing publication and activation boundaries still apply.
 - When the OKF skill is available, keep durable project and user knowledge in
   OKF and do not duplicate it in provider-native memory. Use planning-with-files
   when transient task state must survive compaction or sessions.
