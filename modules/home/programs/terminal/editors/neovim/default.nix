@@ -49,6 +49,10 @@ let
             # Avoid evaluating/building Nixvim man docs unless explicitly enabled.
             enableMan = lib.mkForce false;
 
+            # Nixvim's package maps still use luaPackages, an alias disabled here.
+            plugins.lint.autoInstall.overrides.luacheck = pkgs.lua55Packages.luacheck;
+            lsp.servers.teal_ls.package = pkgs.lua55Packages.teal-language-server;
+
             # Automatically disable dependencies that are already in home.packages
             dependencies = lib.genAttrs (mkNeovimLib profile).dependenciesToDisable (_: disabled);
 

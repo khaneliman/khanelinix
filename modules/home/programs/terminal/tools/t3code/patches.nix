@@ -7,6 +7,6 @@
   ./desktop-attach-existing-backend.patch
   # Keep quota reads nonblocking and discard stale account limits after upstream #15198.
   ./antigravity-usage-limits.patch
-  # Upstream #16716, with folder-root regression coverage.
+  # Upstream owns #16716 host-folder browsing; retain folder-root and path regression coverage.
   ./host-folder-links.patch
 ]
