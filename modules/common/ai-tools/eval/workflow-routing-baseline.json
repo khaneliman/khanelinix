@@ -647,6 +647,58 @@
 				},
 				"must_not_select": ["engineering-workflow", "figure-it-out"]
 			}
+		},
+		{
+			"id": "explicit-burn-implementation",
+			"prompt": "/burn Complete the independent fixes in this backlog using my available subscriptions before they reset.",
+			"tags": ["explicit-positive", "overlay-positive", "provider-parity"],
+			"expected": {
+				"selection": {
+					"owner": "engineering-workflow",
+					"methods": [],
+					"overlays": ["burn", "multi-provider-sdlc"]
+				},
+				"must_not_select": []
+			}
+		},
+		{
+			"id": "explicit-burn-large-goal",
+			"prompt": "Use burn to execute this repository-wide migration quickly across available providers, with an auditable trail.",
+			"tags": ["explicit-positive", "overlay-positive", "provider-parity"],
+			"expected": {
+				"selection": {
+					"owner": "figure-it-out",
+					"methods": [],
+					"overlays": ["burn", "multi-provider-sdlc"]
+				},
+				"must_not_select": []
+			}
+		},
+		{
+			"id": "quota-question-not-burn",
+			"prompt": "How much usage remains and when will each provider reset? Do not start work.",
+			"tags": ["explicit-negative", "overlay-negative", "provider-parity"],
+			"expected": {
+				"selection": {
+					"owner": null,
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["burn", "swarm"]
+			}
+		},
+		{
+			"id": "quick-edit-not-burn",
+			"prompt": "Fix this one typo quickly. This is not a request to burn my quota.",
+			"tags": ["explicit-negative", "overlay-negative", "provider-parity"],
+			"expected": {
+				"selection": {
+					"owner": "engineering-workflow",
+					"methods": [],
+					"overlays": []
+				},
+				"must_not_select": ["burn", "swarm", "multi-provider-sdlc"]
+			}
 		}
 	]
 }

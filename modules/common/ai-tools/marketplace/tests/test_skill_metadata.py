@@ -12,6 +12,7 @@ sys.path.insert(0, str(MARKETPLACE_DIR))
 import skill_metadata
 
 USER_ONLY_SKILLS = {
+    "burn",
     "to-spec",
     "to-tickets",
     "program-orchestration",

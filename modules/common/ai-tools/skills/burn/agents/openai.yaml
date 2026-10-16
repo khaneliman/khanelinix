@@ -1,0 +1,6 @@
+interface:
+  display_name: "Burn"
+  short_description: "Spend available quota on useful parallel work"
+  default_prompt: "Use $burn to complete this task with maximum useful parallel throughput across available provider subscriptions."
+policy:
+  allow_implicit_invocation: false

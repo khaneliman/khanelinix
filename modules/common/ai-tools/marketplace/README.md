@@ -266,6 +266,7 @@ invoke them.
 
 | Skill                   | Purpose                            | Invocation syntax                |
 | :---------------------- | :--------------------------------- | :------------------------------- |
+| `burn`                  | Quota-aware parallel throughput    | `Use $burn <task>`               |
 | `program-orchestration` | Durable multi-unit program control | `Use $program-orchestration ...` |
 | `to-spec`               | Save a durable implementation spec | `Use $to-spec ...`               |
 | `to-tickets`            | Create independent ticket handoffs | `Use $to-tickets ...`            |
@@ -296,6 +297,12 @@ caller still owns the lifecycle and final judgment.
 The marketplace excludes `swarm`. It requires the private worker registry and
 host delegation controls. An explicit `swarm this` request partitions
 independent coverage slices. The caller keeps integration and final judgment.
+
+The marketplace excludes `burn`. It uses private provider routes and quota
+telemetry. Invoke `/burn <task>` or ask to burn available usage before a reset
+to fill independent work across subscriptions. The normal task workflow keeps
+integration and verification; burn mode prioritizes useful throughput over
+forecast-based quota conservation.
 
 The marketplace also excludes `reflect`. Under existing skill-edit authority, it
 routes accepted edits into the khanelinix canonical tree; otherwise it prepares
