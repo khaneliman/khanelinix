@@ -210,6 +210,85 @@ class PresentationTests(unittest.TestCase):
         self.assertEqual(pace_lines(entry, NOW, risks_only=True), [])
         self.assertEqual(pace_lines(entry, NOW), ["Weekly forecast: on track to reset"])
 
+    def test_claude_native_reset_details_reach_shared_presentation(self):
+        entry = {
+            "provider": "claude",
+            "usage": {
+                "primary": window(25),
+                "details": [
+                    {
+                        "rows": [
+                            {
+                                "label": "Limit Reset Credits",
+                                "value": "1 available",
+                                "secondaryValue": "Expires in 3 days",
+                            }
+                        ]
+                    }
+                ],
+            },
+        }
+        self.assertEqual(
+            reset_inventory(entry["usage"], NOW, provider="claude"),
+            ("1 available", "Expires in 3 days"),
+        )
+        rendered = tooltip([entry], NOW)
+        self.assertIn("Usage limit resets: 1 available", rendered)
+        self.assertIn("Expires in 3 days", rendered)
+        self.assertIn("25% used", rendered)
+        self.assertEqual(billing_lines(entry), [])
+
+    def test_claude_missing_or_cached_inventory_is_not_zero_or_available(self):
+        entry = {
+            "provider": "claude",
+            "stale": True,
+            "usage": {
+                "details": [
+                    {
+                        "rows": [
+                            {
+                                "label": "Limit Reset Credits",
+                                "value": "1 available",
+                            }
+                        ]
+                    }
+                ]
+            },
+        }
+        rendered = tooltip([entry], NOW)
+        self.assertIn("Usage limit resets: Unavailable", rendered)
+        self.assertNotIn("1 available", rendered)
+        for details in (
+            None,
+            [],
+            [None, {"rows": [None, {"label": "Limit Reset Credits", "value": None}]}],
+        ):
+            entry = {"provider": "claude", "usage": {"details": details}}
+            rendered = tooltip([entry], NOW)
+            self.assertIn("Usage limit resets: Unavailable", rendered)
+            self.assertNotIn("0 resets", rendered)
+
+    def test_claude_reset_detail_text_is_escaped(self):
+        entry = {
+            "provider": "claude",
+            "usage": {
+                "details": [
+                    {
+                        "rows": [
+                            {
+                                "label": "Limit Reset Credits",
+                                "value": "<one> & available",
+                                "secondaryValue": "Expires <soon>",
+                            }
+                        ]
+                    }
+                ]
+            },
+        }
+        rendered = tooltip([entry], NOW)
+        self.assertIn("&lt;one&gt; &amp; available", rendered)
+        self.assertIn("Expires &lt;soon&gt;", rendered)
+
     def test_billing_deduplicates_and_suppresses_zero_noise(self):
         entry = {
             "credits": {"remaining": 5},

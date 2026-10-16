@@ -14,7 +14,32 @@ diff --git a/codexbar.sh b/codexbar.sh
  }
  
  fetch_provider() {
-@@ -339,200 +343,13 @@
+@@ -291,7 +295,7 @@
+     if [[ -n "$last_good_json" ]]; then
+         merged_for_cache="$(jq -c --argjson prev "$last_good_json" --arg captured_at "$CACHE_CAPTURED_AT" '
+             def cache_key: (.provider // "") + "\u0000" + (.account // "");
+-            ([$prev[]? | select((.error | not) and (.stale != true))
++            ([$prev[]? | select(.error | not)
+               | {key: cache_key, value: .}] | from_entries) as $ok_prev
+             | ([.[]? | select(.error | not)
+             | {key: cache_key, value: (del(.stale) + {cachedAt: $captured_at})}] | from_entries) as $ok_fresh
+@@ -334,205 +338,29 @@
+     ' <<< "$merged")"
+ fi
+ 
++# Keep the popup on the same fresh/stale result as the tooltip.
++if [[ -n "$last_good_json" ]]; then
++    jq -c --argjson current "$merged" '
++        map(. as $cached
++            | if any($current[]; .provider == $cached.provider
++                     and .account == $cached.account
++                     and (.error | not) and (.stale != true))
++              then . else . + {stale: true} end)
++    ' <<< "$last_good_json" > "$LAST_GOOD"
++fi
++
+ if [[ "$merged" == "[]" ]]; then
+     printf '{"text":"","tooltip":"CodexBar: no provider data","class":"stale","percentage":0}\n'
      exit 0
  fi
  
@@ -218,7 +243,7 @@ diff --git a/codexbar.sh b/codexbar.sh
  
      def max_pct(entry):
          if entry.error then 0
-@@ -562,7 +379,6 @@
+@@ -562,7 +390,6 @@
  
      . as $all
      | ($all | map(max_pct(.)) | max // 0 | round_pct) as $pct
@@ -226,7 +251,7 @@ diff --git a/codexbar.sh b/codexbar.sh
      | ($all | all(.error)) as $all_errored
      | ($all | any(.stale == true)) as $any_stale
      | (if $bar_provider == "" then null
-@@ -571,7 +387,7 @@
+@@ -571,7 +398,7 @@
          text: (if $pinned != null then bar_text($pinned)
                 elif $all_errored then "🤖 ⚠"
                 else "🤖 \($pct | tostring)%" end),
@@ -263,7 +288,44 @@ diff --git a/codexbar-popup.py b/codexbar-popup.py
  }
  .codexbar-section-detail-left {
      font-size: 11px;
-@@ -1046,13 +1048,12 @@
+@@ -352,10 +354,11 @@
+ """
+ 
+ 
+-def load_cached() -> list:
++def load_cached(*, stale=False) -> list:
+     if LAST_GOOD.exists():
+         try:
+-            return json.loads(LAST_GOOD.read_text())
++            entries = json.loads(LAST_GOOD.read_text())
++            return [dict(entry, stale=True) for entry in entries] if stale else entries
+         except json.JSONDecodeError:
+             return []
+     return []
+@@ -495,10 +498,10 @@
+ 
+ def fetch_fresh() -> list:
+     try:
+-        subprocess.run([str(WRAPPER)], check=False, capture_output=True, timeout=30)
++        result = subprocess.run([str(WRAPPER)], check=False, capture_output=True, timeout=30)
+     except (FileNotFoundError, subprocess.TimeoutExpired):
+-        pass
+-    return load_cached()
++        return load_cached(stale=True)
++    return load_cached(stale=result.returncode != 0)
+ 
+ 
+ def max_pct(entry: dict) -> int:
+@@ -912,7 +915,7 @@
+         footer.append(self._make_pill("Quit", ["codexbar-footer-btn"], self.quit))
+         root.append(footer)
+ 
+-        self.data = load_cached()
++        self.data = load_cached(stale=True)
+         self.active_pid = default_provider(self.data)
+         if os.environ.get("CODEXBAR_INITIAL_VIEW") == "settings":
+             self.view = "settings"
+@@ -1046,13 +1049,12 @@
          self.body.append(self._divider())
  
          # --- Section: reset time format ---
@@ -280,7 +342,7 @@ diff --git a/codexbar-popup.py b/codexbar-popup.py
              xalign=0.0, wrap=True, max_width_chars=44)
          reset_hint.add_css_class("codexbar-subtitle")
          self.body.append(reset_hint)
-@@ -1264,77 +1265,45 @@
+@@ -1264,77 +1266,45 @@
              self.body.append(err)
              return
  
@@ -302,7 +364,7 @@ diff --git a/codexbar-popup.py b/codexbar-popup.py
 -            window = item.get("window")
 -            if not isinstance(window, dict):
 -                continue
-+        inventory = reset_inventory(usage, exact_mode=current_reset_format())
++        inventory = reset_inventory(usage, exact_mode=current_reset_format(), provider=entry.get("provider"), stale=entry.get("stale", False))
 +        if inventory:
              self.body.append(self._divider())
 -            title = item.get("title") or item.get("id") or "Extra quota"
@@ -389,7 +451,7 @@ diff --git a/codexbar-popup.py b/codexbar-popup.py
              rendered_any = True
  
          if not rendered_any:
-@@ -1348,45 +1317,38 @@
+@@ -1348,45 +1318,38 @@
          d.add_css_class("codexbar-divider")
          return d
  
@@ -462,3 +524,54 @@ diff --git a/codexbar-popup.py b/codexbar-popup.py
          return box
  
      def _clear(self, container: Gtk.Box):
+diff --git a/tests/test_popup_provider_selection.py b/tests/test_popup_provider_selection.py
+--- a/tests/test_popup_provider_selection.py
++++ b/tests/test_popup_provider_selection.py
+@@ -1,9 +1,13 @@
+ import importlib.util
++import json
++import subprocess
++import tempfile
+ import os
+ import sys
+ import types
+ import unittest
+ from pathlib import Path
++from unittest.mock import patch
+ 
+ 
+ def load_popup_module():
+@@ -104,5 +108,33 @@
+         self.assertIsNone(popup.default_provider([], {"popupProvider": "codex"}))
+ 
+ 
++class ResetInventoryCacheTests(unittest.TestCase):
++    def test_popup_requires_successful_refresh_for_saved_claude_resets(self):
++        entry = {
++            "provider": "claude",
++            "usage": {"details": [{"rows": [{
++                "label": "Limit Reset Credits", "value": "1 available",
++            }]}]},
++        }
++        with tempfile.TemporaryDirectory() as directory:
++            cache = Path(directory) / "last.json"
++            cache.write_text(json.dumps([entry]))
++            with patch.object(popup, "LAST_GOOD", cache), patch.object(popup.subprocess, "run") as run:
++                self.assertTrue(popup.load_cached(stale=True)[0]["stale"])
++                for error in (FileNotFoundError(), subprocess.TimeoutExpired("wrapper", 30)):
++                    run.side_effect = error
++                    self.assertTrue(popup.fetch_fresh()[0]["stale"])
++                run.side_effect = None
++                run.return_value = types.SimpleNamespace(returncode=1)
++                self.assertTrue(popup.fetch_fresh()[0]["stale"])
++                run.return_value = types.SimpleNamespace(returncode=0)
++                fresh = popup.fetch_fresh()[0]
++                self.assertEqual(popup.reset_inventory(fresh["usage"], provider="claude")[0], "1 available")
++                entry["stale"] = True
++                cache.write_text(json.dumps([entry]))
++                cached = popup.fetch_fresh()[0]
++                self.assertEqual(popup.reset_inventory(cached["usage"], provider="claude", stale=cached["stale"])[0], "Unavailable")
++
++
+ if __name__ == "__main__":
+     unittest.main()

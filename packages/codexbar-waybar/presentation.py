@@ -188,7 +188,29 @@ def quota_rows(entry, now=None, exact_mode=None):
     return rows
 
 
-def reset_inventory(usage, now=None, exact_mode=None):
+def reset_inventory(usage, now=None, exact_mode=None, *, provider=None, stale=False):
+    if provider == "claude":
+        # Claude exports only a live display row, not dated inventory. A cached
+        # count may include a reset already redeemed on claude.ai.
+        if not stale:
+            for section in usage.get("details") or []:
+                if not isinstance(section, dict):
+                    continue
+                for row in section.get("rows") or []:
+                    if (
+                        not isinstance(row, dict)
+                        or row.get("label") != "Limit Reset Credits"
+                    ):
+                        continue
+                    value, expiry = row.get("value"), row.get("secondaryValue")
+                    if isinstance(value, str) and value.strip():
+                        return value, expiry if isinstance(expiry, str) else ""
+        return (
+            "Unavailable",
+            "Refresh Claude usage to check saved resets"
+            if stale
+            else "Not reported by this usage source",
+        )
     now = now or dt.datetime.now(UTC)
     snapshot = usage.get("codexResetCredits")
     if not isinstance(snapshot, dict):
@@ -341,10 +363,16 @@ def tooltip(entries, now=None, exact_mode=None):
                 )
             if not rows:
                 lines.append(muted("Quota unavailable"))
-            inventory = reset_inventory(entry.get("usage") or {}, now, exact_mode)
+            inventory = reset_inventory(
+                entry.get("usage") or {},
+                now,
+                exact_mode,
+                provider=entry.get("provider"),
+                stale=entry.get("stale", False),
+            )
             if inventory:
                 summary, expiry = inventory
-                line = f"<b>{html.escape(summary)}</b>"
+                line = f"<b>Usage limit resets: {html.escape(summary)}</b>"
                 if expiry:
                     line += f"  {muted(expiry)}"
                 lines.append(line)

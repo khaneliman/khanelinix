@@ -28,7 +28,7 @@ run_wrapper() {
         CODEXBAR_BIN="$test_root/codexbar" \
         CODEXBAR_SECRET_TOOL="$test_root/secret-tool" \
         CODEXBAR_RESET_INVENTORY=1 \
-        CODEXBAR_PROVIDERS=codex \
+        CODEXBAR_PROVIDERS="${1:-codex}" \
         CODEXBAR_PROVIDER_TIMEOUT=0.5 \
         FAKE_QUOTAS="$test_root/quotas.json" \
         "$wrapper_shell" "$wrapper"
@@ -43,3 +43,39 @@ jq -e '.percentage == 40 and (.tooltip | contains("60% left"))' <<<"$output" >/d
 printf '%s\n' '[{"provider":"codex","usage":{"secondary":{"usedPercent":40},"codexResetCredits":{"availableCount":1,"credits":[{"status":"available","expires_at":"2099-10-05T04:18:34Z"}]}}}]' >"$test_root/quotas.json"
 output="$(run_wrapper)"
 jq -e '(.tooltip | contains("1 reset available")) and (.tooltip | contains("4:18 AM UTC"))' <<<"$output" >/dev/null
+
+printf '%s\n' '[{"provider":"claude","source":"oauth","usage":{"primary":{"usedPercent":25},"details":[{"rows":[{"label":"Limit Reset Credits","value":"1 available","secondaryValue":"Expires in 3 days"}]}]}}]' >"$test_root/quotas.json"
+output="$(run_wrapper claude)"
+jq -e '(.tooltip | contains("Usage limit resets: 1 available")) and (.tooltip | contains("Expires in 3 days")) and (.tooltip | contains("25% used"))' <<<"$output" >/dev/null
+
+# A different provider's successful refresh cannot make retained Claude resets current.
+cp "$test_root/quotas.json" "$test_root/claude.json"
+printf '%s\n' '[{"provider":"codex","usage":{"secondary":{"usedPercent":40}}}]' >"$test_root/quotas.json"
+run_wrapper >/dev/null
+jq -e 'any(.[]; .provider == "claude" and .stale == true)' "$test_root/cache/codexbar-waybar/last.json" >/dev/null
+cp "$test_root/claude.json" "$test_root/quotas.json"
+run_wrapper claude >/dev/null
+
+# Keep only Claude cached so an empty Codex response has no quota fallback.
+jq 'map(select(.provider == "claude"))' "$test_root/cache/codexbar-waybar/last.json" >"$test_root/claude-cache.json"
+cp "$test_root/claude-cache.json" "$test_root/cache/codexbar-waybar/last.json"
+printf '[]\n' >"$test_root/quotas.json"
+output="$(run_wrapper)"
+jq -e '.tooltip == "CodexBar: no provider data"' <<<"$output" >/dev/null
+jq -e 'any(.[]; .provider == "claude" and .stale == true)' "$test_root/cache/codexbar-waybar/last.json" >/dev/null
+cp "$test_root/claude.json" "$test_root/quotas.json"
+run_wrapper claude >/dev/null
+
+# The popup reads last.json, so failed refreshes must mark that snapshot stale
+# while preserving it for quota fallback on subsequent refreshes.
+printf '%s\n' '[{"provider":"claude","error":{"message":"rate limited"}}]' >"$test_root/quotas.json"
+for attempt in 1 2; do
+    output="$(run_wrapper claude)"
+    jq -e '(.tooltip | contains("Usage limit resets: Unavailable")) and (.tooltip | contains("1 available") | not)' <<<"$output" >/dev/null
+    jq -e 'any(.[]; .provider == "claude" and .stale == true)' "$test_root/cache/codexbar-waybar/last.json" >/dev/null
+done
+
+# A later successful usage response without the row must clear the old count.
+printf '%s\n' '[{"provider":"claude","source":"oauth","usage":{"primary":{"usedPercent":26}}}]' >"$test_root/quotas.json"
+output="$(run_wrapper claude)"
+jq -e '(.tooltip | contains("Usage limit resets: Unavailable")) and (.tooltip | contains("1 available") | not)' <<<"$output" >/dev/null
