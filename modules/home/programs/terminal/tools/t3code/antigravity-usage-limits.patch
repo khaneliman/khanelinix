@@ -4,7 +4,7 @@ diff --git a/apps/mobile/src/features/threads/ComposerUsageLimits.tsx b/apps/mob
 --- a/apps/mobile/src/features/threads/ComposerUsageLimits.tsx
 +++ b/apps/mobile/src/features/threads/ComposerUsageLimits.tsx
 @@ -5,7 +5,11 @@
- import { AppText as Text } from "../../components/AppText";
+ import { AppText as Text } from "../../components/ui/AppText";
  import { AccountLimits, ResetCredits } from "../usage/UsageLimitsSection";
  
 -const DRIVER_LABEL: Partial<Record<string, string>> = { codex: "Codex", claudeAgent: "Claude" };
@@ -14,8 +14,8 @@ diff --git a/apps/mobile/src/features/threads/ComposerUsageLimits.tsx b/apps/mob
 +  antigravity: "Antigravity",
 +};
  
- /**
-  * The /usage-limits result, docked above the composer. It is the Usage → Limits
+ export function ComposerUsageLimits({
+   report,
 diff --git a/apps/server/src/provider/AntigravityProvider.test.ts b/apps/server/src/provider/AntigravityProvider.test.ts
 --- a/apps/server/src/provider/AntigravityProvider.test.ts
 +++ b/apps/server/src/provider/AntigravityProvider.test.ts
@@ -532,7 +532,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
  import * as DateTime from "effect/DateTime";
  import * as Effect from "effect/Effect";
  import * as Option from "effect/Option";
-@@ -116,6 +119,7 @@
+@@ -115,6 +118,7 @@
  interface AntigravityProviderState {
    readonly draft: ServerProviderDraft;
    readonly authRevision: number;
@@ -540,16 +540,16 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
  }
  
  interface AntigravityProviderOptions {
-@@ -127,6 +131,8 @@
+@@ -126,6 +130,8 @@
    readonly supportsTextGeneration: Effect.Effect<boolean>;
    readonly probeUsage?: Effect.Effect<ServerProviderUsageLimits>;
    readonly clearUsage?: Effect.Effect<void>;
 +  /** Fails when the account identity cannot be determined right now. */
 +  readonly usageLimitsCredentialFingerprint?: Effect.Effect<string | undefined, Error>;
    readonly maintenanceCapabilities?: ProviderMaintenanceCapabilities;
-   /** Auth type and label published once a session authenticates. */
    readonly auth?: { readonly type: string; readonly label: string };
-@@ -141,6 +147,9 @@
+ }
+@@ -135,6 +141,9 @@
    options: AntigravityProviderOptions,
  ) {
    const checkedAt = DateTime.formatIso(yield* DateTime.now);
@@ -559,7 +559,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
    const initialDraft = {
      ...buildServerProvider({
        presentation: { displayName: "Antigravity", showInteractionModeToggle: false },
-@@ -167,6 +176,7 @@
+@@ -159,6 +168,7 @@
    const metadata = yield* SubscriptionRef.make<AntigravityProviderState>({
      draft: initialDraft,
      authRevision: 0,
@@ -567,10 +567,11 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
    });
    // Skills the driver discovered on disk per workspace. Session callbacks
    // rewrite the workspace entry with native commands and must keep these, or
-@@ -176,6 +186,83 @@
+@@ -167,6 +177,83 @@
+   const getSnapshot = SubscriptionRef.get(metadata).pipe(
      Effect.flatMap((state) => options.stampIdentity(state.draft)),
    );
- 
++
 +  /** Clear the previous account's limits without waiting for the quota backend. */
 +  const clearChangedAccountLimits = Effect.fn("AntigravityProvider.clearChangedAccountLimits")(
 +    function* (revision: number) {
@@ -647,11 +648,10 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
 +      }),
 +    );
 +  });
-+
+ 
    const checkProvider = Effect.fn("checkAntigravityProvider")(function* () {
      if (!settings.enabled) return yield* getSnapshot;
-     const before = yield* SubscriptionRef.get(metadata);
-@@ -199,8 +286,6 @@
+@@ -191,8 +278,6 @@
                : `Antigravity did not respond to its local health check within ${HEALTH_CHECK_TIMEOUT}.`;
      const supportsTextGeneration =
        initialized !== undefined ? yield* options.supportsTextGeneration : false;
@@ -660,7 +660,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
      const updatedAt = DateTime.formatIso(yield* DateTime.now);
      const next = yield* SubscriptionRef.updateAndGet(metadata, (state) => {
        if (state.authRevision !== before.authRevision) return state;
-@@ -221,12 +306,7 @@
+@@ -213,12 +298,7 @@
            version: initialized?.agentInfo?.version || draft.version,
            status: errorMessage ? "error" : authenticated ? "ready" : "warning",
            checkedAt: updatedAt,
@@ -674,7 +674,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
            ...(missingInstallation
              ? {
                  models: [],
-@@ -246,7 +326,10 @@
+@@ -238,7 +318,10 @@
          },
        } satisfies AntigravityProviderState;
      });
@@ -686,7 +686,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
    });
  
    const maintenanceCapabilities =
-@@ -265,7 +348,11 @@
+@@ -257,7 +340,11 @@
      enrichSnapshot: ({ publishSnapshot }) =>
        SubscriptionRef.changes(metadata).pipe(
          Stream.runForEach((state) =>
@@ -699,7 +699,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
          ),
        ),
    });
-@@ -276,24 +363,21 @@
+@@ -268,24 +355,21 @@
    ) {
      if (!settings.enabled) return;
      const before = yield* SubscriptionRef.get(metadata);
@@ -732,7 +732,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
          draft: {
            ...draft,
            installed: true,
-@@ -305,10 +389,6 @@
+@@ -297,10 +381,6 @@
              label: options.auth?.label ?? "Google account",
            },
            checkedAt: updatedAt,
@@ -743,7 +743,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
            models: buildAntigravityModelsFromSession(started.sessionSetupResult),
            supportsTextGeneration,
            ...(cwd
-@@ -326,7 +406,14 @@
+@@ -318,7 +398,14 @@
              : {}),
          },
        } satisfies AntigravityProviderState;
@@ -758,7 +758,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
    });
  
    const onConfigOptionsUpdated = Effect.fn("AntigravityProvider.onConfigOptionsUpdated")(function* (
-@@ -378,11 +465,13 @@
+@@ -370,11 +457,13 @@
      if (options.clearUsage) yield* options.clearUsage;
      if (!settings.enabled) return;
      const updatedAt = DateTime.formatIso(yield* DateTime.now);
@@ -786,7 +786,7 @@ diff --git a/apps/server/src/provider/Drivers/AntigravityDriver.ts b/apps/server
 diff --git a/apps/server/src/provider/antigravityUsageLimits.ts b/apps/server/src/provider/antigravityUsageLimits.ts
 --- a/apps/server/src/provider/antigravityUsageLimits.ts
 +++ b/apps/server/src/provider/antigravityUsageLimits.ts
-@@ -191,6 +191,19 @@
+@@ -189,6 +189,14 @@
        Effect.flatMap((response) => response.json),
        Effect.timeout("10 seconds"),
      );
@@ -796,17 +796,12 @@ diff --git a/apps/server/src/provider/antigravityUsageLimits.ts b/apps/server/sr
 +    if (!(yield* fs.exists(tokenPath))) return undefined;
 +    const token = yield* fs.readFileString(tokenPath).pipe(Effect.flatMap(decodeTokenFile));
 +    return yield* fingerprintForToken(token);
-+  }).pipe(
-+    Effect.timeout("10 seconds"),
-+    Effect.mapError(
-+      (cause) => new Error("Could not read Antigravity credential identity", { cause }),
-+    ),
-+  );
++  }).pipe(Effect.timeout("10 seconds"));
 +
    const read = Effect.gen(function* () {
      const startedGeneration = generation;
      const checkedAt = DateTime.formatIso(yield* DateTime.now);
-@@ -206,9 +219,7 @@
+@@ -204,9 +212,7 @@
        });
      }
      const token = yield* fs.readFileString(tokenPath).pipe(Effect.flatMap(decodeTokenFile));
@@ -817,7 +812,7 @@ diff --git a/apps/server/src/provider/antigravityUsageLimits.ts b/apps/server/sr
      const now = yield* Clock.currentTimeMillis;
      let accessToken: string;
      let account: string;
-@@ -300,6 +311,7 @@
+@@ -298,6 +304,7 @@
    );
    return {
      probe,

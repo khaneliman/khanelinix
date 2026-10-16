@@ -1,8 +1,7 @@
 diff --git a/apps/desktop/src/app/DesktopApp.ts b/apps/desktop/src/app/DesktopApp.ts
-index a6906099dbd5f275c2be94a75b72f61e04953025..6e88dfa977313e9291c9600c2200e67c16286634 100644
 --- a/apps/desktop/src/app/DesktopApp.ts
 +++ b/apps/desktop/src/app/DesktopApp.ts
-@@ -19,6 +19,7 @@ import * as DesktopApplicationMenu from "../window/DesktopApplicationMenu.ts";
+@@ -19,6 +19,7 @@
  import * as DesktopWindow from "../window/DesktopWindow.ts";
  import * as PreviewPasskeys from "../preview/Passkeys.ts";
  import * as DesktopBackendPool from "../backend/DesktopBackendPool.ts";
@@ -10,58 +9,45 @@ index a6906099dbd5f275c2be94a75b72f61e04953025..6e88dfa977313e9291c9600c2200e67c
  import * as DesktopEnvironment from "./DesktopEnvironment.ts";
  import * as DesktopLegacyLocalStorage from "./DesktopLegacyLocalStorage.ts";
  import * as DesktopLifecycle from "./DesktopLifecycle.ts";
-@@ -162,14 +163,50 @@ export const stopAllPoolInstances = Effect.fn("desktop.app.stopAllPoolInstances"
+@@ -160,6 +161,7 @@
  );
  
  const bootstrap = Effect.gen(function* () {
 +  const attachment = yield* DesktopExistingBackendAttachment.DesktopExistingBackendAttachment;
    const state = yield* DesktopState.DesktopState;
    const environment = yield* DesktopEnvironment.DesktopEnvironment;
--  const desktopSettings = yield* DesktopAppSettings.DesktopAppSettings;
-   const desktopWindow = yield* DesktopWindow.DesktopWindow;
+   const desktopSettings = yield* DesktopAppSettings.DesktopAppSettings;
+@@ -167,6 +169,9 @@
    const snapShot = yield* DesktopSnapShot.DesktopSnapShot;
    const appActivation = yield* DesktopAppActivation.DesktopAppActivation;
    yield* logBootstrapInfo("bootstrap start");
- 
++
 +  yield* attachment.bootstrap;
 +  const attached = yield* attachment.ready;
-+
+ 
+   const settings = yield* desktopSettings.get;
+   const electronProtocol = yield* ElectronProtocol.ElectronProtocol;
+@@ -186,6 +191,20 @@
+ 
+   yield* snapShot.initialize;
+ 
 +  if (Option.isSome(attached)) {
-+    if (yield* Ref.get(state.quitting)) return;
-+    const electronProtocol = yield* ElectronProtocol.ElectronProtocol;
-+    const rendererTarget = environment.isDevelopment
-+      ? Option.getOrThrow(environment.devServerUrl)
-+      : attached.value.httpBaseUrl;
-+    yield* electronProtocol.registerDesktopProtocol({
-+      scheme: ElectronProtocol.getDesktopScheme(environment.isDevelopment),
-+      targetOrigin: rendererTarget,
-+      clerkFrontendApiHostname: DesktopClerk.desktopClerkFrontendApiHostname,
-+    });
 +    yield* logBootstrapInfo("bootstrap attached to existing backend", {
 +      baseUrl: attached.value.httpBaseUrl.href,
 +    });
-+    yield* snapShot.initialize;
-+    yield* installDesktopIpcHandlers();
-+    yield* logBootstrapInfo("bootstrap ipc handlers registered");
-+    yield* (yield* DesktopLegacyLocalStorage.DesktopLegacyLocalStorage).load(
-+      yield* (yield* DesktopAppIdentity.DesktopAppIdentity).resolveUserDataPath,
-+    );
 +    if (!(yield* Ref.get(state.quitting))) {
 +      yield* desktopWindow.handleBackendReady(attached.value.httpBaseUrl);
 +      yield* appActivation.start.pipe(
 +        Effect.tap(() => logBootstrapInfo("desktop app control socket ready")),
-+        Effect.catch((error) =>
-+          logStartupError("desktop app control socket unavailable", { error }),
-+        ),
++        Effect.catch((error) => logStartupError("desktop app control socket unavailable", { error })),
 +      );
 +    }
 +    return;
 +  }
 +
-+  const desktopSettings = yield* DesktopAppSettings.DesktopAppSettings;
-   const settings = yield* desktopSettings.get;
-   // The renderer is served from the bundled client (or Vite in development)
-   // rather than through the local backend, so the window can open without one.
+   if (!settings.localEnvironmentEnabled) {
+     yield* logBootstrapInfo("bootstrap skipping local environment (disabled in settings)");
+     if (!(yield* Ref.get(state.quitting))) {
 diff --git a/apps/desktop/src/app/DesktopConfig.ts b/apps/desktop/src/app/DesktopConfig.ts
 index 773ea24509cf146ea63e57e6c5415e491eca2a52..2c78ca835ad2044c8bccd47ec607910d1a8769eb 100644
 --- a/apps/desktop/src/app/DesktopConfig.ts
@@ -95,20 +81,19 @@ index 6a8bc8e0ea4955a0313349f0ffbe1bc41e1b1abb..1973ee1e8e652c2116e5adfcc2d5edf2
      otlpTracesUrl: config.otlpTracesUrl,
      otlpMetricsUrl: config.otlpMetricsUrl,
 diff --git a/apps/desktop/src/backend/DesktopBackendManager.test.ts b/apps/desktop/src/backend/DesktopBackendManager.test.ts
-index 24303aa66997c4fddeb45f4f8c3c1cca21835d6a..0b62e08c84abdb3e4a10900c1b1998f7f96b59b0 100644
 --- a/apps/desktop/src/backend/DesktopBackendManager.test.ts
 +++ b/apps/desktop/src/backend/DesktopBackendManager.test.ts
-@@ -22,6 +22,9 @@ import * as TestClock from "effect/testing/TestClock";
+@@ -22,6 +22,9 @@
+ import * as TestClock from "effect/testing/TestClock";
  import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
  import { ChildProcess, ChildProcessSpawner } from "effect/process";
- 
++
 +import * as NodeServices from "@effect/platform-node/NodeServices";
 +import { processIsAlive } from "./DesktopExistingBackendAttachment.ts";
-+
+ 
  import * as DesktopBackendManager from "./DesktopBackendManager.ts";
  import * as DesktopApp from "../app/DesktopApp.ts";
- import * as DesktopBackendPool from "./DesktopBackendPool.ts";
-@@ -1509,6 +1512,13 @@ describe("DesktopBackendManager", () => {
+@@ -1525,6 +1528,13 @@
    it.effect("stopAllPoolInstances bounds the quit finalizer when backends hang", () =>
      Effect.scoped(
        Effect.gen(function* () {
@@ -119,10 +104,10 @@ index 24303aa66997c4fddeb45f4f8c3c1cca21835d6a..0b62e08c84abdb3e4a10900c1b1998f7
 +            stderr: "ignore",
 +          }),
 +        );
-         // Each backend's process-scope finalizer reports when it starts and
-         // when it finishes, keyed by instance name, so the test can prove
-         // both backends reached each milestone instead of inferring it from
-@@ -1574,7 +1584,8 @@ describe("DesktopBackendManager", () => {
+         const teardownStarted = yield* Queue.unbounded<string>();
+         const teardownFinished = yield* Queue.unbounded<string>();
+         const allowTeardown = yield* Deferred.make<void>();
+@@ -1579,7 +1589,8 @@
          yield* Deferred.succeed(allowTeardown, undefined);
          const finished = yield* Queue.takeN(teardownFinished, 2);
          assert.deepEqual(finished.toSorted(), ["instance1", "instance2"]);
@@ -788,18 +773,17 @@ index 3f0bd82d5888d1f34c9e3d76909294f1e248c472..52fb879df1d12b59c6979023483d5f50
 +  );
  });
 diff --git a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts b/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts
-index d137d502e6c5ede735a5e75bb9a6c47eccde399c..754d9ac2d49b024887edd37a049898640c462a7a 100644
 --- a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts
 +++ b/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts
-@@ -15,6 +15,7 @@ import * as Semaphore from "effect/Semaphore";
+@@ -15,6 +15,7 @@
  import * as HttpClient from "effect/http/HttpClient";
  
  import * as DesktopBackendPool from "./DesktopBackendPool.ts";
 +import * as DesktopExistingBackendAttachment from "./DesktopExistingBackendAttachment.ts";
  
- // A loopback /oauth/token exchange can fail transiently while the backend
- // settles (a 502-504, a refused or reset connection, a timeout). Retry those
-@@ -70,6 +71,7 @@ export class DesktopLocalEnvironmentAuth extends Context.Service<
+ const BOOTSTRAP_TRANSIENT_RETRY_TIMEOUT = Duration.seconds(15);
+ const BOOTSTRAP_TRANSIENT_RETRY_INTERVAL = Duration.millis(500);
+@@ -66,6 +67,7 @@
  /** @public Service construction is part of the canonical Effect module API. */
  export const make = Effect.gen(function* () {
    const pool = yield* DesktopBackendPool.DesktopBackendPool;
@@ -807,7 +791,7 @@ index d137d502e6c5ede735a5e75bb9a6c47eccde399c..754d9ac2d49b024887edd37a04989864
    const httpClient = yield* HttpClient.HttpClient;
    const tokenRef = yield* Ref.make(Option.none<string>());
    const mutex = yield* Semaphore.make(1);
-@@ -77,6 +79,10 @@ export const make = Effect.gen(function* () {
+@@ -73,6 +75,10 @@
    const getBearerToken = mutex
      .withPermits(1)(
        Effect.gen(function* () {
@@ -889,10 +873,9 @@ index a6913528653cadbecab8bae2631740ab54bb4d1b..6352c9d28f9b1eafe0ec5cc2010c7b05
  
  describe("getWindowFullscreenState", () => {
 diff --git a/apps/desktop/src/ipc/methods/window.ts b/apps/desktop/src/ipc/methods/window.ts
-index 47e6c02ffe52eaf73439b86589d66ef47caf3577..0149e26cf2cd6e3f1671c45c8c0dcee9e51f048c 100644
 --- a/apps/desktop/src/ipc/methods/window.ts
 +++ b/apps/desktop/src/ipc/methods/window.ts
-@@ -29,6 +29,7 @@ import * as DesktopEnvironment from "../../app/DesktopEnvironment.ts";
+@@ -29,6 +29,7 @@
  import * as DesktopAppSettings from "../../settings/DesktopAppSettings.ts";
  import * as DesktopWslBackend from "../../wsl/DesktopWslBackend.ts";
  import * as DesktopWslEnvironment from "../../wsl/DesktopWslEnvironment.ts";
@@ -900,7 +883,7 @@ index 47e6c02ffe52eaf73439b86589d66ef47caf3577..0149e26cf2cd6e3f1671c45c8c0dcee9
  import * as ElectronApp from "../../electron/ElectronApp.ts";
  import * as ElectronDialog from "../../electron/ElectronDialog.ts";
  import * as ElectronMenu from "../../electron/ElectronMenu.ts";
-@@ -96,10 +97,21 @@ export const getLocalEnvironmentBootstraps = DesktopIpc.makeSyncIpcMethod({
+@@ -96,10 +97,21 @@
    handler: Effect.fn("desktop.ipc.window.getLocalEnvironmentBootstraps")(function* () {
      const pool = yield* DesktopBackendPool.DesktopBackendPool;
      const configuration = yield* DesktopBackendConfiguration.DesktopBackendConfiguration;
@@ -921,7 +904,7 @@ index 47e6c02ffe52eaf73439b86589d66ef47caf3577..0149e26cf2cd6e3f1671c45c8c0dcee9
 +      if (Option.isSome(attached) && isPrimary) continue;
        const config = yield* instance.currentConfig;
        const snapshot = yield* instance.snapshot;
-       // A secondary backend (e.g. a parallel WSL backend) that hasn't produced
+       if (Option.isNone(config) || Option.isSome(config.value.preflightFailure)) {
 diff --git a/apps/desktop/src/main.ts b/apps/desktop/src/main.ts
 index ef00c4d66ed89b41f11f52aa6b754dccc7cc6446..3fa6a8238db1094c7a7587477ee29e7dcb3d743e 100644
 --- a/apps/desktop/src/main.ts

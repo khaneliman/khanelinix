@@ -1,8 +1,7 @@
 diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/ChatView.tsx
-index ca71e42f7a402cb915bdbe3ff9116505f6e8d017..4d3ac806c8063cafdf6b800b5420bbb8e474f1e8 100644
 --- a/apps/web/src/components/ChatView.tsx
 +++ b/apps/web/src/components/ChatView.tsx
-@@ -295,7 +295,6 @@ import { makeWorkspaceFileDropHandlers } from "./chat/workspaceFileDrop";
+@@ -305,7 +305,6 @@
  import { isEditableFocused } from "../lib/editableFocus";
  import { DEFAULT_RESOLVED_KEYBINDINGS } from "@t3tools/shared/keybindings";
  import { resolveChatShortcutCommand, shortcutLabelForCommand } from "../keybindings";
@@ -10,7 +9,7 @@ index ca71e42f7a402cb915bdbe3ff9116505f6e8d017..4d3ac806c8063cafdf6b800b5420bbb8
  import {
    AlarmClockIcon,
    CheckCircle2Icon,
-@@ -704,6 +703,7 @@ const DevicePanel = lazy(() =>
+@@ -717,6 +716,7 @@
    import("./device/DevicePanel").then((module) => ({ default: module.DevicePanel })),
  );
  const FilePreviewPanel = lazy(() => import("./files/FilePreviewPanel"));
@@ -18,7 +17,7 @@ index ca71e42f7a402cb915bdbe3ff9116505f6e8d017..4d3ac806c8063cafdf6b800b5420bbb8
  const EMPTY_PENDING_FILE_SURFACE_IDS: ReadonlySet<string> = new Set();
  const TYPE_TO_FOCUS_EDITABLE_SELECTOR = [
    "input",
-@@ -1325,35 +1325,39 @@ const PersistentThreadTerminalDrawer = memo(function PersistentThreadTerminalDra
+@@ -1327,34 +1327,36 @@
        )}
      >
        <div className="min-h-0 overflow-clip">
@@ -30,7 +29,6 @@ index ca71e42f7a402cb915bdbe3ff9116505f6e8d017..4d3ac806c8063cafdf6b800b5420bbb8
 -          runtimeEnv={runtimeEnv}
 -          visible={visible}
 -          height={terminalUiState.terminalHeight}
--          // Known-session order is MRU and changes on focus; persisted store order keeps sidebar labels stable.
 -          terminalIds={canOperateTerminal ? terminalUiState.terminalIds : serverOrderedTerminalIds}
 -          activeTerminalId={terminalUiState.activeTerminalId}
 -          terminalGroups={terminalUiState.terminalGroups}
@@ -60,10 +58,7 @@ index ca71e42f7a402cb915bdbe3ff9116505f6e8d017..4d3ac806c8063cafdf6b800b5420bbb8
 +            runtimeEnv={runtimeEnv}
 +            visible={visible}
 +            height={terminalUiState.terminalHeight}
-+            // Known-session order is MRU and changes on focus; persisted store order keeps sidebar labels stable.
-+            terminalIds={
-+              canOperateTerminal ? terminalUiState.terminalIds : serverOrderedTerminalIds
-+            }
++            terminalIds={canOperateTerminal ? terminalUiState.terminalIds : serverOrderedTerminalIds}
 +            activeTerminalId={terminalUiState.activeTerminalId}
 +            terminalGroups={terminalUiState.terminalGroups}
 +            activeTerminalGroupId={terminalUiState.activeTerminalGroupId}
@@ -87,7 +82,7 @@ index ca71e42f7a402cb915bdbe3ff9116505f6e8d017..4d3ac806c8063cafdf6b800b5420bbb8
        </div>
      </div>
    );
-@@ -1493,41 +1497,45 @@ const PersistentThreadTerminalPanel = memo(function PersistentThreadTerminalPane
+@@ -1494,41 +1496,45 @@
    if (!project || !cwd) return null;
  
    return (
