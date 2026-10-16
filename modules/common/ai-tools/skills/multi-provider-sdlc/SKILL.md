@@ -38,3 +38,5 @@ override and pass supported non-null `reasoning_effort`. Record every claimed
 attempt through `record_argv`; native attempts cannot report named-agent errors.
 Preserve `semantic_role` and `write_policy` in the packet. A catalog is not
 proof of quota or successful inference. Selection grants no new authority.
+Isolate only a `workspace write` route that cannot share the checkout. Its
+worktree outlives the task; `git-toolkit` cleanup owns its closeout.

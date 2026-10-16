@@ -162,11 +162,13 @@ behavior is verified.
   re-diagnose from their evidence, or report what each attempt showed and what
   remains unknown.
 - Own task-created branches, worktrees, and worker resources through cleanup,
-  using `git-toolkit` cleanup mode before creating or removing them. Before
-  claiming completion, integrate, verify, stop workers, and remove integrated
-  task-owned resources. This standing authority covers safe local cleanup, not
-  unrelated or unintegrated work or remote branches. Report any retained
-  resource with its exact path or ref, reason, and next action.
+  using `git-toolkit` cleanup mode before creating or removing them. Close out
+  each worktree as soon as its slice is integrated, rejected, or abandoned, not
+  at the end of the run. Before claiming completion, integrate, verify, stop
+  workers, and remove integrated task-owned resources. This standing authority
+  covers safe local cleanup, not unrelated or unintegrated work or remote
+  branches. Report any retained resource with its exact path or ref, reason, and
+  next action.
 - When evidence supports disagreement, state reason, alternative, and risk.
 - Keep disposable build scratch in the repository's ignored build directory or
   under `$XDG_CACHE_HOME`, not `/tmp`.

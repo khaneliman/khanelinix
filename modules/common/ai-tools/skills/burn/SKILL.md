@@ -22,12 +22,14 @@ delegation tools. Keep state in the task's ignored scratch directory.
    owner, and an exit condition. Quota is a resource, not a work target.
 2. **Read capacity.** Discover live providers, models, and actual host limits.
    In T3 use `orchestrator_capabilities`; a thread-creation batch limit is not a
-   delegated-worker concurrency limit. Use `multi-provider-sdlc` quota advice
-   with `--user-requested` for each relevant provider, fetching independent
-   sources concurrently. Match each source to the account running the workers.
-   Keep all reported windows, headroom, reset times, and available reset-credit
-   inventory. Missing telemetry is unknown, not exhaustion or unlimited usage.
-   When `reset-inventory.py` is installed, enrich the Codex read with
+   delegated-worker concurrency limit. Disk is a host limit: check free space as
+   `git-toolkit` cleanup describes before isolating any worker. Use
+   `multi-provider-sdlc` quota advice with `--user-requested` for each relevant
+   provider, fetching independent sources concurrently. Match each source to the
+   account running the workers. Keep all reported windows, headroom, reset
+   times, and available reset-credit inventory. Missing telemetry is unknown,
+   not exhaustion or unlimited usage. When `reset-inventory.py` is installed,
+   enrich the Codex read with
    `reset-inventory.py codexbar usage --provider codex --source cli --json --no-credits`
    and pipe its JSON to quota advice with
    `--provider codex --from-stdin
@@ -47,33 +49,42 @@ delegation tools. Keep state in the task's ignored scratch directory.
    provider and host capacity can sustain. Use concurrent tool calls and refill
    slots as workers finish, rather than waiting for a whole wave. There is no
    default worker count or forecast-based conservation ceiling in burn mode.
-   Grow until ready work, real throttling, host pressure, or parent integration
-   throughput becomes the constraint. For unknown capacity, let one required
-   task probe each provider/pool, then expand after success. Use isolated
-   worktrees when parallel writers cannot safely share a checkout; commit
-   required inputs first because T3 worktrees start from the parent commit.
+   Grow until ready work, real throttling, host pressure, free disk, or parent
+   integration throughput becomes the constraint. For unknown capacity, let one
+   required task probe each provider/pool, then expand after success. Give an
+   isolated worktree only to a writer that cannot share the checkout; reviewers,
+   playtesters, planners, and other readers never get one. Record each worktree
+   before dispatch, and commit required inputs first because T3 worktrees start
+   from the parent commit. A slot frees only after its worktree closes.
 5. **Keep the parent productive.** Give workers bounded packets with task,
    paths, verified context, constraints, write policy, skill/tool lane, required
    evidence, and exit criteria. Integrate and verify returned slices while other
-   workers run. Avoid overlapping writers, duplicate investigations, and extra
-   review rounds without an unresolved question. Reserve enough capacity to
-   finish integration and corrections, not an arbitrary quota percentage.
+   workers run. Close out each slice's worktree through `git-toolkit` cleanup as
+   soon as the slice resolves, before refilling its slot. Avoid overlapping
+   writers, duplicate investigations, and extra review rounds without an
+   unresolved question. Reserve enough capacity to finish integration and
+   corrections, not an arbitrary quota percentage.
 6. **React to actual limits.** Retain task-local routing state, claims, task
-   IDs, and outcomes. On exhaustion, route remaining ready work to another
-   capable subscription instead of trying another model in the same pool.
-   Refresh quota before substantial expansion and after a confirmed reset. A
-   reset credit being available or a reset timestamp passing does not prove
-   replenishment. Redeem a credit only when the user authorized redemption and a
-   supported mechanism exists; never purchase credits implicitly. Otherwise
-   report the available reset while continuing work on other providers. After
-   account-matched fresh telemetry or an explicit user report confirms
-   replenishment, use `multi-provider-sdlc`'s `reset-quota` recovery procedure
-   once for that reset. This rearms one pool for a required probe and preserves
-   other failures. Treat rate throttling separately from exhausted allowance;
-   honor retry timing and reduce pressure on the affected route.
+   IDs, worktree ownership records, and outcomes. Before each refill, compare
+   `git worktree list` with those records. An unrecorded worktree, or a resolved
+   one still open, blocks expansion until it is closed out. Low disk is a hard
+   stop for isolated dispatch until resolved worktrees are closed out. On
+   exhaustion, route remaining ready work to another capable subscription
+   instead of trying another model in the same pool. Refresh quota before
+   substantial expansion and after a confirmed reset. A reset credit being
+   available or a reset timestamp passing does not prove replenishment. Redeem a
+   credit only when the user authorized redemption and a supported mechanism
+   exists; never purchase credits implicitly. Otherwise report the available
+   reset while continuing work on other providers. After account-matched fresh
+   telemetry or an explicit user report confirms replenishment, use
+   `multi-provider-sdlc`'s `reset-quota` recovery procedure once for that reset.
+   This rearms one pool for a required probe and preserves other failures. Treat
+   rate throttling separately from exhausted allowance; honor retry timing and
+   reduce pressure on the affected route.
 7. **Finish the work.** Stop adding workers when the authorized queue is done,
    all capable routes are genuinely blocked, or the user stops the run. Collect
-   and inspect every result, complete verification, and clean up task-owned
-   resources. Report completed work, provider distribution, observed usage where
-   available, and any remaining blocker. Never invent usage or claim a speedup
+   and inspect every result, complete verification, and close out every recorded
+   worktree; none may remain open after the run. Report completed work, provider
+   distribution, observed usage where available, retained branches with their
+   tips, and any remaining blocker. Never invent usage or claim a speedup
    without measurements.

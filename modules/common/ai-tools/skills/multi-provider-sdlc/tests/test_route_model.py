@@ -236,7 +236,7 @@ class RouteModelTests(unittest.TestCase):
         self.assertIn("--schema", skill)
         self.assertNotIn("references/", skill)
         self.assertNotIn("model-routing.json", skill)
-        self.assertLessEqual(len(skill.splitlines()), 40)
+        self.assertLessEqual(len(skill.splitlines()), 42)
 
     def test_cli_rejects_duplicate_keys_and_oversized_input(self) -> None:
         for value in (
