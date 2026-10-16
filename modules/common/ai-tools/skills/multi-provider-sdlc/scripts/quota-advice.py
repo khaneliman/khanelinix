@@ -132,6 +132,19 @@ def summarize(payload, provider, max_age_seconds=300, now=None):
     else:
         result = advice(provider, reason="window-evidence-incomplete", windows=windows)
     result["snapshot_age_seconds"] = age
+    if provider == "codex":
+        credits = usage.get("codexResetCredits")
+        count = credits.get("availableCount") if isinstance(credits, dict) else None
+        if type(count) is int and count >= 0:
+            entries = credits.get("credits")
+            expired = 0
+            for credit in entries if isinstance(entries, list) else []:
+                if not isinstance(credit, dict) or credit.get("status") != "available":
+                    continue
+                expiry = timestamp(credit.get("expires_at") or credit.get("expiresAt"))
+                if expiry is not None and expiry <= now:
+                    expired += 1
+            result["reset_credits_available"] = max(0, count - expired)
     return result
 
 
@@ -154,43 +167,41 @@ def main(argv=None):
     parser.add_argument("--user-requested", action="store_true")
     parser.add_argument("--max-age-seconds", type=max_age, default=300)
     args = parser.parse_args(argv)
+    try:
+        if args.from_stdin:
+            raw = sys.stdin.read(MAX_INPUT + 1)
+        else:
+            completed = subprocess.run(
+                [
+                    "codexbar",
+                    "usage",
+                    "--provider",
+                    args.provider,
+                    "--source",
+                    "cli",
+                    "--json",
+                    "--no-credits",
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+                timeout=10,
+                check=True,
+                text=True,
+                encoding="utf-8",
+            )
+            raw = completed.stdout
+        if len(raw) > MAX_INPUT:
+            result = advice(args.provider, reason="quota-data-too-large")
+        else:
+            result = summarize(json.loads(raw), args.provider, args.max_age_seconds)
+    except subprocess.TimeoutExpired:
+        result = advice(args.provider, reason="quota-tool-timeout")
+    except (OSError, subprocess.CalledProcessError):
+        result = advice(args.provider, reason="quota-tool-unavailable-or-failed")
+    except (ValueError, RecursionError):
+        result = advice(args.provider, reason="quota-data-malformed")
     if args.user_requested:
-        result = advice(args.provider, reason="explicit-user-request")
         result["next_action"] = "follow-user-request"
-    else:
-        try:
-            if args.from_stdin:
-                raw = sys.stdin.read(MAX_INPUT + 1)
-            else:
-                completed = subprocess.run(
-                    [
-                        "codexbar",
-                        "usage",
-                        "--provider",
-                        args.provider,
-                        "--source",
-                        "cli",
-                        "--json",
-                        "--no-credits",
-                    ],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.DEVNULL,
-                    timeout=10,
-                    check=True,
-                    text=True,
-                    encoding="utf-8",
-                )
-                raw = completed.stdout
-            if len(raw) > MAX_INPUT:
-                result = advice(args.provider, reason="quota-data-too-large")
-            else:
-                result = summarize(json.loads(raw), args.provider, args.max_age_seconds)
-        except subprocess.TimeoutExpired:
-            result = advice(args.provider, reason="quota-tool-timeout")
-        except (OSError, subprocess.CalledProcessError):
-            result = advice(args.provider, reason="quota-tool-unavailable-or-failed")
-        except (ValueError, RecursionError):
-            result = advice(args.provider, reason="quota-data-malformed")
     print(json.dumps(result, allow_nan=False))
     return 0
 

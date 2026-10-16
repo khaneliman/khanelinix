@@ -48,7 +48,9 @@ class QuotaAdviceTests(unittest.TestCase):
             mock.patch.object(quota.subprocess, "run", side_effect=error) as run,
             mock.patch.object(quota.sys, "stdin", io.StringIO(stdin)),
             mock.patch.object(quota.sys, "stdout", new_callable=io.StringIO) as output,
+            mock.patch.object(quota, "datetime", wraps=datetime) as clock,
         ):
+            clock.now.return_value = NOW
             run.return_value = subprocess.CompletedProcess(["codexbar"], 0, stdout)
             self.assertEqual(quota.main(["--provider", "codex", *args]), 0)
             return json.loads(output.getvalue()), run
@@ -130,28 +132,51 @@ class QuotaAdviceTests(unittest.TestCase):
         data[0]["pace"]["primary"] = {"etaSeconds": 250}
         self.assertEqual(self.summarize(data)["forecast"], "on-track")
 
-    def test_override_neither_fetches_nor_reads_stdin(self):
-        with mock.patch.object(quota.sys, "stdin") as stdin:
-            stdin.read.side_effect = AssertionError("must not read stdin")
-            with (
-                mock.patch.object(quota.subprocess, "run") as run,
-                mock.patch.object(
-                    quota.sys, "stdout", new_callable=io.StringIO
-                ) as output,
-            ):
-                self.assertEqual(
-                    quota.main(
-                        ["--provider", "claude", "--user-requested", "--from-stdin"]
-                    ),
-                    0,
+    def test_override_preserves_fresh_usage_and_forecast(self):
+        data = snapshot()
+        data[0]["pace"]["primary"]["willLastToReset"] = False
+        for from_stdin in (False, True):
+            with self.subTest(from_stdin=from_stdin):
+                args = ["--user-requested"]
+                if from_stdin:
+                    args.append("--from-stdin")
+                result, run = self.cli(
+                    *args, stdin=json.dumps(data), stdout=json.dumps(data)
                 )
-                result = json.loads(output.getvalue())
                 self.assertEqual(result["next_action"], "follow-user-request")
-                self.assertTrue(result["is_advisory"])
-                stdin.read.assert_not_called()
-                run.assert_not_called()
-        _, run = self.cli("--user-requested")
-        run.assert_not_called()
+                self.assertEqual(result["forecast"], "at-risk")
+                self.assertEqual(result["windows"][0]["used_percent"], 25)
+                self.assertEqual(result["windows"][0]["seconds_to_reset"], 100)
+                self.assertEqual(run.call_count, 0 if from_stdin else 1)
+
+    def test_override_honors_request_when_usage_is_unavailable(self):
+        result, _ = self.cli("--user-requested", error=FileNotFoundError())
+        self.assertEqual(result["next_action"], "follow-user-request")
+        self.assertEqual(result["forecast"], "unknown")
+
+    def test_reset_credit_inventory_is_optional_fresh_and_sanitized(self):
+        data = snapshot()
+        data[0]["usage"]["codexResetCredits"] = {
+            "availableCount": 2,
+            "credits": [{"id": "private-account-id", "status": "available"}],
+        }
+        result = self.summarize(data)
+        self.assertEqual(result["reset_credits_available"], 2)
+        self.assertNotIn("private-account-id", json.dumps(result))
+        data[0]["usage"]["codexResetCredits"]["credits"] = [
+            {
+                "status": "available",
+                "expires_at": (NOW - timedelta(seconds=1)).isoformat(),
+            },
+            {"status": "used", "expires_at": (NOW - timedelta(seconds=1)).isoformat()},
+        ]
+        self.assertEqual(self.summarize(data)["reset_credits_available"], 1)
+        data[0]["usage"]["updatedAt"] = (NOW - timedelta(seconds=301)).isoformat()
+        self.assertNotIn("reset_credits_available", self.summarize(data))
+        for count in (None, -1, True, "2"):
+            data = snapshot()
+            data[0]["usage"]["codexResetCredits"] = {"availableCount": count}
+            self.assertNotIn("reset_credits_available", self.summarize(data))
 
     def test_tool_failures_are_advisory_and_sanitized(self):
         for error in (

@@ -23,14 +23,14 @@ from typing import Any
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = SKILL_ROOT / "references" / "model-routing.json"
 RENDERER_PATH = SKILL_ROOT / "scripts" / "render-model-routes.py"
-STATE_SCHEMA_VERSION = 3
+STATE_SCHEMA_VERSION = 4
 MAX_REGISTRY_BYTES = 256 * 1024
-MAX_STATE_BYTES = 64 * 1024
+# Bound parsing memory while allowing thousands of tracked workers.
+MAX_STATE_BYTES = 16 * 1024 * 1024
 MAX_TELEMETRY_BYTES = 64 * 1024
 TASK_ID_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,79}\Z")
 CLAIM_ID_RE = re.compile(r"[0-9a-f]{32}\Z")
 CIRCUIT_STATES = {"unknown", "available", "open"}
-MAX_ACTIVE_CLAIMS = 32
 OUTCOMES = {
     "success",
     "quota-exhausted",
@@ -195,6 +195,9 @@ def exclusive_state_lock(path: Path) -> Iterator[None]:
 
 
 def write_state(path: Path, state: dict[str, Any]) -> None:
+    payload = canonical_json(state)
+    if len(payload) > MAX_STATE_BYTES:
+        raise CapabilityError(f"capability state exceeds {MAX_STATE_BYTES} bytes")
     descriptor, temporary_name = tempfile.mkstemp(
         dir=path.parent,
         prefix=f".{path.name}.",
@@ -204,7 +207,7 @@ def write_state(path: Path, state: dict[str, Any]) -> None:
     try:
         os.fchmod(descriptor, 0o600)
         with os.fdopen(descriptor, "wb", closefd=True) as handle:
-            handle.write(canonical_json(state))
+            handle.write(payload)
             handle.flush()
             os.fsync(handle.fileno())
         os.replace(temporary_path, path)
@@ -252,8 +255,8 @@ def model_scope_names(model_id: str, model: dict[str, Any]) -> set[str]:
 
 
 def validate_claims(value: Any, registry: dict[str, Any]) -> None:
-    if not isinstance(value, dict) or len(value) > MAX_ACTIVE_CLAIMS:
-        raise CapabilityError("claims must be a bounded object")
+    if not isinstance(value, dict):
+        raise CapabilityError("claims must be an object")
     occupied: set[str] = set()
     for claim_id, claim in value.items():
         if not isinstance(claim_id, str) or not CLAIM_ID_RE.fullmatch(claim_id):
@@ -328,10 +331,8 @@ def validate_claims(value: Any, registry: dict[str, Any]) -> None:
                 raise CapabilityError("claim has an invalid candidate override")
         if (
             not isinstance(scopes, list)
-            or not scopes
             or any(not isinstance(scope, str) for scope in scopes)
             or scopes != sorted(set(scopes))
-            or f"route:{model_id}" not in scopes
             or not set(scopes).issubset(
                 model_scope_names(model_id, registry["models"][model_id])
             )
@@ -350,7 +351,9 @@ def validate_claim_scope_coverage(
         model = registry["models"][model_id]
         subscription = model["subscription"]
         pool = model["quota_pool"]
-        required = {f"route:{model_id}"}
+        required = set()
+        if state["routes"][model_id] == "unknown":
+            required.add(f"route:{model_id}")
         if claim["named_agent"] and state["named_agents"] == "unknown":
             required.add("named-agent-surface")
         if state["providers"][subscription] == "unknown":
@@ -495,7 +498,7 @@ def mark_open(container: dict[str, str], key: str) -> bool:
 
 def mark_named_available(state: dict[str, Any]) -> bool:
     # The named-agent surface is recoverable inside one task because a host can
-    # accept named agent types again. Quota-pool circuits stay open instead.
+    # accept named agent types again. Pool recovery requires a confirmed reset.
     if state["named_agents"] == "available":
         return False
     state["named_agents"] = "available"
@@ -743,8 +746,6 @@ def claim_route(
     with exclusive_state_lock(path):
         state = load_state(path, task_id, registry, digest)
         require_revision(state, expected_revision)
-        if len(state["claims"]) >= MAX_ACTIVE_CLAIMS:
-            raise CapabilityError("too many active claims")
         route = task_route(registry, need)
         planned_candidates = candidate_model_ids(
             state, registry, route, named_agent=named_agent
@@ -762,7 +763,9 @@ def claim_route(
         )
         if reason is not None:
             raise CapabilityError(f"route is unavailable: {reason}")
-        scopes = {f"route:{model_id}"}
+        scopes = set()
+        if state["routes"][model_id] == "unknown":
+            scopes.add(f"route:{model_id}")
         if named_agent and state["named_agents"] == "unknown":
             scopes.add("named-agent-surface")
         subscription = model["subscription"]
@@ -973,6 +976,39 @@ def ingest_google_telemetry(
     }
 
 
+def reset_quota(
+    path: Path,
+    task_id: str,
+    expected_revision: int,
+    subscription: str,
+    pool: str,
+) -> dict[str, Any]:
+    """Rearm one pool after the caller confirms its account's quota reset."""
+    require_task_id(task_id)
+    path = state_path(path)
+    registry, digest = load_registry_context()
+    if pool not in registry["quota_pools"].get(subscription, []):
+        raise CapabilityError("unknown subscription or quota pool")
+    with exclusive_state_lock(path):
+        state = load_state(path, task_id, registry, digest)
+        require_revision(state, expected_revision)
+        for claim in state["claims"].values():
+            model = registry["models"][claim["model"]]
+            if model["subscription"] == subscription and model["quota_pool"] == pool:
+                raise CapabilityError("quota pool still has active claims")
+        changed = state["pools"][subscription][pool] == "open"
+        if changed:
+            state["pools"][subscription][pool] = "unknown"
+        save_if_changed(path, state, changed)
+    return {
+        "changed": changed,
+        "taskId": task_id,
+        "revision": state["revision"],
+        "subscription": subscription,
+        "pool": pool,
+    }
+
+
 def status_report(path: Path, task_id: str) -> dict[str, Any]:
     require_task_id(task_id)
     path = state_path(path)
@@ -1033,6 +1069,21 @@ def build_parser() -> argparse.ArgumentParser:
     ingest.add_argument("--expected-revision", type=int, required=True)
     ingest.add_argument("--input", type=Path, default=Path("-"))
 
+    reset = commands.add_parser(
+        "reset-quota",
+        description=(
+            "Rearm one exhausted pool for a required probe after fresh telemetry "
+            "for the same account or an explicit user report confirms replenishment. "
+            "An elapsed reset timestamp or available credit is not confirmation. "
+            "Wait for the pool's active claims, then read status for its revision. "
+            "Preserves provider, route, and other pool failures in the existing state."
+        ),
+    )
+    reset.add_argument("--expected-revision", type=int, required=True)
+    reset.add_argument("--subscription", required=True)
+    reset.add_argument("--pool", required=True)
+    reset.add_argument("--confirmed-reset", action="store_true", required=True)
+
     commands.add_parser("status")
     return parser
 
@@ -1076,6 +1127,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
         elif args.command == "cancel":
             result = cancel_claim(args.state, args.task_id, args.claim_id)
+        elif args.command == "reset-quota":
+            result = reset_quota(
+                args.state,
+                args.task_id,
+                args.expected_revision,
+                args.subscription,
+                args.pool,
+            )
         elif args.command == "ingest-google":
             if args.input == Path("-"):
                 raw = read_stream_bytes(

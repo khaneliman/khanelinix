@@ -139,8 +139,10 @@ returns a forecast, window evidence, and an advisory `next_action`:
 - `use-normal-judgment`: usage data is missing, stale, incomplete, or cannot be
   attributed to one provider account. Continue without a quota-based decision.
 - `follow-user-request`: explicit requests for more workers or a swarm override
-  forecast-based conservation. This flag skips the quota fetch, so your request
-  does not wait for information that cannot change the decision.
+  forecast-based conservation. The bounded fetch still returns fresh usage,
+  reset timing, and forecasts so the caller can allocate work across providers.
+  When present, `reset_credits_available` reports Codex reset-credit inventory;
+  missing inventory is unknown, not zero. The helper never redeems credits.
 
 CodexBar is optional. It publishes macOS and Linux CLI builds; a missing CLI on
 Windows or any other platform returns unavailable advice, not a blocked route.
@@ -212,8 +214,9 @@ python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id 
 Only a successful claim authorizes named-model dispatch. Never dispatch from a
 plan alone. The claim records its task need, plan revision, selected model, and
 current planned candidate set. A claim reserves each unknown named-agent,
-provider, and pool scope, plus the selected route. Use a fresh revision for each
-parallel claim; distinct known scopes can remain active together.
+provider, pool, and route scope for one probe. Once those capabilities are
+known, many workers can use the same model concurrently. Use a fresh revision
+for each claim; the parent serializes state claims, not worker execution.
 
 Use a non-candidate only when caller intent requires one. Add exactly one
 categorical `--override-reason`: `explicit-model-request`,
@@ -251,16 +254,41 @@ revision for the next plan or claim:
 ```
 
 The state keeps active claim metadata and categorical route, pool, provider, and
-named-agent circuits. Route, pool, and provider circuits stay open for the
-current task. The named-agent surface is the one recoverable circuit. A later
-outcome that carries named-agent availability evidence closes that surface and
-resumes named routing. A compare-and-swap claim rejects concurrent or stale
-probes. If the canonical registry or state schema changes, initialize a new
-task-state path. Do not rewrite stale state because older claims lack current
-binding evidence. Schema 3 records whether each claim uses a local named agent.
-Existing schema-2 task state is rejected rather than silently converted. Finish
-its claims with the matching installed script and keep its failures for that
-task; initialize schema-3 state for new tasks, not to bypass old circuits.
+named-agent circuits. Route and provider circuits stay open for the current
+task. Pool circuits also stay open unless a quota reset is confirmed through the
+recovery procedure below. A later outcome that carries named-agent availability
+evidence closes that surface and resumes named routing. A compare-and-swap claim
+rejects concurrent or stale probes. If the canonical registry or state schema
+changes, initialize a new task-state path. Do not rewrite stale state because
+older claims lack current binding evidence. Schema 4 permits claims without
+exclusive scopes once a route is known. Earlier task state is rejected rather
+than silently converted. Finish its claims with the matching installed script
+and keep its failures for that task; initialize schema-4 state for new tasks,
+not to bypass old circuits.
+
+### Confirmed quota resets
+
+After fresh telemetry for the same account shows replenished capacity, or the
+user explicitly reports completing that account's reset, rearm only the affected
+pool. An available reset credit, a forecast timestamp, ordinary rate throttling,
+or a request to burn usage is not confirmation. Refresh quota first when
+telemetry is available; otherwise let one required task probe the reset.
+
+Wait for active claims in that pool to finish, read `status` for the current
+revision, then run:
+
+```console
+python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> reset-quota --expected-revision <revision> --subscription <subscription> --pool <pool> --confirmed-reset
+```
+
+Use canonical subscription and pool names from routing state, not CodexBar
+provider names. The command trusts the caller's reset confirmation, as `record`
+trusts reported worker outcomes. It changes only an exhausted pool to `unknown`
+so one required task probes capacity. It preserves provider, route, named-agent,
+and other pool failures, rejects active claims or a stale revision, and is a
+no-op when the pool is not exhausted. Record the next attempt normally. A new
+quota failure blocks the pool again; another recovery requires a newly confirmed
+reset. Keep the existing state file rather than erasing failures.
 
 ### T3 native dispatch
 
@@ -294,8 +322,8 @@ quota failures, and categorical outcomes retain the same protections.
 - `unknown`: allow one required attempt; a `429` or retry-limit failure opens
   that pool circuit for the current task.
 - Reuse open circuits across later phases and challenge rounds. Do not probe or
-  retry another model in the same pool. Skipped calls do not consume dispatch
-  budget.
+  retry another model in the same pool unless a newly confirmed quota reset
+  rearms it through `reset-quota`. Skipped calls do not consume dispatch budget.
 - Treat unsupported models and model-specific errors as route failures; one
   corrected route in the same pool is allowed. Treat host rejection of named
   agent types as a named-agent surface failure. Treat auth or connection failure

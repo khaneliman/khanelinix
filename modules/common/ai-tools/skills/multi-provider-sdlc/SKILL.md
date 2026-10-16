@@ -20,14 +20,16 @@ In T3, call `orchestrator_capabilities` and pass its live result as
 `capabilities`, with `gateway: false`. The resolver returns a native `target`
 for `delegate_task`, not a local named agent. Narrow provider instances when
 needed to match the intended account; quota state must describe those accounts.
-Without T3 capabilities, native selection uses the current CLI's semantic
-profile and cannot switch subscriptions. Gateway selection needs configured
-gateway model agents; it does not create them or change a native invocation.
+Without T3, native selection stays on its CLI profile and subscription. Gateway
+routing needs configured model agents; it does not create them.
 
 For optional quota advice:
 `python3 <skill-root>/scripts/quota-advice.py --provider <codex|claude|antigravity>`.
-Match its account to the route; add `--user-requested` for more workers or a
-swarm. Missing CodexBar never blocks dispatch.
+Match its account to the route; `--user-requested` preserves telemetry. Missing
+CodexBar never blocks dispatch. After confirmed replenishment, consult
+`python3 <skill-root>/scripts/route-capability.py reset-quota --help`.
+Confirmation requires account-matched telemetry or a user report, not a
+timestamp or an available credit. User requests override forecast conservation.
 
 Follow `next_action`: complete `claim_argv` before any stateful dispatch. For a
 `target`, call `delegate_task` and retain its task ID; manage it through

@@ -145,11 +145,102 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertIn("<skill-root>/scripts/route-capability.py", routing)
         self.assertIn("semanticFallbackReason", routing)
         self.assertIn("agent-type-available", routing)
-        self.assertIn(
-            "Route, pool, and provider circuits stay open for the\ncurrent task",
-            routing,
+        self.assertIn("reset-quota", routing)
+        self.assertIn("--confirmed-reset", routing)
+
+    def test_confirmed_reset_rearms_only_the_exhausted_pool(self) -> None:
+        self.initialize()
+        model = self.registry["task_routes"][0]["preferred"][0]
+        route = self.registry["models"][model]
+        self.complete(model, "quota-exhausted")
+        before = self.load_state()
+        result = self.run_cli(
+            "reset-quota",
+            "--expected-revision",
+            str(before["revision"]),
+            "--subscription",
+            route["subscription"],
+            "--pool",
+            route["quota_pool"],
+            "--confirmed-reset",
         )
-        self.assertIn("the one recoverable circuit", routing)
+        after = self.load_state()
+        self.assertTrue(result["changed"])
+        self.assertEqual(
+            after["pools"][route["subscription"]][route["quota_pool"]], "unknown"
+        )
+        expected = before.copy()
+        expected["pools"] = json.loads(json.dumps(before["pools"]))
+        expected["pools"][route["subscription"]][route["quota_pool"]] = "unknown"
+        expected["revision"] += 1
+        self.assertEqual(after, expected)
+        self.claim(model, after["revision"])
+
+    def test_reset_preserves_provider_and_route_failures(self) -> None:
+        self.initialize()
+        state = self.load_state()
+        state["providers"]["openai"] = "open"
+        state["pools"]["openai"]["general"] = "open"
+        model = next(
+            name
+            for name, route in self.registry["models"].items()
+            if route["subscription"] == "openai"
+        )
+        state["routes"][model] = "open"
+        self.state.write_bytes(capability.canonical_json(state))
+        capability.reset_quota(self.state, self.task_id, 0, "openai", "general")
+        after = self.load_state()
+        self.assertEqual(after["providers"]["openai"], "open")
+        self.assertEqual(after["routes"][model], "open")
+
+    def test_reset_is_idempotent_and_rejects_stale_or_unknown_targets(self) -> None:
+        self.initialize()
+        before = self.state.read_bytes()
+        result = capability.reset_quota(
+            self.state, self.task_id, 0, "openai", "general"
+        )
+        self.assertFalse(result["changed"])
+        self.assertEqual(self.state.read_bytes(), before)
+        for revision, subscription, pool in (
+            (1, "openai", "general"),
+            (0, "unknown", "general"),
+            (0, "openai", "unknown"),
+        ):
+            with self.assertRaises(capability.CapabilityError):
+                capability.reset_quota(
+                    self.state, self.task_id, revision, subscription, pool
+                )
+            self.assertEqual(self.state.read_bytes(), before)
+
+    def test_reset_rejects_active_claims(self) -> None:
+        self.initialize()
+        model = self.registry["task_routes"][0]["preferred"][0]
+        self.claim(model)
+        before = self.state.read_bytes()
+        route = self.registry["models"][model]
+        with self.assertRaisesRegex(capability.CapabilityError, "active claims"):
+            capability.reset_quota(
+                self.state, self.task_id, 1, route["subscription"], route["quota_pool"]
+            )
+        self.assertEqual(self.state.read_bytes(), before)
+
+    def test_reset_requires_explicit_confirmation(self) -> None:
+        with self.assertRaises(SystemExit), mock.patch.object(sys, "stderr"):
+            capability.build_parser().parse_args(
+                [
+                    "--state",
+                    str(self.state),
+                    "--task-id",
+                    self.task_id,
+                    "reset-quota",
+                    "--expected-revision",
+                    "0",
+                    "--subscription",
+                    "openai",
+                    "--pool",
+                    "general",
+                ]
+            )
 
     def test_init_writes_private_canonical_state_and_is_idempotent(self) -> None:
         created = self.initialize()
@@ -332,6 +423,58 @@ class RouteCapabilityTests(unittest.TestCase):
             ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-argon"],
         )
         self.assertIsNone(stored_claim["candidate_override"])
+
+    def test_known_route_allows_many_concurrent_workers(self) -> None:
+        self.initialize()
+        self.complete("gpt-6-1-sol", "success")
+        revision = self.load_state()["revision"]
+        claims = []
+        for _ in range(64):
+            claim = self.claim("gpt-6-1-sol", revision)
+            self.assertFalse(claim["probe"])
+            self.assertEqual(claim["reservedScopes"], [])
+            claims.append(claim["claimId"])
+            revision = claim["revision"]
+        self.assertEqual(len(self.load_state()["claims"]), 64)
+        for claim_id in claims:
+            capability.record_outcome(self.state, self.task_id, claim_id, "success")
+        self.assertEqual(self.load_state()["claims"], {})
+
+    def test_unknown_route_probe_stays_exclusive_in_known_pool(self) -> None:
+        self.initialize()
+        self.complete("gpt-6-1-sol", "success")
+        claim = self.claim("gpt-6-luna", 2)
+        self.assertEqual(claim["reservedScopes"], ["route:gpt-6-luna"])
+        with self.assertRaises(capability.CapabilityError):
+            self.claim("gpt-6-luna", claim["revision"])
+        self.claim("gpt-6-1-sol", claim["revision"])
+
+    def test_parallel_success_does_not_clear_a_quota_failure(self) -> None:
+        self.initialize()
+        self.complete("gpt-6-1-sol", "success")
+        first = self.claim("gpt-6-1-sol", 2)
+        second = self.claim("gpt-6-1-sol", first["revision"])
+        capability.record_outcome(
+            self.state, self.task_id, first["claimId"], "quota-exhausted"
+        )
+        capability.record_outcome(
+            self.state, self.task_id, second["claimId"], "success"
+        )
+        state = self.load_state()
+        self.assertEqual(state["pools"]["openai"]["general"], "open")
+        with self.assertRaises(capability.CapabilityError):
+            self.claim("gpt-6-1-sol", state["revision"])
+
+    def test_state_size_guard_rejects_claim_without_corrupting_state(self) -> None:
+        self.initialize()
+        self.complete("gpt-6-1-sol", "success")
+        before = self.state.read_bytes()
+        with (
+            mock.patch.object(capability, "MAX_STATE_BYTES", len(before)),
+            self.assertRaisesRegex(capability.CapabilityError, "exceeds"),
+        ):
+            self.claim("gpt-6-1-sol", 2)
+        self.assertEqual(self.state.read_bytes(), before)
 
     def test_non_candidate_requires_categorical_override(self) -> None:
         self.initialize()
