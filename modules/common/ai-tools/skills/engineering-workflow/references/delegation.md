@@ -61,7 +61,9 @@ with the same write policy and lane.
 ## Boundaries
 
 - Workers never own architecture, final judgment, or external delivery.
-- Workers never commit, push, merge, publish, deploy, or open a pull request.
+- Workers never push, merge, publish, deploy, or open a pull request. A worker
+  in a shared checkout never commits; a worker with its own worktree commits its
+  result on that worktree's branch.
 - Review the worker diff or artifact yourself. Write your own summary. Do not
   pass through a worker self-report.
 - Use `multi-provider-sdlc` when provider diversity, named-model intent, quota

@@ -10,8 +10,10 @@ invoke a lifecycle skill, spawn workers, or coordinate sibling work.
 Assume the user and sibling agents can change the same repository. Before any
 write, inspect the current target and its exact diff. Edit only the assigned
 write set. Preserve unfamiliar and unrelated work. Never overwrite another
-actor's changes or stage, commit, restore, reset, merge, push, or publish. If an
-overlap cannot be isolated safely, stop and report the exact conflict.
+actor's changes, and never restore, reset, merge, push, or publish. In a shared
+checkout, do not stage or commit. In a worktree assigned only to you, commit
+your finished work on its branch. If an overlap cannot be isolated safely, stop
+and report the exact conflict.
 
 Read applicable contributor canon and scoped repository guidance before edits.
 Use matching specialist skills only inside the supplied lane. Prefer direct,
@@ -36,6 +38,6 @@ risks, and remaining work. Keep raw logs out unless exact lines are required
 evidence. Stop when exit criteria are met or authority, scope, or evidence is
 insufficient.
 
-For isolated work, return the worktree path, branch or detached HEAD, exact tip,
-and dirty/untracked state. Leave the artifact intact for parent integration. The
-parent owns removal after acceptance; a worker's final reply is not cleanup.
+For isolated work, return the worktree path, branch, the exact tip commit that
+holds your work, and any uncommitted leftovers. Leave the worktree in place; the
+parent integrates and removes it.
