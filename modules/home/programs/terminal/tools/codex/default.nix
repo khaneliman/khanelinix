@@ -329,7 +329,7 @@ in
         };
 
         agents = {
-          max_concurrent_threads_per_session = 12;
+          max_concurrent_threads_per_session = aiTools.workerConcurrencyLimit;
         }
         // codexAgentRoles;
 

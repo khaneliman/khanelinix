@@ -203,6 +203,7 @@ in
           ANTHROPIC_BASE_URL = "https://api.anthropic.com";
           ANTHROPIC_AUTH_TOKEN = "";
           CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY = "0";
+          CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS = toString aiTools.workerConcurrencyLimit;
           # Custom Anthropic endpoints disable deferred MCP tool loading unless
           # explicitly enabled.
           ENABLE_TOOL_SEARCH = "true";

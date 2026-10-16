@@ -355,6 +355,10 @@ let
     harnessName: (skillPolicyFor harnessName).disablePluginSkills or [ ];
 in
 {
+  # Both CLIs require a positive limit. Worker sizing belongs to the task,
+  # current provider quota, and host capacity rather than a small fixed cap.
+  workerConcurrencyLimit = 2147483647;
+
   inherit
     agents
     base
