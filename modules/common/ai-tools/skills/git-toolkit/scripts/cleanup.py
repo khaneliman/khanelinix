@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preview or remove one explicitly owned, integrated local branch/worktree."""
+"""Preview or remove one explicitly owned local worktree and its integrated branch."""
 
 from __future__ import annotations
 
@@ -117,6 +117,8 @@ def plan(args: argparse.Namespace) -> dict:
     )
     if path and not selected and path.exists():
         raise CleanupError("path exists but is not a registered worktree")
+    if args.keep_branch and not exists:
+        raise CleanupError("release requires the task branch that keeps the work")
     if not exists and not selected:
         return {
             "state": "already-clean",
@@ -127,19 +129,27 @@ def plan(args: argparse.Namespace) -> dict:
     tip = commit(repo, args.expected_tip)
     if tip != args.expected_tip:
         raise CleanupError("expected tip must be a full commit object ID")
-    target_ref = output(
-        repo,
-        "rev-parse",
-        "--symbolic-full-name",
-        "--verify",
-        "--end-of-options",
-        args.target,
-    )
-    if not target_ref.startswith("refs/heads/") or target_ref == branch_ref:
-        raise CleanupError("target must be a different local integration branch")
-    target = commit(repo, target_ref)
+    if not args.keep_branch:
+        target_ref = output(
+            repo,
+            "rev-parse",
+            "--symbolic-full-name",
+            "--verify",
+            "--end-of-options",
+            args.target,
+        )
+        if not target_ref.startswith("refs/heads/") or target_ref == branch_ref:
+            raise CleanupError("target must be a different local integration branch")
+        target = commit(repo, target_ref)
     if exists and commit(repo, branch_ref) != tip:
         raise CleanupError("branch tip changed since handoff")
+    if args.keep_branch and not selected:
+        return {
+            "state": "already-released",
+            "branch": args.branch,
+            "worktree": str(path),
+            "expected_tip": tip,
+        }
     if branch_ref:
         for record in records:
             if record.get("branch") == branch_ref and record is not selected:
@@ -191,6 +201,15 @@ def plan(args: argparse.Namespace) -> dict:
             )
             if marker_path.exists():
                 raise CleanupError(f"worktree has an unfinished operation: {marker}")
+    if args.keep_branch:
+        # The branch keeps every committed change, so releasing the checkout needs no integration proof.
+        return {
+            "state": "ready",
+            "branch": args.branch,
+            "worktree": str(path),
+            "expected_tip": tip,
+            "delete_branch": False,
+        }
     return {
         "state": "ready",
         "branch": args.branch,
@@ -215,7 +234,6 @@ def main() -> int:
     parser.add_argument("--expected-tip", required=True)
     parser.add_argument(
         "--target",
-        required=True,
         help="local integration branch, not a remote-tracking ref",
     )
     parser.add_argument(
@@ -225,10 +243,22 @@ def main() -> int:
     parser.add_argument(
         "--landed-commit", help="single commit containing the exact source delta"
     )
+    parser.add_argument(
+        "--keep-branch",
+        action="store_true",
+        help="release only the clean checkout and keep the branch at its exact tip",
+    )
     parser.add_argument("--apply", action="store_true")
     args = parser.parse_args()
     if not (args.branch or args.worktree):
         parser.error("specify --branch or --worktree")
+    if args.keep_branch:
+        if not (args.branch and args.worktree):
+            parser.error("--keep-branch needs --branch and --worktree")
+        if args.target or args.source_base or args.landed_commit:
+            parser.error("--keep-branch takes no integration evidence")
+    elif not args.target:
+        parser.error("--target is required unless --keep-branch")
     try:
         result = plan(args)
         if args.apply and result["state"] == "ready":
@@ -247,9 +277,10 @@ def main() -> int:
                     )
                 # The target proof above also covers squashes, which branch -d cannot recognize.
                 git(args.repo, "branch", "-D", "--", args.branch)
-            if plan(args)["state"] != "already-clean":
+            done = "already-released" if args.keep_branch else "already-clean"
+            if plan(args)["state"] != done:
                 raise CleanupError("cleanup readback failed")
-            result["state"] = "cleaned"
+            result["state"] = "released" if args.keep_branch else "cleaned"
         print(json.dumps(result, sort_keys=True))
         return 0
     except (CleanupError, OSError) as error:

@@ -23,9 +23,9 @@ When invoked, route to one mode:
 5. **adversarial-review**: independently review a commit, branch, or diff
    against falsifiable design premises and repository-wide constraints. Read
    [adversarial-review.md](references/adversarial-review.md).
-6. **cleanup**: before creating task branches/worktrees, after integrating
-   parallel work, or after a PR merges. Read
-   [cleanup.md](references/cleanup.md).
+6. **cleanup**: before creating task branches/worktrees (disk budget), when each
+   worker's slice resolves, after integrating parallel work, or after a PR
+   merges. Read [cleanup.md](references/cleanup.md).
 7. **routine-workflow**: branch creation, naming, merge/rebase choice, conflict
    resolution, or standard Git operations. Git mechanics are model-known; read
    [operating-rules.md](references/operating-rules.md) when naming a branch or

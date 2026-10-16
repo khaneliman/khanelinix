@@ -59,9 +59,9 @@ class CleanupTests(unittest.TestCase):
             str(self.repo),
             "--expected-tip",
             expected or self.tip,
-            "--target",
-            target,
         ]
+        if target:
+            command += ["--target", target]
         if branch:
             command += ["--branch", "topic"]
         if worktree:
@@ -235,6 +235,51 @@ class CleanupTests(unittest.TestCase):
         code, result = self.run_cleanup("--apply", worktree=False)
         self.assertEqual(code, 0, result)
         self.assertEqual(self.git("branch", "--list", "topic"), "")
+
+    def test_release_keeps_unintegrated_branch(self):
+        code, result = self.run_cleanup("--keep-branch", target=None)
+        self.assertEqual(code, 0, result)
+        self.assertEqual(result["state"], "ready")
+        self.assertTrue(self.worktree.exists())
+        code, result = self.run_cleanup("--keep-branch", "--apply", target=None)
+        self.assertEqual(code, 0, result)
+        self.assertEqual(result["state"], "released")
+        self.assertFalse(self.worktree.exists())
+        self.assertEqual(self.git("rev-parse", "topic"), self.tip)
+        self.assertEqual(self.git("rev-parse", "main"), self.base)
+        code, result = self.run_cleanup("--keep-branch", "--apply", target=None)
+        self.assertEqual((code, result["state"]), (0, "already-released"))
+
+    def test_release_retains_dirty_or_moved_checkout(self):
+        (self.worktree / "untracked").write_text("keep me\n")
+        self.assertBlocked("--keep-branch", target=None)
+        (self.worktree / "untracked").unlink()
+        self.assertBlocked("--keep-branch", target=None, expected=self.base)
+
+    def test_release_rejects_integration_evidence(self):
+        process = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPT),
+                "--repo",
+                str(self.repo),
+                "--branch",
+                "topic",
+                "--worktree",
+                str(self.worktree),
+                "--expected-tip",
+                self.tip,
+                "--target",
+                "main",
+                "--keep-branch",
+            ],
+            env=self.env,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(process.returncode, 2)
+        self.assertTrue(self.worktree.exists())
 
     def test_inherited_git_dir_does_not_redirect_cleanup(self):
         self.git("merge", "--ff-only", "topic")

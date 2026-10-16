@@ -1,7 +1,9 @@
 # Task Branch and Worktree Cleanup
 
-Use before creating isolated work and after integration or a confirmed PR merge.
-The parent owns cleanup, including resources created by delegated workers.
+Use before creating isolated work and as soon as each worker's slice is
+accepted, rejected, or abandoned, not at the end of a run. The parent owns
+cleanup, including resources created by delegated workers and host-created
+worktrees such as T3 `delegate_task` isolation, which the host does not remove.
 
 ## Ownership
 
@@ -14,11 +16,18 @@ Do not infer ownership from a naming prefix, age, or a merged-branch listing.
 Pre-existing resources and other sessions stay outside scope unless assigned.
 Use a detached worktree for read-only scratch when no branch is needed.
 
+Each worktree is a full checkout plus its build output, so give one only to a
+writer that cannot share the checkout. Before creating one, confirm that free
+space on its filesystem stays above 10% of the disk, and above Nix `min-free`
+where Nix is installed, after adding the checkout's size. Otherwise close out
+resolved worktrees first.
+
 ## Closeout
 
-1. Inspect worker artifacts and integrate accepted changes into the named local
-   target. Verify that target, not just the worker checkout. A committed worker
-   branch is not integration. Follow `github-toolkit` for PR merge evidence.
+1. Inspect worker artifacts and integrate the worker's committed tip into the
+   named local target by merge, fast-forward, or cherry-pick. Verify that
+   target, not just the worker checkout. A committed worker branch is not
+   integration. Follow `github-toolkit` for PR merge evidence.
 2. Stop or close the task's workers and processes using the owned worktrees.
    Release host-managed worktrees through the owning host when available. Never
    unlock another session's worktree or delete a live checkout.
@@ -36,10 +45,15 @@ Use a detached worktree for read-only scratch when no branch is needed.
    `--worktree` for a branch-only resource, or `--branch` for a detached
    worktree. Exit 0 means a valid preview, successful apply, or already absent;
    exit 1 reports a blocked cleanup. A `ready` preview is not a cleanup receipt.
+   When integration cannot be proved, such as rejected work or a landing edited
+   during integration, pass `--keep-branch` instead of `--target`. It removes
+   only the clean checkout and keeps the branch at its tip. Commit a failed
+   worker's leftover edits on its branch first.
 4. Verify each owned path is absent from `git worktree list --porcelain`, each
-   owned branch is absent, and the retained checkout remains on its intended
-   branch with unrelated changes intact. Account for every ownership record.
-   Report removed resources, or retained path/ref, reason, and next action.
+   owned branch is absent or recorded as retained, and the retained checkout
+   remains on its intended branch with unrelated changes intact. Account for
+   every ownership record. Report removed resources, or retained path/ref,
+   reason, and next action.
 
 ## Integration and Preservation
 
@@ -51,9 +65,9 @@ history and an exact binary-capable diff match. This preserves whitespace,
 modes, and file content; commit-message similarity is not evidence.
 
 Conflict-resolved rebases and multi-commit rebase landings can fail this strict
-check. Retain those resources until exact integration is independently proved;
-do not substitute a newer source base to hide omitted changes. If cleanup needs
-a manual path, inspect every source change and any post-merge commits first.
+check. Retain those branches until exact integration is independently proved; do
+not substitute a newer source base to hide omitted changes. If cleanup needs a
+manual path, inspect every source change and any post-merge commits first.
 
 The helper refuses primary, executing, locked, unavailable, dirty, and
 in-progress worktrees. It also rejects index flags that can hide tracked edits,

@@ -6,7 +6,8 @@ causal analysis, and rewrite decisions in the relevant playbook.
 ## Available Scripts
 
 - `<path-to-skill>/scripts/cleanup.py`: preview or apply cleanup of one exact
-  owned branch/worktree after integration. Read [cleanup.md](cleanup.md) for
+  owned branch/worktree after integration, or with `--keep-branch`, release a
+  clean checkout while keeping its branch. Read [cleanup.md](cleanup.md) for
   ownership, invocation, evidence, and preservation rules.
 - `<path-to-skill>/scripts/stack_report.py --base <ref> [--head <ref>]`:
   read-only status, ahead/behind, commit-message, and touched-path report. JSON
