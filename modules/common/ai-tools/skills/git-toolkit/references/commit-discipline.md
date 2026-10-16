@@ -28,6 +28,13 @@ can stand on its own, build, and tell one useful history fact. A good split is
 based on dependency order and behavior, not on convenience, feature name, or the
 fact that changes arrived in one request.
 
+For dependency or flake lock updates, keep the updated pins and the changes
+required by those versions in one commit: compatibility migrations, refreshed
+hashes, and patch refreshes or removals. They form one update even across
+modules and overlays. When repairing failures from an existing uncommitted lock
+update, include that related lockfile diff in the update commit; preserve
+unrelated work separately.
+
 Before committing, write the plan as ordered commit boundaries. For each
 boundary, ask:
 
@@ -52,7 +59,7 @@ Split these when each can stand alone:
 - package or tool exposure in a dev shell/profile
 - reusable module/package/helper creation
 - concrete configuration that consumes that dependency/tool
-- generated snapshots, lockfiles, fixtures, or golden output
+- independently refreshed snapshots, fixtures, or golden output
 - tests that assert the new behavior
 - documentation of the new workflow or feature
 - host or profile enablement of that reusable piece
