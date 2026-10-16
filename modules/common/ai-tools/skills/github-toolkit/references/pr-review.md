@@ -1,10 +1,11 @@
 # Pull Request Review Authoring
 
-Use for high-signal review delivered as a pending GitHub review owned by the
-current actor. A request to review a PR includes creating or updating that
-pending review without another permission question. The user edits and submits
-it on GitHub. Explicit chat-only, read-only, or no-post instructions take
-precedence. Use [pr-feedback.md](pr-feedback.md) for existing review comments.
+Use for high-signal PR review. Choose private or pending-review delivery under
+the skill's Shared Rules: audits of the user's own PRs stay private unless a
+GitHub review draft is explicitly requested. For another contributor's PR, a
+review request includes preparing a pending review without another permission
+question. The user edits and submits it. Use [pr-feedback.md](pr-feedback.md)
+for existing review comments.
 
 The `premise-review` method in `engineering-principles` is the review contract:
 its packet, premise gate, evidence axes, finding format, and verdict apply here.
@@ -45,23 +46,24 @@ review operations, and the public comment format.
    PRs, use the PR's actual base so lower layers stay outside the review unit.
 7. Revalidate each finding against the current PR head, changed code, and
    repository policy before drafting or revising it.
-8. Inspect the current actor's reviews, preview the exact pending-review writes,
-   then apply them under the review request's authority. Create one pending
-   review when absent; otherwise preserve the user's existing draft and update
-   only findings covered by this task. Add genuinely new findings to that same
-   pending review. For a delegated review, the child returns evidence without
-   GitHub writes; the parent owns draft delivery and readback. Do not delete or
-   replace an existing review to simplify the write. For a no-issues verdict,
-   create or update a short pending summary when GitHub permits it, without
-   overwriting unrelated draft content.
-9. Read back the review and comments from GitHub. Completion requires the
-   intended bodies and anchors, current-head validation, `PENDING` state, and
-   null `submitted_at`. Link the PR's Files changed page and report the pending
-   review ID and comment count so the user can edit and submit it there. A local
-   report, JSON payload, or successful preview alone is not delivery. If GitHub
-   authentication, permissions, or API failure blocks delivery, report that
-   concrete blocker and retain the prepared draft; do not ask whether to post an
-   already-authorized pending review.
+8. For private delivery, return findings in chat or the requested local report
+   without GitHub review writes. Otherwise inspect the current actor's reviews,
+   preview the exact pending-review writes, then apply them under the review
+   request's authority. Create one pending review when absent; otherwise
+   preserve the user's existing draft and update only findings covered by this
+   task. Add genuinely new findings to that same pending review. For a delegated
+   review, the child returns evidence without GitHub writes; the parent owns
+   draft delivery and readback. Do not delete or replace an existing review to
+   simplify the write. For a no-issues verdict, create or update a short pending
+   summary when GitHub permits it, without overwriting unrelated draft content.
+9. For pending-review delivery, read back the review and comments from GitHub.
+   Completion requires the intended bodies and anchors, current-head validation,
+   `PENDING` state, and null `submitted_at`. Link the PR's Files changed page
+   and report the pending review ID and comment count so the user can edit and
+   submit it there. A local report, JSON payload, or successful preview alone is
+   not delivery. If GitHub authentication, permissions, or API failure blocks
+   delivery, report that concrete blocker and retain the prepared draft; do not
+   ask whether to post an already-authorized pending review.
 
 Choose a reviewer by the hardest question in the change, not diff size. For
 multi-model review, allocate at most one review seat per model family per review

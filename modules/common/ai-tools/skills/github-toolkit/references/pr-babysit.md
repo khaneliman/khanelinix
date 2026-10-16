@@ -13,7 +13,8 @@ Starting a watch authorizes these actions on every pass without asking again:
 
 - read the pull request, its threads, comments, reviews, and checks
 - edit and commit fixes locally on the PR branch, with focused validation
-- add reply drafts to the current actor's pending review
+- prepare replies, keeping them in the report for the user's own PR unless
+  pending GitHub drafts are explicitly requested
 
 Pushing, publishing a reply, resolving a thread, submitting the review,
 rebasing, and merging each need a separate request. The user proofreads the
@@ -77,13 +78,16 @@ reviewers cannot see yet.
    - **Answer:** answer the question directly.
    - **Decline:** give the evidence that settles it in a sentence or two.
 
-   Add thread replies with `scripts/review_threads.py reply --apply` and no
-   `--publish`. Put replies to top-level comments in the pending review summary
-   with a link to each comment. That helper creates a pending review without a
-   summary, and GitHub can reject a summary added later, so create the pending
-   review with its summary through `scripts/review_draft.py create` before
-   adding thread replies. If a summaryless pending review already exists,
-   include the top-level reply in the report for the user to post.
+   Follow the skill's Shared Rules for delivery. For the user's own PR, keep
+   replies in the report unless GitHub drafts are explicitly requested. For
+   pending-review delivery, add thread replies with
+   `scripts/review_threads.py reply --apply` and no `--publish`. Put replies to
+   top-level comments in the pending review summary with a link to each comment.
+   That helper creates a pending review without a summary, and GitHub can reject
+   a summary added later, so create the pending review with its summary through
+   `scripts/review_draft.py create` before adding thread replies. If a
+   summaryless pending review already exists, include the top-level reply in the
+   report for the user to post.
 
 6. Report what is new since the last report: commits made, drafts waiting in the
    pending review, skipped items, and decisions needed. Do not repeat a handoff

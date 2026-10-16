@@ -17,8 +17,8 @@ Route to one mode and load only named reference:
    [issue-discovery.md](references/issue-discovery.md).
 5. **issue-triage**: classify target issue and draft next-step guidance. Read
    [issue-triage.md](references/issue-triage.md).
-6. **pr-review**: review target and create or update the current actor's pending
-   GitHub review for the user to edit and submit, unless chat-only or read-only
+6. **pr-review**: review target, keeping audits of the user's own PRs private.
+   For another contributor's PR, prepare a pending GitHub review unless private
    output is requested. Read [pr-review.md](references/pr-review.md).
 7. **pr-feedback**: inspect or address existing review comments. Read
    [pr-feedback.md](references/pr-feedback.md).
@@ -42,11 +42,16 @@ If intent is unclear, ask for mode before GitHub writes or source edits.
 
 - Read repository contributor docs, local instructions, and matching issue/PR
   template before drafting or publishing.
-- A PR review request authorizes creating or updating the current actor's
-  pending review, not submitting it. Explicit chat-only, read-only, or no-post
-  instructions override this default. Other GitHub writes require their own
-  authority; preparing a pending review does not authorize publishing comments,
-  approving, requesting changes, deleting reviews, or resolving threads.
+- Resolve the authenticated actor and PR author before choosing review delivery.
+  Audits of the user's own PRs, including PRs created during the task, stay in
+  chat or private reports unless the user explicitly requests a GitHub review
+  draft. Do not create a self-review as a receipt for internal quality checks.
+  For another contributor's PR, a PR review request authorizes creating or
+  updating the current actor's pending review, not submitting it. Explicit
+  chat-only, read-only, or no-post instructions override that default. Other
+  GitHub writes require their own authority; preparing a pending review does not
+  authorize publishing comments, approving, requesting changes, deleting
+  reviews, or resolving threads.
 - PR URL inputs accept `https://github.com/...` only. Do not use these helpers
   for GitHub Enterprise until hostname binding is implemented.
 - Write public prose like teammate: specific evidence and direct request, no
