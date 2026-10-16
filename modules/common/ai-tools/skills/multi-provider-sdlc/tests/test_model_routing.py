@@ -97,7 +97,7 @@ class ModelRoutingTests(unittest.TestCase):
         )
         self.assertEqual(
             routes["plan or code review"]["fallbacks"],
-            ["gpt-6-1-sol", "fable-5-1", "google-opus-5-5"],
+            ["gpt-6-1-sol", "gemini-4-argon", "fable-5-1", "google-opus-5-5"],
         )
         self.assertEqual(
             self.registry["semantic_roles"]["reviewer"]["gateway"]["claude"],

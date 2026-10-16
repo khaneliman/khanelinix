@@ -434,7 +434,12 @@
 		{
 			"need": "plan or code review",
 			"preferred": ["opus-5-5", "gpt-6-astra"],
-			"fallbacks": ["gpt-6-1-sol", "fable-5-1", "google-opus-5-5"],
+			"fallbacks": [
+				"gpt-6-1-sol",
+				"gemini-4-argon",
+				"fable-5-1",
+				"google-opus-5-5"
+			],
 			"semantic_role": "reviewer",
 			"write_policy": "read-only"
 		},

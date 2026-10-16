@@ -49,6 +49,11 @@ review trials read-only even when the selected model can write. Compare against
 the current default on representative local tasks before promotion. Sol 6.1 also
 has limited independent evidence at this snapshot date. See the
 [September 2026 evidence and adoption criteria](routing-evidence-2026-09.md).
+The
+[October 2026 Artificial Analysis snapshot](aa-intelligence-index-2026-10.md)
+places each model by general capability and cost per task: Luna is the cheapest,
+Sol is the best value above 50, and Opus at xhigh is the strongest at
+Astra-level cost. Use it for tiering, not to override review-specific evidence.
 
 The named task preferences below apply to gateway selection. Native dispatch
 uses provider-specific semantic-role profiles, not the named-model ranking: for
@@ -60,20 +65,20 @@ Every subscription requires a live route and current authentication.
 
 <!-- BEGIN GENERATED ROUTES -->
 
-| Need                                       | Preferred                 | Fallback                                                 | Semantic role  | Write policy                      |
-| ------------------------------------------ | ------------------------- | -------------------------------------------------------- | -------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-6-luna`              | `haiku-5-5`, `gemini-3-8-flash`                          | `mechanic`     | read-only unless edit is explicit |
-| repository discovery                       | `gpt-6-luna`              | `haiku-5-5`, `gpt-6-1-sol`, `gemini-3-8-flash`           | `fact-finder`  | read-only                         |
-| bounded reproduction                       | `gpt-6-luna`              | `haiku-5-5`, `gpt-6-1-sol`, `opus-5-5`, `gemini-4-argon` | `probe-runner` | build artifacts only              |
-| focused validation                         | `gpt-6-luna`              | `haiku-5-5`, `gemini-3-8-flash`                          | `checker`      | build artifacts only              |
-| noisy validation                           | `gpt-6-luna`              | `haiku-5-5`, `gemini-3-8-flash`, `gpt-oss-120b`          | `test-runner`  | build artifacts only              |
-| implementation                             | `gpt-6-1-sol`             | `opus-5-5`, `gpt-6-luna`, `haiku-5-5`, `gemini-4-argon`  | `implementer`  | workspace write                   |
-| difficult implementation                   | `gpt-6-1-sol`, `opus-5-5` | `gpt-6-luna`, `haiku-5-5`, `gemini-4-argon`              | `implementer`  | workspace write                   |
-| ambiguous diagnosis                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-4-argon`                             | `debugger`     | read-only                         |
-| plan or code review                        | `opus-5-5`, `gpt-6-astra` | `gpt-6-1-sol`, `fable-5-1`, `google-opus-5-5`            | `reviewer`     | read-only                         |
-| routine code review                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-4-argon`                             | `reviewer`     | read-only                         |
-| bounded Sonnet trial                       | `sonnet-5-5`              | `gpt-6-1-sol`, `opus-5-5`                                | `implementer`  | workspace write                   |
-| multimodal analysis                        | `gemini-4-argon`          | `gpt-6-1-sol`, `opus-5-5`                                | `fact-finder`  | read-only                         |
+| Need                                       | Preferred                 | Fallback                                                        | Semantic role  | Write policy                      |
+| ------------------------------------------ | ------------------------- | --------------------------------------------------------------- | -------------- | --------------------------------- |
+| obvious lookup or mechanical one-file edit | `gpt-6-luna`              | `haiku-5-5`, `gemini-3-8-flash`                                 | `mechanic`     | read-only unless edit is explicit |
+| repository discovery                       | `gpt-6-luna`              | `haiku-5-5`, `gpt-6-1-sol`, `gemini-3-8-flash`                  | `fact-finder`  | read-only                         |
+| bounded reproduction                       | `gpt-6-luna`              | `haiku-5-5`, `gpt-6-1-sol`, `opus-5-5`, `gemini-4-argon`        | `probe-runner` | build artifacts only              |
+| focused validation                         | `gpt-6-luna`              | `haiku-5-5`, `gemini-3-8-flash`                                 | `checker`      | build artifacts only              |
+| noisy validation                           | `gpt-6-luna`              | `haiku-5-5`, `gemini-3-8-flash`, `gpt-oss-120b`                 | `test-runner`  | build artifacts only              |
+| implementation                             | `gpt-6-1-sol`             | `opus-5-5`, `gpt-6-luna`, `haiku-5-5`, `gemini-4-argon`         | `implementer`  | workspace write                   |
+| difficult implementation                   | `gpt-6-1-sol`, `opus-5-5` | `gpt-6-luna`, `haiku-5-5`, `gemini-4-argon`                     | `implementer`  | workspace write                   |
+| ambiguous diagnosis                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-4-argon`                                    | `debugger`     | read-only                         |
+| plan or code review                        | `opus-5-5`, `gpt-6-astra` | `gpt-6-1-sol`, `gemini-4-argon`, `fable-5-1`, `google-opus-5-5` | `reviewer`     | read-only                         |
+| routine code review                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-4-argon`                                    | `reviewer`     | read-only                         |
+| bounded Sonnet trial                       | `sonnet-5-5`              | `gpt-6-1-sol`, `opus-5-5`                                       | `implementer`  | workspace write                   |
+| multimodal analysis                        | `gemini-4-argon`          | `gpt-6-1-sol`, `opus-5-5`                                       | `fact-finder`  | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5-5`, Google
 `gemini-4-argon` with `google-opus-5-5` fallback (degraded family diversity),
