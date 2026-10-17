@@ -32,14 +32,42 @@ let
   claudeIcon = ./assets/claude.ico;
   claudeNotify = import ./notify.nix { inherit config lib pkgs; };
 
-  # Codex-style status line: model+reasoning, session/worktree, context, limits.
+  # Codex-style status line: model+reasoning, session/worktree, context, speed,
+  # limits.
   # Rate-limit fields only appear for Claude.ai subscribers, so guard for null.
   statusLineScript = pkgs.writeShellApplication {
     name = "claude-statusline";
     runtimeInputs = [ pkgs.jq ];
     text = ''
       input=$(cat)
-      jq -r '
+
+      # Output speed: token-weighted over the last 5 responses from the latest
+      # model, timed from request send to final block, so it includes time to
+      # first token. Transcripts without api-request entries (2.1.261 and
+      # older) hide the segment.
+      tps=""
+      transcript=$(jq -r '.transcript_path // empty' <<<"$input")
+      if [[ -r "$transcript" ]]; then
+        tps=$(tail -n 400 "$transcript" | jq -nRr '
+          def ms: (.[0:19] + "Z" | fromdateiso8601) * 1000 + (.[20:23] | tonumber? // 0);
+          [inputs | fromjson?] |
+          (map(select(.type == "api-request") | {key: .id, value: (.timestamp | ms)}) | from_entries) as $sent |
+          [ map(select(.type == "assistant" and $sent[.requestRef // ""] != null))
+            | group_by(.requestRef)[]
+            | (map(.timestamp | ms) | max) as $end
+            | { model: .[0].message.model,
+                tokens: (map(.message.usage.output_tokens // 0) | max),
+                ms: ($end - $sent[.[0].requestRef]),
+                end: $end } ]
+          | sort_by(.end) | reverse
+          | (.[0].model // null) as $model
+          | map(select(.model == $model)) | .[:5]
+          | (map(.tokens) | add // 0) as $tokens | (map(.ms) | add // 0) as $ms
+          | if $ms > 0 then $tokens * 1000 / $ms | round | tostring else empty end
+        ' || true)
+      fi
+
+      jq -r --arg tps "$tps" '
         def pc(v): (v // 0) | floor | tostring;
         (.model.display_name // "?") as $name |
         (.session_name // "") as $session |
@@ -60,6 +88,7 @@ let
         + (if .context_window.used_percentage != null
            then " | ctx " + pc(.context_window.used_percentage) + "%"
            else "" end)
+        + (if $tps != "" then " | " + $tps + " tok/s" else "" end)
         + (if .rate_limits.five_hour.used_percentage != null
            then " | 5h " + pc(.rate_limits.five_hour.used_percentage) + "%"
            else "" end)
