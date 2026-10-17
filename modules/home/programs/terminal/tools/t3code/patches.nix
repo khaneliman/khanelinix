@@ -9,4 +9,6 @@
   ./antigravity-usage-limits.patch
   # Upstream owns #16716 host-folder browsing; retain folder-root and path regression coverage.
   ./host-folder-links.patch
+  # Local: tok/s of model time per run, for comparing providers and models.
+  ./turn-output-rate.patch
 ]

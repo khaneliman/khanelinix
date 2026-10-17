@@ -1,0 +1,338 @@
+# Show output tokens per second of model time on each run's final assistant message.
+# Rebased on ac251a23f22f3aaa08a41773bcfa7efa9c507278.
+diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/ChatView.tsx
+--- a/apps/web/src/components/ChatView.tsx
++++ b/apps/web/src/components/ChatView.tsx
+@@ -510,6 +510,7 @@ import {
+   deriveLatestContextWindowSnapshot,
+   latestProviderTurnTokenUsage,
+ } from "../lib/contextWindow";
++import { deriveOutputRateByRunId } from "../lib/outputRate";
+ import {
+   DRAFT_HERO_TRANSITION_ANIMATION_ID,
+   DRAFT_HERO_TRANSITION_EASING,
+@@ -1804,6 +1805,17 @@ export default function ChatView(props: ChatViewProps) {
+     [serverProjection?.providerTurns],
+   );
+   const serverVisibleTurnItems = useThreadVisibleTurnItems(routeThreadDetailRef);
++  const derivedOutputRates = useMemo(
++    () => deriveOutputRateByRunId(serverProjection?.providerTurns ?? [], serverVisibleTurnItems),
++    [serverProjection?.providerTurns, serverVisibleTurnItems],
++  );
++  const outputRatesKey = Array.from(
++    derivedOutputRates,
++    ([runId, rate]) => `${runId}:${rate}`,
++  ).join();
++  // Streaming deltas rebuild the map. Keep its identity while the rates hold so
++  // the shared row context does not re-render every timeline row.
++  const outputRateByRunId = useMemo(() => derivedOutputRates, [outputRatesKey]);
+   const serverThreadHistory = useThreadHistory(routeThreadDetailRef);
+   const threadHistoryControls = useMemo<MessagesTimelineHistoryControls | undefined>(() => {
+     if (routeThreadDetailRef === null || !shouldShowLoadEarlierControl(serverThreadHistory)) {
+@@ -11000,6 +11012,7 @@ export default function ChatView(props: ChatViewProps) {
+                   )?.serverConfig?.providers ?? EMPTY_PROVIDERS
+                 }
+                 runs={paintOnlyDisplayedTimeline ? [] : (serverProjection?.runs ?? [])}
++                outputRateByRunId={outputRateByRunId}
+                 latestRun={paintOnlyDisplayedTimeline ? null : activeActivityRun}
+                 runningRunId={paintOnlyDisplayedTimeline ? null : activeRunningTurnId}
+                 turnDiffSummaries={
+diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/components/chat/MessagesTimeline.tsx
+--- a/apps/web/src/components/chat/MessagesTimeline.tsx
++++ b/apps/web/src/components/chat/MessagesTimeline.tsx
+@@ -317,6 +317,7 @@ interface TimelineRowSharedState {
+   skills: ReadonlyArray<Pick<ServerProviderSkill, "name" | "displayName">>;
+   providerStatuses: ReadonlyArray<ServerProvider>;
+   runs: ReadonlyArray<HandoffTimelineRun>;
++  outputRateByRunId: ReadonlyMap<RunId, number>;
+   activeThreadEnvironmentId: EnvironmentId;
+   onRevertToTurnCount: (targetTurnCount: number, messageId: MessageId) => void;
+   onUseArtifactTemplate: (template: CodexArtifactTemplate) => void;
+@@ -395,6 +396,7 @@ function TimelineListFooter({
+ }
+ 
+ const EMPTY_TIMELINE_SKILLS: ReadonlyArray<Pick<ServerProviderSkill, "name" | "displayName">> = [];
++const EMPTY_OUTPUT_RATES: ReadonlyMap<RunId, number> = new Map();
+ const TIMELINE_MAINTAIN_SCROLL_AT_END = {
+   animated: false,
+   on: {
+@@ -479,6 +481,7 @@ interface MessagesTimelineProps {
+   skills?: ReadonlyArray<Pick<ServerProviderSkill, "name" | "displayName">>;
+   providerStatuses: ReadonlyArray<ServerProvider>;
+   runs: ReadonlyArray<HandoffTimelineRun>;
++  outputRateByRunId?: ReadonlyMap<RunId, number>;
+   anchorMessageId: MessageId | null;
+   onAnchorReady: (messageId: MessageId, anchorIndex: number) => void;
+   onAnchorSizeChanged: (messageId: MessageId, size: number) => void;
+@@ -575,6 +578,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
+   skills = EMPTY_TIMELINE_SKILLS,
+   providerStatuses,
+   runs: runsProp,
++  outputRateByRunId = EMPTY_OUTPUT_RATES,
+   anchorMessageId,
+   onAnchorReady,
+   onAnchorSizeChanged,
+@@ -1287,6 +1291,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
+       skills,
+       providerStatuses,
+       runs,
++      outputRateByRunId,
+       activeThreadEnvironmentId,
+       onRevertToTurnCount,
+       onRunShellCommand,
+@@ -1325,6 +1330,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
+       skills,
+       providerStatuses,
+       runs,
++      outputRateByRunId,
+       activeThreadEnvironmentId,
+       onRevertToTurnCount,
+       onRunShellCommand,
+@@ -2883,6 +2889,7 @@ function AssistantMessageMeta({
+   alwaysVisible?: boolean;
+ }) {
+   const ctx = use(TimelineRowCtx);
++  const outputRate = message.runId ? ctx.outputRateByRunId.get(message.runId) : undefined;
+ 
+   return (
+     <div
+@@ -2917,6 +2924,16 @@ function AssistantMessageMeta({
+           </TooltipPopup>
+         </Tooltip>
+       )}
++      {!message.streaming && outputRate !== undefined && (
++        <Tooltip>
++          <TooltipTrigger render={<p className="text-muted-foreground text-xs tabular-nums" />}>
++            {outputRate} tok/s
++          </TooltipTrigger>
++          <TooltipPopup>
++            Output tokens per second, excluding tool, approval, and compaction time
++          </TooltipPopup>
++        </Tooltip>
++      )}
+     </div>
+   );
+ }
+diff --git a/apps/web/src/lib/outputRate.test.ts b/apps/web/src/lib/outputRate.test.ts
+new file mode 100644
+--- /dev/null
++++ b/apps/web/src/lib/outputRate.test.ts
+@@ -0,0 +1,104 @@
++import type { OrchestrationV2ProviderTurn, OrchestrationV2TurnItem } from "@t3tools/contracts";
++import { describe, expect, it } from "vite-plus/test";
++import * as DateTime from "effect/DateTime";
++import { deriveOutputRateByRunId } from "./outputRate";
++
++const at = (seconds: number) => DateTime.makeUnsafe(Date.UTC(2026, 9, 16, 0, 0, seconds));
++
++function providerTurn(
++  id: string,
++  startSeconds: number,
++  endSeconds: number,
++  outputTokens: number,
++  overrides: Partial<OrchestrationV2ProviderTurn> = {},
++) {
++  return {
++    id: id as never,
++    status: "completed" as const,
++    startedAt: at(startSeconds),
++    completedAt: at(endSeconds),
++    turnTokenUsage: {
++      usageStatus: "complete" as const,
++      usageScope: "main_agent" as const,
++      inputTokens: 1_000,
++      outputTokens,
++      hasSubagents: false,
++    },
++    ...overrides,
++  };
++}
++
++function item(
++  type: OrchestrationV2TurnItem["type"],
++  providerTurnId: string,
++  startSeconds: number,
++  endSeconds: number,
++  runId = "run-1",
++) {
++  return {
++    item: {
++      type,
++      runId,
++      providerTurnId,
++      startedAt: at(startSeconds),
++      completedAt: at(endSeconds),
++      updatedAt: at(endSeconds),
++    } as unknown as OrchestrationV2TurnItem,
++  };
++}
++
++describe("deriveOutputRateByRunId", () => {
++  it("excludes tool time and counts overlapping tools once", () => {
++    const rates = deriveOutputRateByRunId(
++      [providerTurn("turn-1", 0, 10, 400)],
++      [
++        item("assistant_message", "turn-1", 0, 2),
++        item("command_execution", "turn-1", 2, 6),
++        item("dynamic_tool", "turn-1", 4, 8),
++        item("assistant_message", "turn-1", 8, 10),
++      ],
++    );
++    expect(rates.get("run-1" as never)).toBe(100);
++  });
++
++  it("combines every provider turn of a run", () => {
++    const rates = deriveOutputRateByRunId(
++      [providerTurn("turn-1", 0, 10, 300), providerTurn("turn-2", 20, 30, 200)],
++      [item("assistant_message", "turn-1", 0, 10), item("assistant_message", "turn-2", 20, 30)],
++    );
++    expect(rates.get("run-1" as never)).toBe(25);
++  });
++
++  it("skips turns whose model time is unknown or usage is incomplete", () => {
++    const rates = deriveOutputRateByRunId(
++      [
++        providerTurn("subagent-item", 0, 10, 300),
++        providerTurn("subagent-flag", 0, 10, 300, {
++          turnTokenUsage: {
++            usageStatus: "complete",
++            usageScope: "main_agent",
++            inputTokens: 1_000,
++            outputTokens: 300,
++            hasSubagents: true,
++          },
++        }),
++        providerTurn("partial", 0, 10, 300, {
++          turnTokenUsage: {
++            usageStatus: "partial",
++            usageScope: "main_agent",
++            outputTokens: 300,
++            hasSubagents: false,
++          },
++        }),
++        providerTurn("running", 0, 10, 300, { status: "running", completedAt: null }),
++      ],
++      [
++        item("subagent", "subagent-item", 1, 9, "run-subagent-item"),
++        item("assistant_message", "subagent-flag", 0, 10, "run-subagent-flag"),
++        item("assistant_message", "partial", 0, 10, "run-partial"),
++        item("assistant_message", "running", 0, 10, "run-running"),
++      ],
++    );
++    expect(rates.size).toBe(0);
++  });
++});
+diff --git a/apps/web/src/lib/outputRate.ts b/apps/web/src/lib/outputRate.ts
+new file mode 100644
+--- /dev/null
++++ b/apps/web/src/lib/outputRate.ts
+@@ -0,0 +1,109 @@
++import type {
++  OrchestrationV2ProviderTurn,
++  OrchestrationV2TurnItem,
++  ProviderTurnId,
++  RunId,
++} from "@t3tools/contracts";
++import * as DateTime from "effect/DateTime";
++
++// The model waits while these run, so their time is not generation time.
++const NON_GENERATION_ITEM_TYPES: ReadonlySet<OrchestrationV2TurnItem["type"]> = new Set([
++  "command_execution",
++  "file_change",
++  "file_search",
++  "web_search",
++  "dynamic_tool",
++  "approval_request",
++  "user_input_request",
++  "compaction",
++]);
++
++interface ProviderTurnItems {
++  runId: RunId | null;
++  hasSubagent: boolean;
++  intervals: Array<readonly [number, number]>;
++}
++
++function busyMs(intervals: ReadonlyArray<readonly [number, number]>, start: number, end: number) {
++  const clipped = intervals
++    .map(([from, to]) => [Math.max(from, start), Math.min(to, end)] as const)
++    .filter(([from, to]) => to > from)
++    .toSorted((left, right) => left[0] - right[0]);
++  let total = 0;
++  let coveredUntil = start;
++  for (const [from, to] of clipped) {
++    const uncoveredFrom = Math.max(from, coveredUntil);
++    if (to > uncoveredFrom) {
++      total += to - uncoveredFrom;
++      coveredUntil = to;
++    }
++  }
++  return total;
++}
++
++/**
++ * Output tokens per second of model time for each completed run. Model time is
++ * provider-turn wall time minus tool, approval, input, and compaction item
++ * time, so it includes time to first token. Turns with subagents are skipped:
++ * background subagents overlap the parent's own generation, which leaves its
++ * model time unknown.
++ */
++export function deriveOutputRateByRunId(
++  providerTurns: ReadonlyArray<
++    Pick<
++      OrchestrationV2ProviderTurn,
++      "id" | "status" | "startedAt" | "completedAt" | "turnTokenUsage"
++    >
++  >,
++  entries: ReadonlyArray<{ readonly item: OrchestrationV2TurnItem }>,
++): ReadonlyMap<RunId, number> {
++  const itemsByProviderTurn = new Map<ProviderTurnId, ProviderTurnItems>();
++  for (const { item } of entries) {
++    if (item.providerTurnId === null) continue;
++    let group = itemsByProviderTurn.get(item.providerTurnId);
++    if (group === undefined) {
++      group = { runId: null, hasSubagent: false, intervals: [] };
++      itemsByProviderTurn.set(item.providerTurnId, group);
++    }
++    group.runId ??= item.runId;
++    if (item.type === "subagent") group.hasSubagent = true;
++    if (NON_GENERATION_ITEM_TYPES.has(item.type) && item.startedAt !== null) {
++      group.intervals.push([
++        DateTime.toEpochMillis(item.startedAt),
++        DateTime.toEpochMillis(item.completedAt ?? item.updatedAt),
++      ]);
++    }
++  }
++
++  const totalsByRunId = new Map<RunId, { tokens: number; modelMs: number }>();
++  for (const turn of providerTurns) {
++    const usage = turn.turnTokenUsage;
++    const group = itemsByProviderTurn.get(turn.id);
++    if (
++      turn.status !== "completed" ||
++      turn.startedAt === null ||
++      turn.completedAt === null ||
++      usage?.usageStatus !== "complete" ||
++      usage.hasSubagents ||
++      usage.outputTokens <= 0 ||
++      group?.runId == null ||
++      group.hasSubagent
++    ) {
++      continue;
++    }
++    const start = DateTime.toEpochMillis(turn.startedAt);
++    const end = DateTime.toEpochMillis(turn.completedAt);
++    const modelMs = end - start - busyMs(group.intervals, start, end);
++    if (modelMs <= 0) continue;
++    const totals = totalsByRunId.get(group.runId) ?? { tokens: 0, modelMs: 0 };
++    totals.tokens += usage.outputTokens;
++    totals.modelMs += modelMs;
++    totalsByRunId.set(group.runId, totals);
++  }
++
++  const rates = new Map<RunId, number>();
++  for (const [runId, { tokens, modelMs }] of totalsByRunId) {
++    rates.set(runId, Math.round((tokens * 1000) / modelMs));
++  }
++  return rates;
++}
