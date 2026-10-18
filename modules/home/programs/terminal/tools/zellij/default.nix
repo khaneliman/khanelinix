@@ -94,6 +94,8 @@ in
           compact-bar.path = "compact-bar";
         };
 
+        scroll_mode_sync = false;
+
         theme = lib.mkDefault "catppuccin-macchiato";
         theme_dir = "${config.xdg.configHome}/zellij/themes";
       }
