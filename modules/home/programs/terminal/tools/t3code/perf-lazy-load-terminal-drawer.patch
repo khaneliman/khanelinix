@@ -1,23 +1,26 @@
-diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/ChatView.tsx
---- a/apps/web/src/components/ChatView.tsx
-+++ b/apps/web/src/components/ChatView.tsx
-@@ -305,7 +305,6 @@
- import { isEditableFocused } from "../lib/editableFocus";
- import { DEFAULT_RESOLVED_KEYBINDINGS } from "@t3tools/shared/keybindings";
- import { resolveChatShortcutCommand, shortcutLabelForCommand } from "../keybindings";
+diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/src/components/PersistentThreadTerminals.tsx
+--- a/apps/web/src/components/PersistentThreadTerminals.tsx
++++ b/apps/web/src/components/PersistentThreadTerminals.tsx
+@@ -8,7 +8,7 @@ import {
+ import { scopeProjectRef } from "@t3tools/client-runtime/environment";
+ import { projectScriptCwd, projectScriptRuntimeEnv } from "@t3tools/shared/projectScripts";
+ import { resolveTerminalSessionLabel } from "@t3tools/shared/terminalLabels";
+-import { memo, useEffect, useState } from "react";
++import { lazy, memo, Suspense, useEffect, useState } from "react";
+ import { useComposerDraftStore } from "../composerDraftStore";
+ import { useStableCallback } from "../hooks/useStableCallback";
+ import type { TerminalContextSelection } from "../lib/terminalContext";
+@@ -23,7 +23,8 @@ import { useEnvironmentScope } from "../state/session";
+ import { useKnownTerminalSessions } from "../state/terminalSessions";
+ import { selectThreadTerminalUiState, useTerminalUiStateStore } from "../terminalUiStateStore";
+ import { useThreadTerminalActions } from "./terminal/useThreadTerminalActions";
 -import ThreadTerminalDrawer from "./ThreadTerminalDrawer";
- import {
-   AlarmClockIcon,
-   CheckCircle2Icon,
-@@ -717,6 +716,7 @@
-   import("./device/DevicePanel").then((module) => ({ default: module.DevicePanel })),
- );
- const FilePreviewPanel = lazy(() => import("./files/FilePreviewPanel"));
++
 +const ThreadTerminalDrawer = lazy(() => import("./ThreadTerminalDrawer"));
- const EMPTY_PENDING_FILE_SURFACE_IDS: ReadonlySet<string> = new Set();
- const TYPE_TO_FOCUS_EDITABLE_SELECTOR = [
-   "input",
-@@ -1327,34 +1327,36 @@
+ 
+ /** Where a drawer or panel opens new terminals when a script run overrides the thread's own. */
+ export type PersistentTerminalLaunchContext = {
+@@ -259,35 +260,39 @@ export const PersistentThreadTerminalDrawer = memo(function PersistentThreadTerm
        )}
      >
        <div className="min-h-0 overflow-clip">
@@ -29,6 +32,7 @@ diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/Chat
 -          runtimeEnv={runtimeEnv}
 -          visible={visible}
 -          height={terminalUiState.terminalHeight}
+-          // Known-session order is MRU and changes on focus; persisted store order keeps sidebar labels stable.
 -          terminalIds={canOperateTerminal ? terminalUiState.terminalIds : serverOrderedTerminalIds}
 -          activeTerminalId={terminalUiState.activeTerminalId}
 -          terminalGroups={terminalUiState.terminalGroups}
@@ -58,7 +62,10 @@ diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/Chat
 +            runtimeEnv={runtimeEnv}
 +            visible={visible}
 +            height={terminalUiState.terminalHeight}
-+            terminalIds={canOperateTerminal ? terminalUiState.terminalIds : serverOrderedTerminalIds}
++            // Known-session order is MRU and changes on focus; persisted store order keeps sidebar labels stable.
++            terminalIds={
++              canOperateTerminal ? terminalUiState.terminalIds : serverOrderedTerminalIds
++            }
 +            activeTerminalId={terminalUiState.activeTerminalId}
 +            terminalGroups={terminalUiState.terminalGroups}
 +            activeTerminalGroupId={terminalUiState.activeTerminalGroupId}
@@ -82,7 +89,7 @@ diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/Chat
        </div>
      </div>
    );
-@@ -1494,41 +1496,45 @@
+@@ -384,40 +389,44 @@ export const PersistentThreadTerminalPanel = memo(function PersistentThreadTermi
    if (!project || !cwd) return null;
  
    return (
@@ -162,12 +169,10 @@ diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/Chat
 +    </Suspense>
    );
  });
- 
 diff --git a/apps/web/vite.config.ts b/apps/web/vite.config.ts
-index cf343e26a4fcf9ffbe1e9d208753d319bdbc9581..3f144defbcb60aefae84e19af295d96b3d797632 100644
 --- a/apps/web/vite.config.ts
 +++ b/apps/web/vite.config.ts
-@@ -285,6 +285,21 @@ export default defineConfig(() => {
+@@ -277,6 +277,21 @@ export default defineConfig(() => {
        emptyOutDir: true,
        manifest: true,
        sourcemap: buildSourcemap,
@@ -188,4 +193,4 @@ index cf343e26a4fcf9ffbe1e9d208753d319bdbc9581..3f144defbcb60aefae84e19af295d96b
 +      },
      },
      test: {
-       projects: [defineProject(unitTestProject)],
+       projects: [defineProject(unitTestProject), defineProject(browserTestProject)],

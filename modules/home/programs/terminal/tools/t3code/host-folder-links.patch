@@ -1,7 +1,7 @@
 diff --git a/apps/web/src/components/files/FilePreviewPanel.test.ts b/apps/web/src/components/files/FilePreviewPanel.test.ts
 --- a/apps/web/src/components/files/FilePreviewPanel.test.ts
 +++ b/apps/web/src/components/files/FilePreviewPanel.test.ts
-@@ -12,6 +12,7 @@
+@@ -12,6 +12,7 @@ import {
    filePreviewReadErrorMessage,
    isMarkdownPreviewFile,
    resolveFilePreviewPath,
@@ -9,7 +9,7 @@ diff --git a/apps/web/src/components/files/FilePreviewPanel.test.ts b/apps/web/s
    setMarkdownTaskChecked,
    shouldShowFileExplorer,
    workspaceAssetResource,
-@@ -156,6 +157,63 @@
+@@ -156,6 +157,63 @@ describe("shouldShowFileExplorer", () => {
    });
  });
  
@@ -76,7 +76,7 @@ diff --git a/apps/web/src/components/files/FilePreviewPanel.test.ts b/apps/web/s
 diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/components/files/FilePreviewPanel.tsx
 --- a/apps/web/src/components/files/FilePreviewPanel.tsx
 +++ b/apps/web/src/components/files/FilePreviewPanel.tsx
-@@ -105,6 +105,7 @@
+@@ -105,6 +105,7 @@ import {
    filePreviewReadErrorMessage,
    isMarkdownPreviewFile,
    resolveFilePreviewPath,
@@ -84,7 +84,7 @@ diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/c
    setMarkdownTaskChecked,
    shouldShowFileExplorer,
    workspaceAssetResource,
-@@ -1108,9 +1109,12 @@
+@@ -1035,9 +1036,12 @@ export default function FilePreviewPanel({
    const isFolder =
      attachment === undefined &&
      (file.isNotFile || (folderTrail !== undefined && file.data === null && file.error === null));
@@ -100,7 +100,7 @@ diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/c
    const [explorerOpen, setExplorerOpen] = useState(initialExplorerOpen);
    const showExplorer = shouldShowFileExplorer({
      relativePath: previewPath,
-@@ -1525,9 +1529,9 @@
+@@ -1436,9 +1440,9 @@ export default function FilePreviewPanel({
              )}
            >
              <FileBrowserPanel
@@ -115,7 +115,7 @@ diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/c
 diff --git a/apps/web/src/components/files/filePath.test.ts b/apps/web/src/components/files/filePath.test.ts
 --- a/apps/web/src/components/files/filePath.test.ts
 +++ b/apps/web/src/components/files/filePath.test.ts
-@@ -190,3 +190,23 @@
+@@ -190,3 +190,23 @@ describe("fileBreadcrumbParent", () => {
      expect(fileBreadcrumbParent(path)).toBe(expected);
    });
  });
@@ -142,12 +142,10 @@ diff --git a/apps/web/src/components/files/filePath.test.ts b/apps/web/src/compo
 diff --git a/apps/web/src/components/files/filePreviewMode.ts b/apps/web/src/components/files/filePreviewMode.ts
 --- a/apps/web/src/components/files/filePreviewMode.ts
 +++ b/apps/web/src/components/files/filePreviewMode.ts
-@@ -5,6 +5,26 @@
- export function resolveFilePreviewPath(path: string | null, cwd: string): string | null {
-   if (path === null) return null;
+@@ -6,6 +6,26 @@ export function resolveFilePreviewPath(path: string | null, cwd: string): string
    return path === "." || workspaceRelativeFilePath(path, cwd) === "." ? null : path;
-+}
-+
+ }
+ 
 +/** Host folders use their own explorer root without changing the thread's workspace. */
 +export function resolveFilePreviewLocation(input: {
 +  readonly cwd: string;
@@ -166,9 +164,11 @@ diff --git a/apps/web/src/components/files/filePreviewMode.ts b/apps/web/src/com
 +    explorerCwd: hostDirectory ?? input.cwd,
 +    previewPath: isDirectory ? null : input.relativePath,
 +  };
- }
- 
++}
++
  export const isMarkdownPreviewFile = (path: string): boolean => /\.(?:md|mdx)$/i.test(path);
+ 
+ export function filePreviewReadErrorMessage(error: ProjectReadFileError): string {
 diff --git a/apps/web/src/components/files/fileTreeDragMention.test.ts b/apps/web/src/components/files/fileTreeDragMention.test.ts
 --- a/apps/web/src/components/files/fileTreeDragMention.test.ts
 +++ b/apps/web/src/components/files/fileTreeDragMention.test.ts
@@ -180,14 +180,13 @@ diff --git a/apps/web/src/components/files/fileTreeDragMention.test.ts b/apps/we
  import { createFileTreeDragMentionController } from "./fileTreeDragMention.ts";
  
  const makeTransfer = (plainText = "") => {
-@@ -17,6 +18,25 @@
+@@ -17,6 +18,24 @@ const rowNode = (path: string) => ({
  });
  
  describe("createFileTreeDragMentionController", () => {
 +  it("anchors external-tree mentions without changing the row paths used for deselection", () => {
 +    const deselected: string[] = [];
 +    const controller = createFileTreeDragMentionController({
-+      deselect: (path) => deselected.push(path),
 +      mentionPath: (path) => joinHostPath("/other-project", path),
 +    });
 +    const transfer = makeTransfer();
@@ -199,10 +198,10 @@ diff --git a/apps/web/src/components/files/fileTreeDragMention.test.ts b/apps/we
 +    expect(transfer.getData(COMPOSER_MENTION_DRAG_TYPE)).toBe(
 +      "[app.ts](/other-project/src/app.ts) [docs](/other-project/docs)",
 +    );
-+    controller.handleDragEnd();
++    controller.handleDragEnd((path) => void deselected.push(path));
 +    expect(deselected).toEqual(["src/app.ts", "docs/"]);
 +  });
 +
    it("tags a row drag with the mention payload and flags the drag", () => {
-     const controller = createFileTreeDragMentionController({ deselect: () => {} });
+     const controller = createFileTreeDragMentionController({});
      const transfer = makeTransfer();
