@@ -237,10 +237,12 @@ python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id 
 ```
 
 If dispatch did not start, cancel its claim. If dispatch started but then
-stopped without a provider result, record `dispatch-interrupted`; this opens the
-claimed route. Do not cancel a claim for a seat that can still return. Keep
-native semantic-fallback evidence in the caller-owned lifecycle; this state
-tracks named model routes only.
+stopped without a provider result, recover or cancel the app-owned task before
+reassigning its work, then record `dispatch-interrupted`. This releases the
+claim without changing route, provider or quota evidence: a caller interruption
+does not establish a provider failure. Do not cancel a claim for a seat that can
+still return. Keep native semantic-fallback evidence in the caller-owned
+lifecycle; this state tracks named model routes only.
 
 ```console
 python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> cancel --claim-id <claim-id>

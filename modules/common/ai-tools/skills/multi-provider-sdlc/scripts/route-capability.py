@@ -568,8 +568,10 @@ def record_outcome(
             state["named_agents"] = "open"
         elif outcome == "agent-type-available":
             mark_named_available(state)
-        else:
-            mark_open(state["routes"], model)
+        elif outcome == "dispatch-interrupted":
+            # Caller interruption supplies no provider availability evidence.
+            # Preserve a failure another concurrent claim may have established.
+            pass
         save_if_changed(path, state, True)
 
     return {

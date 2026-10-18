@@ -179,7 +179,11 @@ class RouteCapabilityTests(unittest.TestCase):
     def test_caller_fault_recovery_rearms_only_its_route_for_one_probe(self) -> None:
         self.initialize()
         model = self.registry["task_routes"][0]["preferred"][0]
-        self.complete(model, "dispatch-interrupted")
+        # A legacy caller-fault receipt may have opened the route before the
+        # interruption outcome stopped supplying provider evidence.
+        state = self.load_state()
+        state["routes"][model] = "open"
+        self.state.write_bytes(capability.canonical_json(state))
         before = self.load_state()
         with self.assertRaises(capability.CapabilityError):
             self.claim(model, before["revision"])
@@ -617,7 +621,7 @@ class RouteCapabilityTests(unittest.TestCase):
         repeated = self.claim("opus-5-5", 2)
         self.assertEqual(repeated["revision"], 3)
 
-    def test_interrupted_dispatch_opens_route_and_releases_claim(self) -> None:
+    def test_interrupted_dispatch_preserves_evidence_and_releases_claim(self) -> None:
         self.initialize()
         claim = self.claim("opus-5-5")
 
@@ -631,10 +635,28 @@ class RouteCapabilityTests(unittest.TestCase):
         state = self.load_state()
 
         self.assertEqual(result["revision"], 2)
-        self.assertEqual(plan["selected"], "gpt-6-astra")
-        self.assertFalse(plan["selectionRequired"])
-        self.assertEqual(state["routes"]["opus-5-5"], "open")
+        self.assertIsNone(plan["selected"])
+        self.assertTrue(plan["selectionRequired"])
+        self.assertEqual(state["routes"]["opus-5-5"], "unknown")
         self.assertEqual(state["named_agents"], "unknown")
+        self.assertEqual(state["claims"], {})
+
+    def test_interruption_does_not_clear_a_concurrent_route_failure(self) -> None:
+        self.initialize()
+        self.complete("opus-5-5", "success")
+        interrupted = self.claim("opus-5-5", 2)
+        failed = self.claim("opus-5-5", 3)
+        capability.record_outcome(
+            self.state, self.task_id, failed["claimId"], "route-unavailable"
+        )
+
+        capability.record_outcome(
+            self.state, self.task_id, interrupted["claimId"], "dispatch-interrupted"
+        )
+
+        state = self.load_state()
+        self.assertEqual(state["routes"]["opus-5-5"], "open")
+        self.assertEqual(state["pools"]["anthropic"]["general"], "available")
         self.assertEqual(state["claims"], {})
 
     def test_independent_claim_outcomes_merge_by_claim_id(self) -> None:
