@@ -29,6 +29,8 @@ in
 
       githubRoot = "${config.home.homeDirectory}/${lib.optionalString pkgs.stdenv.hostPlatform.isLinux "Documents/"}github";
 
+      worktreeIdleDays = 3;
+
       overrideT3codeSource =
         package:
         let
@@ -301,7 +303,15 @@ in
           snoozeLimitedThreads = true;
           autoResumeLimitedThreads = true;
           branchNamingMode = "semantic";
-          storageCleanup.worktreeOnMerge = true;
+          # The hourly sweep keeps each branch and recreates the checkout when
+          # its thread resumes. Keep the default keep rule: "tracked-changes"
+          # runs `git clean -ffdx` and deletes untracked files before removal.
+          storageCleanup = {
+            worktreeAfterDays = worktreeIdleDays;
+            worktreeSettledAfterDays = 0;
+            worktreeOnDelete = true;
+            worktreeOnMerge = true;
+          };
           # Keep threads until their PR merges or they are settled manually.
           sidebarAutoSettleAfterDays = null;
           sidebarAutoSettleOnMerge = true;
