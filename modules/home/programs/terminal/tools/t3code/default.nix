@@ -235,10 +235,51 @@ in
           exec t3 pair --tailscale "$@" --label "$label"
         '';
       };
+
+      # Linux only: the in-use check reads process working directories from /proc.
+      storageGcCommand = pkgs.writeShellApplication {
+        name = "t3code-storage-gc";
+        runtimeInputs = [
+          pkgs.coreutils
+          pkgs.findutils
+          pkgs.gawk
+          pkgs.git
+        ];
+        # Prepend this host's defaults so `t3code-storage-gc --dry-run` previews a run.
+        text = ''
+          set -- ${
+            lib.escapeShellArgs (
+              [
+                "--worktree-root"
+                "${config.home.homeDirectory}/.t3/worktrees"
+                "--idle-days"
+                (toString worktreeIdleDays)
+                "--max-new-file-mib"
+                "50"
+              ]
+              ++ lib.concatMap (root: [
+                "--repo-root"
+                root
+              ]) (
+                [
+                  githubRoot
+                  "${config.home.homeDirectory}/Documents/gitlab"
+                ]
+                ++ lib.optional (config.programs.nh.flake != null) config.programs.nh.flake
+              )
+            )
+          } "$@"
+        ''
+        + builtins.readFile ./storage-gc.sh;
+      };
     in
     lib.mkIf cfg.enable {
       home = {
-        packages = [ reconcileCommand ] ++ lib.optional tailscaleEnabled pairCommand;
+        packages = [
+          reconcileCommand
+        ]
+        ++ lib.optional tailscaleEnabled pairCommand
+        ++ lib.optional pkgs.stdenv.hostPlatform.isLinux storageGcCommand;
 
         # Explicit instances shadow legacy providers. Update only Nix-owned
         # fields without creating instances or overriding undeclared GUI enablement.
@@ -255,20 +296,43 @@ in
         };
       };
 
-      systemd.user.services.t3code-remote = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-        Unit = {
-          Description = "T3 Code canonical backend";
-          After = [ "network-online.target" ];
-          Wants = [ "network-online.target" ];
+      systemd.user = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+        services = {
+          t3code-remote = {
+            Unit = {
+              Description = "T3 Code canonical backend";
+              After = [ "network-online.target" ];
+              Wants = [ "network-online.target" ];
+            };
+
+            Service = {
+              ExecStart = lib.getExe remoteCommand;
+              Restart = "on-failure";
+              RestartSec = "10s";
+            };
+
+            Install.WantedBy = [ "default.target" ];
+          };
+
+          t3code-storage-gc = {
+            Unit.Description = "Reclaim storage left by T3 agent runs";
+            Service = {
+              Type = "oneshot";
+              ExecStart = lib.getExe storageGcCommand;
+              Nice = 19;
+              IOSchedulingClass = "idle";
+            };
+          };
         };
 
-        Service = {
-          ExecStart = lib.getExe remoteCommand;
-          Restart = "on-failure";
-          RestartSec = "10s";
+        timers.t3code-storage-gc = {
+          Unit.Description = "Reclaim storage left by T3 agent runs hourly";
+          Timer = {
+            OnCalendar = "hourly";
+            Persistent = true;
+          };
+          Install.WantedBy = [ "timers.target" ];
         };
-
-        Install.WantedBy = [ "default.target" ];
       };
 
       launchd.agents.t3code-remote = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
