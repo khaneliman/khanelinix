@@ -42,18 +42,38 @@ branch, so resuming the thread recreates the checkout without rerunning setup
 scripts. It never removes a worktree with uncommitted changes or one owned by
 an archived thread.
 
-On Linux, the hourly `t3code-storage-gc` timer covers what the sweep cannot:
+On Linux, the hourly `t3code-storage-gc` timer covers what the sweep cannot.
+It works on the repositories of the projects T3 lists in
+`~/.t3/userdata/statev2.sqlite` and on every worktree of those repositories:
+the main checkout, T3's worktrees, and worktrees agents add themselves. No
+repository is configured by name.
 
 - It deletes `tmp_*` files untouched for an hour in `.git/objects`, its `pack`
-  directory, and its loose-object directories, for repositories under
-  `~/Documents/github`, `~/Documents/gitlab`, and the flake checkout. T3 stops
-  a checkpoint capture after 30 seconds, and a capture stopped while streaming
-  large untracked files leaks a partial pack.
+  directory, and its loose-object directories. T3 stops a checkpoint capture
+  after 30 seconds, and a capture stopped while streaming large untracked
+  files leaks a partial pack.
 - In `~/.t3/worktrees`, it commits the edits of a worktree idle for three days
   as a `wip:` commit on that worktree's branch, without hooks or signing, so
   the sweep can remove it. It keeps worktrees with a new file over 50 MiB, an
   untracked nested repository, hidden or unmerged index entries, an operation
   in progress, or a process working inside.
+- It prunes cargo target directories: ignored directories at the top of a
+  worktree that hold cargo's `.rustc_info.json`, such as `target/`.
+  Everything in one is disposable (`cargo clean` deletes it all), but agents
+  leave task folders there and give isolated checks their own nested target
+  directories, often tens of GiB each. It deletes folders unchanged for 14
+  days, unless they hold tracked files, a nested worktree or clone, or a
+  process working in them. After 24 hours unchanged, it deletes cargo's own
+  build folders (profiles and target triples) inside nested target
+  directories, unless a build holds their `.cargo-lock` or a process works in
+  them. Anything saved beside those build folders waits for the 14-day rule.
+  Cargo's own folders directly under the target directory are never deleted.
+  "Unchanged" means no newer modification time, so a folder copied or
+  restored with its old timestamps counts as idle.
+
+`CACHEDIR.TAG` alone does not qualify a directory: cargo omits it when the
+directory already existed, and other tools tag state that is not scratch, such
+as uv virtual environments.
 
 Preview a run with `t3code-storage-gc --dry-run`. Runs log to
 `journalctl --user -u t3code-storage-gc`.

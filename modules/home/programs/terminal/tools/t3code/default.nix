@@ -244,30 +244,24 @@ in
           pkgs.findutils
           pkgs.gawk
           pkgs.git
+          pkgs.sqlite
+          pkgs.util-linux
         ];
-        # Prepend this host's defaults so `t3code-storage-gc --dry-run` previews a run.
+        # Prepend the defaults so `t3code-storage-gc --dry-run` previews a run.
         text = ''
           set -- ${
-            lib.escapeShellArgs (
-              [
-                "--worktree-root"
-                "${config.home.homeDirectory}/.t3/worktrees"
-                "--idle-days"
-                (toString worktreeIdleDays)
-                "--max-new-file-mib"
-                "50"
-              ]
-              ++ lib.concatMap (root: [
-                "--repo-root"
-                root
-              ]) (
-                [
-                  githubRoot
-                  "${config.home.homeDirectory}/Documents/gitlab"
-                ]
-                ++ lib.optional (config.programs.nh.flake != null) config.programs.nh.flake
-              )
-            )
+            lib.escapeShellArgs [
+              "--t3-home"
+              "${config.home.homeDirectory}/.t3"
+              "--idle-days"
+              (toString worktreeIdleDays)
+              "--max-new-file-mib"
+              "50"
+              "--folder-days"
+              "14"
+              "--cache-hours"
+              "24"
+            ]
           } "$@"
         ''
         + builtins.readFile ./storage-gc.sh;
