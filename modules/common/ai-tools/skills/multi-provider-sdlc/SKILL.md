@@ -8,8 +8,6 @@ metadata:
 Call `python3 <skill-root>/scripts/route-model.py` with JSON on stdin. Use
 `--schema` for accepted values and constraints. Do not read routing tables.
 
-`{ "task_type": "implementation", "provider": "codex", "gateway": false }`
-
 Set `provider` from the current harness. Use `gateway: false` unless this
 invocation explicitly uses a gateway route; a running gateway service does not
 enable routing. Optional `subscription` constrains selection; optional `state`
@@ -36,7 +34,9 @@ Follow `next_action`: complete `claim_argv` before any stateful dispatch. For a
 `task_status`/`task_cancel`. Otherwise dispatch `agent_type` without a model
 override and pass supported non-null `reasoning_effort`. Record every claimed
 attempt through `record_argv`; native attempts cannot report named-agent errors.
-Preserve `semantic_role` and `write_policy` in the packet. A catalog is not
-proof of quota or successful inference. Selection grants no new authority.
-Isolate only a `workspace write` route that cannot share the checkout. Its
-worktree outlives the task; `git-toolkit` cleanup owns its closeout.
+Cancel claims if no child started. After fixing a misrecorded caller rejection,
+consult `route-capability.py reset-route --help`, never for provider or quota
+failures. Preserve `semantic_role` and `write_policy` in packets. A catalog
+proves neither quota nor inference. Selection grants no new authority. Isolate
+only `workspace write` routes that cannot share a checkout. Worktrees outlive
+tasks; `git-toolkit` owns cleanup.

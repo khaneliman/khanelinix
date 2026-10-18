@@ -176,6 +176,92 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(after, expected)
         self.claim(model, after["revision"])
 
+    def test_caller_fault_recovery_rearms_only_its_route_for_one_probe(self) -> None:
+        self.initialize()
+        model = self.registry["task_routes"][0]["preferred"][0]
+        self.complete(model, "dispatch-interrupted")
+        before = self.load_state()
+        with self.assertRaises(capability.CapabilityError):
+            self.claim(model, before["revision"])
+        result = self.run_cli(
+            "reset-route",
+            "--expected-revision",
+            str(before["revision"]),
+            "--model",
+            model,
+            "--confirmed-caller-fault",
+        )
+        expected = json.loads(json.dumps(before))
+        expected["routes"][model] = "unknown"
+        expected["revision"] += 1
+        self.assertTrue(result["changed"])
+        self.assertEqual(self.load_state(), expected)
+        claim = self.claim(model, expected["revision"])
+        self.assertTrue(claim["probe"])
+        with self.assertRaises(capability.CapabilityError):
+            self.claim(model, claim["revision"])
+
+    def test_route_reset_cannot_bypass_provider_or_quota_failure(self) -> None:
+        model = self.registry["task_routes"][0]["preferred"][0]
+        route = self.registry["models"][model]
+        for blocker in ("provider", "quota"):
+            with self.subTest(blocker=blocker):
+                self.initialize()
+                state = self.load_state()
+                state["routes"][model] = "open"
+                if blocker == "provider":
+                    state["providers"][route["subscription"]] = "open"
+                else:
+                    state["pools"][route["subscription"]][route["quota_pool"]] = "open"
+                self.state.write_bytes(capability.canonical_json(state))
+                capability.reset_route(
+                    self.state, self.task_id, state["revision"], model
+                )
+                after = self.load_state()
+                self.assertEqual(after["providers"], state["providers"])
+                self.assertEqual(after["pools"], state["pools"])
+                with self.assertRaises(capability.CapabilityError):
+                    self.claim(model, after["revision"])
+                self.state.unlink()
+
+    def test_route_reset_rejects_active_stale_and_unknown_without_changes(self) -> None:
+        self.initialize()
+        model = self.registry["task_routes"][0]["preferred"][0]
+        claim = self.claim(model)
+        before = self.state.read_bytes()
+        for revision, target in (
+            (claim["revision"], model),
+            (claim["revision"] - 1, model),
+            (claim["revision"], "not-a-route"),
+        ):
+            with self.subTest(revision=revision, target=target):
+                with self.assertRaises(capability.CapabilityError):
+                    capability.reset_route(self.state, self.task_id, revision, target)
+                self.assertEqual(self.state.read_bytes(), before)
+        capability.cancel_claim(self.state, self.task_id, claim["claimId"])
+        before = self.state.read_bytes()
+        result = capability.reset_route(
+            self.state, self.task_id, self.load_state()["revision"], model
+        )
+        self.assertFalse(result["changed"])
+        self.assertEqual(self.state.read_bytes(), before)
+
+    def test_route_reset_requires_explicit_caller_fault_confirmation(self) -> None:
+        with self.assertRaises(SystemExit), mock.patch.object(sys, "stderr"):
+            capability.build_parser().parse_args(
+                [
+                    "--state",
+                    str(self.state),
+                    "--task-id",
+                    self.task_id,
+                    "reset-route",
+                    "--expected-revision",
+                    "0",
+                    "--model",
+                    "any",
+                ]
+            )
+
     def test_reset_preserves_provider_and_route_failures(self) -> None:
         self.initialize()
         state = self.load_state()

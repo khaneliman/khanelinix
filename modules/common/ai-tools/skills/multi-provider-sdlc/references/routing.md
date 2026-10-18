@@ -246,6 +246,19 @@ tracks named model routes only.
 python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> cancel --claim-id <claim-id>
 ```
 
+If a caller-side rejection was mistakenly recorded as `dispatch-interrupted`,
+retain that failure receipt and verify both that no child started and that the
+caller fault is resolved. Only then rearm that route for one required probe:
+
+```console
+python3 <skill-root>/scripts/route-capability.py --state <state-path> --task-id <task-id> reset-route --expected-revision <revision> --model <model> --confirmed-caller-fault
+```
+
+This changes only the named route from `open` to `unknown`, rejects active
+claims on it, and preserves provider, quota-pool, and other route failures. It
+is not recovery for interrupted inference, provider errors, or quota exhaustion.
+Continue through the resolver and a fresh claim; do not dispatch directly.
+
 Before a Google claim, ingest only categorical telemetry and use the returned
 revision for the next plan or claim:
 

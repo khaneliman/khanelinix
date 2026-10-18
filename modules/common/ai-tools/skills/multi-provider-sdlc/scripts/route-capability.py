@@ -1009,6 +1009,35 @@ def reset_quota(
     }
 
 
+def reset_route(
+    path: Path,
+    task_id: str,
+    expected_revision: int,
+    model: str,
+) -> dict[str, Any]:
+    """Rearm a route after a caller rejection was misrecorded as a started run."""
+    require_task_id(task_id)
+    path = state_path(path)
+    registry, digest = load_registry_context()
+    if model not in registry["models"]:
+        raise CapabilityError("unknown model route")
+    with exclusive_state_lock(path):
+        state = load_state(path, task_id, registry, digest)
+        require_revision(state, expected_revision)
+        if any(claim["model"] == model for claim in state["claims"].values()):
+            raise CapabilityError("model route still has active claims")
+        changed = state["routes"][model] == "open"
+        if changed:
+            state["routes"][model] = "unknown"
+        save_if_changed(path, state, changed)
+    return {
+        "changed": changed,
+        "taskId": task_id,
+        "revision": state["revision"],
+        "model": model,
+    }
+
+
 def status_report(path: Path, task_id: str) -> dict[str, Any]:
     require_task_id(task_id)
     path = state_path(path)
@@ -1084,6 +1113,21 @@ def build_parser() -> argparse.ArgumentParser:
     reset.add_argument("--pool", required=True)
     reset.add_argument("--confirmed-reset", action="store_true", required=True)
 
+    route_reset = commands.add_parser(
+        "reset-route",
+        description=(
+            "Correct a route opened by a misclassified caller-side dispatch rejection. "
+            "Confirm that no child started and the caller fault is resolved. "
+            "Not for provider errors, interrupted inference, or quota replenishment. "
+            "Preserves every provider, quota pool, other route, and active claim."
+        ),
+    )
+    route_reset.add_argument("--expected-revision", type=int, required=True)
+    route_reset.add_argument("--model", required=True)
+    route_reset.add_argument(
+        "--confirmed-caller-fault", action="store_true", required=True
+    )
+
     commands.add_parser("status")
     return parser
 
@@ -1134,6 +1178,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                 args.expected_revision,
                 args.subscription,
                 args.pool,
+            )
+        elif args.command == "reset-route":
+            result = reset_route(
+                args.state,
+                args.task_id,
+                args.expected_revision,
+                args.model,
             )
         elif args.command == "ingest-google":
             if args.input == Path("-"):
