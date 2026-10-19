@@ -30,6 +30,9 @@ in
 - Configure upstream NixOS, nix-darwin, or Home Manager options directly when no
   repository-level choice exists. Do not wrap only for visual consistency.
 - Keep fixed repository policy as local module bindings, not options.
+- Do not name individual project repositories or add per-repository jobs in a
+  reusable module. Derive targets from the tool's own state or from markers that
+  tools write.
 - Emit only intentional deltas from the pinned upstream default. Inspect that
   default before adding a setting, including values inherited from another owned
   config.
