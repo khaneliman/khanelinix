@@ -660,8 +660,8 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
      const updatedAt = DateTime.formatIso(yield* DateTime.now);
      const next = yield* SubscriptionRef.updateAndGet(metadata, (state) => {
        if (state.authRevision !== before.authRevision) return state;
-@@ -213,12 +298,7 @@
-           version: initialized?.agentInfo?.version || draft.version,
+@@ -214,12 +299,7 @@
+           version: version === "unknown" ? draft.version : version || draft.version,
            status: errorMessage ? "error" : authenticated ? "ready" : "warning",
            checkedAt: updatedAt,
 -          usageLimits: missingInstallation
