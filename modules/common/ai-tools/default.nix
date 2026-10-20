@@ -252,6 +252,16 @@ let
         "plugin-creator"
         "skill-installer"
       ];
+      disablePluginSkills = map (name: "mattpocock-skills:${name}") [
+        "code-review"
+        "diagnosing-bugs"
+        "implement"
+        "research"
+        "resolving-merge-conflicts"
+        "tdd"
+        "triage"
+        "writing-for-agents"
+      ];
     };
 
     claudeCode = {
@@ -407,6 +417,7 @@ in
       ${frontendDesignPlugin}.enabled = true;
     };
     disabledSystemSkills = disabledSystemSkillsForHarness "codex";
+    disabledPluginSkills = disabledPluginSkillsForHarness "codex";
     agents = aiAgents.toCodexAgents;
     contextOverride = codexContextOverride;
     managedRequirements = codexManagedRequirementsWithHooks;

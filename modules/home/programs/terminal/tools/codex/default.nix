@@ -102,6 +102,12 @@ let
     path = "${codexConfigPath}/skills/.system/${name}/SKILL.md";
     enabled = false;
   }) aiTools.codex.disabledSystemSkills;
+  disabledSkillConfig =
+    disabledSystemSkillConfig
+    ++ map (name: {
+      inherit name;
+      enabled = false;
+    }) aiTools.codex.disabledPluginSkills;
   codexAgentSources = lib.mapAttrs (
     name: agentSettings: tomlFormat.generate "codex-agent-${name}" agentSettings
   ) aiTools.codex.agents;
@@ -485,8 +491,8 @@ in
         approval_policy = "on-request";
         sandbox_mode = "danger-full-access";
 
-        skills = lib.optionalAttrs (disabledSystemSkillConfig != [ ]) {
-          config = disabledSystemSkillConfig;
+        skills = lib.optionalAttrs (disabledSkillConfig != [ ]) {
+          config = disabledSkillConfig;
         };
 
         tui = {
