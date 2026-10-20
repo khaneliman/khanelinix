@@ -95,7 +95,7 @@
 			},
 			"displayName": "Diagnosing Bugs",
 			"description": "Reproduce, minimize, and establish software bug causes.",
-			"version": "0.1.2",
+			"version": "0.1.3",
 			"category": "Developer Tools"
 		},
 		{

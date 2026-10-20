@@ -25,24 +25,28 @@ the `engineering-workflow` Ground phase and return control to that lifecycle.
 
 ## Diagnosis Contract
 
-Read [diagnosis-loop.md](references/diagnosis-loop.md), then:
+Choose one evidence path. Read [diagnosis-loop.md](references/diagnosis-loop.md)
+for the selected path's detail:
 
-1. Build and run one fast feedback command that can detect the user's exact
-   symptom. Record its red result.
-2. Minimize the reproduction one element at a time. Stop when every remaining
-   element is load-bearing.
-3. Rank three to five falsifiable hypotheses. State one observable prediction
-   for each hypothesis.
-4. Run one-variable probes against those predictions. Prefer debugger or REPL
-   inspection over broad logging.
-5. State the supported cause, rejected hypotheses, evidence, and residual
-   uncertainty.
+1. **Reproduction, preferred:** run a focused command that detects the user's
+   exact symptom. Reuse it to test the cause and verify a requested fix. Minimize
+   the reproduction only as far as needed to isolate the relevant uncertainty.
+2. **Source or contract evidence:** when the defect follows conclusively from
+   source, a schema, documentation, or an input/output contract, establish the
+   mismatch directly. State what this proves and what still needs runtime
+   confirmation. Do not claim an unexecuted reproduction or fix check.
 
-If no red-capable loop is possible, report each attempted route and request the
-smallest missing access, redacted artifact, or instrumentation authority. Do not
-replace the missing signal with speculation.
+Start with the best-supported explanation and a check that could disprove it.
+Compare alternative hypotheses when the evidence is ambiguous or a check fails;
+do not invent a quota of alternatives for an established mismatch.
+
+A caller may strengthen either path, for example by requiring runtime
+reproduction for a timing bug or release acceptance. Honor that requirement
+without imposing it on every diagnosis. When neither path provides sufficient
+evidence, report the gap and request only the access or artifact needed to
+resolve it. Do not replace missing evidence with speculation.
 
 For diagnosis-only work, stop after the evidence report. For a requested fix,
-return the minimized reproduction and supported cause to `engineering-workflow`.
+return the evidence and supported cause to `engineering-workflow`.
 That lifecycle owns implementation, regression verification, review, and
 handoff.

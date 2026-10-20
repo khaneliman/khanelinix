@@ -42,8 +42,10 @@ class DiagnosingBugsContractTests(unittest.TestCase):
         text = " ".join((read(SKILL_MD) + read(REFERENCE)).lower().split())
         for invariant in (
             "user's exact symptom",
-            "every remaining element is load-bearing",
-            "three to five falsifiable hypotheses",
+            "reproduction, preferred",
+            "source or contract evidence",
+            "caller may strengthen either path",
+            "do not invent a quota of alternatives",
             "one variable",
             "[debug-<id>]",
             "original unminimized command",
