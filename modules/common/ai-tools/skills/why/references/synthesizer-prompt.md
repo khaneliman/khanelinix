@@ -69,7 +69,8 @@ before writing the output. The key rules:
 
 ## Output Format
 
-Write the output for the user. Use this exact structure:
+Write the output for the user. Use only sections that help answer the question;
+a short cited explanation can replace this structure for a simple result:
 
 ---
 
@@ -135,12 +136,12 @@ why" is not. Include:
 
 ### Sources Consulted
 
-Bulleted list of what was actually searched, so the user can judge coverage and
-redirect. Format:
+List what was actually searched so the user can judge coverage and redirect.
+Omit unrelated categories; a tool's availability is not a reason to use it.
+Name a missing source only when it leaves a material evidence gap. Examples:
 
 - **Source control history**: {file paths}, {number of commits reviewed}, PRs
-  #{numbers}, and code comments searched. Or "Not searched. This should not
-  happen because git and `gh` are always expected."
+  #{numbers}, and code comments searched.
 - **Issue / ticket tracker**: {ticket IDs and keyword searches}. Or "Not
   searched. No matching MCP available in this environment."
 - **Long-form documents**: {page titles and search queries}. Or "Not searched.
@@ -178,9 +179,8 @@ Before finalizing, review your output against this checklist:
 2. Is the phrasing tier-appropriate? (Direct claims can use "because"; Inferred
    claims cannot.)
 3. Did you surface any contradictions you noticed, or did you quietly pick one?
-4. Does the "What We Don't Know" section exist and name specific gaps? If it's
-   empty or missing, be suspicious. Historical investigations almost always have
-   gaps.
+4. Are material evidence gaps stated? Do not invent gaps or empty sections for
+   a question the evidence has answered.
 5. If the user embedded a hypothesis in their question, did you check it against
    the evidence rather than rubber-stamping it?
 6. Did you cite any code as evidence for its own intent? Remove those. Code is

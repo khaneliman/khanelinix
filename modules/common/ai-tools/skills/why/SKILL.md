@@ -1,6 +1,6 @@
 ---
 name: why
-description: "Investigate motivation, design rationale, and historical decisions behind code. Queries source control, issue trackers, docs, chat, observability, and error logs in parallel. Use for 'why does X work this way', 'why we picked Y', design rationale, regressions, or postmortems."
+description: "Investigate motivation, design rationale, and historical decisions behind code using relevant evidence. Use for 'why does X work this way', 'why we picked Y', design rationale, regressions, or postmortems."
 ---
 
 # Why
@@ -35,10 +35,16 @@ gh pr view <number> --json title,body,author,comments,reviews
 
 Record file paths, line ranges, symbols, commit SHAs, and linked ticket numbers.
 
-### 2. Query Evidence Categories in Parallel
+### 2. Follow Relevant Evidence
 
-Query available evidence systems in parallel using
-[investigator-prompt.md](references/investigator-prompt.md):
+Start with sources likely to answer the question. A commit or linked design
+record may be sufficient. Use other tools only when they resolve a material gap
+or contradiction, or the user requests broader coverage. Tool availability alone
+does not justify a query.
+
+For independent searches that benefit from delegation, use
+[investigator-prompt.md](references/investigator-prompt.md). Keep simple
+investigations in the parent. Potential sources include:
 
 1. **Source control**: Commits, PR descriptions, review comments, tests
    ([code-archaeology.md](references/sources/code-archaeology.md)).
@@ -49,13 +55,15 @@ Query available evidence systems in parallel using
    [incident-postmortem.md](references/sources/incident-postmortem.md) when
    investigating defensive checks.
 
-Skip only systems without an available tool, and record each one in sources
-consulted.
+Stop when the evidence sufficiently answers the question. Report the sources
+actually consulted and material limits; do not inventory or query unrelated
+systems to satisfy a coverage template.
 
 ### 3. Synthesize and Present
 
-Synthesize findings using
-[synthesizer-prompt.md](references/synthesizer-prompt.md):
+Answer a simple question directly with citations and any material uncertainty.
+For a complex investigation, use
+[synthesizer-prompt.md](references/synthesizer-prompt.md) to organize:
 
 - **The Question**: Concise restatement.
 - **The Code**: Anchoring files, symbols, and line ranges.
