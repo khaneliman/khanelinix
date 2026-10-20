@@ -35,6 +35,12 @@ kind; its confirmed risks feed a review's scrutiny.
 Answer each stage with evidence before the next. Stop early and recommend
 redesign or closure when a stage fails.
 
+Before dispatching detailed specialist reviews, the parent establishes whether
+the change solves a worthwhile problem within scope. If the premise fails,
+stop there; do not spend more reviews on syntax, style, or edge cases in an
+unwanted solution. When intent is materially unclear, ask a focused question or
+limit review to resolving the premise before continuing.
+
 1. Premise and demonstrated value.
 2. Issue fit and scope.
 3. API and architecture.
@@ -109,10 +115,17 @@ or CI-check lane, not the reviewer.
 
 ## Premise Gate
 
-Record this block first in internal review reports, before findings and before
-the verdict. Keep cleared concerns and the full checklist out of public reviews;
-publish only actionable findings in the concise review-authoring format.
-Write one conventional comment per internal concern, in the form
+Check the premise first in every review; the amount recorded depends on the
+change. For a simple, well-understood change, a brief conclusion tied to the
+request and affected code is enough. Do not create a report merely to prove the
+review happened. Use the full block below for complex or contested designs,
+adversarial multi-reviewer work, or an explicitly requested structured report.
+Record it before findings and the verdict. Keep cleared concerns and the full
+checklist out of public reviews; publish only actionable findings in the
+concise review-authoring format.
+
+For the full block, write one conventional comment per internal concern, in
+the form
 `<label> [(decoration)]: <concern>: <evidence>`, with the labels and decorations
 from conventionalcomments.org. Answer from repository evidence: issue text,
 callers, existing options, schemas, history, and canon. Cite what was searched,
@@ -149,10 +162,12 @@ blocks.
 `No issues found` and `approved` mean the premise, scope, API boundary, and
 minimality were checked, not only the changed lines.
 
-Check a report with `../scripts/premise_gate_check.py review <report.md>`. It
+For a full structured report, use
+`../scripts/premise_gate_check.py review <report.md>`. It
 fails on a missing or unknown concern, a comment without evidence, an
 undecorated `issue` or `todo`, a gate placed after findings or the verdict, or
-an approving verdict beside a blocking premise comment.
+an approving verdict beside a blocking premise comment. Do not run this
+full-report checker against a brief routine review.
 
 ## Reviewer Packets
 

@@ -53,17 +53,27 @@ and review summaries. The Verification Gate belongs to implementation and
 correction, not a second mechanical validation pass by the reviewer.
 
 - Trivial: optional unless requested.
-- Normal: one fresh independent reviewer. Check intended behavior, correctness,
-  unnecessary complexity, maintenance burden, and the value and CI cost of tests.
+- Normal: review directly when the intended change, affected callers, and
+  focused evidence make the result clear. Use one fresh independent reviewer
+  when correctness or consequences elsewhere remain uncertain after
+  investigation, or complexity warrants another perspective.
 - High: required. Use `interrogate` when the change is contested or high stakes.
+
+An explicit review request always receives review, but does not by itself
+require delegation, a full internal report, or multiple passes. Establish that
+the change makes sense before spending effort on details or specialist fan-out.
+For simple changes, a brief premise conclusion and focused verification suffice;
+do not manufacture process to fill a checklist.
 
 ## Correction Gate
 
 - The parent classifies findings by evidence and risk. Accepted
   completion-blocking findings block handoff. Suggestions never expand scope.
 - Correct accepted blockers within scope, then revalidate invalidated evidence.
-- Request re-review for the corrected concerns; do not restart cleared review
-  work without new evidence.
+- Re-review corrected concerns when consequential uncertainty remains or the
+  correction changes a reviewed boundary. An obvious correction established by
+  focused evidence does not require another reviewer pass. Do not restart
+  cleared review work without new evidence.
 - Continue while evidence improves or accepted blockers shrink. If the same
   failure repeats without progress, re-ground the cause or escalate the method.
 - Stop only for a concrete blocker, exhausted explicit budget, missing authority,

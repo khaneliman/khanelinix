@@ -59,9 +59,11 @@ of unrecorded shared-tree edits a durable rollback boundary.
    high risk.
 5. **Review.** Apply the proportional review gate below. The lifecycle owner
    validates reviewer findings against code and evidence.
-6. **Correct.** Resolve accepted blockers, rerun invalidated checks, and request
-   focused re-review. Continue while making progress; re-ground repeated unchanged
-   failures. Stop for a concrete blocker or a required user decision.
+6. **Correct.** Resolve accepted blockers and rerun invalidated checks. Request
+   focused re-review when consequential uncertainty remains or the correction
+   changes a reviewed boundary, not for every obvious correction. Continue while
+   making progress; re-ground repeated unchanged failures. Stop for a concrete
+   blocker or a required user decision.
 7. **Prepare candidate.** With local-commit authority, stage only slice changes
    and inspect the staged diff. Without authority, materialize the exact handoff
    patch. If slice changes cannot be separated from pre-existing work, do not
@@ -86,13 +88,17 @@ A command that did not run cannot pass.
 - **Trivial:** focused verification is required. Fresh review is optional. The
   pre-commit receipt and commit occurrence records are optional. When the slice
   skips those records, it reports the focused verification evidence directly.
-- **Normal:** focused and regression checks are required. One fresh reviewer is
-  required.
+- **Normal:** focused and regression checks are required. Review directly when
+  the change and its consequences are clear. Use one fresh reviewer when
+  correctness or impact uncertainty remains after investigation, or complexity
+  warrants another perspective.
 - **High:** focused, regression, reach, and integration checks are required.
   Independent review is required. Use adversarial review when risk is contested
   or one reviewer cannot cover the relevant boundaries.
 
-A reviewer must not be the slice writer. Suggestions do not expand slice scope.
+An independent reviewer must not be the slice writer. Simple changes do not
+need delegation, a full internal report, or repeated review passes. Suggestions
+do not expand slice scope.
 Accepted blockers prevent completion, not further authorized correction. Keep
 review read-only and correction separate; do not re-review cleared concerns
 without changed evidence.

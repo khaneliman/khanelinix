@@ -26,8 +26,11 @@ review operations, and the public comment format.
    exhaustive. Increase `--max-files`/`--max-commits`, or use `0` to fetch
    through GitHub's API hard cap.
 
-2. Stop for closed or draft pull requests, or generated/dependency-only changes
-   with no reviewable code.
+2. Treat closed, draft, or generated/dependency-only status as context, not a
+   reason to reject an explicitly requested review. Follow the user's stated
+   scope and review the relevant design, configuration, or dependency behavior
+   even when there is no handwritten code. State any unfinished or historical
+   limitations; do not change draft status or publication authority.
 3. Read contributor guidance, PR template, root and changed-path instructions,
    and directly relevant documentation.
 4. Load the available specialist skill for each changed language or domain, such
@@ -36,11 +39,12 @@ review operations, and the public comment format.
    coverage gap, and return a blocked review only when missing evidence or
    capability prevents a reliable verdict.
 5. Run the premise gate from the `premise-review` method in
-   `engineering-principles` before reading the diff for defects. Record each
-   premise concern as a conventional comment with evidence from the issue, the
-   PR body, and the repository. When the gate fails, draft a review that
-   recommends redesign or closure with the native abstraction or existing
-   capability named, even when every check is green.
+   `engineering-principles` before reading the diff for defects or dispatching
+   detailed specialist reviewers. Use its brief conclusion for a simple change
+   and its full internal block when complexity or contested premises warrant it.
+   When the gate fails, draft a review that recommends redesign or closure with
+   the native abstraction or existing capability named, even when every check is
+   green.
 6. Review the merge-base-to-head diff (`base...head`) plus necessary local
    context, not a two-tip comparison against the default branch tip. For stacked
    PRs, use the PR's actual base so lower layers stay outside the review unit.
