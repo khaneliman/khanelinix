@@ -28,7 +28,7 @@
   tests, and install documentation
 - `skills/`: canonical on-demand workflows; keep root playbooks lean and route
   detail into references/scripts
-- `skill-routing/`: deterministic provider gates for verified missed routes
+- `skill-routing/`: advisory provider reminders for known missed routes
 - `planning-with-files/`: vendored provider adapters and explicit planning
   commands; `skills/planning-with-files/` owns the canonical optional workflow
 - `okf-memory/`: deterministic cross-provider durable-memory hooks
