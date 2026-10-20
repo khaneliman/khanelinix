@@ -197,10 +197,11 @@ in
             ];
             build-users-group = "nixbld";
 
-            # buildDotnetModule emits __sandboxProfile on Darwin (mds, ICU,
-            # SecurityServer); strict `sandbox = true` refuses such drvs
-            # outright. Relaxed still sandboxes everything else.
-            sandbox = lib.mkForce "relaxed";
+            # Large Home Manager closures exceed macOS's sandbox policy limit
+            # throughout profile and system assembly, even in relaxed mode.
+            # Keep Darwin builds unsandboxed until Nix can compile these profiles.
+            # https://github.com/NixOS/nix/issues/4119
+            sandbox = lib.mkForce false;
 
             extra-sandbox-paths = [
               "/System/Library/Frameworks"
