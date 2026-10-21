@@ -32,8 +32,6 @@ in
         '';
       };
 
-      hostName = config.system.name;
-
       # Resolve .local domains over IPv4 only. Responders with no IPv6 address,
       # such as AustinServer, never answer AAAA queries, so nssmdns6 stalls
       # each lookup for 5 s and can fail it.
@@ -42,13 +40,17 @@ in
       # pass avahi port(s) to the firewall
       openFirewall = true;
 
-      publish = {
-        enable = true;
-        addresses = true;
-        domain = true;
-        hinfo = true;
-        userServices = true;
-        workstation = true;
+      settings = {
+        server.host-name = config.system.name;
+
+        publish = {
+          disable-publishing = false;
+          disable-user-service-publishing = false;
+          publish-addresses = true;
+          publish-domain = true;
+          publish-hinfo = true;
+          publish-workstation = true;
+        };
       };
     };
   };
