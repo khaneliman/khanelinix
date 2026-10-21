@@ -72,7 +72,7 @@ in
       "class<claude-desktop>" = "󰚩";
       "class<codex-desktop>" = "󱚣";
       "class<DBeaver>" = "";
-      "class<Element>" = "󰭹";
+      "class<element-desktop>" = "󰭹";
       "class<Darktable>" = "󰄄";
       "class<Github Desktop>" = "󰊤";
       "class<Godot>" = "";
