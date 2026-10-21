@@ -69,6 +69,10 @@ in
             workspace = "4 silent";
             no_initial_focus = true;
             focus_on_activate = false;
+            # The game requests fullscreen on a specific output after mapping,
+            # and Hyprland answers that by moving the window to the output's
+            # active workspace, undoing the workspace 4 placement.
+            suppress_event = "fullscreenoutput";
           }
           {
             match.class = "^(heroic|lutris|org.vinegarhq.Sober)$";
