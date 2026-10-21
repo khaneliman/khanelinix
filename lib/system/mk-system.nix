@@ -41,6 +41,7 @@ let
       "nixpkgs-master"
       "home-manager"
       "sops-nix"
+      "stylix"
     ];
   };
   common = import ./common.nix { inputs = patchedInputs; };

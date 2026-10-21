@@ -15,6 +15,7 @@ Supported inputs:
 - `nixpkgs-master`
 - `home-manager`
 - `sops-nix`
+- `stylix`
 - `nix-darwin`
 - `nix-rosetta-builder`
 
@@ -28,9 +29,9 @@ Patch sources:
   `mkSystem`, `mkDarwin`, or `mkHome`.
 
 `mkDarwin` can patch every supported input. `mkSystem` and `mkHome` patch
-`nixpkgs`, `nixpkgs-unstable`, `nixpkgs-master`, `home-manager`, and `sops-nix`;
-they skip `nix-darwin` and `nix-rosetta-builder` because those builders do not
-evaluate them.
+`nixpkgs`, `nixpkgs-unstable`, `nixpkgs-master`, `home-manager`, `sops-nix`, and
+`stylix`; they skip `nix-darwin` and `nix-rosetta-builder` because those
+builders do not evaluate them.
 
 `nix-rosetta-builder` bakes its VM image from its own `nixpkgs` input at lock
 time, so whenever `nixpkgs-unstable` has patches it is re-imported against the
