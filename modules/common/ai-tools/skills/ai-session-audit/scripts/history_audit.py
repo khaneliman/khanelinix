@@ -418,10 +418,10 @@ def status(db: sqlite3.Connection, now: dt.datetime | None = None) -> dict[str, 
     ).fetchall()
     agents = [dict(row) for row in rows]
     newest = max((row["newest"] or "" for row in agents), default="")
-    now = now or dt.datetime.now(dt.timezone.utc)
+    now = now or dt.datetime.now(dt.UTC)
     stale_days = None
     if newest:
-        parsed = dt.datetime.fromisoformat(newest[:19]).replace(tzinfo=dt.timezone.utc)
+        parsed = dt.datetime.fromisoformat(newest[:19]).replace(tzinfo=dt.UTC)
         stale_days = round((now - parsed).total_seconds() / 86400, 1)
     return {"agents": agents, "newest_session": newest, "stale_days": stale_days}
 

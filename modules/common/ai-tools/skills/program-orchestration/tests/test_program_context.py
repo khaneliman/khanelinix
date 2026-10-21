@@ -10,7 +10,7 @@ import sys
 import tempfile
 import unittest
 from contextlib import redirect_stderr
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest import mock
 
@@ -21,7 +21,7 @@ sys.path.insert(0, str(SCRIPTS))
 import program_context
 import program_state
 
-START = datetime(2026, 1, 1, tzinfo=timezone.utc)
+START = datetime(2026, 1, 1, tzinfo=UTC)
 DIGEST = "a" * 64
 NO_BYTECODE_ENV = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
 

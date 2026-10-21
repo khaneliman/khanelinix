@@ -229,7 +229,7 @@ def load_sensitive_rules(path: str | None) -> list[tuple[str, str, float]]:
 def parse_date(value: str) -> dt.datetime:
     parsed = dt.datetime.fromisoformat(value)
     if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=dt.timezone.utc)
+        parsed = parsed.replace(tzinfo=dt.UTC)
     return parsed
 
 
@@ -435,7 +435,7 @@ def write_csv(path: Path, header: list[str], rows: Iterable[list[str]]) -> None:
 
 
 def build_ownership_map(args: argparse.Namespace) -> Path:
-    now = dt.datetime.now(dt.timezone.utc)
+    now = dt.datetime.now(dt.UTC)
     rules = load_sensitive_rules(args.sensitive_config)
     out_dir = ensure_out_dir(args.out)
 

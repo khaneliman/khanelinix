@@ -305,7 +305,7 @@ class ExtractTests(unittest.TestCase):
         with fixture() as (_, db):
             report = history.status(
                 history.connect(db),
-                now=dt.datetime(2026, 9, 14, 8, tzinfo=dt.timezone.utc),
+                now=dt.datetime(2026, 9, 14, 8, tzinfo=dt.UTC),
             )
         self.assertEqual(report["newest_session"], "2026-09-12T08:00:00Z")
         self.assertEqual(report["stale_days"], 2.0)

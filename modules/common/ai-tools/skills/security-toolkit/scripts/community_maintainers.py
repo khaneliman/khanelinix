@@ -130,7 +130,7 @@ def parse_date(value: str) -> dt.datetime:
     except ValueError:
         parsed = dt.datetime.fromisoformat(value + "T00:00:00")
     if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=dt.timezone.utc)
+        parsed = parsed.replace(tzinfo=dt.UTC)
     return parsed
 
 
@@ -147,16 +147,16 @@ def month_end(timestamp: dt.datetime) -> dt.datetime:
     year = timestamp.year
     month = timestamp.month
     if month == 12:
-        next_month = dt.datetime(year + 1, 1, 1, tzinfo=dt.timezone.utc)
+        next_month = dt.datetime(year + 1, 1, 1, tzinfo=dt.UTC)
     else:
-        next_month = dt.datetime(year, month + 1, 1, tzinfo=dt.timezone.utc)
+        next_month = dt.datetime(year, month + 1, 1, tzinfo=dt.UTC)
     return next_month - dt.timedelta(seconds=1)
 
 
 def quarter_start(timestamp: dt.datetime) -> dt.datetime:
     quarter = (timestamp.month - 1) // 3
     start_month = quarter * 3 + 1
-    return dt.datetime(timestamp.year, start_month, 1, tzinfo=dt.timezone.utc)
+    return dt.datetime(timestamp.year, start_month, 1, tzinfo=dt.UTC)
 
 
 def quarter_end(timestamp: dt.datetime) -> dt.datetime:
@@ -166,14 +166,14 @@ def quarter_end(timestamp: dt.datetime) -> dt.datetime:
     if end_month > 12:
         end_month -= 12
         end_year += 1
-    end_anchor = dt.datetime(end_year, end_month, 1, tzinfo=dt.timezone.utc)
+    end_anchor = dt.datetime(end_year, end_month, 1, tzinfo=dt.UTC)
     return month_end(end_anchor)
 
 
 def add_months(timestamp: dt.datetime, months: int) -> dt.datetime:
     year = timestamp.year + (timestamp.month - 1 + months) // 12
     month = (timestamp.month - 1 + months) % 12 + 1
-    return dt.datetime(year, month, 1, tzinfo=dt.timezone.utc)
+    return dt.datetime(year, month, 1, tzinfo=dt.UTC)
 
 
 def recency_weight(age_days: float, half_life_days: float) -> float:
@@ -468,12 +468,8 @@ def main() -> int:
         key_func = quarter_key
         end_func = quarter_end
     else:
-        period_cursor = dt.datetime(
-            min_date.year, min_date.month, 1, tzinfo=dt.timezone.utc
-        )
-        period_end_anchor = dt.datetime(
-            max_date.year, max_date.month, 1, tzinfo=dt.timezone.utc
-        )
+        period_cursor = dt.datetime(min_date.year, min_date.month, 1, tzinfo=dt.UTC)
+        period_end_anchor = dt.datetime(max_date.year, max_date.month, 1, tzinfo=dt.UTC)
         step_months = 1
         key_func = month_key
         end_func = month_end

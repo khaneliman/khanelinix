@@ -18,7 +18,7 @@ import sys
 import time
 from contextlib import AbstractContextManager
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
 from types import TracebackType
 from typing import Any, NoReturn, Self
@@ -352,7 +352,7 @@ def require_utc(value: Any, label: str) -> str:
     if not isinstance(value, str) or UTC_RE.fullmatch(value) is None:
         fail(f"{label} must be an RFC 3339 UTC timestamp ending in Z")
     try:
-        parsed = datetime.fromisoformat(value[:-1] + "+00:00")
+        parsed = datetime.fromisoformat(value)
     except ValueError as error:
         raise ProgramError(f"{label} is not a valid UTC timestamp") from error
     if parsed.utcoffset() is None or parsed.utcoffset().total_seconds() != 0:
@@ -362,13 +362,11 @@ def require_utc(value: Any, label: str) -> str:
 
 def parse_utc(value: str) -> datetime:
     require_utc(value, "timestamp")
-    return datetime.fromisoformat(value[:-1] + "+00:00")
+    return datetime.fromisoformat(value)
 
 
 def utc_now() -> str:
-    return (
-        datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
-    )
+    return datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 
 def require_scope(value: Any, label: str) -> str:
