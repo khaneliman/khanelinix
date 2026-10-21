@@ -13,7 +13,7 @@ import sys
 from collections import Counter
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -299,12 +299,12 @@ def parse_time(value: str, option: str) -> datetime:
     if not candidate:
         raise AuditError(f"{option} must not be empty")
     try:
-        parsed = datetime.fromisoformat(candidate.replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(candidate)
     except ValueError as error:
         raise AuditError(f"{option} must be an ISO-8601 date or timestamp") from error
     if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=timezone.utc)
-    return parsed.astimezone(timezone.utc)
+        parsed = parsed.replace(tzinfo=UTC)
+    return parsed.astimezone(UTC)
 
 
 def safe_timestamp(value: Any, scrubbed_fields: list[str]) -> str | None:
@@ -665,12 +665,12 @@ def normalize(
 def chronological_key(event: dict[str, Any]) -> tuple[datetime, str, str]:
     created_at = text(event.get("created_at"))
     if created_at is None:
-        created = datetime.min.replace(tzinfo=timezone.utc)
+        created = datetime.min.replace(tzinfo=UTC)
     else:
         try:
             created = parse_time(created_at, "created_at")
         except AuditError:
-            created = datetime.min.replace(tzinfo=timezone.utc)
+            created = datetime.min.replace(tzinfo=UTC)
     return (
         created,
         text(event.get("source_event_id")) or "",
@@ -920,7 +920,7 @@ def summarize(
         )
     report = {
         "schema_version": SCHEMA_VERSION,
-        "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "generated_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         "policy_revision": policy_revision,
         "filters": {
             "sources": [str(path) for path in sources],

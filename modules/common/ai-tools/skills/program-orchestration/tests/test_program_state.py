@@ -11,7 +11,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest import mock
 
@@ -23,7 +23,7 @@ sys.modules[SPEC.name] = program_state
 SPEC.loader.exec_module(program_state)
 
 SCHEMA = Path(__file__).resolve().parents[1] / "schemas" / "event-v1.schema.json"
-START = datetime(2026, 1, 1, tzinfo=timezone.utc)
+START = datetime(2026, 1, 1, tzinfo=UTC)
 DIGEST = "a" * 64
 
 

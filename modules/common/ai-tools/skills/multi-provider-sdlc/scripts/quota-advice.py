@@ -12,7 +12,7 @@ import json
 import math
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 PROVIDERS = ("codex", "claude", "antigravity")
 MAX_INPUT = 1024 * 1024
@@ -38,8 +38,8 @@ def timestamp(value):
     if not isinstance(value, str):
         return None
     try:
-        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
-        return parsed.astimezone(timezone.utc) if parsed.tzinfo else None
+        parsed = datetime.fromisoformat(value)
+        return parsed.astimezone(UTC) if parsed.tzinfo else None
     except (ValueError, OverflowError):
         return None
 
@@ -89,7 +89,7 @@ def window_advice(name, usage, pace, age, now):
 
 
 def summarize(payload, provider, max_age_seconds=300, now=None):
-    now = now if now is not None else datetime.now(timezone.utc)
+    now = now if now is not None else datetime.now(UTC)
     if not isinstance(payload, list) or any(
         not isinstance(row, dict) for row in payload
     ):

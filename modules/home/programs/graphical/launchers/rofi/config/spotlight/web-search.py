@@ -111,9 +111,7 @@ def fetch_suggestions(search_string):
             "q": search_string,
             "callback": "autocompleteCallback",
             "kl": "wt-wt",
-            "_": str(
-                int(datetime.datetime.now(datetime.timezone.utc).timestamp() * 1000)
-            ),
+            "_": str(int(datetime.datetime.now(datetime.UTC).timestamp() * 1000)),
         }
         url = CONFIG["SUGGESTION_URL"][SEARCH_ENGINE] + urllib.parse.urlencode(r)
         if bang_search:

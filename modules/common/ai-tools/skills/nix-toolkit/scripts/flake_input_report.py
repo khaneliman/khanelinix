@@ -101,7 +101,7 @@ def collect_inputs(metadata: dict[str, Any]) -> list[Input]:
 
 
 def build_report(inputs: Sequence[Input], stale_days: int) -> dict[str, Any]:
-    now = int(datetime.datetime.now(tz=datetime.timezone.utc).timestamp())
+    now = int(datetime.datetime.now(tz=datetime.UTC).timestamp())
 
     rows = [
         {

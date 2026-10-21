@@ -3,7 +3,7 @@ import io
 import json
 import subprocess
 import unittest
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest import mock
 
@@ -12,7 +12,7 @@ SPEC = importlib.util.spec_from_file_location("quota_advice", SCRIPT)
 assert SPEC is not None and SPEC.loader is not None
 quota = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(quota)
-NOW = datetime(2026, 10, 1, tzinfo=timezone.utc)
+NOW = datetime(2026, 10, 1, tzinfo=UTC)
 
 
 def snapshot(age=0, provider="codex"):
