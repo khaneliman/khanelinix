@@ -41,6 +41,27 @@ let
     }).config;
 in
 {
+  testPatchedFlakeRetainsInputs = {
+    expr =
+      let
+        patched = self.lib.system.common.mkPatchedFlake {
+          pkgs = { };
+          inputName = "fixture";
+          input.outPath = ./fixtures/flake;
+          force = true;
+          flakeInputs.marker = "owner";
+        };
+      in
+      {
+        evaluated = patched.marker;
+        retained = patched.inputs.marker;
+      };
+    expected = {
+      evaluated = "owner";
+      retained = "owner";
+    };
+  };
+
   testBoundModuleArguments = {
     expr = evaluateBoundModules [ ];
     expected = {

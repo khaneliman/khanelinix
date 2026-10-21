@@ -120,6 +120,7 @@ let
         # uniqueness checks (e.g. nix.registry pins) compare definition
         # values, and equal strings pass where derivation attrsets cannot.
         outPath = "${patchedSrc}";
+        inputs = flakeInputs;
         rev = input.rev or null;
         shortRev = input.shortRev or "patched";
       }
@@ -143,6 +144,7 @@ let
         "nixpkgs-master"
         "home-manager"
         "sops-nix"
+        "stylix"
         "nix-darwin"
         "nix-rosetta-builder"
       ],
@@ -171,6 +173,7 @@ let
         sops-nix = mkPatchedFlakeInput "sops-nix" {
           nixpkgs = nixpkgs-unstable;
         };
+        stylix = mkPatchedFlakeInput "stylix" (inputs.stylix.inputs // { inherit nixpkgs; });
         home-manager = mkPatchedFlake {
           pkgs = bootstrapPkgs;
           inputName = "home-manager";
@@ -218,6 +221,9 @@ let
     }
     // optionalAttrs (enabled "sops-nix") {
       inherit (patched) sops-nix;
+    }
+    // optionalAttrs (enabled "stylix") {
+      inherit (patched) stylix;
     }
     // optionalAttrs (enabled "nix-darwin") {
       inherit (patched) nix-darwin;
