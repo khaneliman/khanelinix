@@ -19,7 +19,9 @@ in
         # Gamescope documentation
         # See: https://github.com/ValveSoftware/gamescope
         enable = true;
-        enableWsi = true;
+        # Jovian's Steam session ships its own WSI layer, and a second copy
+        # collides in the graphics driver environment.
+        enableWsi = !(config.jovian.steam.enable or false);
         package = pkgs.gamescope;
 
         # NOTE: breaks running WITHIN steam
