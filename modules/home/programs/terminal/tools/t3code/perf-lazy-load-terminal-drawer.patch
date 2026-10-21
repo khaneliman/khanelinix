@@ -10,17 +10,19 @@ diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/sr
  import { useComposerDraftStore } from "../composerDraftStore";
  import { useStableCallback } from "../hooks/useStableCallback";
  import type { TerminalContextSelection } from "../lib/terminalContext";
-@@ -23,7 +23,8 @@ import { useEnvironmentScope } from "../state/session";
+@@ -23,9 +23,10 @@ import { useEnvironmentScope } from "../state/session";
  import { useKnownTerminalSessions } from "../state/terminalSessions";
  import { selectThreadTerminalUiState, useTerminalUiStateStore } from "../terminalUiStateStore";
  import { useThreadTerminalActions } from "./terminal/useThreadTerminalActions";
 -import ThreadTerminalDrawer from "./ThreadTerminalDrawer";
-+
-+const ThreadTerminalDrawer = lazy(() => import("./ThreadTerminalDrawer"));
+ import { resolveTerminalWorktreePath } from "./ChatView.logic";
  
++const ThreadTerminalDrawer = lazy(() => import("./ThreadTerminalDrawer"));
++
  /** Where a drawer or panel opens new terminals when a script run overrides the thread's own. */
  export type PersistentTerminalLaunchContext = {
-@@ -259,35 +260,39 @@ export const PersistentThreadTerminalDrawer = memo(function PersistentThreadTerm
+   readonly cwd: string;
+@@ -262,36 +263,40 @@ export const PersistentThreadTerminalDrawer = memo(function PersistentThreadTerm
        )}
      >
        <div className="min-h-0 overflow-clip">
@@ -32,6 +34,7 @@ diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/sr
 -          runtimeEnv={runtimeEnv}
 -          visible={visible}
 -          height={terminalUiState.terminalHeight}
+-          composerHeight={composerHeight}
 -          // Known-session order is MRU and changes on focus; persisted store order keeps sidebar labels stable.
 -          terminalIds={canOperateTerminal ? terminalUiState.terminalIds : serverOrderedTerminalIds}
 -          activeTerminalId={terminalUiState.activeTerminalId}
@@ -62,6 +65,7 @@ diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/sr
 +            runtimeEnv={runtimeEnv}
 +            visible={visible}
 +            height={terminalUiState.terminalHeight}
++            composerHeight={composerHeight}
 +            // Known-session order is MRU and changes on focus; persisted store order keeps sidebar labels stable.
 +            terminalIds={
 +              canOperateTerminal ? terminalUiState.terminalIds : serverOrderedTerminalIds
@@ -89,7 +93,7 @@ diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/sr
        </div>
      </div>
    );
-@@ -384,40 +389,44 @@ export const PersistentThreadTerminalPanel = memo(function PersistentThreadTermi
+@@ -394,40 +399,44 @@ export const PersistentThreadTerminalPanel = memo(function PersistentThreadTermi
    if (!project || !cwd) return null;
  
    return (
@@ -172,7 +176,7 @@ diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/sr
 diff --git a/apps/web/vite.config.ts b/apps/web/vite.config.ts
 --- a/apps/web/vite.config.ts
 +++ b/apps/web/vite.config.ts
-@@ -277,6 +277,21 @@ export default defineConfig(() => {
+@@ -296,6 +296,21 @@ export default defineConfig(() => {
        emptyOutDir: true,
        manifest: true,
        sourcemap: buildSourcemap,

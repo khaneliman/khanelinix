@@ -3,7 +3,7 @@
 diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/ChatView.tsx
 --- a/apps/web/src/components/ChatView.tsx
 +++ b/apps/web/src/components/ChatView.tsx
-@@ -459,6 +459,7 @@ import {
+@@ -478,6 +478,7 @@ import {
    deriveLatestContextWindowSnapshot,
    latestProviderTurnTokenUsage,
  } from "../lib/contextWindow";
@@ -11,8 +11,8 @@ diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/Chat
  import {
    DRAFT_HERO_TRANSITION_ANIMATION_ID,
    DRAFT_HERO_TRANSITION_EASING,
-@@ -1144,6 +1145,11 @@ export default function ChatView(props: ChatViewProps) {
-     serverProjection?.providerTurns ?? [],
+@@ -1218,6 +1219,11 @@ export default function ChatView(props: ChatViewProps) {
+     activeProviderThread,
    );
    const serverVisibleTurnItems = useThreadVisibleTurnItems(routeThreadDetailRef);
 +  // Streaming deltas recompute the rates. A string prop lets the timeline keep
@@ -23,7 +23,7 @@ diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/Chat
    const serverThreadHistory = useThreadHistory(routeThreadDetailRef);
    const threadHistoryControls = (() => {
      if (routeThreadDetailRef === null || !shouldShowLoadEarlierControl(serverThreadHistory)) {
-@@ -7951,6 +7957,7 @@ export default function ChatView(props: ChatViewProps) {
+@@ -8262,6 +8268,7 @@ export default function ChatView(props: ChatViewProps) {
                  listRef={legendListRef}
                  timelineEntries={displayedTimeline.entries}
                  runs={paintOnlyDisplayedTimeline ? [] : (serverProjection?.runs ?? [])}
@@ -34,7 +34,7 @@ diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/Chat
 diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/components/chat/MessagesTimeline.tsx
 --- a/apps/web/src/components/chat/MessagesTimeline.tsx
 +++ b/apps/web/src/components/chat/MessagesTimeline.tsx
-@@ -315,6 +315,7 @@ interface TimelineRowSharedState {
+@@ -321,6 +321,7 @@ interface TimelineRowSharedState {
    workspaceRoot: string | undefined;
    skills: ReadonlyArray<Pick<ServerProviderSkill, "name" | "displayName">>;
    runs: ReadonlyArray<HandoffTimelineRun>;
@@ -42,7 +42,7 @@ diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/co
    activeThreadEnvironmentId: EnvironmentId;
    onRevertToTurnCount: (targetTurnCount: number, messageId: MessageId) => void;
    onUseArtifactTemplate: (template: CodexArtifactTemplate) => void;
-@@ -492,6 +493,8 @@ interface MessagesTimelineProps {
+@@ -503,6 +504,8 @@ interface MessagesTimelineProps {
    workspaceRoot: string | undefined;
    skills?: ReadonlyArray<Pick<ServerProviderSkill, "name" | "displayName">>;
    runs: ReadonlyArray<HandoffTimelineRun>;
@@ -51,7 +51,7 @@ diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/co
    anchorMessageId: MessageId | null;
    onAnchorReady: (messageId: MessageId, anchorIndex: number) => void;
    onAnchorSizeChanged: (messageId: MessageId, size: number) => void;
-@@ -587,6 +590,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
+@@ -603,6 +606,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
    workspaceRoot,
    skills = EMPTY_TIMELINE_SKILLS,
    runs: runsProp,
@@ -59,7 +59,7 @@ diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/co
    anchorMessageId,
    onAnchorReady,
    onAnchorSizeChanged,
-@@ -1205,6 +1209,9 @@ const ConversationTimeline = memo(function ConversationTimeline({
+@@ -1282,6 +1286,9 @@ const ConversationTimeline = memo(function ConversationTimeline({
      // oxlint-disable-next-line react/exhaustive-effect-dependencies -- Rows and chat width resize the content without resizing the viewport.
    }, [timelineViewportElement, rows.length, reportContentOverflow, chatWidth]);
  
@@ -69,7 +69,7 @@ diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/co
    const sharedState: TimelineRowSharedState = {
      citationRequest: readyCitationRequest,
      listRef,
-@@ -1216,6 +1223,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
+@@ -1293,6 +1300,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
      workspaceRoot,
      skills,
      runs,
@@ -77,7 +77,7 @@ diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/co
      activeThreadEnvironmentId,
      onRevertToTurnCount,
      onRunShellCommand,
-@@ -2704,6 +2712,7 @@ function AssistantMessageMeta({
+@@ -2792,6 +2800,7 @@ function AssistantMessageMeta({
    alwaysVisible?: boolean;
  }) {
    const ctx = use(TimelineRowCtx);
@@ -85,7 +85,7 @@ diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/co
  
    return (
      <div
-@@ -2738,6 +2747,16 @@ function AssistantMessageMeta({
+@@ -2826,6 +2835,16 @@ function AssistantMessageMeta({
            </TooltipPopup>
          </Tooltip>
        )}

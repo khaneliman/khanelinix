@@ -1,15 +1,15 @@
 diff --git a/apps/web/src/components/files/FilePreviewPanel.test.ts b/apps/web/src/components/files/FilePreviewPanel.test.ts
 --- a/apps/web/src/components/files/FilePreviewPanel.test.ts
 +++ b/apps/web/src/components/files/FilePreviewPanel.test.ts
-@@ -12,6 +12,7 @@ import {
+@@ -7,6 +7,7 @@ import { remapFileCommentAnnotations } from "./fileCommentAnnotations";
+ import {
    filePreviewReadErrorMessage,
-   isMarkdownPreviewFile,
    resolveFilePreviewPath,
 +  resolveFilePreviewLocation,
    setMarkdownTaskChecked,
    shouldShowFileExplorer,
    workspaceAssetResource,
-@@ -156,6 +157,63 @@ describe("shouldShowFileExplorer", () => {
+@@ -63,6 +64,63 @@ describe("file comment annotations", () => {
    });
  });
  
@@ -76,7 +76,7 @@ diff --git a/apps/web/src/components/files/FilePreviewPanel.test.ts b/apps/web/s
 diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/components/files/FilePreviewPanel.tsx
 --- a/apps/web/src/components/files/FilePreviewPanel.tsx
 +++ b/apps/web/src/components/files/FilePreviewPanel.tsx
-@@ -105,6 +105,7 @@ import {
+@@ -107,6 +107,7 @@ import {
    filePreviewReadErrorMessage,
    isMarkdownPreviewFile,
    resolveFilePreviewPath,
@@ -84,7 +84,7 @@ diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/c
    setMarkdownTaskChecked,
    shouldShowFileExplorer,
    workspaceAssetResource,
-@@ -1045,15 +1046,18 @@ export default function FilePreviewPanel({
+@@ -1044,15 +1045,18 @@ export default function FilePreviewPanel({
    const isFolder =
      attachment === undefined &&
      (file.isNotFile || (folderTrail !== undefined && file.data === null && file.error === null));
@@ -106,7 +106,7 @@ diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/c
    const [explorerOpen, setExplorerOpen] = useState(initialExplorerOpen);
    const showExplorer = shouldShowFileExplorer({
      relativePath: previewPath,
-@@ -1436,9 +1440,9 @@ export default function FilePreviewPanel({
+@@ -1454,9 +1458,9 @@ export default function FilePreviewPanel({
              )}
            >
              <FileBrowserPanel
@@ -121,8 +121,21 @@ diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/c
 diff --git a/apps/web/src/components/files/filePath.test.ts b/apps/web/src/components/files/filePath.test.ts
 --- a/apps/web/src/components/files/filePath.test.ts
 +++ b/apps/web/src/components/files/filePath.test.ts
-@@ -190,3 +190,23 @@ describe("fileBreadcrumbParent", () => {
-     expect(fileBreadcrumbParent(path)).toBe(expected);
+@@ -1,6 +1,11 @@
+ import { describe, expect, it } from "vite-plus/test";
+ 
+-import { fileBreadcrumbChildren, fileBreadcrumbs, retainedBreadcrumbTrail } from "./filePath";
++import {
++  fileBreadcrumbChildren,
++  fileBreadcrumbs,
++  joinHostPath,
++  retainedBreadcrumbTrail,
++} from "./filePath";
+ 
+ describe("fileBreadcrumbs", () => {
+   it("starts host paths outside the workspace at the filesystem root", () => {
+@@ -69,3 +74,23 @@ describe("retainedBreadcrumbTrail", () => {
+     expect(retainedBreadcrumbTrail(trail, path)).toBe(expected);
    });
  });
 +
@@ -148,7 +161,13 @@ diff --git a/apps/web/src/components/files/filePath.test.ts b/apps/web/src/compo
 diff --git a/apps/web/src/components/files/filePreviewMode.ts b/apps/web/src/components/files/filePreviewMode.ts
 --- a/apps/web/src/components/files/filePreviewMode.ts
 +++ b/apps/web/src/components/files/filePreviewMode.ts
-@@ -6,6 +6,26 @@ export function resolveFilePreviewPath(path: string | null, cwd: string): string
+@@ -1,11 +1,31 @@
+ import type { AssetResource, ProjectReadFileError, ScopedThreadRef } from "@t3tools/contracts";
+-import { isHostPath, workspaceRelativeFilePath } from "@t3tools/shared/path";
++import { isAbsolutePath, isHostPath, workspaceRelativeFilePath } from "@t3tools/shared/path";
+ 
+ export function resolveFilePreviewPath(path: string | null, cwd: string): string | null {
+   if (path === null) return null;
    return path === "." || workspaceRelativeFilePath(path, cwd) === "." ? null : path;
  }
  

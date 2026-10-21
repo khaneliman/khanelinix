@@ -185,11 +185,14 @@ in
           };
 
           settings = {
+            # Nix checks this list on Darwin even when sandbox is false.
             allowed-impure-host-deps = [
               "/bin/sh"
               "/dev/random"
               "/dev/urandom"
               "/dev/zero"
+              # harfbuzz's CoreText tests read the system fonts.
+              "/System/Library/Fonts"
               "/usr/bin/ditto"
               "/usr/lib/libSystem.B.dylib"
               "/usr/lib/libc.dylib"

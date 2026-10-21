@@ -49,8 +49,16 @@ let
             # Avoid evaluating/building Nixvim man docs unless explicitly enabled.
             enableMan = lib.mkForce false;
 
-            # Nixvim's package maps still use luaPackages, an alias disabled here.
-            plugins.lint.autoInstall.overrides.luacheck = pkgs.lua55Packages.luacheck;
+            # Nixvim's package maps still use luaPackages, an alias disabled
+            # here. Khanelivim's package set also lacks this flake's overlays
+            # that keep bicep and sqlfluff building.
+            plugins = {
+              lint.autoInstall.overrides = {
+                luacheck = pkgs.lua55Packages.luacheck;
+                inherit (pkgs) sqlfluff;
+              };
+              conform-nvim.autoInstall.overrides = { inherit (pkgs) bicep sqlfluff; };
+            };
             lsp.servers.teal_ls.package = pkgs.lua55Packages.teal-language-server;
 
             # Automatically disable dependencies that are already in home.packages
