@@ -35,15 +35,8 @@ in
     tuicr
     vibe-kanban
     workmux
+    zat
     ;
-
-  zat = inputs.llm-agents.packages.${system}.zat.overrideAttrs (old: {
-    # tree-sitter-haskell 0.23.1 type-puns array pointers, corrupting the heap
-    # under GCC 16: https://github.com/tree-sitter/tree-sitter-haskell/pull/157
-    env = (old.env or { }) // {
-      CFLAGS = "-fno-strict-aliasing";
-    };
-  });
 
   # Darwin's sandbox crashes the binary's version check, although it runs
   # outside the sandbox. Keep Linux's install check enabled.
