@@ -88,7 +88,7 @@ in
           }
           # Messaging
           {
-            match.class = "^(Slack|Caprine|org.telegram.desktop|discord|vesktop|zoom|Element|teams-for-linux)$";
+            match.class = "^(Slack|Caprine|org.telegram.desktop|discord|vesktop|zoom|element-desktop|teams-for-linux)$";
             workspace = "5 silent";
           }
           # Mail
