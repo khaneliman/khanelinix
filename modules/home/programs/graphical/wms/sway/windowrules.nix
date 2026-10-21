@@ -57,7 +57,7 @@ in
             { app_id = "^discord$"; }
             { app_id = "^vesktop$"; }
             # { class = "^zoom$"; }
-            { app_id = "^Element$"; }
+            { app_id = "^element-desktop$"; }
             { app_id = "^teams-for-linux$"; }
           ];
           "6" = [

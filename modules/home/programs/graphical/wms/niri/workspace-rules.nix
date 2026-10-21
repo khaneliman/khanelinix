@@ -45,7 +45,7 @@ in
         (mkWorkspaceRule "5" { app-id = "^org.telegram.desktop$"; })
         (mkWorkspaceRule "5" { app-id = "^(discord|vesktop)$"; })
         (mkWorkspaceRule "5" { app-id = "^zoom$"; })
-        (mkWorkspaceRule "5" { app-id = "^Element$"; })
+        (mkWorkspaceRule "5" { app-id = "^element-desktop$"; })
         (mkWorkspaceRule "5" { app-id = "^teams-for-linux$"; })
 
         (mkWorkspaceRule "6" { app-id = "^thunderbird$"; })
