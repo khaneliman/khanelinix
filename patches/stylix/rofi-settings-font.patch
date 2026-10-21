@@ -1,0 +1,12 @@
+diff --git a/modules/rofi/hm.nix b/modules/rofi/hm.nix
+--- a/modules/rofi/hm.nix
++++ b/modules/rofi/hm.nix
+@@ -14,7 +14,7 @@ mkTarget {
+ 
+   config = [
+     ({ fonts }: {
+-      programs.rofi.font = "${fonts.monospace.name} ${toString fonts.sizes.popups}";
++      programs.rofi.settings.font = "${fonts.monospace.name} ${toString fonts.sizes.popups}";
+     })
+     (
+       {
