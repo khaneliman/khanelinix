@@ -46,7 +46,7 @@ let
     import subprocess
     import sys
 
-    KHAL = "${lib.getExe' pkgs.khal "khal"}"
+    KHAL = "${lib.getExe' config.programs.khal.package "khal"}"
     CALENDAR_LABELS = {
     ${calendarLabelMapPython}
     }

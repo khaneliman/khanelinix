@@ -1,8 +1,7 @@
 diff --git a/apps/server/src/process/externalLauncher.ts b/apps/server/src/process/externalLauncher.ts
-index 74e95b9ddcc47de09f9cf951405a1c63331db0b1..b92821f8ed8748a9d526214eb34f574708bd388f 100644
 --- a/apps/server/src/process/externalLauncher.ts
 +++ b/apps/server/src/process/externalLauncher.ts
-@@ -419,23 +419,22 @@ const buildAvailableEditors = Effect.fn("externalLauncher.buildAvailableEditors"
+@@ -429,23 +429,22 @@ const buildAvailableEditors = Effect.fn("externalLauncher.buildAvailableEditors"
    never,
    FileSystem.FileSystem | Path.Path | ChildProcessSpawner.ChildProcessSpawner
  > {
@@ -44,7 +43,7 @@ index 74e95b9ddcc47de09f9cf951405a1c63331db0b1..b92821f8ed8748a9d526214eb34f5747
 diff --git a/packages/shared/src/editor.ts b/packages/shared/src/editor.ts
 --- a/packages/shared/src/editor.ts
 +++ b/packages/shared/src/editor.ts
-@@ -38,10 +38,18 @@ export const resolveEditorCommand = Effect.fn("editor.resolveEditorCommand")(fun
+@@ -38,9 +38,17 @@ export const resolveEditorCommand = Effect.fn("editor.resolveEditorCommand")(fun
    // so a PATH entry for the ZFS Event Daemon cannot take over editor opens.
    const preferBundle = platform === "darwin" && editor.id === "zed";
    if (!preferBundle) {
@@ -65,4 +64,3 @@ diff --git a/packages/shared/src/editor.ts b/packages/shared/src/editor.ts
    }
  
    const path = yield* Path.Path;
-   const fs = yield* FileSystem.FileSystem;

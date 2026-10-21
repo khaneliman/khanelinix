@@ -9,7 +9,7 @@ diff --git a/apps/desktop/src/app/DesktopApp.ts b/apps/desktop/src/app/DesktopAp
  import * as DesktopEnvironment from "./DesktopEnvironment.ts";
  import * as DesktopLegacyLocalStorage from "./DesktopLegacyLocalStorage.ts";
  import * as DesktopLifecycle from "./DesktopLifecycle.ts";
-@@ -160,6 +161,7 @@ export const stopAllPoolInstances = Effect.fn("desktop.app.stopAllPoolInstances"
+@@ -160,6 +161,7 @@ const stopAllPoolInstances = Effect.fn("desktop.app.stopAllPoolInstances")(
  );
  
  const bootstrap = Effect.gen(function* () {
@@ -78,43 +78,6 @@ diff --git a/apps/desktop/src/app/DesktopEnvironment.ts b/apps/desktop/src/app/D
      commitHashOverride: config.commitHashOverride,
      otlpTracesUrl: config.otlpTracesUrl,
      otlpMetricsUrl: config.otlpMetricsUrl,
-diff --git a/apps/desktop/src/backend/DesktopBackendManager.test.ts b/apps/desktop/src/backend/DesktopBackendManager.test.ts
---- a/apps/desktop/src/backend/DesktopBackendManager.test.ts
-+++ b/apps/desktop/src/backend/DesktopBackendManager.test.ts
-@@ -23,6 +23,9 @@ import * as TestClock from "effect/testing/TestClock";
- import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
- import { ChildProcess, ChildProcessSpawner } from "effect/process";
- 
-+import * as NodeServices from "@effect/platform-node/NodeServices";
-+import { processIsAlive } from "./DesktopExistingBackendAttachment.ts";
-+
- import * as DesktopBackendManager from "./DesktopBackendManager.ts";
- import * as DesktopApp from "../app/DesktopApp.ts";
- import * as DesktopBackendPool from "./DesktopBackendPool.ts";
-@@ -1525,6 +1528,13 @@ describe("DesktopBackendManager", () => {
-   it.effect("stopAllPoolInstances bounds the quit finalizer when backends hang", () =>
-     Effect.scoped(
-       Effect.gen(function* () {
-+        const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-+        const external = yield* spawner.spawn(
-+          ChildProcess.make(process.execPath, ["-e", "setInterval(() => {}, 1000)"], {
-+            stdout: "ignore",
-+            stderr: "ignore",
-+          }),
-+        );
-         const teardownStarted = yield* Queue.unbounded<string>();
-         const teardownFinished = yield* Queue.unbounded<string>();
-         const allowTeardown = yield* Deferred.make<void>();
-@@ -1579,7 +1589,8 @@ describe("DesktopBackendManager", () => {
-         yield* Deferred.succeed(allowTeardown, undefined);
-         const finished = yield* Queue.takeN(teardownFinished, 2);
-         assert.deepEqual(finished.toSorted(), ["instance1", "instance2"]);
--      }).pipe(Effect.provide(TestClock.layer())),
-+        assert.isTrue(processIsAlive(external.pid));
-+      }).pipe(Effect.provide(Layer.mergeAll(TestClock.layer(), NodeServices.layer))),
-     ),
-   );
- });
 diff --git a/apps/desktop/src/backend/DesktopExistingBackendAttachment.test.ts b/apps/desktop/src/backend/DesktopExistingBackendAttachment.test.ts
 new file mode 100644
 --- /dev/null
@@ -733,7 +696,7 @@ diff --git a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.test.ts b/apps
            ),
          ),
        );
-@@ -232,4 +251,33 @@ describe("DesktopLocalEnvironmentAuth", () => {
+@@ -217,4 +236,33 @@ describe("DesktopLocalEnvironmentAuth", () => {
        assert.strictEqual(yield* Ref.get(requestCount), 1);
      }).pipe(Effect.provide(TestClock.layer())),
    );
@@ -800,15 +763,15 @@ diff --git a/apps/desktop/src/backend/DesktopLocalEnvironmentAuth.ts b/apps/desk
 diff --git a/apps/desktop/src/ipc/methods/window.test.ts b/apps/desktop/src/ipc/methods/window.test.ts
 --- a/apps/desktop/src/ipc/methods/window.test.ts
 +++ b/apps/desktop/src/ipc/methods/window.test.ts
-@@ -22,6 +22,7 @@ vi.mock("electron", () => ({
+@@ -20,6 +20,7 @@ vi.mock("electron", () => ({
  import * as DesktopBackendConfiguration from "../../backend/DesktopBackendConfiguration.ts";
  import * as DesktopBackendManager from "../../backend/DesktopBackendManager.ts";
  import * as DesktopBackendPool from "../../backend/DesktopBackendPool.ts";
 +import * as DesktopExistingBackendAttachment from "../../backend/DesktopExistingBackendAttachment.ts";
- import * as ElectronDialog from "../../electron/ElectronDialog.ts";
- import * as ElectronWindow from "../../electron/ElectronWindow.ts";
- import * as DesktopAppSettings from "../../settings/DesktopAppSettings.ts";
-@@ -82,8 +83,17 @@ const backendConfigurationLayer = Layer.succeed(
+ import {
+   getLocalEnvironmentBootstraps,
+   getRelayTelemetryEnabled,
+@@ -75,8 +76,17 @@ const backendConfigurationLayer = Layer.succeed(
    } satisfies DesktopBackendConfiguration.DesktopBackendConfiguration["Service"],
  );
  
@@ -827,8 +790,8 @@ diff --git a/apps/desktop/src/ipc/methods/window.test.ts b/apps/desktop/src/ipc/
 +  );
  
  describe("getLocalEnvironmentBootstraps", () => {
-   it.effect("publishes the concrete running distro without replacing the stable instance id", () =>
-@@ -195,6 +205,37 @@ describe("getLocalEnvironmentBootstraps", () => {
+   it.effect("hands out the current window's token to a backend launched with the secret", () =>
+@@ -171,6 +181,37 @@ describe("getLocalEnvironmentBootstraps", () => {
        assert.deepEqual(result, []);
      }).pipe(Effect.provide(bootstrapsLayer([stoppedInstance])));
    });
@@ -865,11 +828,11 @@ diff --git a/apps/desktop/src/ipc/methods/window.test.ts b/apps/desktop/src/ipc/
 +  );
  });
  
- describe("getWindowFullscreenState", () => {
+ describe("getRelayTelemetryEnabled", () => {
 diff --git a/apps/desktop/src/ipc/methods/window.ts b/apps/desktop/src/ipc/methods/window.ts
 --- a/apps/desktop/src/ipc/methods/window.ts
 +++ b/apps/desktop/src/ipc/methods/window.ts
-@@ -29,6 +29,7 @@ import * as DesktopEnvironment from "../../app/DesktopEnvironment.ts";
+@@ -30,6 +30,7 @@ import * as DesktopEnvironment from "../../app/DesktopEnvironment.ts";
  import * as DesktopAppSettings from "../../settings/DesktopAppSettings.ts";
  import * as DesktopWslBackend from "../../wsl/DesktopWslBackend.ts";
  import * as DesktopWslEnvironment from "../../wsl/DesktopWslEnvironment.ts";
@@ -877,7 +840,7 @@ diff --git a/apps/desktop/src/ipc/methods/window.ts b/apps/desktop/src/ipc/metho
  import * as ElectronApp from "../../electron/ElectronApp.ts";
  import * as ElectronDialog from "../../electron/ElectronDialog.ts";
  import * as ElectronMenu from "../../electron/ElectronMenu.ts";
-@@ -96,10 +97,21 @@ export const getLocalEnvironmentBootstraps = DesktopIpc.makeSyncIpcMethod({
+@@ -105,10 +106,21 @@ export const getLocalEnvironmentBootstraps = DesktopIpc.makeSyncIpcMethod({
    handler: Effect.fn("desktop.ipc.window.getLocalEnvironmentBootstraps")(function* () {
      const pool = yield* DesktopBackendPool.DesktopBackendPool;
      const configuration = yield* DesktopBackendConfiguration.DesktopBackendConfiguration;
