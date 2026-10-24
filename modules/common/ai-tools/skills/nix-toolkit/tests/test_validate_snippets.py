@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -23,13 +25,49 @@ class ValidateSnippetsTest(unittest.TestCase):
         (refs_dir / "test.md").write_text(ref_content, encoding="utf-8")
         return dest_script
 
-    def run_fixture(self, script_path: Path) -> subprocess.CompletedProcess[str]:
+    def run_fixture(
+        self, script_path: Path, env: dict[str, str] | None = None
+    ) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
             ["bash", str(script_path)],
             capture_output=True,
             text=True,
             check=False,
+            env=env,
         )
+
+    def test_help_checks_disable_pagers_and_drain_output(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            script = self.setUpFixture(root, "`builtins.parallel`\n")
+            bin_dir = root / "bin"
+            bin_dir.mkdir()
+            nix_build = bin_dir / "nix-build"
+            nix_build.write_text(
+                f"#!{sys.executable}\n"
+                "import os, signal, sys\n"
+                "assert sys.argv[1:] == ['--help']\n"
+                "assert all(os.environ.get(key) == 'cat' "
+                "for key in ['PAGER', 'MANPAGER', 'NIX_PAGER'])\n"
+                "signal.signal(signal.SIGPIPE, signal.SIG_DFL)\n"
+                "sys.stdout.write('--argstr\\n')\n"
+                "sys.stdout.flush()\n"
+                "sys.stdout.write('padding\\n' * 200000)\n",
+                encoding="utf-8",
+            )
+            nix_build.chmod(0o755)
+            env = {
+                **os.environ,
+                "PATH": f"{bin_dir}{os.pathsep}{os.environ['PATH']}",
+                "PAGER": "interactive-pager",
+                "MANPAGER": "interactive-pager",
+                "NIX_PAGER": "interactive-pager",
+            }
+
+            result = self.run_fixture(script, env)
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("nix-toolkit snippets validated", result.stdout)
 
     def test_rejects_boolean_flag_without_option(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

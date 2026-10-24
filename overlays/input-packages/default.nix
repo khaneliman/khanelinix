@@ -68,22 +68,16 @@ in
     else
       package;
 
-  github-copilot-cli =
-    (inputs.llm-agents.packages.${system}.copilot-cli.override {
-      # patchelf 0.19.2 corrupts this binary when one call sets both the
-      # interpreter and RPATH.
-      patchelf = final.patchelf_0_15;
-    }).overrideAttrs
-      (
-        old:
-        final.lib.optionalAttrs final.stdenv.hostPlatform.isDarwin {
-          # The bundled Node binary probes a system OpenSSL file denied by the sandbox.
-          preVersionCheck = (old.preVersionCheck or "") + ''
-            export OPENSSL_CONF=/dev/null
-          '';
-          versionCheckKeepEnvironment = (old.versionCheckKeepEnvironment or [ ]) ++ [ "OPENSSL_CONF" ];
-        }
-      );
+  github-copilot-cli = inputs.llm-agents.packages.${system}.copilot-cli.overrideAttrs (
+    old:
+    final.lib.optionalAttrs final.stdenv.hostPlatform.isDarwin {
+      # The bundled Node binary probes a system OpenSSL file denied by the sandbox.
+      preVersionCheck = (old.preVersionCheck or "") + ''
+        export OPENSSL_CONF=/dev/null
+      '';
+      versionCheckKeepEnvironment = (old.versionCheckKeepEnvironment or [ ]) ++ [ "OPENSSL_CONF" ];
+    }
+  );
   pi-coding-agent = inputs.llm-agents.packages.${system}.pi;
 
   #          ╭──────────────────────────────────────────────────────────╮

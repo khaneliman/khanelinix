@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+export PAGER=cat MANPAGER=cat NIX_PAGER=cat
+
 skill_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
@@ -119,16 +121,17 @@ nix-instantiate --parse -E '
   in pkgs.${package}
 ' >/dev/null
 
-nix-build --help | grep -q -- "--argstr"
-nix build --help | grep -q -- "--dry-run"
-nix build --help | grep -q -- "--no-link"
-nix build --help | grep -q -- "--rebuild"
-nix path-info --help | grep -q -- "--json"
-nix why-depends --help | grep -q -- "--derivation"
+# Drain help output so pipefail does not report SIGPIPE after an early match.
+nix-build --help | grep -- "--argstr" >/dev/null
+nix build --help | grep -- "--dry-run" >/dev/null
+nix build --help | grep -- "--no-link" >/dev/null
+nix build --help | grep -- "--rebuild" >/dev/null
+nix path-info --help | grep -- "--json" >/dev/null
+nix why-depends --help | grep -- "--derivation" >/dev/null
 nix store diff-closures --help >/dev/null
-nix store make-content-addressed --help | grep -q -- "--json"
+nix store make-content-addressed --help | grep -- "--json" >/dev/null
 nix derivation show --help >/dev/null
-nix flake metadata --help | grep -q -- "--inputs-from"
-nix flake update --help | grep -q -- "nix flake update"
+nix flake metadata --help | grep -- "--inputs-from" >/dev/null
+nix flake update --help | grep -- "nix flake update" >/dev/null
 
 echo "nix-toolkit snippets validated"
