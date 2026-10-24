@@ -149,8 +149,17 @@ in
         };
       })
       {
-        system.newsyslog.files.nix-gc = nixLogRotationEntries.gc;
-        system.newsyslog.files.nix-optimise = nixLogRotationEntries.optimise;
+        system = {
+          # Keep Finder and native file pickers from caching the entire store.
+          # https://github.com/NixOS/nix-installer/pull/183
+          activationScripts.preActivation.text = lib.mkBefore ''
+            echo "hiding /nix from Finder..." >&2
+            /usr/bin/chflags hidden /nix
+          '';
+
+          newsyslog.files.nix-gc = nixLogRotationEntries.gc;
+          newsyslog.files.nix-optimise = nixLogRotationEntries.optimise;
+        };
 
         launchd.daemons.fast-nix-optimise = lib.mkIf config.services.fast-nix-optimise.automatic {
           serviceConfig = {
