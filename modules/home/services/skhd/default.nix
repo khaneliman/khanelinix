@@ -44,18 +44,10 @@ in
       restart-skhd = ''launchctl kickstart -k gui/"$(id -u)"/org.nix-community.home.skhd'';
     };
 
-    home.activation.skhdTccShim = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      echo >&2 "Setting up stable TCC shim for skhd..."
-      $DRY_RUN_CMD mkdir -p "${userHome}/.local/bin"
-      # We must copy, not symlink, so TCC sees a stable filesystem path.
-      if [[ ! -e "${userHome}/.local/bin/skhd-stable" ]] || ! cmp -s "${pkgs.skhd}/bin/skhd" "${userHome}/.local/bin/skhd-stable"; then
-        $DRY_RUN_CMD cp -f "${pkgs.skhd}/bin/skhd" "${userHome}/.local/bin/skhd-stable"
-        $DRY_RUN_CMD chmod +x "${userHome}/.local/bin/skhd-stable"
-      fi
-    '';
+    khanelinix.system.tcc.stableBinaries.skhd.source = getExe config.services.skhd.package;
 
     launchd.agents.skhd.config.ProgramArguments = lib.mkForce [
-      "${userHome}/.local/bin/skhd-stable"
+      config.khanelinix.system.tcc.stableBinaries.skhd.path
     ];
 
     services.skhd = {

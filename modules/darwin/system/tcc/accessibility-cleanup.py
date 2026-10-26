@@ -1,3 +1,4 @@
+import json
 import os
 import re
 import sqlite3
@@ -8,12 +9,7 @@ SERVICE = "kTCCServiceAccessibility"
 
 
 def stable_clients():
-    user_home = os.environ["KHANELINIX_TCC_ACCESSIBILITY_USER_HOME"]
-    return [
-        os.path.join(user_home, ".local/bin/skhd-stable"),
-        os.path.join(user_home, ".local/bin/yabai-stable"),
-        os.path.join(user_home, ".local/bin/borders-stable"),
-    ]
+    return json.loads(os.environ["KHANELINIX_TCC_STABLE_CLIENTS"])
 
 
 def cdhash(path):

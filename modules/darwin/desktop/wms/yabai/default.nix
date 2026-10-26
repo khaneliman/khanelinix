@@ -23,7 +23,7 @@ let
     )
     + lib.optionalString (yabaiExtraConfig != "") ("\n" + yabaiExtraConfig + "\n")
   );
-  yabaiStablePath = "${userHome}/.local/bin/yabai-stable";
+  yabaiStablePath = hmCfg.khanelinix.system.tcc.stableBinaries.yabai.path;
   yabaiStartupCommand = ''
     user_name="$USER"
     if [ -z "$user_name" ]; then
@@ -72,6 +72,8 @@ in
         home.shellAliases = {
           restart-yabai = ''launchctl kickstart -k gui/"$(id -u)"/org.nixos.yabai'';
         };
+
+        khanelinix.system.tcc.stableBinaries.yabai.source = getExe yabaiPackage;
       };
     };
 
@@ -89,16 +91,6 @@ in
         };
       };
     };
-
-    system.activationScripts.extraActivation.text = ''
-      echo >&2 "Setting up stable TCC shim for yabai..."
-      mkdir -p "${userHome}/.local/bin"
-      # We must copy, not symlink, so TCC sees a stable filesystem path.
-      if [[ ! -e "${userHome}/.local/bin/yabai-stable" ]] || ! cmp -s "${yabaiPackage}/bin/yabai" "${userHome}/.local/bin/yabai-stable"; then
-        cp -f "${yabaiPackage}/bin/yabai" "${userHome}/.local/bin/yabai-stable"
-        chmod +x "${userHome}/.local/bin/yabai-stable"
-      fi
-    '';
 
     services.yabai = {
       # Yabai documentation
