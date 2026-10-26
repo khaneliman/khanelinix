@@ -124,6 +124,7 @@ let
 
   workerLanes = {
     hook = ./worker-lanes/hooks/worker_lanes_hook.py;
+    codex.requirements = import ./worker-lanes/codex/requirements.nix;
   };
 
   # Antigravity loads plugin.json and hooks.json from each plugin directory;
@@ -173,6 +174,7 @@ let
         planningWithFiles.codex.requirements
         programOrchestration.codex.requirements
         technicalWriting.codex.requirements
+        workerLanes.codex.requirements
       ];
   codexManagedRequirementsWithHooks = codexManagedRequirements // {
     hooks = codexHooks;
@@ -193,6 +195,8 @@ let
         cp ${programOrchestration.canonicalSkill}/scripts/program_state.py $out/program-orchestration/
         mkdir -p $out/technical-writing
         cp ${technicalWriting.guard} $out/technical-writing/style_guard.py
+        mkdir -p $out/worker-lanes
+        cp ${workerLanes.hook} $out/worker-lanes/worker_lanes_hook.py
       '';
 
   isSkillDirectory =
