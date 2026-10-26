@@ -32,6 +32,8 @@ in
         ".gemini/config/plugins/okf-memory".source = lib.mkDefault aiTools.antigravityCli.okfMemoryPlugin;
         ".gemini/config/plugins/technical-writing".source =
           lib.mkDefault aiTools.antigravityCli.technicalWritingPlugin;
+        ".gemini/config/plugins/worker-lanes".source =
+          lib.mkDefault aiTools.antigravityCli.workerLanesPlugin;
       };
       shellAliases = {
         # Control overrides

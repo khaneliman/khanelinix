@@ -159,6 +159,22 @@ let
       Stop = [ (hook "stop") ];
     };
 
+  antigravityWorkerLanesPlugin =
+    let
+      hook =
+        event: antigravityHook "${lib.getExe pkgs.python3} -P ${workerLanes.hook} antigravity ${event}";
+    in
+    mkAntigravityPlugin "worker-lanes" {
+      PostToolUse = [
+        {
+          matcher = "invoke_subagent";
+          hooks = [ (hook "post-tool") ];
+        }
+      ];
+      PreInvocation = [ (hook "pre-invocation") ];
+      Stop = [ (hook "stop") ];
+    };
+
   antigravityTechnicalWritingPlugin = mkAntigravityPlugin "technical-writing" {
     Stop = [
       (antigravityHook "${lib.getExe pkgs.python3} ${technicalWriting.guard} hook antigravity")
@@ -387,6 +403,7 @@ in
   antigravityCli = {
     okfMemoryPlugin = antigravityOkfMemoryPlugin;
     technicalWritingPlugin = antigravityTechnicalWritingPlugin;
+    workerLanesPlugin = antigravityWorkerLanesPlugin;
     skills = skillsAttrsForHarness "antigravityCli";
   };
 
