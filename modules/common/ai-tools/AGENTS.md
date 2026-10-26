@@ -39,6 +39,9 @@
 
 - Change shared behavior once at canonical source, then verify every renderer or
   consumer affected by that source.
+- Build hooks for every configured harness (Claude Code, Codex, Antigravity) by
+  default: one script with per-harness adapters, wired into each harness. Scope
+  to one harness only when the request names it.
 - Published skill directories are native plugin roots. Maintain content only
   under `skills/`; do not create copied marketplace payloads. Follow
   `marketplace/README.md` for version updates and validation.
