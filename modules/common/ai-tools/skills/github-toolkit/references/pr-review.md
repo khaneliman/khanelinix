@@ -265,6 +265,13 @@ Do not flag style, subjective quality, pre-existing problems, speculative edge
 cases, duplicates, or normal linter findings unless repo instructions require.
 Validate each issue against diff and relevant local instructions.
 
+A defect that changed code inherits from a shared layer, such as a serializer,
+helper, or platform module that sibling consumers use the same way, is
+pre-existing. Before drafting, search for those consumers. Do not ask the
+contributor for a local workaround or block on it; keep it in private notes or a
+non-blocking pointer and route the fix to the owning layer. Asking the changed
+code to use an existing shared helper is still in scope.
+
 Design ideas and architectural questions can still be useful when they move the
 work forward. Present them as proposals, distinguish them from demonstrated
 defects, and say when they have not been validated. Do not turn an untested idea
