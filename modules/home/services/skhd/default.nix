@@ -46,9 +46,13 @@ in
 
     khanelinix.system.tcc.stableBinaries.skhd.source = getExe config.services.skhd.package;
 
-    launchd.agents.skhd.config.ProgramArguments = lib.mkForce [
-      config.khanelinix.system.tcc.stableBinaries.skhd.path
-    ];
+    launchd.agents.skhd.config = {
+      ProgramArguments = lib.mkForce [
+        config.khanelinix.system.tcc.stableBinaries.skhd.path
+      ];
+      # Without its TCC grant, skhd exits at once and prompts on every launch.
+      ThrottleInterval = 60;
+    };
 
     services.skhd = {
       # Skhd documentation

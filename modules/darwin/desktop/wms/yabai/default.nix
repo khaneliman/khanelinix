@@ -90,6 +90,8 @@ in
           "/run/current-system/sw/bin/yabai" = true;
         };
       };
+      # Without its TCC grant, yabai exits at once and prompts on every launch.
+      ThrottleInterval = 60;
     };
 
     services.yabai = {

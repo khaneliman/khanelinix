@@ -17,9 +17,13 @@ in
     khanelinix.system.tcc.stableBinaries.borders.source =
       lib.getExe config.services.jankyborders.package;
 
-    launchd.agents.jankyborders.config.ProgramArguments = lib.mkForce [
-      config.khanelinix.system.tcc.stableBinaries.borders.path
-    ];
+    launchd.agents.jankyborders.config = {
+      ProgramArguments = lib.mkForce [
+        config.khanelinix.system.tcc.stableBinaries.borders.path
+      ];
+      # Without its TCC grant, borders exits at once and prompts on every launch.
+      ThrottleInterval = 60;
+    };
 
     services.jankyborders = {
       # Jankyborders documentation
