@@ -1,30 +1,36 @@
 import json
 import os
-import re
 import sqlite3
 import subprocess
+import tempfile
 
 DB_PATH = "/Library/Application Support/com.apple.TCC/TCC.db"
 SERVICE = "kTCCServiceAccessibility"
+# codesign exits 3 when the code is validly signed but fails the -R requirement.
+REQUIREMENT_UNSATISFIED = 3
 
 
 def stable_clients():
     return json.loads(os.environ["KHANELINIX_TCC_STABLE_CLIENTS"])
 
 
-def cdhash(path):
+def fails_requirement(path, csreq):
     if not os.path.exists(path):
-        return None
+        return True
+    if csreq is None:
+        return False
 
-    result = subprocess.run(
-        ["/usr/bin/codesign", "-d", "-r-", path],
-        check=False,
-        capture_output=True,
-        text=True,
-    )
-    output = result.stdout + result.stderr
-    match = re.search(r'cdhash H"([0-9a-fA-F]+)"', output)
-    return match.group(1).upper() if match else None
+    # Check the stored requirement the way tccd does, so a grant recorded
+    # against the signing certificate survives rebuilds.
+    with tempfile.NamedTemporaryFile(suffix=".csreq") as requirement:
+        requirement.write(csreq)
+        requirement.flush()
+        result = subprocess.run(
+            ["/usr/bin/codesign", "--verify", "-R", requirement.name, path],
+            check=False,
+            capture_output=True,
+        )
+    return result.returncode == REQUIREMENT_UNSATISFIED
 
 
 def main():
@@ -34,7 +40,7 @@ def main():
     with sqlite3.connect(DB_PATH) as connection:
         rows = connection.execute(
             f"""
-            select client, hex(csreq)
+            select client, csreq
             from access
             where service = ?
               and client_type = 1
@@ -53,10 +59,8 @@ def main():
                     stale_clients.add(client)
                 continue
 
-            if client in stable_client_paths:
-                current_cdhash = cdhash(client)
-                if current_cdhash is None or current_cdhash not in csreq:
-                    stale_clients.add(client)
+            if client in stable_client_paths and fails_requirement(client, csreq):
+                stale_clients.add(client)
 
         stale_clients = sorted(stale_clients)
 
