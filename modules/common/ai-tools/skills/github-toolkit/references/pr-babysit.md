@@ -16,10 +16,14 @@ Starting a watch authorizes these actions on every pass without asking again:
 - prepare replies, keeping them in the report for the user's own PR unless
   pending GitHub drafts are explicitly requested
 
-Pushing, publishing a reply, resolving a thread, submitting the review,
-rebasing, and merging each need a separate request. The user proofreads the
-drafts and pushes the commits together, so no posted reply points at code that
-reviewers cannot see yet.
+When the user asks to monitor and fix or address their own PR, that request also
+authorizes a fast-forward push of verified fix commits on every pass; do not
+stop to ask before pushing.
+
+Otherwise pushing needs a separate request. Publishing a reply, resolving a
+thread, submitting the review, rebasing, force-pushing, and merging always need
+one. Push a fix before posting any reply that refers to it, so no posted reply
+points at code that reviewers cannot see yet.
 
 ## Start
 
