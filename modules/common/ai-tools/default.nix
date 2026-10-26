@@ -126,68 +126,43 @@ let
     hook = ./worker-lanes/hooks/worker_lanes_hook.py;
   };
 
-  antigravityOkfMemoryPlugin =
+  # Antigravity loads plugin.json and hooks.json from each plugin directory;
+  # hooks.json maps the plugin name to its event handlers.
+  mkAntigravityPlugin =
+    name: events:
     if pkgs == null then
       null
     else
       let
-        command = event: "${lib.getExe pkgs.python3} ${okfMemory.hook} antigravity ${event}";
-        pluginJson = pkgs.writeText "antigravity-okf-memory-plugin.json" (
-          builtins.toJSON { name = "okf-memory"; }
-        );
-        hooksJson = pkgs.writeText "antigravity-okf-memory-hooks.json" (
-          builtins.toJSON {
-            okf-memory = {
-              PreInvocation = [
-                {
-                  type = "command";
-                  command = command "pre-invocation";
-                  timeout = 5;
-                }
-              ];
-              Stop = [
-                {
-                  type = "command";
-                  command = command "stop";
-                  timeout = 5;
-                }
-              ];
-            };
-          }
-        );
+        pluginJson = pkgs.writeText "antigravity-${name}-plugin.json" (builtins.toJSON { inherit name; });
+        hooksJson = pkgs.writeText "antigravity-${name}-hooks.json" (builtins.toJSON { ${name} = events; });
       in
-      pkgs.runCommand "antigravity-okf-memory-plugin" { } ''
+      pkgs.runCommand "antigravity-${name}-plugin" { } ''
         mkdir -p $out
         cp ${pluginJson} $out/plugin.json
         cp ${hooksJson} $out/hooks.json
       '';
 
-  antigravityTechnicalWritingPlugin =
-    if pkgs == null then
-      null
-    else
-      let
-        command = "${lib.getExe pkgs.python3} ${technicalWriting.guard} hook antigravity";
-        pluginJson = pkgs.writeText "antigravity-technical-writing-plugin.json" (
-          builtins.toJSON { name = "technical-writing"; }
-        );
-        hooksJson = pkgs.writeText "antigravity-technical-writing-hooks.json" (
-          builtins.toJSON {
-            technical-writing.Stop = [
-              {
-                type = "command";
-                inherit command;
-                timeout = 5;
-              }
-            ];
-          }
-        );
-      in
-      pkgs.runCommand "antigravity-technical-writing-plugin" { } ''
-        mkdir -p $out
-        cp ${pluginJson} $out/plugin.json
-        cp ${hooksJson} $out/hooks.json
-      '';
+  antigravityHook = command: {
+    type = "command";
+    inherit command;
+    timeout = 5;
+  };
+
+  antigravityOkfMemoryPlugin =
+    let
+      hook = event: antigravityHook "${lib.getExe pkgs.python3} ${okfMemory.hook} antigravity ${event}";
+    in
+    mkAntigravityPlugin "okf-memory" {
+      PreInvocation = [ (hook "pre-invocation") ];
+      Stop = [ (hook "stop") ];
+    };
+
+  antigravityTechnicalWritingPlugin = mkAntigravityPlugin "technical-writing" {
+    Stop = [
+      (antigravityHook "${lib.getExe pkgs.python3} ${technicalWriting.guard} hook antigravity")
+    ];
+  };
 
   codexHooks =
     lib.zipAttrsWith
