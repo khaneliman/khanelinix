@@ -96,6 +96,16 @@ in
           if [[ -n "$signed" ]]; then
             printf '%s\n' "$source" > "$stamp"
           fi
+
+          # A process still running the old copy can fail its TCC check against
+          # the new file, and an event tap that loses access blocks keyboard
+          # and mouse input. Stop it so launchd relaunches the new copy.
+          ps -axo pid=,comm= | while read -r pid command; do
+            if [[ "$command" == "$target" ]]; then
+              echo >&2 "Restarting $name to run the new copy..."
+              kill "$pid" 2>/dev/null || true
+            fi
+          done
         }
 
         ${lib.concatMapAttrsStringSep "\n" (
