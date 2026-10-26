@@ -122,6 +122,10 @@ let
     hook = skillRoutingDir + "/hooks/skill_routing_hook.py";
   };
 
+  workerLanes = {
+    hook = ./worker-lanes/hooks/worker_lanes_hook.py;
+  };
+
   antigravityOkfMemoryPlugin =
     if pkgs == null then
       null
@@ -386,6 +390,7 @@ in
     skillsDir
     systemSkillNames
     technicalWriting
+    workerLanes
     ;
 
   claudeCode = {

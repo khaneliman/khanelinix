@@ -32,6 +32,8 @@
 - `planning-with-files/`: vendored provider adapters and explicit planning
   commands; `skills/planning-with-files/` owns the canonical optional workflow
 - `okf-memory/`: deterministic cross-provider durable-memory hooks
+- `worker-lanes/`: refill reminders for orchestrators while two or more
+  background worker lanes run at once
 
 ## Change Boundaries
 
