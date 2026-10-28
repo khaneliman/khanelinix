@@ -68,10 +68,15 @@ jj sparse set --add backend/ --add shared/
 
 ## Colocated repo caveats
 
-In colocated jj/git repos, `jj workspace add` creates a workspace that may not
-have full git interop. The new workspace gets its own `.jj/` but may not have a
-`.git/`. Git-based tooling, including editors and CI scripts, may not work
-there. Plan accordingly if you need git compatibility in all workspaces.
+In a colocated repo, jj 0.46 `jj workspace add` also creates a Git worktree
+linked by relative paths. It sets `extensions.relativeWorktrees` in the shared
+`.git/config`. Git before 2.48 then refuses to open every checkout of the repo,
+including the main one, so tools that find an older git, such as lazygit, fail.
+
+`jj workspace forget` removes the Git worktree but leaves the extension set and
+the workspace directory on disk. After forgetting a workspace you added, delete
+its directory. If no `.git/worktrees/*/gitdir` still holds a relative path, run
+`git config --local --unset extensions.relativeWorktrees`.
 
 ## Use cases
 
