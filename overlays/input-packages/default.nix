@@ -101,9 +101,6 @@ in
   #          ╭──────────────────────────────────────────────────────────╮
   #          │                 Darwin package overrides                 │
   #          ╰──────────────────────────────────────────────────────────╯
-  # TODO: remove after the ld64 hardening workaround reaches input-leap.
-  input-leap = useLldOnDarwin prev.input-leap;
-
   # TODO: remove after the ld64 hardening workaround reaches musikcube.
   musikcube = useLldOnDarwin prev.musikcube;
 
