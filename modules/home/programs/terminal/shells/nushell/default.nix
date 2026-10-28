@@ -21,6 +21,7 @@ in
         # Nushell documentation
         # See: https://www.nushell.sh/book/
         enable = true;
+        loadSessionVariables = true;
 
         extraConfig = ''
           if (($env.NIXPKGS_REVIEW_ROOT? | default "") != "") {
