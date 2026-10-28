@@ -56,7 +56,6 @@ in
         lib.optionalString pkgs.stdenv.hostPlatform.isDarwin /* fish */ ''
           ${nixpkgsReviewGuard}
 
-          export NIX_PATH="darwin-config=${config.home.homeDirectory}/.nixpkgs/darwin-configuration.nix:${config.home.homeDirectory}/.nix-defexpr/channels:$NIX_PATH"
           fish_add_path --move --prepend --path ${
             lib.concatMapStringsSep " " dquote (makeBinPathList (osConfig.environment.profiles or [ ]))
           }
