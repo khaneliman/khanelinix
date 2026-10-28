@@ -1,15 +1,16 @@
 diff --git a/apps/web/src/components/files/FilePreviewPanel.test.ts b/apps/web/src/components/files/FilePreviewPanel.test.ts
+index ddc77e5748..0ee0ca6c54 100644
 --- a/apps/web/src/components/files/FilePreviewPanel.test.ts
 +++ b/apps/web/src/components/files/FilePreviewPanel.test.ts
-@@ -7,6 +7,7 @@ import { remapFileCommentAnnotations } from "./fileCommentAnnotations";
- import {
+@@ -10,6 +10,7 @@ import {
    filePreviewReadErrorMessage,
+   isMarkdownPreviewFile,
    resolveFilePreviewPath,
 +  resolveFilePreviewLocation,
    setMarkdownTaskChecked,
    shouldShowFileExplorer,
    workspaceAssetResource,
-@@ -63,6 +64,63 @@ describe("file comment annotations", () => {
+@@ -66,6 +67,63 @@ describe("file comment annotations", () => {
    });
  });
  
@@ -70,13 +71,14 @@ diff --git a/apps/web/src/components/files/FilePreviewPanel.test.ts b/apps/web/s
 +  });
 +});
 +
- describe("setMarkdownTaskChecked", () => {
-   const markdown = "- [ ] First\n- [x] Second\n";
- 
+ describe("isMarkdownPreviewFile", () => {
+   it("recognizes markdown and MDX files case-insensitively", () => {
+     expect(isMarkdownPreviewFile("README.md")).toBe(true);
 diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/components/files/FilePreviewPanel.tsx
+index 56854b3ec6..e66ead141c 100644
 --- a/apps/web/src/components/files/FilePreviewPanel.tsx
 +++ b/apps/web/src/components/files/FilePreviewPanel.tsx
-@@ -107,6 +107,7 @@ import {
+@@ -113,6 +113,7 @@ import {
    filePreviewReadErrorMessage,
    isMarkdownPreviewFile,
    resolveFilePreviewPath,
@@ -106,7 +108,7 @@ diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/c
    const [explorerOpen, setExplorerOpen] = useState(initialExplorerOpen);
    const showExplorer = shouldShowFileExplorer({
      relativePath: previewPath,
-@@ -1454,9 +1458,9 @@ export default function FilePreviewPanel({
+@@ -1518,9 +1522,9 @@ export default function FilePreviewPanel({
              )}
            >
              <FileBrowserPanel
@@ -119,6 +121,7 @@ diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/c
                hostFolder={hostFolderPath !== null}
                selectedPath={
 diff --git a/apps/web/src/components/files/filePath.test.ts b/apps/web/src/components/files/filePath.test.ts
+index 22cb582493..c98b8ab7b3 100644
 --- a/apps/web/src/components/files/filePath.test.ts
 +++ b/apps/web/src/components/files/filePath.test.ts
 @@ -1,6 +1,11 @@
@@ -134,7 +137,7 @@ diff --git a/apps/web/src/components/files/filePath.test.ts b/apps/web/src/compo
  
  describe("fileBreadcrumbs", () => {
    it("starts host paths outside the workspace at the filesystem root", () => {
-@@ -69,3 +74,23 @@ describe("retainedBreadcrumbTrail", () => {
+@@ -64,3 +69,23 @@ describe("retainedBreadcrumbTrail", () => {
      expect(retainedBreadcrumbTrail(trail, path)).toBe(expected);
    });
  });
@@ -159,10 +162,12 @@ diff --git a/apps/web/src/components/files/filePath.test.ts b/apps/web/src/compo
 +  });
 +});
 diff --git a/apps/web/src/components/files/filePreviewMode.ts b/apps/web/src/components/files/filePreviewMode.ts
+index 3777fad423..dc1196bf70 100644
 --- a/apps/web/src/components/files/filePreviewMode.ts
 +++ b/apps/web/src/components/files/filePreviewMode.ts
-@@ -1,11 +1,31 @@
+@@ -1,12 +1,32 @@
  import type { AssetResource, ProjectReadFileError, ScopedThreadRef } from "@t3tools/contracts";
+ import { mediaFileReference } from "@t3tools/client-runtime/media-reference";
 -import { isHostPath, workspaceRelativeFilePath } from "@t3tools/shared/path";
 +import { isAbsolutePath, isHostPath, workspaceRelativeFilePath } from "@t3tools/shared/path";
  
@@ -191,10 +196,11 @@ diff --git a/apps/web/src/components/files/filePreviewMode.ts b/apps/web/src/com
 +  };
 +}
 +
- export const isMarkdownPreviewFile = (path: string): boolean => /\.(?:md|mdx)$/i.test(path);
+ export const isMarkdownPreviewFile = (path: string): boolean =>
+   /\.(?:md|mdx|markdown|mdown|mkd)$/i.test(path);
  
- export function filePreviewReadErrorMessage(error: ProjectReadFileError): string {
 diff --git a/apps/web/src/components/files/fileTreeDragMention.test.ts b/apps/web/src/components/files/fileTreeDragMention.test.ts
+index 2c459a4c3d..ace25a7190 100644
 --- a/apps/web/src/components/files/fileTreeDragMention.test.ts
 +++ b/apps/web/src/components/files/fileTreeDragMention.test.ts
 @@ -1,6 +1,7 @@

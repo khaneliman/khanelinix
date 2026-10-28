@@ -14,6 +14,9 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.mcp;
   mcpPkgs = inputs.mcp-servers-nix.packages.${system};
+  # TODO: drop once the reference servers accept mcp 2. Upstream pins a
+  # nixpkgs that still ships mcp 1.x, but this flake overrides that pin.
+  mcp1Python3Packages = pkgs.python3Packages.overrideScope (final: _: { mcp = final.mcp_1; });
   hasTavilyApiKey = hasAttrByPath [ "sops" "secrets" "TAVILY_API_KEY" ] config;
   blenderMcpPackage = pkgs.khanelinix.blender-mcp;
 in
@@ -63,7 +66,7 @@ in
         fetch = {
           # Native browser and web tools cover routine retrieval.
           enabled = false;
-          command = getExe mcpPkgs.mcp-server-fetch;
+          command = getExe (mcpPkgs.mcp-server-fetch.override { python3Packages = mcp1Python3Packages; });
         };
 
         filesystem = {
@@ -86,7 +89,7 @@ in
         git = {
           # Native shell tools cover Git inspection and mutation.
           enabled = false;
-          command = getExe mcpPkgs.mcp-server-git;
+          command = getExe (mcpPkgs.mcp-server-git.override { python3Packages = mcp1Python3Packages; });
         };
 
         bevy-brp = {

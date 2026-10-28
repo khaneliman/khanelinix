@@ -30,12 +30,12 @@ let
 
   mlxMetal = pythonPackages.buildPythonPackage {
     pname = "mlx-metal";
-    version = "0.31.2";
+    version = "0.32.4";
     format = "wheel";
 
     src = prev.fetchurl {
-      url = "https://files.pythonhosted.org/packages/99/82/11fd62a8d7a3e96e5c43220b17de0151e3f10101f8bb3b865f5bd9cdd074/mlx_metal-0.31.2-py3-none-macosx_26_0_arm64.whl";
-      hash = "sha256-hP+2DuUD8D62hPX7Fo1c/zHioWt/J8FzHq92Yr1um0Y=";
+      url = "https://files.pythonhosted.org/packages/2a/d6/4340ed6e184f71693d7f531c9ae55d677451351245760d71f8dd714dcbe5/mlx_metal-0.32.4-py3-none-macosx_26_0_arm64.whl";
+      hash = "sha256-UU35LUGiholdJWS0sY9NpFCWvXpKDEfhBC80WtWn+TY=";
     };
   };
 
@@ -43,12 +43,12 @@ let
     if useMetalWheel then
       pythonPackages.buildPythonPackage {
         pname = "mlx";
-        version = "0.31.2";
+        version = "0.32.4";
         format = "wheel";
 
         src = prev.fetchurl {
-          url = "https://files.pythonhosted.org/packages/ca/20/c6c5fb998c7834d094b2bfb9f003b5246cb270f0266da055c55546c34999/mlx-0.31.2-cp313-cp313-macosx_26_0_arm64.whl";
-          hash = "sha256-wFmBaEJ5qJNdWLDd4+pbAtIQw7rTMZqg6ZNOwt8WV1I=";
+          url = "https://files.pythonhosted.org/packages/e8/b1/33ca08f84550fd512f28b84055ff00631ef2ce83011ac2bbc171ffec7bbb/mlx-0.32.4-cp313-cp313-macosx_26_0_arm64.whl";
+          hash = "sha256-7xMOPaiVyFN0sRpsOJrLEiiT8v/L7YJri2L9RaILetY=";
         };
 
         dependencies = [
@@ -92,8 +92,8 @@ let
           mlx-lm
         ];
 
-      # nixpkgs marks mlx-vlm 0.4.4 broken because it does not support the
-      # nixpkgs mlx 0.32.1. The Metal wheel above pins mlx 0.31.2, which it does.
+      # nixpkgs marks mlx-vlm 0.4.4 broken. It declares mlx>=0.30.0 and imports
+      # cleanly against the Metal wheel above on real hardware.
       meta = (old.meta or { }) // prev.lib.optionalAttrs useMetalWheel { broken = false; };
     })
   );

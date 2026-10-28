@@ -23,7 +23,8 @@ python3Packages.buildPythonApplication (finalAttrs: {
 
   propagatedBuildInputs = with python3Packages; [
     docutils
-    mcp
+    # Upstream requires mcp<2.
+    mcp_1
     pyyaml
   ];
 

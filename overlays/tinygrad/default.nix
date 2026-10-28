@@ -8,6 +8,10 @@ _: _final: prev: {
           # AssertionError: 15.95… not less than 9.0 : should exit in time
           # (test/amd/test_mockgpu_invalid.py, same wall-clock class)
           "test_unsupported_instruction_raises"
+          # torch 2.14 changed the reference results these compare against:
+          # clip's backward shape and replicate-mode padding bounds.
+          "test_clip"
+          "test_pad_replicate_mode"
         ];
       });
     })

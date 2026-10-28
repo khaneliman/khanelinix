@@ -1,16 +1,17 @@
 diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/src/components/PersistentThreadTerminals.tsx
+index 5e2fe0dbe9..9b57c5fbb2 100644
 --- a/apps/web/src/components/PersistentThreadTerminals.tsx
 +++ b/apps/web/src/components/PersistentThreadTerminals.tsx
 @@ -8,7 +8,7 @@ import {
  import { scopeProjectRef } from "@t3tools/client-runtime/environment";
  import { projectScriptCwd, projectScriptRuntimeEnv } from "@t3tools/shared/projectScripts";
  import { resolveTerminalSessionLabel } from "@t3tools/shared/terminalLabels";
--import { memo, useEffect, useState } from "react";
-+import { lazy, memo, Suspense, useEffect, useState } from "react";
+-import { memo, useEffect } from "react";
++import { lazy, memo, Suspense, useEffect } from "react";
  import { useComposerDraftStore } from "../composerDraftStore";
  import { useStableCallback } from "../hooks/useStableCallback";
  import type { TerminalContextSelection } from "../lib/terminalContext";
-@@ -23,9 +23,10 @@ import { useEnvironmentScope } from "../state/session";
+@@ -24,9 +24,10 @@ import { useEnvironmentScope } from "../state/session";
  import { useKnownTerminalSessions } from "../state/terminalSessions";
  import { selectThreadTerminalUiState, useTerminalUiStateStore } from "../terminalUiStateStore";
  import { useThreadTerminalActions } from "./terminal/useThreadTerminalActions";
@@ -22,7 +23,7 @@ diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/sr
  /** Where a drawer or panel opens new terminals when a script run overrides the thread's own. */
  export type PersistentTerminalLaunchContext = {
    readonly cwd: string;
-@@ -262,36 +263,40 @@ export const PersistentThreadTerminalDrawer = memo(function PersistentThreadTerm
+@@ -249,35 +250,39 @@ export const PersistentThreadTerminalDrawer = memo(function PersistentThreadTerm
        )}
      >
        <div className="min-h-0 overflow-clip">
@@ -40,7 +41,6 @@ diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/sr
 -          activeTerminalId={terminalUiState.activeTerminalId}
 -          terminalGroups={terminalUiState.terminalGroups}
 -          activeTerminalGroupId={terminalUiState.activeTerminalGroupId}
--          focusRequestId={focusRequestId + localFocusRequestId + (visible ? 1 : 0)}
 -          onSplitTerminal={splitTerminal}
 -          onSplitTerminalVertical={splitTerminalVertical}
 -          onNewTerminal={createNewTerminal}
@@ -73,7 +73,6 @@ diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/sr
 +            activeTerminalId={terminalUiState.activeTerminalId}
 +            terminalGroups={terminalUiState.terminalGroups}
 +            activeTerminalGroupId={terminalUiState.activeTerminalGroupId}
-+            focusRequestId={focusRequestId + localFocusRequestId + (visible ? 1 : 0)}
 +            onSplitTerminal={splitTerminal}
 +            onSplitTerminalVertical={splitTerminalVertical}
 +            onNewTerminal={createNewTerminal}
@@ -93,7 +92,7 @@ diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/sr
        </div>
      </div>
    );
-@@ -394,40 +399,44 @@ export const PersistentThreadTerminalPanel = memo(function PersistentThreadTermi
+@@ -378,39 +383,43 @@ export const PersistentThreadTerminalPanel = memo(function PersistentThreadTermi
    if (!project || !cwd) return null;
  
    return (
@@ -116,7 +115,6 @@ diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/sr
 -        },
 -      ]}
 -      activeTerminalGroupId={surface.id}
--      focusRequestId={focusRequestId}
 -      onSplitTerminal={onSplitTerminal}
 -      onSplitTerminalVertical={onSplitTerminalVertical}
 -      onNewTerminal={onNewTerminal}
@@ -154,7 +152,6 @@ diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/sr
 +          },
 +        ]}
 +        activeTerminalGroupId={surface.id}
-+        focusRequestId={focusRequestId}
 +        onSplitTerminal={onSplitTerminal}
 +        onSplitTerminalVertical={onSplitTerminalVertical}
 +        onNewTerminal={onNewTerminal}
@@ -174,14 +171,13 @@ diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/sr
    );
  });
 diff --git a/apps/web/vite.config.ts b/apps/web/vite.config.ts
+index 501bac5dba..d337c89863 100644
 --- a/apps/web/vite.config.ts
 +++ b/apps/web/vite.config.ts
-@@ -296,6 +296,21 @@ export default defineConfig(() => {
-       emptyOutDir: true,
-       manifest: true,
-       sourcemap: buildSourcemap,
-+      rollupOptions: {
-+        output: {
+@@ -384,6 +384,17 @@ export default defineConfig(() => {
+             asset.originalFileNames.some((path) => /[/\\]pdfjs-dist[/\\]wasm[/\\]/.test(path))
+               ? `assets/pdfjs-${pdfjsPkg.version}/[name][extname]`
+               : "assets/[name]-[hash][extname]",
 +          manualChunks(id) {
 +            if (!id.includes("node_modules")) {
 +              return;
@@ -193,8 +189,6 @@ diff --git a/apps/web/vite.config.ts b/apps/web/vite.config.ts
 +              return "vendor-dnd-kit";
 +            }
 +          },
-+        },
-+      },
+         },
+       },
      },
-     test: {
-       projects: [defineProject(unitTestProject), defineProject(browserTestProject)],

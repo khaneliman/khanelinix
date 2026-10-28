@@ -26,7 +26,6 @@ in
     ccusage
     ck
     claude-code
-    code-review-graph
     git-surgeon
     hunk
     rtk
@@ -37,6 +36,25 @@ in
     workmux
     zat
     ;
+
+  # TODO: remove after numtide/llm-agents.nix#11477 lands. fastmcp-slim is
+  # marked broken against mcp 2, so build this Python scope against mcp 1.x.
+  # The package calls `python3.override` itself, so compose with its
+  # packageOverrides instead of replacing them.
+  code-review-graph = inputs.llm-agents.packages.${system}.code-review-graph.override {
+    python3 = final.python3 // {
+      override =
+        args:
+        final.python3.override (
+          args
+          // {
+            packageOverrides = final.lib.composeExtensions (pyFinal: _: {
+              mcp = pyFinal.mcp_1;
+            }) args.packageOverrides;
+          }
+        );
+    };
+  };
 
   # Darwin's sandbox crashes the binary's version check, although it runs
   # outside the sandbox. Keep Linux's install check enabled.

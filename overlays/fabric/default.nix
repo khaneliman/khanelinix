@@ -16,6 +16,11 @@ _: _final: prev: {
 
         pythonRelaxDeps = (old.pythonRelaxDeps or [ ]) ++ [ "invoke" ];
 
+        # The tests load the hardcoded system /etc/ssh/ssh_config. Darwin
+        # builds run unsandboxed here, where that file is root-only, so
+        # every Connection fixture fails. Linux builds stay sandboxed.
+        doCheck = !prev.stdenv.hostPlatform.isDarwin;
+
         meta = old.meta // {
           broken = false;
         };

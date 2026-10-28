@@ -1,6 +1,7 @@
 # Retain nonblocking quota reads and account-switch guards on upstream usage limits.
-# Rebased on ed0f7b908b2e7b3a22e6fd82a73794c2fe6ee06e.
+# Rebased on ff71186669c863aa976cee0fdb00c20c64ea92b4.
 diff --git a/apps/mobile/src/features/threads/ComposerUsageLimits.tsx b/apps/mobile/src/features/threads/ComposerUsageLimits.tsx
+index 7044a8d70a..2519956a85 100644
 --- a/apps/mobile/src/features/threads/ComposerUsageLimits.tsx
 +++ b/apps/mobile/src/features/threads/ComposerUsageLimits.tsx
 @@ -5,7 +5,11 @@ import { SymbolView } from "../../components/ui/AppSymbol";
@@ -17,6 +18,7 @@ diff --git a/apps/mobile/src/features/threads/ComposerUsageLimits.tsx b/apps/mob
  export function ComposerUsageLimits({
    report,
 diff --git a/apps/server/src/provider/AntigravityProvider.test.ts b/apps/server/src/provider/AntigravityProvider.test.ts
+index ade033551f..5bf8188d00 100644
 --- a/apps/server/src/provider/AntigravityProvider.test.ts
 +++ b/apps/server/src/provider/AntigravityProvider.test.ts
 @@ -8,6 +8,7 @@ import {
@@ -528,6 +530,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.test.ts b/apps/server/
 +  );
 +});
 diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/provider/AntigravityProvider.ts
+index c6809c3577..4a76775bbb 100644
 --- a/apps/server/src/provider/AntigravityProvider.ts
 +++ b/apps/server/src/provider/AntigravityProvider.ts
 @@ -9,6 +9,9 @@ import {
@@ -573,9 +576,9 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
      authRevision: 0,
 +    authInvalidationRevision: 0,
    });
-   // Skills the driver discovered on disk per workspace. Session callbacks
-   // rewrite the workspace entry with native commands and must keep these, or
-@@ -168,6 +178,83 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+   // Preserve disk-discovered skills when callbacks replace workspace commands; the registry will not rescan them.
+   const discoveredSkills = new Map<string, ServerProvider["skills"]>();
+@@ -166,6 +176,83 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
      Effect.flatMap((state) => options.stampIdentity(state.draft)),
    );
  
@@ -659,7 +662,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
    const checkProvider = Effect.fn("checkAntigravityProvider")(function* () {
      if (!settings.enabled) return yield* getSnapshot;
      const before = yield* SubscriptionRef.get(metadata);
-@@ -192,8 +279,6 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -190,8 +277,6 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
                : `Antigravity did not respond to its local health check within ${HEALTH_CHECK_TIMEOUT}.`;
      const supportsTextGeneration =
        initialized !== undefined ? yield* options.supportsTextGeneration : false;
@@ -668,7 +671,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
      const updatedAt = DateTime.formatIso(yield* DateTime.now);
      const next = yield* SubscriptionRef.updateAndGet(metadata, (state) => {
        if (state.authRevision !== before.authRevision) return state;
-@@ -216,12 +301,7 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -213,12 +298,7 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
            version: version === "unknown" ? draft.version : version || draft.version,
            status: errorMessage ? "error" : authenticated ? "ready" : "warning",
            checkedAt: updatedAt,
@@ -682,7 +685,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
            ...(missingInstallation
              ? {
                  models: [],
-@@ -241,7 +321,10 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -238,7 +318,10 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
          },
        } satisfies AntigravityProviderState;
      });
@@ -694,7 +697,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
    });
  
    const maintenanceCapabilities =
-@@ -260,7 +343,11 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -257,7 +340,11 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
      enrichSnapshot: ({ publishSnapshot }) =>
        SubscriptionRef.changes(metadata).pipe(
          Stream.runForEach((state) =>
@@ -707,7 +710,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
          ),
        ),
    });
-@@ -271,24 +358,21 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -268,24 +355,21 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
    ) {
      if (!settings.enabled) return;
      const before = yield* SubscriptionRef.get(metadata);
@@ -740,7 +743,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
          draft: {
            ...draft,
            installed: true,
-@@ -300,10 +384,6 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -297,10 +381,6 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
              label: options.auth?.label ?? "Google account",
            },
            checkedAt: updatedAt,
@@ -751,7 +754,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
            models: buildAntigravityModelsFromSession(started.sessionSetupResult),
            supportsTextGeneration,
            ...(cwd
-@@ -321,7 +401,14 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -318,7 +398,14 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
              : {}),
          },
        } satisfies AntigravityProviderState;
@@ -766,7 +769,7 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
    });
  
    const onConfigOptionsUpdated = Effect.fn("AntigravityProvider.onConfigOptionsUpdated")(function* (
-@@ -373,11 +460,13 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -370,11 +457,13 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
      if (options.clearUsage) yield* options.clearUsage;
      if (!settings.enabled) return;
      const updatedAt = DateTime.formatIso(yield* DateTime.now);
@@ -781,9 +784,10 @@ diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/p
              ...state.draft,
              auth: { status: "unauthenticated" },
 diff --git a/apps/server/src/provider/Drivers/AntigravityDriver.ts b/apps/server/src/provider/Drivers/AntigravityDriver.ts
+index fd5725c6cd..9189d3f3d0 100644
 --- a/apps/server/src/provider/Drivers/AntigravityDriver.ts
 +++ b/apps/server/src/provider/Drivers/AntigravityDriver.ts
-@@ -393,6 +393,7 @@ export const AntigravityDriver: ProviderDriver<
+@@ -390,6 +390,7 @@ export const AntigravityDriver: ProviderDriver<
        stampIdentity: classifyModels,
        probe,
        probeUsage: usage.probe,
@@ -792,6 +796,7 @@ diff --git a/apps/server/src/provider/Drivers/AntigravityDriver.ts b/apps/server
        auth: { type: auth.authMethod, label: antigravityAuthLabel(auth.authMethod) },
        supportsTextGeneration: isAntigravityTextGenerationAvailable(profileDirectory).pipe(
 diff --git a/apps/server/src/provider/antigravityUsageLimits.ts b/apps/server/src/provider/antigravityUsageLimits.ts
+index 75333ae826..2246a116ac 100644
 --- a/apps/server/src/provider/antigravityUsageLimits.ts
 +++ b/apps/server/src/provider/antigravityUsageLimits.ts
 @@ -189,6 +189,14 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
@@ -820,7 +825,7 @@ diff --git a/apps/server/src/provider/antigravityUsageLimits.ts b/apps/server/sr
      const now = yield* Clock.currentTimeMillis;
      let accessToken: string;
      let account: string;
-@@ -310,6 +316,7 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
+@@ -307,6 +313,7 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
    );
    return {
      probe,
@@ -829,9 +834,10 @@ diff --git a/apps/server/src/provider/antigravityUsageLimits.ts b/apps/server/sr
        cached = undefined;
        generation++;
 diff --git a/packages/provider-core/src/server/managedProvider.test.ts b/packages/provider-core/src/server/managedProvider.test.ts
+index 668502f93e..b4a7370dc9 100644
 --- a/packages/provider-core/src/server/managedProvider.test.ts
 +++ b/packages/provider-core/src/server/managedProvider.test.ts
-@@ -383,6 +383,49 @@ describe("makeManagedServerProvider", () => {
+@@ -458,6 +458,49 @@ describe("makeManagedServerProvider", () => {
      ).pipe(Effect.provide(layerAlwaysRunTest)),
    );
  
@@ -882,6 +888,7 @@ diff --git a/packages/provider-core/src/server/managedProvider.test.ts b/package
      Effect.scoped(
        Effect.gen(function* () {
 diff --git a/packages/provider-core/src/server/managedProvider.ts b/packages/provider-core/src/server/managedProvider.ts
+index f40baee525..f033cba988 100644
 --- a/packages/provider-core/src/server/managedProvider.ts
 +++ b/packages/provider-core/src/server/managedProvider.ts
 @@ -48,7 +48,10 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
@@ -895,8 +902,8 @@ diff --git a/packages/provider-core/src/server/managedProvider.ts b/packages/pro
 +    ) => Effect.Effect<void>;
    }) => Effect.Effect<void>;
    readonly refreshInterval?: Duration.Input;
-   readonly refreshOnInterval?: boolean;
-@@ -77,14 +80,19 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
+   readonly refreshOnInterval?: boolean | ((snapshot: ServerProvider) => boolean);
+@@ -77,13 +80,18 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
    const publishEnrichedSnapshot = Effect.fn("publishEnrichedSnapshot")(function* (
      generation: number,
      nextSnapshot: ServerProvider,
@@ -906,11 +913,9 @@ diff --git a/packages/provider-core/src/server/managedProvider.ts b/packages/pro
        if (state.enrichmentGeneration !== generation) {
          return [null, state] as const;
        }
-       // Enrichment derives from the snapshot it was handed; a runtime usage
--      // update that landed since must not be reverted by it.
+       // Enrichment must not revert usage updates newer than its input snapshot.
 -      const merged = withUsageLimits(nextSnapshot, state.snapshot.usageLimits);
-+      // update that landed since must not be reverted by it. Providers whose
-+      // enrichment owns usage state can explicitly replace or clear it.
++      // Providers whose enrichment owns usage state can explicitly replace or clear it.
 +      const merged = withUsageLimits(
 +        nextSnapshot,
 +        options?.replaceUsageLimits ? nextSnapshot.usageLimits : state.snapshot.usageLimits,
@@ -918,7 +923,7 @@ diff --git a/packages/provider-core/src/server/managedProvider.ts b/packages/pro
        if (Equal.equals(state.snapshot, merged)) {
          return [null, state] as const;
        }
-@@ -115,7 +123,8 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
+@@ -114,7 +122,8 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
          settings,
          snapshot,
          getSnapshot: Ref.get(snapshotStateRef).pipe(Effect.map((state) => state.snapshot)),
@@ -929,9 +934,10 @@ diff --git a/packages/provider-core/src/server/managedProvider.ts b/packages/pro
        .pipe(Effect.ignoreCause({ log: true }), Effect.forkIn(scope));
  
 diff --git a/packages/provider-core/src/server/usageLimits.test.ts b/packages/provider-core/src/server/usageLimits.test.ts
+index 4b9c1b39c8..264666dadf 100644
 --- a/packages/provider-core/src/server/usageLimits.test.ts
 +++ b/packages/provider-core/src/server/usageLimits.test.ts
-@@ -114,6 +114,23 @@ describe("resolveUsageLimitsAfterProbe", () => {
+@@ -112,6 +112,23 @@ describe("resolveUsageLimitsAfterProbe", () => {
      expect(resolveUsageLimitsAfterProbe({ published: live, probed: newer })).toEqual(newer);
    });
  
@@ -956,9 +962,10 @@ diff --git a/packages/provider-core/src/server/usageLimits.test.ts b/packages/pr
      const failed = { checkedAt, windows: [], unavailable: { reason: "probeFailed" as const } };
      const unsupported = { checkedAt, windows: [], unavailable: { reason: "unsupported" as const } };
 diff --git a/packages/provider-core/src/server/usageLimits.ts b/packages/provider-core/src/server/usageLimits.ts
+index 1e4bcd0090..91870f7acb 100644
 --- a/packages/provider-core/src/server/usageLimits.ts
 +++ b/packages/provider-core/src/server/usageLimits.ts
-@@ -106,7 +106,14 @@ export function resolveUsageLimitsAfterProbe(input: {
+@@ -104,7 +104,14 @@ export function resolveUsageLimitsAfterProbe(input: {
    readonly probed: ServerProviderUsageLimits | undefined;
  }): ServerProviderUsageLimits | undefined {
    const { published, probed } = input;

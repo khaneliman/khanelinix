@@ -36,19 +36,20 @@ in
         let
           pnpm =
             if pkgs.stdenv.hostPlatform.isDarwin then
-              pkgs.pnpm_11.override { nodejs-slim = pkgs.nodejs-slim_24; }
+              pkgs.pnpm_12.override { nodejs-slim = pkgs.nodejs-slim_24; }
             else
-              pkgs.pnpm_11;
+              pkgs.pnpm_12;
           t3codeArgs = builtins.functionArgs (import "${pkgs.path}/pkgs/by-name/t3/t3code/unwrapped.nix");
-          pnpmOverride =
-            if t3codeArgs ? pnpm_11 then
-              { pnpm_11 = pnpm; }
-            else if t3codeArgs ? pnpm_10 then
-              { pnpm_10 = pnpm; }
-            else
-              throw "t3code package exposes neither pnpm_10 nor pnpm_11";
+          pnpmArg =
+            lib.findFirst (name: t3codeArgs ? ${name})
+              (throw "t3code package exposes none of pnpm_10, pnpm_11, or pnpm_12")
+              [
+                "pnpm_12"
+                "pnpm_11"
+                "pnpm_10"
+              ];
         in
-        (package.override pnpmOverride).overrideAttrs (
+        (package.override { ${pnpmArg} = pnpm; }).overrideAttrs (
           old:
           let
             t3codeVersion =
@@ -75,7 +76,7 @@ in
               version = t3codeVersion;
               src = inputs.t3code;
               inherit pnpm;
-              fetcherVersion = 4;
+              fetcherVersion = 5;
               # Large platform binaries (rolldown, esbuild) trip pnpm's 60s
               # default fetch timeout on slow links; the fetch env doesn't
               # affect the fixed-output hash.
@@ -84,7 +85,7 @@ in
                 pnpm config set fetch-retries 5
                 pnpm config set network-concurrency 8
               '';
-              hash = "sha256-xRmOrOZbBljaF1IJr0JFUFzdhkld6+ehLIlpVOg/J3E=";
+              hash = "sha256-k+k+p8l/93nK6X9ng9BzyhDakeT45k/2dbAy3JOuIO4=";
             };
             # License generation otherwise downloads SPDX notices during the sandboxed build.
             preBuild = ''

@@ -1,37 +1,39 @@
 # Show output tokens per second of model time on each run's final assistant message.
-# Rebased on 52628d863e977e1a8b16644141fd00ba96640b16.
+# Rebased on ff71186669c863aa976cee0fdb00c20c64ea92b4.
 diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/ChatView.tsx
+index dfdf3f5fc6..fba1db9e3f 100644
 --- a/apps/web/src/components/ChatView.tsx
 +++ b/apps/web/src/components/ChatView.tsx
-@@ -3326,6 +3326,7 @@
-                 }
+@@ -3283,6 +3283,7 @@ export default function ChatView(props: ChatViewProps) {
+                 footer={timelineFooter}
                  listRef={legendListRef}
-                 runs={paintOnlyDisplayedTimeline ? [] : (serverProjection?.runs ?? [])}
+                 runs={serverProjection?.runs ?? []}
 +                providerTurns={serverProjection?.providerTurns ?? []}
-                 latestRun={paintOnlyDisplayedTimeline ? null : activeActivityRun}
-                 announcedRun={
-                   paintOnlyDisplayedTimeline
+                 latestRun={activeActivityRun}
+                 announcedRun={announcedRun(activeActivityRun, serverProjection?.runs ?? [])}
+                 detailBehindShell={isDetailBehindShell(
 diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/components/chat/MessagesTimeline.tsx
+index f5cc45730c..fa81d63d6b 100644
 --- a/apps/web/src/components/chat/MessagesTimeline.tsx
 +++ b/apps/web/src/components/chat/MessagesTimeline.tsx
-@@ -31,6 +31,7 @@
+@@ -31,6 +31,7 @@ import {
+   use,
    useContext,
-   useEffect,
    useLayoutEffect,
 +  useMemo,
    useRef,
    useState,
    type ReactNode,
-@@ -246,6 +247,8 @@
+@@ -266,6 +267,8 @@ interface MessagesTimelineProps {
    workspaceRoot: string | undefined;
-   skills?: ReadonlyArray<Pick<ServerProviderSkill, "name" | "displayName">>;
+   skills?: ReadonlyArray<ServerProviderSkill>;
    runs: ReadonlyArray<HandoffTimelineRun>;
 +  /** JSON entries of run id to output tokens per second. */
 +  outputRatesJson?: string;
    anchorMessageId: MessageId | null;
    onAnchorReady: (messageId: MessageId, anchorIndex: number) => void;
    onAnchorSizeChanged: (messageId: MessageId, size: number) => void;
-@@ -350,6 +353,7 @@
+@@ -361,6 +364,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
    workspaceRoot,
    skills = EMPTY_TIMELINE_SKILLS,
    runs: runsProp,
@@ -39,9 +41,9 @@ diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/co
    anchorMessageId,
    onAnchorReady,
    onAnchorSizeChanged,
-@@ -907,6 +911,12 @@
-     // oxlint-disable-next-line react/exhaustive-effect-dependencies -- Rows and chat width resize the content without resizing the viewport.
-   }, [timelineViewportElement, rows.length, reportContentOverflow, chatWidth]);
+@@ -1002,6 +1006,12 @@ const ConversationTimeline = memo(function ConversationTimeline({
+     };
+   };
  
 +  // Depends only on the string prop, so the map keeps its identity across
 +  // streaming deltas that leave every rate unchanged.
@@ -52,7 +54,7 @@ diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/co
    const sharedState: TimelineRowSharedState = {
      citationRequest: readyCitationRequest,
      listRef,
-@@ -918,6 +928,7 @@
+@@ -1013,6 +1023,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
      workspaceRoot,
      skills,
      runs,
@@ -60,21 +62,64 @@ diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/co
      activeThreadEnvironmentId,
      onRevertToTurnCount,
      onRunShellCommand,
-diff --git a/apps/web/src/components/chat/timelineRowContext.ts b/apps/web/src/components/chat/timelineRowContext.ts
---- a/apps/web/src/components/chat/timelineRowContext.ts
-+++ b/apps/web/src/components/chat/timelineRowContext.ts
-@@ -31,6 +31,7 @@
-   workspaceRoot: string | undefined;
-   skills: ReadonlyArray<Pick<ServerProviderSkill, "name" | "displayName">>;
-   runs: ReadonlyArray<HandoffTimelineRun>;
-+  outputRateByRunId: ReadonlyMap<RunId, number>;
-   activeThreadEnvironmentId: EnvironmentId;
-   onRevertToTurnCount: (targetTurnCount: number, messageId: MessageId) => void;
-   onUseArtifactTemplate: (template: CodexArtifactTemplate) => void;
+diff --git a/apps/web/src/components/chat/ThreadTimeline.tsx b/apps/web/src/components/chat/ThreadTimeline.tsx
+index 7d1db86178..e776454caf 100644
+--- a/apps/web/src/components/chat/ThreadTimeline.tsx
++++ b/apps/web/src/components/chat/ThreadTimeline.tsx
+@@ -9,6 +9,7 @@ import {
+   resolveThreadSwitchTimeline,
+   timelineHasEphemeralPreviewUrls,
+ } from "../ChatView.logic";
++import { deriveOutputRateByRunId } from "../../lib/outputRate";
+ import { MessagesTimeline } from "./MessagesTimeline";
+ 
+ /**
+@@ -19,14 +20,16 @@ import { MessagesTimeline } from "./MessagesTimeline";
+ export function ThreadTimeline({
+   threadDetailRef,
+   entriesInput,
++  providerTurns,
+   draftEntries,
+   activeThreadKey,
+   syncing,
+   detailLoading,
+   ...timelineProps
+-}: Omit<ComponentProps<typeof MessagesTimeline>, "timelineEntries"> & {
++}: Omit<ComponentProps<typeof MessagesTimeline>, "timelineEntries" | "outputRatesJson"> & {
+   /** Null until the thread's detail may load; see resolveThreadDetailRef. */
+   threadDetailRef: ScopedThreadRef | null;
++  providerTurns: Parameters<typeof deriveOutputRateByRunId>[0];
+   entriesInput: Omit<TimelineEntriesInput, "visibleTurnItems">;
+   /** A local draft's optimistic rows; null for a server thread. */
+   draftEntries: ReadonlyArray<TimelineEntry> | null;
+@@ -35,6 +38,9 @@ export function ThreadTimeline({
+   detailLoading: boolean;
+ }) {
+   const visibleTurnItems = useThreadVisibleTurnItems(threadDetailRef);
++  const outputRatesJson = JSON.stringify([
++    ...deriveOutputRateByRunId(providerTurns, visibleTurnItems),
++  ]);
+   const serverEntries = useIncrementalTimelineEntries(activeThreadKey, {
+     ...entriesInput,
+     visibleTurnItems,
+@@ -53,5 +59,11 @@ export function ThreadTimeline({
+     }
+     rememberReadyThreadTimeline({ threadKey: activeThreadKey, entries });
+   }, [activeThreadKey, detailLoading, entries]);
+-  return <MessagesTimeline {...timelineProps} timelineEntries={displayedEntries} />;
++  return (
++    <MessagesTimeline
++      {...timelineProps}
++      timelineEntries={displayedEntries}
++      outputRatesJson={outputRatesJson}
++    />
++  );
+ }
 diff --git a/apps/web/src/components/chat/TimelineAssistantRows.tsx b/apps/web/src/components/chat/TimelineAssistantRows.tsx
+index 89b52ae5c5..000dd28cb7 100644
 --- a/apps/web/src/components/chat/TimelineAssistantRows.tsx
 +++ b/apps/web/src/components/chat/TimelineAssistantRows.tsx
-@@ -154,6 +154,7 @@
+@@ -157,6 +157,7 @@ function AssistantMessageMeta({
    alwaysVisible?: boolean;
  }) {
    const ctx = use(TimelineRowCtx);
@@ -82,13 +127,10 @@ diff --git a/apps/web/src/components/chat/TimelineAssistantRows.tsx b/apps/web/s
  
    return (
      <div
-@@ -185,6 +186,16 @@
-           </TooltipTrigger>
-           <TooltipPopup>
-             {formatChatTimestampTooltip(message.updatedAt, ctx.timestampFormat)}
-+          </TooltipPopup>
-+        </Tooltip>
-+      )}
+@@ -191,6 +192,16 @@ function AssistantMessageMeta({
+           </TooltipPopup>
+         </Tooltip>
+       )}
 +      {!message.streaming && outputRate !== undefined && (
 +        <Tooltip>
 +          <TooltipTrigger render={<p className="text-muted-foreground text-xs tabular-nums" />}>
@@ -96,11 +138,27 @@ diff --git a/apps/web/src/components/chat/TimelineAssistantRows.tsx b/apps/web/s
 +          </TooltipTrigger>
 +          <TooltipPopup>
 +            Output tokens per second, excluding tool, approval, and compaction time
-           </TooltipPopup>
-         </Tooltip>
-       )}
++          </TooltipPopup>
++        </Tooltip>
++      )}
+     </div>
+   );
+ }
+diff --git a/apps/web/src/components/chat/timelineRowContext.ts b/apps/web/src/components/chat/timelineRowContext.ts
+index e38dfecffd..bfa21d2688 100644
+--- a/apps/web/src/components/chat/timelineRowContext.ts
++++ b/apps/web/src/components/chat/timelineRowContext.ts
+@@ -47,6 +47,7 @@ export interface TimelineRowSharedState {
+   workspaceRoot: string | undefined;
+   skills: ReadonlyArray<ServerProviderSkill>;
+   runs: ReadonlyArray<HandoffTimelineRun>;
++  outputRateByRunId: ReadonlyMap<RunId, number>;
+   activeThreadEnvironmentId: EnvironmentId;
+   onRevertToTurnCount: (targetTurnCount: number, messageId: MessageId) => void;
+   onUseArtifactTemplate: (template: CodexArtifactTemplate) => void;
 diff --git a/apps/web/src/lib/outputRate.test.ts b/apps/web/src/lib/outputRate.test.ts
 new file mode 100644
+index 0000000000..8e580caef4
 --- /dev/null
 +++ b/apps/web/src/lib/outputRate.test.ts
 @@ -0,0 +1,104 @@
@@ -210,6 +268,7 @@ new file mode 100644
 +});
 diff --git a/apps/web/src/lib/outputRate.ts b/apps/web/src/lib/outputRate.ts
 new file mode 100644
+index 0000000000..29c995439a
 --- /dev/null
 +++ b/apps/web/src/lib/outputRate.ts
 @@ -0,0 +1,109 @@
@@ -322,57 +381,3 @@ new file mode 100644
 +  }
 +  return rates;
 +}
-diff --git a/apps/web/src/components/chat/ThreadTimeline.tsx b/apps/web/src/components/chat/ThreadTimeline.tsx
---- a/apps/web/src/components/chat/ThreadTimeline.tsx
-+++ b/apps/web/src/components/chat/ThreadTimeline.tsx
-@@ -9,6 +9,7 @@
-   resolveThreadSwitchTimeline,
-   timelineHasEphemeralPreviewUrls,
- } from "../ChatView.logic";
-+import { deriveOutputRateByRunId } from "../../lib/outputRate";
- import { MessagesTimeline } from "./MessagesTimeline";
- 
- /**
-@@ -19,6 +20,7 @@
- export function ThreadTimeline({
-   threadDetailRef,
-   entriesInput,
-+  providerTurns,
-   draftEntries,
-   activeThreadKey,
-   syncing,
-@@ -26,9 +28,10 @@
-   readyMarkdownCwd,
-   readyWorkspaceRoot,
-   ...timelineProps
--}: Omit<ComponentProps<typeof MessagesTimeline>, "timelineEntries"> & {
-+}: Omit<ComponentProps<typeof MessagesTimeline>, "timelineEntries" | "outputRatesJson"> & {
-   /** Null until the thread's detail may load; see resolveThreadDetailRef. */
-   threadDetailRef: ScopedThreadRef | null;
-+  providerTurns: Parameters<typeof deriveOutputRateByRunId>[0];
-   entriesInput: Omit<TimelineEntriesInput, "visibleTurnItems">;
-   /** A local draft's optimistic rows; null for a server thread. */
-   draftEntries: ReadonlyArray<TimelineEntry> | null;
-@@ -39,6 +42,9 @@
-   readyWorkspaceRoot: string | null;
- }) {
-   const visibleTurnItems = useThreadVisibleTurnItems(threadDetailRef);
-+  const outputRatesJson = JSON.stringify([
-+    ...deriveOutputRateByRunId(providerTurns, visibleTurnItems),
-+  ]);
-   const serverEntries = useIncrementalTimelineEntries(activeThreadKey, {
-     ...entriesInput,
-     visibleTurnItems,
-@@ -61,5 +67,11 @@
-       workspaceRoot: readyWorkspaceRoot,
-     });
-   }, [activeThreadKey, detailLoading, entries, readyMarkdownCwd, readyWorkspaceRoot]);
--  return <MessagesTimeline {...timelineProps} timelineEntries={displayed.entries} />;
-+  return (
-+    <MessagesTimeline
-+      {...timelineProps}
-+      timelineEntries={displayed.entries}
-+      outputRatesJson={outputRatesJson}
-+    />
-+  );
- }
