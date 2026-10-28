@@ -85,7 +85,7 @@ in
       config = {
         EnvironmentVariables = {
           BAR_NAME = "dynamic-island-sketchybar";
-          PATH = "${userHome}/.nix-profile/bin:/etc/profiles/per-user/${config.home.username}/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin";
+          PATH = "/etc/profiles/per-user/${config.home.username}/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin";
         };
         KeepAlive = true;
         ProcessType = "Interactive";
