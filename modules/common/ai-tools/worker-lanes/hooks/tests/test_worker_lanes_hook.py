@@ -109,6 +109,18 @@ class WorkerLanesHookTests(unittest.TestCase):
         self.assertIn("Finished: Port parser module.", reminder)
         self.assertIn("Still in flight: Port lexer module.", reminder)
         self.assertNotIn("a2", reminder)
+        self.assertIn("Refill the freed slot from", reminder)
+        self.assertIn("integrate this result while", reminder)
+
+    def test_finish_reminder_pluralizes_batched_finishes(self) -> None:
+        self.start_two_lanes()
+        self.handle("post-tool", launch("a3", "Port emitter module"))
+        batch = notification("a1")
+        batch["prompt"] += "\n" + notification("a2")["prompt"]
+        reminder = context(self.handle("user-prompt", batch))
+        self.assertIn("Finished: Port parser module; Port lexer module.", reminder)
+        self.assertIn("Refill the freed slots from", reminder)
+        self.assertIn("integrate these results while", reminder)
 
     def test_interim_and_unknown_notifications_do_not_finish_lanes(self) -> None:
         self.start_two_lanes()

@@ -595,11 +595,14 @@ def apply(state: dict[str, Any], obs: Observation) -> str | None:
         finished = state.pop("unannounced")
         if not active(state):
             return None
+        slots, results = (
+            ("slots", "these results") if len(finished) > 1 else ("slot", "this result")
+        )
         return (
             f"[worker-lanes] Finished: {lane_list(finished)}. Still in flight: "
-            + f"{lane_list(labels(lanes))}. Refill the freed slot from the ready "
+            + f"{lane_list(labels(lanes))}. Refill the freed {slots} from the ready "
             + "queue as soon as the active workflow allows (for an isolated "
-            + "writer, after its worktree closes), then integrate this result "
+            + f"writer, after its worktree closes), then integrate {results} "
             + "while the other workers run."
         )
     if (
