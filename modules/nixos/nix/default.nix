@@ -92,5 +92,12 @@ in
     # Nix never deletes per-derivation build logs. The `~` keeps the
     # two-character subdirectories and ages only the logs inside them.
     systemd.tmpfiles.rules = [ "e /nix/var/log/nix/drvs - - - ~30d" ];
+
+    # Channels are disabled; remove root's subscription from the installer.
+    system.activationScripts.removeImperativeNixState = ''
+      HOME=${config.users.users.root.home} XDG_STATE_HOME=${config.users.users.root.home}/.local/state \
+        ${lib.getExe pkgs.khanelinix.remove-imperative-nix-state} \
+        || echo "warning: could not remove imperative Nix state" >&2
+    '';
   };
 }

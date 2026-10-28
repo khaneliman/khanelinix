@@ -157,6 +157,14 @@ in
             /usr/bin/chflags hidden /nix
           '';
 
+          # Channels are disabled; remove root's subscription from the installer.
+          # Root's default profile stays because the installer's Nix may live there.
+          activationScripts.postActivation.text = lib.mkAfter ''
+            HOME=/var/root XDG_STATE_HOME=/var/root/.local/state \
+              ${lib.getExe pkgs.khanelinix.remove-imperative-nix-state} \
+              || echo "warning: could not remove imperative Nix state" >&2
+          '';
+
           newsyslog.files.nix-gc = nixLogRotationEntries.gc;
           newsyslog.files.nix-optimise = nixLogRotationEntries.optimise;
         };

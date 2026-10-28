@@ -85,6 +85,27 @@ in
       ];
     };
 
+    # Users get packages through /etc/profiles, so anything in their own Nix
+    # profile or channels came from an imperative command.
+    home-manager.sharedModules = [
+      (
+        {
+          config,
+          lib,
+          pkgs,
+          ...
+        }:
+        {
+          home.activation.removeImperativeNixState = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+            run env XDG_STATE_HOME=${lib.escapeShellArg config.xdg.stateHome} \
+              ${lib.getExe pkgs.khanelinix.remove-imperative-nix-state} \
+              ${lib.optionalString config.submoduleSupport.externalPackageInstall "--profiles"} \
+              || warnEcho "Could not remove imperative Nix state"
+          '';
+        }
+      )
+    ];
+
     # Shared config options
     # Check corresponding nixos/nix-darwin imported module
     nix =
@@ -116,6 +137,8 @@ in
         # Making legacy nix commands consistent as well
         # NOTE: We link inputs here
         nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+        # Flake inputs replace channels; activation removes leftover state.
+        channel.enable = false;
         optimise.automatic = true;
 
         # pin the registry to avoid downloading and evaluating a new nixpkgs version every time
