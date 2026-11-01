@@ -153,6 +153,8 @@
                 extend-ignore-re = [
                   # SSH public keys (ssh-rsa, ssh-ed25519, etc.)
                   "ssh-[a-z0-9]+ [A-Za-z0-9+/=]+"
+                  # Git patch blob hashes (`index f83ba2408e..9db5a603ca`)
+                  "index [0-9a-f]{7,40}\\.\\.[0-9a-f]{7,40}"
                 ];
               };
               files.extend-exclude = [
