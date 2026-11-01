@@ -1,7 +1,7 @@
 # Retain nonblocking quota reads and account-switch guards on upstream usage limits.
-# Rebased on ff71186669c863aa976cee0fdb00c20c64ea92b4.
+# Rebased on 481ff3ea89c7358953e8b7ffb762978c31fb3a0b.
 diff --git a/apps/mobile/src/features/threads/ComposerUsageLimits.tsx b/apps/mobile/src/features/threads/ComposerUsageLimits.tsx
-index 7044a8d70a..2519956a85 100644
+index ef39ef51ff..e82e750f4c 100644
 --- a/apps/mobile/src/features/threads/ComposerUsageLimits.tsx
 +++ b/apps/mobile/src/features/threads/ComposerUsageLimits.tsx
 @@ -5,7 +5,11 @@ import { SymbolView } from "../../components/ui/AppSymbol";
@@ -18,7 +18,7 @@ index 7044a8d70a..2519956a85 100644
  export function ComposerUsageLimits({
    report,
 diff --git a/apps/server/src/provider/AntigravityProvider.test.ts b/apps/server/src/provider/AntigravityProvider.test.ts
-index ade033551f..5bf8188d00 100644
+index 1f852ad8bc..abeb381d2c 100644
 --- a/apps/server/src/provider/AntigravityProvider.test.ts
 +++ b/apps/server/src/provider/AntigravityProvider.test.ts
 @@ -8,6 +8,7 @@ import {
@@ -64,7 +64,7 @@ index ade033551f..5bf8188d00 100644
      },
    );
    const initialUpdate = yield* Stream.toPull(
-@@ -601,7 +607,13 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
+@@ -664,7 +670,13 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
            };
            const usage = yield* Ref.make(limits);
            const harness = yield* makeHarness({ probeUsage: Ref.get(usage) });
@@ -78,7 +78,7 @@ index ade033551f..5bf8188d00 100644
            expect((yield* harness.provider.snapshot.getSnapshot).usageLimits).toEqual(limits);
            yield* Ref.set(harness.probe, Effect.succeed(initializeResult));
            yield* Ref.set(usage, {
-@@ -617,7 +629,16 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
+@@ -680,7 +692,16 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
              windows: [],
              unavailable: { reason: "unsupported" },
            });
@@ -96,7 +96,7 @@ index ade033551f..5bf8188d00 100644
          }),
        ),
    );
-@@ -637,6 +658,7 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
+@@ -700,6 +721,7 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
            usage,
            Deferred.succeed(readStarted, undefined).pipe(Effect.andThen(Deferred.await(readResult))),
          );
@@ -104,7 +104,7 @@ index ade033551f..5bf8188d00 100644
          const refresh = yield* harness.provider.snapshot.refresh.pipe(Effect.forkChild);
          yield* Deferred.await(readStarted);
          yield* harness.provider.onSignedOut;
-@@ -647,8 +669,424 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
+@@ -710,8 +732,424 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
            ],
          });
          yield* Fiber.join(refresh);
@@ -530,7 +530,7 @@ index ade033551f..5bf8188d00 100644
 +  );
 +});
 diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/provider/AntigravityProvider.ts
-index c6809c3577..4a76775bbb 100644
+index b5e9f257d1..5109655f63 100644
 --- a/apps/server/src/provider/AntigravityProvider.ts
 +++ b/apps/server/src/provider/AntigravityProvider.ts
 @@ -9,6 +9,9 @@ import {
@@ -543,7 +543,7 @@ index c6809c3577..4a76775bbb 100644
  import * as DateTime from "effect/DateTime";
  import * as Effect from "effect/Effect";
  import * as Option from "effect/Option";
-@@ -115,6 +118,7 @@ function isMissingInstallation(error: EffectAcpErrors.AcpError | ProviderSetupEr
+@@ -145,6 +148,7 @@ function isMissingInstallation(error: EffectAcpErrors.AcpError | ProviderSetupEr
  interface AntigravityProviderState {
    readonly draft: ServerProviderDraft;
    readonly authRevision: number;
@@ -551,7 +551,7 @@ index c6809c3577..4a76775bbb 100644
  }
  
  interface AntigravityProviderOptions {
-@@ -126,6 +130,8 @@ interface AntigravityProviderOptions {
+@@ -156,6 +160,8 @@ interface AntigravityProviderOptions {
    readonly supportsTextGeneration: Effect.Effect<boolean>;
    readonly probeUsage?: Effect.Effect<ServerProviderUsageLimits>;
    readonly clearUsage?: Effect.Effect<void>;
@@ -560,7 +560,7 @@ index c6809c3577..4a76775bbb 100644
    readonly maintenanceCapabilities?: ProviderMaintenanceCapabilities;
    readonly auth?: { readonly type: string; readonly label: string };
  }
-@@ -135,6 +141,9 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -165,6 +171,9 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
    options: AntigravityProviderOptions,
  ) {
    const checkedAt = DateTime.formatIso(yield* DateTime.now);
@@ -570,7 +570,7 @@ index c6809c3577..4a76775bbb 100644
    const initialDraft = {
      ...buildServerProvider({
        presentation: { displayName: "Antigravity", showInteractionModeToggle: false },
-@@ -159,6 +168,7 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -189,6 +198,7 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
    const metadata = yield* SubscriptionRef.make<AntigravityProviderState>({
      draft: initialDraft,
      authRevision: 0,
@@ -578,7 +578,7 @@ index c6809c3577..4a76775bbb 100644
    });
    // Preserve disk-discovered skills when callbacks replace workspace commands; the registry will not rescan them.
    const discoveredSkills = new Map<string, ServerProvider["skills"]>();
-@@ -166,6 +176,83 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -207,6 +217,83 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
      Effect.flatMap((state) => options.stampIdentity(state.draft)),
    );
  
@@ -662,7 +662,7 @@ index c6809c3577..4a76775bbb 100644
    const checkProvider = Effect.fn("checkAntigravityProvider")(function* () {
      if (!settings.enabled) return yield* getSnapshot;
      const before = yield* SubscriptionRef.get(metadata);
-@@ -190,8 +277,6 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -231,8 +318,6 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
                : `Antigravity did not respond to its local health check within ${HEALTH_CHECK_TIMEOUT}.`;
      const supportsTextGeneration =
        initialized !== undefined ? yield* options.supportsTextGeneration : false;
@@ -671,7 +671,7 @@ index c6809c3577..4a76775bbb 100644
      const updatedAt = DateTime.formatIso(yield* DateTime.now);
      const next = yield* SubscriptionRef.updateAndGet(metadata, (state) => {
        if (state.authRevision !== before.authRevision) return state;
-@@ -213,12 +298,7 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -254,12 +339,7 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
            version: version === "unknown" ? draft.version : version || draft.version,
            status: errorMessage ? "error" : authenticated ? "ready" : "warning",
            checkedAt: updatedAt,
@@ -685,7 +685,7 @@ index c6809c3577..4a76775bbb 100644
            ...(missingInstallation
              ? {
                  models: [],
-@@ -238,7 +318,10 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -279,7 +359,10 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
          },
        } satisfies AntigravityProviderState;
      });
@@ -697,7 +697,7 @@ index c6809c3577..4a76775bbb 100644
    });
  
    const maintenanceCapabilities =
-@@ -257,7 +340,11 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -298,7 +381,11 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
      enrichSnapshot: ({ publishSnapshot }) =>
        SubscriptionRef.changes(metadata).pipe(
          Stream.runForEach((state) =>
@@ -710,9 +710,9 @@ index c6809c3577..4a76775bbb 100644
          ),
        ),
    });
-@@ -268,24 +355,21 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
-   ) {
+@@ -310,24 +397,21 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
      if (!settings.enabled) return;
+     observeThinkingLevels(started.sessionSetupResult.configOptions);
      const before = yield* SubscriptionRef.get(metadata);
 +    yield* clearChangedAccountLimits(before.authRevision);
      const supportsTextGeneration = yield* options.supportsTextGeneration;
@@ -743,7 +743,7 @@ index c6809c3577..4a76775bbb 100644
          draft: {
            ...draft,
            installed: true,
-@@ -297,10 +381,6 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -339,10 +423,6 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
              label: options.auth?.label ?? "Google account",
            },
            checkedAt: updatedAt,
@@ -751,10 +751,10 @@ index c6809c3577..4a76775bbb 100644
 -            published: draft.usageLimits,
 -            probed: usageLimits ?? draft.usageLimits,
 -          }),
-           models: buildAntigravityModelsFromSession(started.sessionSetupResult),
+           models: buildAntigravityModelsFromSession(started.sessionSetupResult, thinkingLevels),
            supportsTextGeneration,
            ...(cwd
-@@ -318,7 +398,14 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -360,7 +440,14 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
              : {}),
          },
        } satisfies AntigravityProviderState;
@@ -769,7 +769,7 @@ index c6809c3577..4a76775bbb 100644
    });
  
    const onConfigOptionsUpdated = Effect.fn("AntigravityProvider.onConfigOptionsUpdated")(function* (
-@@ -370,11 +457,13 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -413,11 +500,13 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
      if (options.clearUsage) yield* options.clearUsage;
      if (!settings.enabled) return;
      const updatedAt = DateTime.formatIso(yield* DateTime.now);
@@ -784,10 +784,10 @@ index c6809c3577..4a76775bbb 100644
              ...state.draft,
              auth: { status: "unauthenticated" },
 diff --git a/apps/server/src/provider/Drivers/AntigravityDriver.ts b/apps/server/src/provider/Drivers/AntigravityDriver.ts
-index fd5725c6cd..9189d3f3d0 100644
+index f1f39e104b..f3812fb179 100644
 --- a/apps/server/src/provider/Drivers/AntigravityDriver.ts
 +++ b/apps/server/src/provider/Drivers/AntigravityDriver.ts
-@@ -390,6 +390,7 @@ export const AntigravityDriver: ProviderDriver<
+@@ -402,6 +402,7 @@ export const AntigravityDriver: ProviderDriver<
        stampIdentity: classifyModels,
        probe,
        probeUsage: usage.probe,
@@ -796,10 +796,10 @@ index fd5725c6cd..9189d3f3d0 100644
        auth: { type: auth.authMethod, label: antigravityAuthLabel(auth.authMethod) },
        supportsTextGeneration: isAntigravityTextGenerationAvailable(profileDirectory).pipe(
 diff --git a/apps/server/src/provider/antigravityUsageLimits.ts b/apps/server/src/provider/antigravityUsageLimits.ts
-index 75333ae826..2246a116ac 100644
+index f73fddb305..122e83c9e4 100644
 --- a/apps/server/src/provider/antigravityUsageLimits.ts
 +++ b/apps/server/src/provider/antigravityUsageLimits.ts
-@@ -189,6 +189,14 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
+@@ -213,6 +213,14 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
        Effect.flatMap((response) => response.json),
        Effect.timeout("10 seconds"),
      );
@@ -814,7 +814,7 @@ index 75333ae826..2246a116ac 100644
    const read = Effect.gen(function* () {
      const startedGeneration = generation;
      const checkedAt = DateTime.formatIso(yield* DateTime.now);
-@@ -204,9 +212,7 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
+@@ -228,9 +236,7 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
        });
      }
      const token = yield* fs.readFileString(tokenPath).pipe(Effect.flatMap(decodeTokenFile));
@@ -825,7 +825,7 @@ index 75333ae826..2246a116ac 100644
      const now = yield* Clock.currentTimeMillis;
      let accessToken: string;
      let account: string;
-@@ -307,6 +313,7 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
+@@ -338,6 +344,7 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
    );
    return {
      probe,
@@ -834,10 +834,10 @@ index 75333ae826..2246a116ac 100644
        cached = undefined;
        generation++;
 diff --git a/packages/provider-core/src/server/managedProvider.test.ts b/packages/provider-core/src/server/managedProvider.test.ts
-index 668502f93e..b4a7370dc9 100644
+index 9df85130d6..2e71cd6c30 100644
 --- a/packages/provider-core/src/server/managedProvider.test.ts
 +++ b/packages/provider-core/src/server/managedProvider.test.ts
-@@ -458,6 +458,49 @@ describe("makeManagedServerProvider", () => {
+@@ -631,6 +631,49 @@ describe("makeManagedServerProvider", () => {
      ).pipe(Effect.provide(layerAlwaysRunTest)),
    );
  
@@ -888,10 +888,10 @@ index 668502f93e..b4a7370dc9 100644
      Effect.scoped(
        Effect.gen(function* () {
 diff --git a/packages/provider-core/src/server/managedProvider.ts b/packages/provider-core/src/server/managedProvider.ts
-index f40baee525..f033cba988 100644
+index f83ba2408e..9db5a603ca 100644
 --- a/packages/provider-core/src/server/managedProvider.ts
 +++ b/packages/provider-core/src/server/managedProvider.ts
-@@ -48,7 +48,10 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
+@@ -49,7 +49,10 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
      readonly settings: Settings;
      readonly snapshot: ServerProvider;
      readonly getSnapshot: Effect.Effect<ServerProvider>;
@@ -903,7 +903,7 @@ index f40baee525..f033cba988 100644
    }) => Effect.Effect<void>;
    readonly refreshInterval?: Duration.Input;
    readonly refreshOnInterval?: boolean | ((snapshot: ServerProvider) => boolean);
-@@ -77,13 +80,18 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
+@@ -79,13 +82,18 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
    const publishEnrichedSnapshot = Effect.fn("publishEnrichedSnapshot")(function* (
      generation: number,
      nextSnapshot: ServerProvider,
@@ -923,7 +923,7 @@ index f40baee525..f033cba988 100644
        if (Equal.equals(state.snapshot, merged)) {
          return [null, state] as const;
        }
-@@ -114,7 +122,8 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
+@@ -116,7 +124,8 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
          settings,
          snapshot,
          getSnapshot: Ref.get(snapshotStateRef).pipe(Effect.map((state) => state.snapshot)),
