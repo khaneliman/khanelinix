@@ -75,10 +75,10 @@ index ddc77e5748..0ee0ca6c54 100644
    it("recognizes markdown and MDX files case-insensitively", () => {
      expect(isMarkdownPreviewFile("README.md")).toBe(true);
 diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/components/files/FilePreviewPanel.tsx
-index 56854b3ec6..e66ead141c 100644
+index 234f077da9..478e89938e 100644
 --- a/apps/web/src/components/files/FilePreviewPanel.tsx
 +++ b/apps/web/src/components/files/FilePreviewPanel.tsx
-@@ -113,6 +113,7 @@ import {
+@@ -114,6 +114,7 @@ import {
    filePreviewReadErrorMessage,
    isMarkdownPreviewFile,
    resolveFilePreviewPath,
@@ -86,7 +86,7 @@ index 56854b3ec6..e66ead141c 100644
    setMarkdownTaskChecked,
    shouldShowFileExplorer,
    workspaceAssetResource,
-@@ -1044,15 +1045,18 @@ export default function FilePreviewPanel({
+@@ -1058,15 +1059,18 @@ export default function FilePreviewPanel({
    const isFolder =
      attachment === undefined &&
      (file.isNotFile || (folderTrail !== undefined && file.data === null && file.error === null));
@@ -108,9 +108,9 @@ index 56854b3ec6..e66ead141c 100644
    const [explorerOpen, setExplorerOpen] = useState(initialExplorerOpen);
    const showExplorer = shouldShowFileExplorer({
      relativePath: previewPath,
-@@ -1518,9 +1522,9 @@ export default function FilePreviewPanel({
-             )}
-           >
+@@ -1527,9 +1531,9 @@ export default function FilePreviewPanel({
+         {showExplorer ? (
+           <FileExplorerPane resizable={Boolean(previewPath)}>
              <FileBrowserPanel
 -              key={`${environmentId}:${hostFolderPath ?? cwd}`}
 +              key={`${environmentId}:${explorerCwd}`}
@@ -121,23 +121,18 @@ index 56854b3ec6..e66ead141c 100644
                hostFolder={hostFolderPath !== null}
                selectedPath={
 diff --git a/apps/web/src/components/files/filePath.test.ts b/apps/web/src/components/files/filePath.test.ts
-index 22cb582493..c98b8ab7b3 100644
+index 3bc371b5c1..2dbdcf1566 100644
 --- a/apps/web/src/components/files/filePath.test.ts
 +++ b/apps/web/src/components/files/filePath.test.ts
-@@ -1,6 +1,11 @@
- import { describe, expect, it } from "vite-plus/test";
- 
--import { fileBreadcrumbChildren, fileBreadcrumbs, retainedBreadcrumbTrail } from "./filePath";
-+import {
-+  fileBreadcrumbChildren,
-+  fileBreadcrumbs,
+@@ -5,6 +5,7 @@ import {
+   fileBreadcrumbChildren,
+   fileBreadcrumbs,
+   isListableHostFolder,
 +  joinHostPath,
-+  retainedBreadcrumbTrail,
-+} from "./filePath";
+   retainedBreadcrumbTrail,
+ } from "./filePath";
  
- describe("fileBreadcrumbs", () => {
-   it("starts host paths outside the workspace at the filesystem root", () => {
-@@ -64,3 +69,23 @@ describe("retainedBreadcrumbTrail", () => {
+@@ -90,3 +91,23 @@ describe("retainedBreadcrumbTrail", () => {
      expect(retainedBreadcrumbTrail(trail, path)).toBe(expected);
    });
  });

@@ -1,8 +1,8 @@
 diff --git a/apps/server/src/process/externalLauncher.ts b/apps/server/src/process/externalLauncher.ts
-index b8c0911a52..be195d19fc 100644
+index 7f4417d1fb..33c6d4d6f4 100644
 --- a/apps/server/src/process/externalLauncher.ts
 +++ b/apps/server/src/process/externalLauncher.ts
-@@ -405,23 +405,22 @@ const buildAvailableEditors = Effect.fn("externalLauncher.buildAvailableEditors"
+@@ -402,23 +402,22 @@ const buildAvailableEditors = Effect.fn("externalLauncher.buildAvailableEditors"
    never,
    FileSystem.FileSystem | Path.Path | ChildProcessSpawner.ChildProcessSpawner
  > {
@@ -42,13 +42,13 @@ index b8c0911a52..be195d19fc 100644
  
  const resolveBrowserLaunch = Effect.fn("externalLauncher.resolveBrowserLaunch")(function* (
 diff --git a/packages/shared/src/editor.ts b/packages/shared/src/editor.ts
-index dd9f11b075..9b28587c76 100644
+index 57bc67afdc..e77f13fda7 100644
 --- a/packages/shared/src/editor.ts
 +++ b/packages/shared/src/editor.ts
-@@ -35,9 +35,17 @@ export const resolveEditorCommand = Effect.fn("editor.resolveEditorCommand")(fun
-   // Prefer Zed's macOS bundle because OpenZFS also installs a zed executable.
+@@ -36,9 +36,17 @@ export const resolveEditorCommand = Effect.fn("editor.resolveEditorCommand")(fun
    const preferBundle = platform === "darwin" && editor.id === "zed";
-   if (!preferBundle) {
+   const preferZeditor = platform === "linux" && editor.id === "zed";
+   if (!preferBundle && !preferZeditor) {
 -    for (const command of editor.commands) {
 -      if (yield* isCommandAvailable(command, { env })) return Option.some({ command, baseArgs });
 -    }
