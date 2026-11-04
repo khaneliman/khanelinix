@@ -1,17 +1,16 @@
 # Show output tokens per second of model time on each run's final assistant message.
-# Rebased on 481ff3ea89c7358953e8b7ffb762978c31fb3a0b.
+# Rebased on 9e85538535c8553901351112ab02dd1dd62db5ee.
 diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/ChatView.tsx
-index d2a176a444..feebbcc36f 100644
 --- a/apps/web/src/components/ChatView.tsx
 +++ b/apps/web/src/components/ChatView.tsx
-@@ -3438,6 +3438,7 @@ export default function ChatView(props: ChatViewProps) {
-                 footer={timelineFooter}
-                 listRef={legendListRef}
-                 runs={serverProjection?.runs ?? []}
-+                providerTurns={serverProjection?.providerTurns ?? []}
-                 latestRun={activeActivityRun}
-                 announcedRun={announcedRun(activeActivityRun, serverProjection?.runs ?? [])}
-                 detailBehindShell={isDetailBehindShell(
+@@ -3433,6 +3433,7 @@
+                   footer={timelineFooter}
+                   listRef={legendListRef}
+                   runs={serverProjection?.runs ?? []}
++                  providerTurns={serverProjection?.providerTurns ?? []}
+                   latestRun={activeActivityRun}
+                   announcedRun={announcedRun(activeActivityRun, serverProjection?.runs ?? [])}
+                   detailBehindShell={isDetailBehindShell(
 diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/components/chat/MessagesTimeline.tsx
 index 4c28163766..89c91117c8 100644
 --- a/apps/web/src/components/chat/MessagesTimeline.tsx

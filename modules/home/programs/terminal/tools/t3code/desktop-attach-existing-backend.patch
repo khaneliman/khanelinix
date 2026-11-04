@@ -768,18 +768,17 @@ index 6481bfd64c..1674545ce9 100644
          if (Option.isSome(cached)) {
            return cached.value;
 diff --git a/apps/desktop/src/ipc/methods/window.test.ts b/apps/desktop/src/ipc/methods/window.test.ts
-index ed821165b4..16224ac9c5 100644
 --- a/apps/desktop/src/ipc/methods/window.test.ts
 +++ b/apps/desktop/src/ipc/methods/window.test.ts
-@@ -23,6 +23,7 @@ import * as DesktopBackendPool from "../../backend/DesktopBackendPool.ts";
- import * as DesktopAppSettings from "../../settings/DesktopAppSettings.ts";
- import * as ElectronDialog from "../../electron/ElectronDialog.ts";
- import * as ElectronWindow from "../../electron/ElectronWindow.ts";
+@@ -23,6 +23,7 @@
+ import * as DesktopBackendConfiguration from "../../backend/DesktopBackendConfiguration.ts";
+ import * as DesktopBackendManager from "../../backend/DesktopBackendManager.ts";
+ import * as DesktopBackendPool from "../../backend/DesktopBackendPool.ts";
 +import * as DesktopExistingBackendAttachment from "../../backend/DesktopExistingBackendAttachment.ts";
- import {
-   getLocalEnvironmentBootstraps,
-   getRelayTelemetryEnabled,
-@@ -79,8 +80,17 @@ const backendConfigurationLayer = Layer.succeed(
+ import * as DesktopAppSettings from "../../settings/DesktopAppSettings.ts";
+ import * as DesktopManagedPolicy from "../../app/DesktopManagedPolicy.ts";
+ import * as ElectronDialog from "../../electron/ElectronDialog.ts";
+@@ -86,8 +87,17 @@
    } satisfies DesktopBackendConfiguration.DesktopBackendConfiguration["Service"],
  );
  
@@ -799,7 +798,7 @@ index ed821165b4..16224ac9c5 100644
  
  describe("getLocalEnvironmentBootstraps", () => {
    it.effect("hands out the current window's token to a backend launched with the secret", () =>
-@@ -175,6 +185,37 @@ describe("getLocalEnvironmentBootstraps", () => {
+@@ -182,6 +192,37 @@
        assert.deepEqual(result, []);
      }).pipe(Effect.provide(bootstrapsLayer([stoppedInstance])));
    });
@@ -836,7 +835,7 @@ index ed821165b4..16224ac9c5 100644
 +  );
  });
  
- describe("getRelayTelemetryEnabled", () => {
+ describe("installRelayTelemetryEnabled", () => {
 diff --git a/apps/desktop/src/ipc/methods/window.ts b/apps/desktop/src/ipc/methods/window.ts
 index f0d661b58b..582fa0391d 100644
 --- a/apps/desktop/src/ipc/methods/window.ts
