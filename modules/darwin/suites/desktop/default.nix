@@ -23,7 +23,6 @@ in
       blueutil
       mole-cleaner
       monitorcontrol
-      raycast
       stats
       switchaudio-osx
     ];
@@ -57,6 +56,10 @@ in
         "gpg-suite"
         "hammerspoon"
         "launchcontrol"
+        # Raycast's privileged updater rewrites even read-only app bundles, so
+        # a nixpkgs copy is replaced by newer releases and then downgraded on
+        # the next switch, which breaks databases those releases migrated.
+        "raycast"
         "sf-symbols"
       ];
 
