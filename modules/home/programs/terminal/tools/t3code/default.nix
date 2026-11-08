@@ -161,7 +161,7 @@ in
       # Upstream renumbers inline sqlite migrations between revisions while the
       # server only tracks applied migrations by id, so an existing database
       # skips renumbered migrations and crashes on missing columns. Reconcile
-      # recorded history by name against the installed bundle before launch.
+      # recorded history by name for manual recovery of legacy state.sqlite.
       reconcileCommand = pkgs.writeShellApplication {
         name = "t3code-reconcile-migrations";
         runtimeInputs = [ pkgs.nodejs ];
@@ -171,50 +171,6 @@ in
             "$HOME/.t3/userdata/state.sqlite"
         '';
       };
-
-      remoteCommand =
-        let
-          claudeCodePackage = config.programs.claude-code.package or null;
-        in
-        pkgs.writeShellApplication {
-          name = "t3code-remote";
-          runtimeInputs = [
-            t3codePackage
-            pkgs.coreutils
-          ]
-          ++ lib.optionals (tailscaleEnabled && pkgs.stdenv.hostPlatform.isLinux) [ pkgs.tailscale ]
-          ++ lib.optional (claudeCodePackage != null) claudeCodePackage;
-          text = ''
-            ${lib.optionalString tailscaleEnabled ''
-              export PATH="/Applications/Tailscale.app/Contents/MacOS:/opt/homebrew/bin:/usr/local/bin:$PATH"
-
-              if command -v tailscale >/dev/null 2>&1; then
-                for _ in $(seq 1 30); do
-                  if tailscale status --json >/dev/null 2>&1; then
-                    break
-                  fi
-                  sleep 2
-                done
-              fi
-            ''}
-
-            ${lib.getExe reconcileCommand}
-
-            exec ${lib.getExe' t3codePackage "t3"} ${
-              lib.escapeShellArgs (
-                [
-                  "serve"
-                  "--host"
-                  "127.0.0.1"
-                  "--port"
-                  "3773"
-                ]
-                ++ lib.optional tailscaleEnabled "--tailscale-serve"
-                ++ [ githubRoot ]
-              )
-            }
-          '';
-        };
 
       # Mint a tailnet pairing link on this host or, given an SSH host, on that
       # host's backend. Usage: t3-pair [ssh-host] [t3 pair flags...]
@@ -282,8 +238,6 @@ in
           run ${lib.getExe syncProviderSettings} ${lib.escapeShellArg "${config.home.homeDirectory}/.t3/userdata/settings.json"}
         '';
 
-        shellAliases.t3-remote = lib.mkIf tailscaleEnabled (lib.getExe remoteCommand);
-
         # Uses the logged-in desktop's keyring over SSH, without screen controls.
         # Usage from another machine: ssh khanelinix t3-repair khanelimac.
         file.".local/bin/t3-repair" = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
@@ -293,21 +247,8 @@ in
 
       systemd.user = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
         services = {
-          t3code-remote = {
-            Unit = {
-              Description = "T3 Code canonical backend";
-              After = [ "network-online.target" ];
-              Wants = [ "network-online.target" ];
-            };
-
-            Service = {
-              ExecStart = lib.getExe remoteCommand;
-              Restart = "on-failure";
-              RestartSec = "10s";
-            };
-
-            Install.WantedBy = [ "default.target" ];
-          };
+          t3code.Service.Environment = lib.optional tailscaleEnabled
+            "PATH=${lib.makeBinPath [ pkgs.tailscale ]}:${config.home.profileDirectory}/bin:/run/current-system/sw/bin";
 
           t3code-storage-gc = {
             Unit.Description = "Reclaim storage left by T3 agent runs";
@@ -330,17 +271,10 @@ in
         };
       };
 
-      launchd.agents.t3code-remote = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-        enable = true;
-        # The user-domain agent was removed at logout and not reloaded at login.
-        # Use the default GUI domain until background-session loading is resolved.
-        # domain = "user";
+      launchd.agents.t3code = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
         config = {
-          ProgramArguments = [ (lib.getExe remoteCommand) ];
-          RunAtLoad = true;
-          KeepAlive = true;
-          StandardOutPath = "${config.home.homeDirectory}/Library/Logs/t3code-remote.out.log";
-          StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/t3code-remote.err.log";
+          StandardOutPath = "${config.home.homeDirectory}/Library/Logs/t3code.out.log";
+          StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/t3code.err.log";
           EnvironmentVariables = {
             PATH = "/Applications/Tailscale.app/Contents/MacOS:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin";
           };
@@ -351,6 +285,18 @@ in
         enable = true;
         package = t3codePackage;
         mutableClientSettings = true;
+
+        server = {
+          enable = true;
+          extraArgs = [
+            "--host"
+            "127.0.0.1"
+            "--port"
+            "3773"
+          ]
+          ++ lib.optional tailscaleEnabled "--tailscale-serve"
+          ++ [ githubRoot ];
+        };
 
         userSettings = {
           addProjectBaseDirectory = githubRoot;

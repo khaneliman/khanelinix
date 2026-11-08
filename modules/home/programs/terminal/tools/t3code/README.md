@@ -1,3 +1,22 @@
+# Background service
+
+`programs.t3code.server.enable` lets Home Manager manage the persistent backend.
+It runs `t3 serve` on `127.0.0.1:3773`, with Tailscale Serve when Tailscale is
+enabled. Its state remains in `~/.t3/userdata`.
+
+- Linux: `systemctl --user status t3code.service`
+- macOS: `launchctl print gui/$(id -u)/org.nix-community.home.t3code`
+- macOS logs: `~/Library/Logs/t3code.out.log` and `t3code.err.log`
+
+Do not run `t3 service install` alongside this configuration: Home Manager
+already owns the service. Use the normal Home Manager or system activation to
+replace the old `t3code-remote` service. Restarting the backend interrupts
+running turns, terminals, and connected clients.
+
+The `t3code-reconcile-migrations` command remains available for manual recovery
+of the legacy `state.sqlite` database. It is not a startup step for the current
+`statev2.sqlite` database.
+
 # Remote desktop connection repair
 
 `t3-pair <ssh-host>` creates a pairing code on the target backend. It does not
