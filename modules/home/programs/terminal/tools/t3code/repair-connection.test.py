@@ -14,6 +14,16 @@ spec.loader.exec_module(repair)
 
 
 class RecoveryTests(unittest.TestCase):
+    def test_repair_requires_explicit_client_only_mode(self):
+        repair.require_client_only({"localEnvironmentEnabled": False})
+        for settings in (
+            {},
+            {"localEnvironmentEnabled": True},
+            {"localEnvironmentEnabled": "false"},
+        ):
+            with self.subTest(settings=settings), self.assertRaises(RuntimeError):
+                repair.require_client_only(settings)
+
     def test_reconnection_uses_the_exact_new_sessions_persisted_connection_record(self):
         fresh = {"sessionId": "new", "connected": False, "lastConnectedAt": None}
         unrelated = {"sessionId": "old", "lastConnectedAt": "2026-10-10T04:00:00Z"}

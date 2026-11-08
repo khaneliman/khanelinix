@@ -63,6 +63,13 @@ def keyring_names(product_name):
     return tuple(dict.fromkeys((product_name, "T3 Code (Alpha)", "T3 Code Alpha")))
 
 
+def require_client_only(settings):
+    if settings.get("localEnvironmentEnabled") is not False:
+        raise RuntimeError(
+            "Turn off Local environment before repairing a paired desktop connection."
+        )
+
+
 def recover_installation(native, app_name, token):
     try:
         return native(app_name, "contains", {"token": token})["installed"]
@@ -146,6 +153,7 @@ def main():
             "The desktop must use a separate backend before terminal repair."
         )
     os.kill(runtime["pid"], 0)
+    require_client_only(json.loads(base.joinpath("desktop-settings.json").read_text()))
     catalog_path = base / "connection-catalog.json"
     environment_id = remote(
         host, 'cat "${T3CODE_HOME:-$HOME/.t3}/userdata/environment-id"'
@@ -257,8 +265,6 @@ def main():
                     installed = recover_installation(native, app_name, token)
                     raise
             finally:
-                env["T3CODE_DESKTOP_ATTACH_EXISTING"] = "1"
-                env["T3CODE_PORT"] = str(runtime["port"])
                 log_path = cache / "desktop-restart.log"
                 fd = os.open(log_path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
                 with os.fdopen(fd, "w") as log:

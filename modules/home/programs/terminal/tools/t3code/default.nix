@@ -97,12 +97,6 @@ in
             postBuild = (old.postBuild or "") + ''
               ${lib.getExe pkgs.nodejs} ${./prune-node-modules.mjs} "$PWD"
             '';
-            postInstall = (old.postInstall or "") + ''
-              wrapProgram "$out/bin/t3code-desktop" \
-                --set T3CODE_DESKTOP_ATTACH_EXISTING 1 \
-                --set T3CODE_PORT 3773
-            '';
-
             # Runtime dependencies contain prebuilt native artifacts. Scanning
             # the JavaScript-heavy closure with Darwin strip costs minutes.
             dontStrip = true;
@@ -231,6 +225,22 @@ in
         ]
         ++ lib.optional tailscaleEnabled pairCommand
         ++ lib.optional pkgs.stdenv.hostPlatform.isLinux storageGcCommand;
+
+        # A paired client must not start a second writer for the service's state.
+        activation.t3codeDesktopSettings = lib.hm.dag.entryAfter [ "linkGeneration" ] (
+          lib.hm.generators.mkImpureConfigMerger {
+            inherit pkgs;
+            format = "json";
+            empty = "{}";
+            jqOperation = "$dynamic * $static";
+            path = "${config.home.homeDirectory}/.t3/userdata/desktop-settings.json";
+            mode = "600";
+            reader = "${lib.getExe (pkgs.python3Packages.toPythonApplication pkgs.python3Packages.json5)} --as-json";
+            staticSettings = (pkgs.formats.json { }).generate "t3code-desktop-settings" {
+              localEnvironmentEnabled = false;
+            };
+          }
+        );
 
         # Explicit instances shadow legacy providers. Update only Nix-owned
         # fields without creating instances or overriding undeclared GUI enablement.

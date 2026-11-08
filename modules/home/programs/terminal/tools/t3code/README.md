@@ -17,6 +17,35 @@ The `t3code-reconcile-migrations` command remains available for manual recovery
 of the legacy `state.sqlite` database. It is not a startup step for the current
 `statev2.sqlite` database.
 
+# Desktop client and first activation
+
+The desktop uses upstream client-only mode (`localEnvironmentEnabled = false`).
+Home Manager merges this into `~/.t3/userdata/desktop-settings.json`, preserving
+window geometry and other undeclared settings. There is no desktop attachment
+patch or custom desktop launcher.
+
+For the first activation after this migration:
+
+1. Wait for active work to finish, then quit the desktop. A running desktop can
+   overwrite its settings with the values it loaded before activation.
+2. Stop the old service before activating. On macOS, run
+   `launchctl bootout gui/$(id -u)/org.nix-community.home.t3code-remote`;
+   on Linux, run `systemctl --user stop t3code-remote.service`.
+   Home Manager starts new launchd jobs before removing old ones, so stopping
+   the old job first avoids a temporary port and state-directory conflict.
+3. Activate the new system or Home Manager generation. Check the new service
+   using the commands above, then reopen the desktop.
+4. Run `t3 pair` on this host and open its desktop pairing link, or paste its
+   pairing URL into **Settings > Environments > Add environment**. Reuse an
+   existing paired connection if this service is already listed. Pairing stays
+   in T3's encrypted connection catalog, not in Nix configuration.
+
+Leave **Local environment** off. The paired service retains the existing
+projects and threads under the same T3 home. For browser automation, use the
+service's browser tab, which is streamed to the desktop, not a separate local
+desktop browser tab. Existing Electron website logins do not transfer to the
+service browser; sign in there when needed.
+
 # Remote desktop connection repair
 
 `t3-pair <ssh-host>` creates a pairing code on the target backend. It does not
@@ -29,8 +58,8 @@ desktop's machine and name the backend's SSH host. From khanelimac:
 ssh khanelinix t3-repair khanelimac
 ```
 
-The Linux desktop must be running with a separate canonical backend, and its
-logged-in user's Secret Service keyring must be available. The command uses no
+The Linux desktop must have **Local environment** off and a separate running
+backend. Its logged-in user's Secret Service keyring must be available. The command uses no
 screen controls. A locked keyring still prevents repair; SSH access does not
 unlock it. The saved environment must be enabled and use an HTTPS bearer route.
 First-time pairing still uses the affected client's Add Environment flow.
