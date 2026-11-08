@@ -1,30 +1,4 @@
-# Background service
-
-`programs.t3code.server.enable` lets Home Manager manage the persistent backend.
-It runs `t3 serve` on `127.0.0.1:3773`, with Tailscale Serve when Tailscale is
-enabled. Its state remains in `~/.t3/userdata`.
-
-- Linux: `systemctl --user status t3code.service`
-- macOS: `launchctl print gui/$(id -u)/org.nix-community.home.t3code`
-- macOS logs: `~/Library/Logs/t3code.out.log` and `t3code.err.log`
-
-Do not run `t3 service install` alongside this configuration: Home Manager
-already owns the service. Use the normal Home Manager or system activation to
-replace the old `t3code-remote` service. Restarting the backend interrupts
-running turns, terminals, and connected clients.
-
-The `t3code-reconcile-migrations` command remains available for manual recovery
-of the legacy `state.sqlite` database. It is not a startup step for the current
-`statev2.sqlite` database.
-
-# Desktop client and first activation
-
-The desktop uses upstream client-only mode (`localEnvironmentEnabled = false`).
-Home Manager merges this into `~/.t3/userdata/desktop-settings.json`, preserving
-window geometry and other undeclared settings. There is no desktop attachment
-patch or custom desktop launcher.
-
-For the first activation after this migration:
+# First activation after the service migration
 
 1. Wait for active work to finish, then quit the desktop. A running desktop can
    overwrite its settings with the values it loaded before activation.
@@ -33,18 +7,20 @@ For the first activation after this migration:
    on Linux, run `systemctl --user stop t3code-remote.service`.
    Home Manager starts new launchd jobs before removing old ones, so stopping
    the old job first avoids a temporary port and state-directory conflict.
-3. Activate the new system or Home Manager generation. Check the new service
-   using the commands above, then reopen the desktop.
+3. Activate the new system or Home Manager generation, then reopen the desktop.
 4. Run `t3 pair` on this host and open its desktop pairing link, or paste its
    pairing URL into **Settings > Environments > Add environment**. Reuse an
-   existing paired connection if this service is already listed. Pairing stays
-   in T3's encrypted connection catalog, not in Nix configuration.
+   existing paired connection if this service is already listed.
 
-Leave **Local environment** off. The paired service retains the existing
-projects and threads under the same T3 home. For browser automation, use the
-service's browser tab, which is streamed to the desktop, not a separate local
-desktop browser tab. Existing Electron website logins do not transfer to the
-service browser; sign in there when needed.
+Leave **Local environment** off and use the service's streamed browser for
+browser automation. Existing Electron website logins do not transfer to that
+browser; sign in there when needed. Do not run `t3 service install` alongside
+the Home Manager-managed service.
+
+# Legacy database recovery
+
+`t3code-reconcile-migrations` is a manual recovery command for the legacy
+`state.sqlite` database, not the current `statev2.sqlite` database.
 
 # Remote desktop connection repair
 
