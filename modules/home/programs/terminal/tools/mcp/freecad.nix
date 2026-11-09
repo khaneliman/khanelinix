@@ -2,15 +2,12 @@
   config,
   lib,
   pkgs,
-  getPkgsMaster,
   ...
 }:
 let
   cfg = config.khanelinix.programs.terminal.tools.mcp.freecad;
   freecadMcpPackage = pkgs.khanelinix.freecad-mcp;
-  # TODO: remove after hits channel. VTK 9.5.2 fails to configure in
-  # nixos-unstable until NixOS/nixpkgs#572295 lands there.
-  inherit ((getPkgsMaster pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; })) freecad;
+  inherit (pkgs) freecad;
 in
 {
   options.khanelinix.programs.terminal.tools.mcp.freecad = {
