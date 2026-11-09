@@ -19,28 +19,12 @@ let
   inherit (lib.khanelinix) mkOpt enabled;
 
   cfg = config.khanelinix.user;
-  fastNixGcPackage =
-    let
-      package = lib.attrByPath [
-        "fast-nix-gc"
-        "packages"
-        pkgs.stdenv.hostPlatform.system
-        "default"
-      ] null inputs;
-    in
-    if package == null then
-      null
-    else
-      package.overrideAttrs (old: {
-        checkFlags =
-          (old.checkFlags or [ ])
-          ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
-            "--skip"
-            "gc_deletes_non_utf8_store_entry"
-            "--skip"
-            "gc_does_not_hang_on_tmp_fifo"
-          ];
-      });
+  fastNixGcPackage = lib.attrByPath [
+    "fast-nix-gc"
+    "packages"
+    pkgs.stdenv.hostPlatform.system
+    "default"
+  ] null inputs;
   gcCommand = if fastNixGcPackage != null then "fast-nix-gc" else "nix-collect-garbage";
 
   home-directory =

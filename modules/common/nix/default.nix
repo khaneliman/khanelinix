@@ -121,13 +121,7 @@ in
         ++ lib.optional pkgs.stdenv.hostPlatform.isLinux "auto-allocate-uids";
       in
       {
-        package =
-          if cfg.useLix then
-            (pkgs.lixPackageSets.stable.lix.overrideAttrs {
-              doInstallCheck = pkgs.stdenv.hostPlatform.isLinux;
-            })
-          else
-            cfg.package;
+        package = if cfg.useLix then pkgs.lixPackageSets.stable.lix else cfg.package;
 
         checkConfig = true;
         distributedBuilds = lib.mkDefault (config.nix.buildMachines != [ ]);
