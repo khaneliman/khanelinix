@@ -71,6 +71,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   buildInputs = runtimeLibraries;
 
+  # libgit2-sys 0.17 accepts only libgit2 1.8, older than nixpkgs, so keep
+  # the vendored copies instead of nixpkgs' forced system libraries.
+  dontCargoUseSystemLibs = true;
+
   postPatch = ''
     substituteInPlace berrycode/src/agent/tools.rs \
       --replace-fail 'Command::new("/bin/bash")' 'Command::new("${lib.getExe bash}")'

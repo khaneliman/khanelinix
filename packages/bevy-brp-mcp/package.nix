@@ -1,8 +1,10 @@
 {
   lib,
+  aws-lc,
   cargo,
   fetchFromGitHub,
   makeWrapper,
+  pkg-config,
   rustPlatform,
   rustc,
   ...
@@ -29,8 +31,11 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   nativeBuildInputs = [
     makeWrapper
+    pkg-config
     rustPlatform.bindgenHook
   ];
+
+  buildInputs = [ aws-lc ];
 
   postFixup = ''
     wrapProgram $out/bin/bevy_brp_mcp \

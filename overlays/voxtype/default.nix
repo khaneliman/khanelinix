@@ -52,6 +52,13 @@ _: final: prev: {
       cargoDeps = final.rustPlatform.importCargoLock {
         lockFile = ./Cargo.lock;
       };
+
+      # nixpkgs' cargo setup hook links onig_sys and libsqlite3-sys against
+      # system libraries.
+      buildInputs = (old.buildInputs or [ ]) ++ [
+        final.oniguruma
+        final.sqlite
+      ];
     }
   );
 }

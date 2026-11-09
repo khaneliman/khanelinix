@@ -1,5 +1,5 @@
 diff --git a/apps/web/src/components/files/FilePreviewPanel.test.ts b/apps/web/src/components/files/FilePreviewPanel.test.ts
-index ddc77e5748..0ee0ca6c54 100644
+index dc68a540..37a22c5d 100644
 --- a/apps/web/src/components/files/FilePreviewPanel.test.ts
 +++ b/apps/web/src/components/files/FilePreviewPanel.test.ts
 @@ -10,6 +10,7 @@ import {
@@ -7,10 +7,10 @@ index ddc77e5748..0ee0ca6c54 100644
    isMarkdownPreviewFile,
    resolveFilePreviewPath,
 +  resolveFilePreviewLocation,
-   setMarkdownTaskChecked,
    shouldShowFileExplorer,
    workspaceAssetResource,
-@@ -66,6 +67,63 @@ describe("file comment annotations", () => {
+ } from "./filePreviewMode";
+@@ -65,6 +66,63 @@ describe("file comment annotations", () => {
    });
  });
  
@@ -75,18 +75,18 @@ index ddc77e5748..0ee0ca6c54 100644
    it("recognizes markdown and MDX files case-insensitively", () => {
      expect(isMarkdownPreviewFile("README.md")).toBe(true);
 diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/components/files/FilePreviewPanel.tsx
-index 234f077da9..478e89938e 100644
+index ed55da7c..60f8a53f 100644
 --- a/apps/web/src/components/files/FilePreviewPanel.tsx
 +++ b/apps/web/src/components/files/FilePreviewPanel.tsx
-@@ -114,6 +114,7 @@ import {
+@@ -115,6 +115,7 @@ import {
    filePreviewReadErrorMessage,
    isMarkdownPreviewFile,
    resolveFilePreviewPath,
 +  resolveFilePreviewLocation,
-   setMarkdownTaskChecked,
    shouldShowFileExplorer,
    workspaceAssetResource,
-@@ -1058,15 +1059,18 @@ export default function FilePreviewPanel({
+ } from "./filePreviewMode";
+@@ -1072,15 +1073,18 @@ export default function FilePreviewPanel({
    const isFolder =
      attachment === undefined &&
      (file.isNotFile || (folderTrail !== undefined && file.data === null && file.error === null));
@@ -108,7 +108,7 @@ index 234f077da9..478e89938e 100644
    const [explorerOpen, setExplorerOpen] = useState(initialExplorerOpen);
    const showExplorer = shouldShowFileExplorer({
      relativePath: previewPath,
-@@ -1527,9 +1531,9 @@ export default function FilePreviewPanel({
+@@ -1542,9 +1546,9 @@ export default function FilePreviewPanel({
          {showExplorer ? (
            <FileExplorerPane resizable={Boolean(previewPath)}>
              <FileBrowserPanel
@@ -121,7 +121,7 @@ index 234f077da9..478e89938e 100644
                hostFolder={hostFolderPath !== null}
                selectedPath={
 diff --git a/apps/web/src/components/files/filePath.test.ts b/apps/web/src/components/files/filePath.test.ts
-index 3bc371b5c1..2dbdcf1566 100644
+index 3bc371b5..2dbdcf15 100644
 --- a/apps/web/src/components/files/filePath.test.ts
 +++ b/apps/web/src/components/files/filePath.test.ts
 @@ -5,6 +5,7 @@ import {
@@ -157,7 +157,7 @@ index 3bc371b5c1..2dbdcf1566 100644
 +  });
 +});
 diff --git a/apps/web/src/components/files/filePreviewMode.ts b/apps/web/src/components/files/filePreviewMode.ts
-index 3777fad423..dc1196bf70 100644
+index 4fca2af1..bb7fa2dd 100644
 --- a/apps/web/src/components/files/filePreviewMode.ts
 +++ b/apps/web/src/components/files/filePreviewMode.ts
 @@ -1,12 +1,32 @@
@@ -195,7 +195,7 @@ index 3777fad423..dc1196bf70 100644
    /\.(?:md|mdx|markdown|mdown|mkd)$/i.test(path);
  
 diff --git a/apps/web/src/components/files/fileTreeDragMention.test.ts b/apps/web/src/components/files/fileTreeDragMention.test.ts
-index 2c459a4c3d..ace25a7190 100644
+index 2c459a4c..ace25a71 100644
 --- a/apps/web/src/components/files/fileTreeDragMention.test.ts
 +++ b/apps/web/src/components/files/fileTreeDragMention.test.ts
 @@ -1,6 +1,7 @@
