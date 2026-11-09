@@ -1,20 +1,7 @@
 { inputs }:
-final: prev:
+final: _prev:
 let
   inherit (final.stdenv.hostPlatform) system;
-
-  useLldOnDarwin =
-    package:
-    if final.stdenv.hostPlatform.isDarwin then
-      package.overrideAttrs (old: {
-        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ final.llvmPackages.lld ];
-        env = (old.env or { }) // {
-          NIX_CFLAGS_LINK = "-fuse-ld=lld";
-        };
-      })
-    else
-      package;
-
 in
 {
   #          ╭──────────────────────────────────────────────────────────╮
@@ -26,35 +13,16 @@ in
     ccusage
     ck
     claude-code
+    code-review-graph
     git-surgeon
     hunk
     rtk
     semble
     toon
     tuicr
-    vibe-kanban
     workmux
     zat
     ;
-
-  # TODO: remove after numtide/llm-agents.nix#11477 lands. fastmcp-slim is
-  # marked broken against mcp 2, so build this Python scope against mcp 1.x.
-  # The package calls `python3.override` itself, so compose with its
-  # packageOverrides instead of replacing them.
-  code-review-graph = inputs.llm-agents.packages.${system}.code-review-graph.override {
-    python3 = final.python3 // {
-      override =
-        args:
-        final.python3.override (
-          args
-          // {
-            packageOverrides = final.lib.composeExtensions (pyFinal: _: {
-              mcp = pyFinal.mcp_1;
-            }) args.packageOverrides;
-          }
-        );
-    };
-  };
 
   # Darwin's sandbox crashes the binary's version check, although it runs
   # outside the sandbox. Keep Linux's install check enabled.
@@ -97,23 +65,4 @@ in
     }
   );
   pi-coding-agent = inputs.llm-agents.packages.${system}.pi;
-
-  #          ╭──────────────────────────────────────────────────────────╮
-  #          │                 Darwin package overrides                 │
-  #          ╰──────────────────────────────────────────────────────────╯
-  # TODO: remove after the ld64 hardening workaround reaches musikcube.
-  musikcube = useLldOnDarwin prev.musikcube;
-
-  # TODO: remove after the ld64 hardening workaround reaches ncspot.
-  ncspot = useLldOnDarwin prev.ncspot;
-
-  # TODO: remove after the ld64 hardening workaround reaches moonlight-qt.
-  moonlight-qt = useLldOnDarwin prev.moonlight-qt;
-
-  # TODO: remove after the ld64 hardening workaround reaches mkvtoolnix.
-  mkvtoolnix = useLldOnDarwin prev.mkvtoolnix;
-
-  # TODO: remove after the ld64 hardening workaround reaches unar.
-  unar = useLldOnDarwin prev.unar;
-
 }
