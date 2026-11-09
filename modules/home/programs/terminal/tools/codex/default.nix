@@ -445,9 +445,10 @@ in
               text = ''
                 payload="$1"
                 # `codex exec` callers, such as T3 Code title generation, read the
-                # final message themselves, so no one is waiting on that turn.
+                # final message themselves. Desktop owns its notifications and
+                # also runs internal title and suggestion turns through this hook.
                 printf '%s' "$payload" \
-                  | jq -e '.type == "agent-turn-complete" and .client != "codex_exec"' >/dev/null \
+                  | jq -e '.type == "agent-turn-complete" and .client != "codex_exec" and .client != "Codex Desktop"' >/dev/null \
                   || exit 0
 
                 cwd="$(printf '%s' "$payload" | jq -r '.cwd // .workspace.current_dir // empty')"

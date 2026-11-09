@@ -225,7 +225,25 @@ with tempfile.TemporaryDirectory(prefix="runtime-", dir=cache) as directory:
         log.unlink()
         notify({"type": "other-event"})
         notify(turn | {"client": "codex_exec"})
+        for message in (
+            '{"suggestions":[]}',
+            '{"title":"Fix notifications","description":"Inspect the notify hook"}',
+            "Turn complete",
+        ):
+            notify(
+                turn | {"client": "Codex Desktop", "last-assistant-message": message}
+            )
         assert not log.exists()
+
+        # JSON can be a real terminal response; classify by client, not content.
+        json_turn = turn | {"last-assistant-message": '{"suggestions":[]}'}
+        for payload in (
+            json_turn,
+            {k: v for k, v in json_turn.items() if k != "client"},
+        ):
+            notify(payload)
+            assert log.read_text().splitlines()[-1] == '{"suggestions":[]}'
+            log.unlink()
 
     check(
         "Codex real notification helper build and executable resolution", notification
