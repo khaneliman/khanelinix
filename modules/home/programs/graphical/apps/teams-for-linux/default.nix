@@ -350,16 +350,31 @@ in
       hasCustomCss = themeCss != "";
 
       settings = {
-        appIdleTimeout = 7200;
-        appIdleTimeoutCheckInterval = 30;
-        appActiveCheckInterval = 5;
-        awayOnSystemIdle = false;
+        idleDetection = {
+          timeout = 7200;
+          checkInterval = {
+            detectIdle = 30;
+            detectActive = 5;
+          };
+          setAwayOnIdle = false;
+        };
 
-        followSystemTheme = false;
-        trayIconEnabled = true;
-        appIconType = "light";
-        notificationMethod = "electron";
-        disableNotificationSound = false;
+        appearance = {
+          followSystemTheme = false;
+        }
+        // (optionalAttrs hasCustomCss {
+          cssLocation = "${configDir}/custom.css";
+        });
+
+        tray = {
+          enabled = true;
+          iconType = "light";
+        };
+
+        notifications = {
+          method = "electron";
+          sound.enabled = true;
+        };
 
         wayland = {
           xwaylandOptimizations = true;
@@ -370,10 +385,7 @@ in
         # Trims the Electron cache before it grows past the size that forces a
         # fresh login every day.
         cacheManagement.enabled = true;
-      }
-      // (optionalAttrs hasCustomCss {
-        customCSSLocation = "${configDir}/custom.css";
-      });
+      };
     in
     {
       home.packages = [
