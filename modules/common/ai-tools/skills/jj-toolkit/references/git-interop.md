@@ -48,14 +48,25 @@ remote hasn't changed since last fetch. Conflicted bookmarks cannot be pushed.
 ### Rewriting a pushed branch
 
 Get rewrite and push authority before starting; a pushed-history rewrite is a
-force-push. Keep a backup bookmark at the old tip. Map each fix to its owning
-commit, then squash only its paths into that ancestor; descendants rebase
-automatically.
+force-push. Record the old tip's commit ID; `<name>@<remote>` also keeps it. A
+new bookmark at the old tip is not a backup, because bookmarks follow rewrites.
+Map each fix to its owning commit, then squash only its paths into that
+ancestor; descendants rebase automatically.
+
+jj rebases every visible descendant, including commits that only remote
+bookmarks keep visible, such as bot or dependabot branches. List descendants
+outside the stack first; if any appear, use the
+[Git-native rewrite handoff](#git-native-rewrite-handoff) instead:
 
 ```bash
+jj log -r '<ancestor>:: ~ ::<name>'
 jj squash --into <ancestor> <paths> --ignore-immutable \
   --use-destination-message
 ```
+
+To back out a rewrite, run `jj undo` or `jj op revert <op-id>`; jj 0.46 has no
+`jj op undo`. Both update the working copy, so check for another session's
+uncommitted edits first.
 
 `--ignore-immutable` is needed when remote bookmarks or other immutable heads
 protect the pushed commits. Path arguments leave unrelated working-copy changes
