@@ -55,6 +55,8 @@ in
         pavucontrol
         pwvucontrol
         qpwgraph
+        # Provides `pw-jack` for running JACK clients against PipeWire per app.
+        config.services.pipewire.package.jack
       ]
       ++ cfg.extra-packages;
 
@@ -73,7 +75,6 @@ in
           support32Bit = pkgs.stdenv.hostPlatform.isx86_64;
         };
         audio.enable = true;
-        jack.enable = true;
         pulse.enable = true;
         wireplumber = {
           enable = true;
