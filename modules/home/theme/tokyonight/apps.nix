@@ -242,6 +242,16 @@ in
         dark.name = "tokyo-night-storm";
       };
 
+      # An existing instance stops the server's legacy `providers` migration,
+      # so create it with a config object for the t3code provider sync to fill.
+      t3code.userSettings.providerInstances.antigravity =
+        mkIf config.khanelinix.programs.terminal.tools.t3code.enable
+          {
+            driver = "antigravity";
+            accentColor = colors.blue;
+            config = { };
+          };
+
       vesktop.vencord = mkIf config.khanelinix.programs.graphical.apps.vesktop.enable {
         settings.enabledThemes = [ "tokyonight.css" ];
         themes.tokyonight = "${tokyonight}/extras/discord/tokyonight_${cfg.variant}.css";

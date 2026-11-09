@@ -306,6 +306,11 @@ in
           ]
           ++ lib.optional tailscaleEnabled "--tailscale-serve"
           ++ [ githubRoot ];
+
+          # Paired desktop clients run no local server, so this covers analytics.
+          environmentFile = pkgs.writeText "t3code-server.env" ''
+            T3CODE_TELEMETRY_ENABLED=false
+          '';
         };
 
         userSettings = {
@@ -314,10 +319,10 @@ in
           # never actionable. This also gates the remote model-manifest fetch,
           # so new model ids arrive with package updates instead.
           enableProviderUpdateChecks = false;
-          continueThreadsAfterServerUpdate = true;
           snoozeLimitedThreads = true;
           autoResumeLimitedThreads = true;
           branchNamingMode = "semantic";
+          removeAgentCreditsOnMerge = true;
           # The hourly sweep keeps each branch and recreates the checkout when
           # its thread resumes. Keep the default keep rule: "tracked-changes"
           # runs `git clean -ffdx` and deletes untracked files before removal.
@@ -326,27 +331,61 @@ in
             worktreeSettledAfterDays = 0;
             worktreeOnDelete = true;
             worktreeOnMerge = true;
+            browserArtifactsAfterDays = 14;
+            logsAfterDays = 14;
           };
           # Keep threads until their PR merges or they are settled manually.
           sidebarAutoSettleAfterDays = null;
-          sidebarAutoSettleOnMerge = true;
-          textGenerationModelSelection = {
-            instanceId = "codex";
-            model = "gpt-6-luna";
-            options = [
-              {
-                id = "reasoningEffort";
-                value = "low";
-              }
-            ];
+
+          linkedEnvironmentsEnabled = true;
+          promptSuggestionsEnabled = true;
+          reviewGuidesEnabled = true;
+          fastWorktreeCheckout = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin true;
+
+          defaultModelSelection = lib.mkIf claudeCodeEnabled {
+            instanceId = "claudeAgent";
+            model = "claude-opus-5-5";
           };
+          # The server owns model favorites. Clients copy their local list to
+          # it once and ignore client-settings.json afterward. The activation
+          # merge replaces arrays, so this list overwrites GUI edits.
+          favorites = [
+            {
+              provider = "claudeAgent";
+              model = "claude-fable-5-1";
+            }
+            {
+              provider = "claudeAgent";
+              model = "claude-opus-5-5";
+            }
+            {
+              provider = "codex";
+              model = "gpt-6-astra";
+            }
+            {
+              provider = "codex";
+              model = "gpt-6.1-sol";
+            }
+            {
+              provider = "codex";
+              model = "gpt-6-luna";
+            }
+            {
+              provider = "antigravity";
+              model = "gemini-4-argon-medium";
+            }
+          ];
 
           providers =
             lib.optionalAttrs (config.programs.codex.enable or false) {
-              # Existing native model IDs and histories must not switch accounts.
-              codex.binaryPath = lib.getExe (
-                config.programs.codex.package.direct or config.programs.codex.package
-              );
+              codex = {
+                # Existing native model IDs and histories must not switch accounts.
+                binaryPath = lib.getExe (
+                  config.programs.codex.package.direct or config.programs.codex.package
+                );
+                homePath =
+                  config.home.sessionVariables.CODEX_HOME or "${config.home.homeDirectory}/.codex";
+              };
             }
             // lib.optionalAttrs claudeCodeEnabled {
               claudeAgent = claudeProviderSettings;
@@ -379,64 +418,19 @@ in
         };
 
         # Merge declared values on activation while preserving undeclared GUI
-        # settings. Declared arrays, including favorites, replace GUI values.
+        # settings.
         clientSettings = {
+          boringSidebarEnabled = true;
           chatWidth = "wide";
-          confirmThreadArchive = false;
-          confirmThreadDelete = true;
-          diffIgnoreWhitespace = true;
-          environmentIdentificationMode = "artwork";
-          followUpBehavior = "steer";
-          favorites = [
-            {
-              provider = "claudeAgent";
-              model = "claude-fable-5-1";
-            }
-            {
-              provider = "claudeAgent";
-              model = "claude-opus-5-5";
-            }
-            {
-              provider = "codex";
-              model = "gpt-6-astra";
-            }
-            {
-              provider = "codex";
-              model = "gpt-6.1-sol";
-            }
-            {
-              provider = "codex";
-              model = "gpt-6-luna";
-            }
-            {
-              provider = "antigravity";
-              model = "gemini-4-argon-medium";
-            }
-          ];
-          fontFamilyCode = "";
-          fontFamilyComposer = "";
-          fontFamilySans = "";
-          fontFamilyTerminal = "";
-          fontSizeCode = 13;
-          fontSizeInterface = 16;
-          fontSizePrompt = 14;
-          fontSizeTerminal = 12;
-          fontSmoothing = true;
-          glassOpacity = 80;
-          legacySidebarEnabled = false;
-          loadBalancingEnabled = true;
+          effortDisplay = "bars";
           inAppNotificationsEnabled = true;
+          loadBalancingEnabled = true;
+          mathRenderingEnabled = true;
           notificationMode = "notifications";
           persistComposerContextStrip = true;
-          planModeEnabled = false;
-          providerModelPreferences = { };
-          sidebarProjectGroupingMode = "repository";
-          sidebarProjectSortOrder = "updated_at";
-          sidebarThreadPreviewCount = 6;
-          sidebarThreadSortOrder = "updated_at";
-          sidebarWorkingShelfEnabled = true;
-          timestampFormat = "locale";
-          wordWrap = true;
+          snapShotEnabled = true;
+          # Context window meter in the thread details card.
+          threadDetailsItems.context = true;
         };
       };
     };
