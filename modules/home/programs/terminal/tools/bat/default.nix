@@ -25,18 +25,14 @@ in
         style = "auto,header-filesize";
       };
 
-      # FIXME: broken nushell darwin
-      extraPackages = lib.optionals pkgs.stdenv.hostPlatform.isLinux (
-        with pkgs.bat-extras;
-        [
-          batdiff
-          batgrep
-          batman
-          batpipe
-          batwatch
-          prettybat
-        ]
-      );
+      extraPackages = with pkgs.bat-extras; [
+        batdiff
+        batgrep
+        batman
+        batpipe
+        batwatch
+        prettybat
+      ];
     };
 
     home.shellAliases = {

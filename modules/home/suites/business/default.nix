@@ -37,8 +37,7 @@ in
     home.packages =
       with pkgs;
       [
-        # FIXME: broken nixpkgs
-        # bitwarden-desktop
+        bitwarden-desktop
         np
       ]
       ++ lib.optionals (includes "maximal") [

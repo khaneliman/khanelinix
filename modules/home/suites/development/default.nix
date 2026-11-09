@@ -124,7 +124,7 @@ in
         ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && !isWSL && includes "maximal") [
           qtcreator
         ]
-        # FIXME: podman marked broken nixpkgs darwin
+        # Darwin runs containers through Colima with docker-client instead.
         ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && cfg.dockerEnable) [
           podman
           podman-desktop
