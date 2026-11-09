@@ -1,12 +1,5 @@
-{ inputs }:
-final: prev:
-let
-  package =
-    prev.antigravity-acp
-      or (final.callPackage "${inputs.nixpkgs-unstable}/pkgs/by-name/an/antigravity-acp/package.nix" { });
-in
-{
-  antigravity-acp = package.overrideAttrs (old: {
+_: final: prev: {
+  antigravity-acp = prev.antigravity-acp.overrideAttrs (old: {
     # Stripping removes the Python archive appended to the executable.
     dontStrip = true;
     doInstallCheck = final.stdenv.hostPlatform.isDarwin;

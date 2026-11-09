@@ -50,14 +50,11 @@ let
             enableMan = lib.mkForce false;
 
             # Nixvim's package maps still use luaPackages, an alias disabled
-            # here. Khanelivim's package set also lacks this flake's overlays
-            # that keep bicep and sqlfluff building.
+            # here. Khanelivim's package set also lacks this flake's overlay
+            # that keeps bicep building on Darwin.
             plugins = {
-              lint.autoInstall.overrides = {
-                luacheck = pkgs.lua55Packages.luacheck;
-                inherit (pkgs) sqlfluff;
-              };
-              conform-nvim.autoInstall.overrides = { inherit (pkgs) bicep sqlfluff; };
+              lint.autoInstall.overrides.luacheck = pkgs.lua55Packages.luacheck;
+              conform-nvim.autoInstall.overrides = { inherit (pkgs) bicep; };
             };
             lsp.servers.teal_ls.package = pkgs.lua55Packages.teal-language-server;
 
