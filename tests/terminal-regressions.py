@@ -105,7 +105,7 @@ with tempfile.TemporaryDirectory(prefix="runtime-", dir=cache) as directory:
     )
     assert result.returncode == 0, result.stderr
     (repository / "nested").mkdir()
-    for command in ["codex", "opencode", "git", "code"]:
+    for command in ["codex", "opencode", "git", "code", "kitten", "ssh"]:
         path = bindir / command
         path.write_text(
             "#!"
@@ -148,6 +148,43 @@ with tempfile.TemporaryDirectory(prefix="runtime-", dir=cache) as directory:
             }
 
     check("Alacritty window merge, Linux and Darwin value renders", window)
+
+    def kitty_helpers():
+        # kitten ssh exports KITTY_WINDOW_ID to the remote shell but not
+        # KITTY_PID, and refuses to start without both. Other kittens work
+        # over that forwarded terminal, so they only need the window ID.
+        cases = [
+            ({"KITTY_WINDOW_ID": "1", "KITTY_PID": "2"}, "ssh", "kitten"),
+            ({"KITTY_WINDOW_ID": "1"}, "ssh", "ssh"),
+            ({"KITTY_WINDOW_ID": "1"}, "clipboard", "kitten"),
+        ]
+        helpers = render["kittyHelpers"]
+        for kitty_env, name, command in cases:
+            case_env = (
+                {
+                    key: value
+                    for key, value in env.items()
+                    if not key.startswith("KITTY_")
+                }
+                | kitty_env
+                | {"TERM": "xterm-kitty"}
+            )
+            fish_body = f"function {name}\n{helpers['fish'][name]}\nend\n"
+            for shell in [
+                [render["bash"], "--noprofile", "--norc", "-c", helpers["bash"]],
+                [fish, "--no-config", "-c", fish_body],
+            ]:
+                Path(env["ARGS_FILE"]).unlink(missing_ok=True)
+                Path(env["COMMAND_FILE"]).unlink(missing_ok=True)
+                shell[-1] += f"\n{name} host 't3 auth'\n"
+                result = run(shell, env=case_env)
+                assert result.returncode == 0, result.stderr
+                case = (shell[0], kitty_env, name)
+                assert Path(env["COMMAND_FILE"]).read_text() == command, case
+                expected = ([name] if command == "kitten" else []) + ["host", "t3 auth"]
+                assert json.loads(Path(env["ARGS_FILE"]).read_text()) == expected, case
+
+    check("Kitty helpers fall back to ssh in kitten ssh remote shells", kitty_helpers)
 
     def notification():
         program = Path(render["notify"][0])
@@ -562,5 +599,5 @@ with tempfile.TemporaryDirectory(prefix="runtime-", dir=cache) as directory:
 
     check("Fish git saved exit status, without invoking code", git_status)
 
-print(f"{14 - len(failures)}/14 groups passed; failures: {failures}")
+print(f"{15 - len(failures)}/15 groups passed; failures: {failures}")
 raise SystemExit(bool(failures))

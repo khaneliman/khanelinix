@@ -52,12 +52,21 @@ in
             kittenCommand = "ssh";
             fallbackCommand = "ssh";
             fallbackTerm = "xterm-256color";
+            # kitten ssh forwards KITTY_WINDOW_ID to the remote shell but not
+            # KITTY_PID, and refuses to start unless both are set.
+            requiredEnv = [
+              "KITTY_WINDOW_ID"
+              "KITTY_PID"
+            ];
           };
         };
 
         mkHelper =
           name: helper:
-          helper
+          {
+            requiredEnv = [ "KITTY_WINDOW_ID" ];
+          }
+          // helper
           // {
             unavailableMessage = "${name} is only available inside kitty";
             hasFallback = helper.fallbackCommand != null;
@@ -86,7 +95,7 @@ in
 
         mkBourneFunction = name: helper: /* bash */ ''
           ${name}() {
-            if [ -n "''${KITTY_WINDOW_ID:-}" ]; then
+            if ${lib.concatMapStringsSep " && " (var: ''[ -n "''${${var}:-}" ]'') helper.requiredEnv}; then
               kitten ${helper.kittenCommand} "$@"
             else
               ${mkBourneFallback helper}
@@ -113,7 +122,11 @@ in
           ];
 
         mkFishFunction = _name: helper: /* fish */ ''
-          if set -q KITTY_WINDOW_ID; and test -n "$KITTY_WINDOW_ID"
+          if ${
+            lib.concatMapStringsSep "; and " (
+              var: ''set -q ${var}; and test -n "''$${var}"''
+            ) helper.requiredEnv
+          }
               kitten ${helper.kittenCommand} $argv
           else
               ${mkFishFallback helper}
@@ -141,7 +154,9 @@ in
 
         mkNushellFunction = name: helper: /* nu */ ''
           def --wrapped ${name} [...args] {
-            if (($env.KITTY_WINDOW_ID? | default "") != "") {
+            if ${
+              lib.concatMapStringsSep " and " (var: ''(($env.${var}? | default "") != "")'') helper.requiredEnv
+            } {
               ^kitten ${helper.kittenCommand} ...$args
             } else {
               ${mkNushellFallback helper}

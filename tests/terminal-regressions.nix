@@ -90,6 +90,7 @@ let
         };
       };
     }).config.content.programs.alacritty.settings.window;
+  kitty = (import (source + "/emulators/kitty") { inherit config lib pkgs; }).config.content.programs;
 in
 {
   inherit
@@ -126,6 +127,11 @@ in
     linux = alacritty "linux";
     darwin = alacritty "darwin";
   };
+  kittyHelpers = {
+    bash = kitty.bash.initExtra.content;
+    fish = kitty.fish.functions;
+  };
+  bash = lib.getExe pkgs.bash;
   fish = lib.getExe pkgs.fish;
   notify = codex.config.content.programs.codex.settings.notify;
   notifyExe = lib.getExe pkgs.libnotify;
