@@ -352,7 +352,7 @@ in
           favorites = [
             {
               provider = "claudeAgent";
-              model = "claude-fable-5-1";
+              model = "claude-fable-5-2";
             }
             {
               provider = "claudeAgent";
