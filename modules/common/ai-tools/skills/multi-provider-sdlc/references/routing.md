@@ -16,7 +16,7 @@ by `route-model.py` and its JSON contract.
 | Subscription         | Model agents                                                                                                   |
 | -------------------- | -------------------------------------------------------------------------------------------------------------- |
 | OpenAI (Codex)       | `gpt-6-luna`, `gpt-5-6-terra`, `gpt-6-1-sol`, `gpt-6-astra`                                                    |
-| Anthropic            | `opus-5-5`, `fable-5-1`, `sonnet-5-5`, `haiku-5-5`                                                             |
+| Anthropic            | `opus-5-5`, `fable-5-2`, `sonnet-5-5`, `haiku-5-5`                                                             |
 | Google (Antigravity) | `gpt-oss-120b`, `google-opus-5-5`, `google-sonnet-5-5`, `gemini-4-argon`, `gemini-3-8-flash`, `gemini-3-1-pro` |
 
 <!-- END GENERATED SUBSCRIPTIONS -->
@@ -75,7 +75,7 @@ Every subscription requires a live route and current authentication.
 | implementation                             | `gpt-6-1-sol`             | `opus-5-5`, `gpt-6-luna`, `haiku-5-5`, `gemini-4-argon`         | `implementer`  | workspace write                   |
 | difficult implementation                   | `gpt-6-1-sol`, `opus-5-5` | `gpt-6-luna`, `haiku-5-5`, `gemini-4-argon`                     | `implementer`  | workspace write                   |
 | ambiguous diagnosis                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-4-argon`                                    | `debugger`     | read-only                         |
-| plan or code review                        | `opus-5-5`, `gpt-6-astra` | `gpt-6-1-sol`, `gemini-4-argon`, `fable-5-1`, `google-opus-5-5` | `reviewer`     | read-only                         |
+| plan or code review                        | `opus-5-5`, `gpt-6-astra` | `gpt-6-1-sol`, `gemini-4-argon`, `fable-5-2`, `google-opus-5-5` | `reviewer`     | read-only                         |
 | routine code review                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-4-argon`                                    | `reviewer`     | read-only                         |
 | bounded Sonnet trial                       | `sonnet-5-5`              | `gpt-6-1-sol`, `opus-5-5`                                       | `implementer`  | workspace write                   |
 | multimodal analysis                        | `gemini-4-argon`          | `gpt-6-1-sol`, `opus-5-5`                                       | `fact-finder`  | read-only                         |

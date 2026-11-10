@@ -24,7 +24,7 @@
 		},
 		"anthropic": {
 			"label": "Anthropic",
-			"model_agents": ["opus-5-5", "fable-5-1", "sonnet-5-5", "haiku-5-5"]
+			"model_agents": ["opus-5-5", "fable-5-2", "sonnet-5-5", "haiku-5-5"]
 		}
 	},
 	"models": {
@@ -182,15 +182,15 @@
 			"workspace_write": true,
 			"publish_alias": false
 		},
-		"fable-5-1": {
+		"fable-5-2": {
 			"subscription": "anthropic",
 			"model_family": "anthropic-claude",
 			"quota_pool": "general",
 			"upstream_provider": "claude",
-			"upstream_model": "claude-fable-5-1",
-			"gateway_alias": "claude-fable-5-1",
-			"display_name": "Anthropic · Fable 5.1",
-			"description": "Anthropic Fable 5.1 gateway worker for escalated read-only planning and review when task evidence justifies it.",
+			"upstream_model": "claude-fable-5-2",
+			"gateway_alias": "claude-fable-5-2",
+			"display_name": "Anthropic · Fable 5.2",
+			"description": "Anthropic Fable 5.2 gateway worker for escalated read-only planning and review when task evidence justifies it.",
 			"reasoning_effort": null,
 			"write": false,
 			"workspace_write": false,
@@ -437,7 +437,7 @@
 			"fallbacks": [
 				"gpt-6-1-sol",
 				"gemini-4-argon",
-				"fable-5-1",
+				"fable-5-2",
 				"google-opus-5-5"
 			],
 			"semantic_role": "reviewer",

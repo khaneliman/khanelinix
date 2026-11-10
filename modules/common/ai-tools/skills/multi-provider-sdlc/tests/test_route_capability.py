@@ -460,7 +460,7 @@ class RouteCapabilityTests(unittest.TestCase):
                 "gpt-6-astra",
                 "gpt-6-1-sol",
                 "gemini-4-argon",
-                "fable-5-1",
+                "fable-5-2",
                 "google-opus-5-5",
             ],
         )
@@ -703,7 +703,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(plan["selected"], "gpt-6-astra")
         self.assertEqual(
             {blocked["model"] for blocked in plan["blocked"]},
-            {"opus-5-5", "fable-5-1"},
+            {"opus-5-5", "fable-5-2"},
         )
         self.assertTrue(
             all(
