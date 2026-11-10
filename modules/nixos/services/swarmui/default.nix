@@ -176,6 +176,13 @@ in
   config = lib.mkIf cfg.enable {
     networking.firewall.allowedTCPPorts = lib.mkIf cfg.openFirewall [ cfg.port ];
 
+    services.comfyui.extraPackages = lib.mkIf comfyuiEnabled (ps: [
+      ps.dill
+      ps.imageio-ffmpeg
+      ps.rembg
+      ps.ultralytics
+    ]);
+
     systemd = {
       tmpfiles.settings = lib.mkIf (cfg.outputDir != null) {
         "10-khanelinix-swarmui-output".${cfg.outputDir}.d = {
@@ -187,13 +194,6 @@ in
 
       services = {
         comfyui = lib.mkIf comfyuiEnabled {
-          environment.PYTHONPATH = pkgs.python3Packages.makePythonPath [
-            pkgs.python3Packages.dill
-            pkgs.python3Packages.imageio-ffmpeg
-            pkgs.python3Packages.rembg
-            pkgs.python3Packages.ultralytics
-          ];
-
           preStart = lib.mkAfter ''
             ln -sfnT \
               ${cfg.package}/share/swarmui/src/BuiltinExtensions/ComfyUIBackend/ExtraNodes/SwarmComfyCommon \

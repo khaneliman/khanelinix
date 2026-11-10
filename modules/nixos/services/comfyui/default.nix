@@ -48,25 +48,6 @@ let
     hash = "sha256-/ZwecgxTTMo9J1whdEJci8lEkOy/yP+UmjbpOAA3BvU=";
   };
 
-  comfyUiGgufPythonPath = pkgs.python3Packages.makePythonPath [
-    pkgs.python3Packages.gguf
-    pkgs.python3Packages.protobuf
-    pkgs.python3Packages.sentencepiece
-  ];
-
-  comfyUiWithGguf = pkgs.symlinkJoin {
-    name = "comfyui-with-gguf";
-    paths = [ pkgs.comfyui ];
-    nativeBuildInputs = [ pkgs.makeWrapper ];
-    meta.mainProgram = "comfyui";
-    postBuild = ''
-      rm "$out/bin/comfyui"
-      makeWrapper ${pkgs.comfyui.pythonEnv}/bin/python3 "$out/bin/comfyui" \
-        --add-flags ${pkgs.comfyui}/share/comfyui/main.py \
-        --prefix PYTHONPATH : ${comfyUiGgufPythonPath}
-    '';
-  };
-
   # Realize models before activation. ComfyUI consumes the read-only store paths.
   modelRoot = pkgs.linkFarm "comfyui-models" cfg.models;
 
@@ -175,7 +156,11 @@ in
   config = lib.mkIf cfg.enable {
     services.comfyui = {
       enable = true;
-      package = comfyUiWithGguf;
+      # ComfyUI-GGUF also needs sentencepiece, which ComfyUI already depends on.
+      extraPackages = ps: [
+        ps.gguf
+        ps.protobuf
+      ];
       extraArgs = [
         # TODO(ROCm): Retest SDPA when gfx1100 Qwen output is fixed.
         # Tracking: https://github.com/Comfy-Org/ComfyUI/issues/14335
