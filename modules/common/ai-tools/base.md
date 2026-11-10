@@ -171,7 +171,9 @@ behavior is verified.
   next action.
 - When evidence supports disagreement, state reason, alternative, and risk.
 - Keep disposable build scratch in the repository's ignored build directory or
-  under `$XDG_CACHE_HOME`, not `/tmp`.
+  under `$XDG_CACHE_HOME`, not `/tmp`. Build Nix scratch outputs with
+  `--no-link`, or remove the out-link when the task ends: a leftover link keeps
+  its whole closure from being garbage collected.
 - Verify in proportion to risk before reporting completion: complete required
   checks, and broaden or repeat them only when changes, failures, or unresolved
   concerns justify it. Avoid tests that merely mirror low-impact edits.
