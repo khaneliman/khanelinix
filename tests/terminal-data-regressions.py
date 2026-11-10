@@ -1,4 +1,4 @@
-"""Run: python3 tests/terminal-data-regressions.py /locked/nixpkgs ignored-scratch-dir.
+"""Run: python3 tests/terminal-data-regressions.py /locked/nixpkgs ignored-scratch-dir /locked/home-manager.
 
 Exercises built hook scripts and a Go template using the pinned lazygit Quote
 implementation. Git is an argv recorder, so no real commits are made.
@@ -15,6 +15,7 @@ import tempfile
 
 root = pathlib.Path(__file__).resolve().parent.parent
 nixpkgs = pathlib.Path(sys.argv[1]).resolve()
+home_manager = pathlib.Path(sys.argv[3]).resolve()
 scratch = pathlib.Path(sys.argv[2]).resolve()
 scratch.mkdir(parents=True, exist_ok=True)
 scratch = pathlib.Path(tempfile.mkdtemp(prefix="terminal-data-", dir=scratch))
@@ -22,6 +23,7 @@ data_home = scratch / "data home"
 expression = (
     f"import {root / 'tests/terminal-data-regressions.nix'} "
     f"{{ nixpkgs = builtins.toPath {json.dumps(str(nixpkgs))}; "
+    f"homeManager = builtins.toPath {json.dumps(str(home_manager))}; "
     f"dataHome = {json.dumps(str(data_home))}; }}"
 )
 subprocess.run(
@@ -42,6 +44,46 @@ rendered = json.loads(
     )
 )
 (scratch / "rendered.json").write_text(json.dumps(rendered, indent=2))
+
+assert rendered["hookSyncAfter"] == ["claudeCodeSettings"]
+assert not rendered["immutableHookSync"]
+settings_path = data_home / "claude/settings.json"
+settings_path.parent.mkdir(parents=True)
+unrelated = {
+    "theme": "light",
+    "permissions": {"allow": ["Read"]},
+    "enabledPlugins": {"local-plugin": True},
+}
+stale_hooks = {
+    event: [{"hooks": [{"type": "command", "command": "deleted-hook"}]}]
+    for event in ("PreToolUse", "UserPromptExpansion", "UserPromptSubmit")
+}
+settings_path.write_text(json.dumps(unrelated | {"hooks": stale_hooks}))
+settings_path.chmod(0o600)
+
+
+def sync_hooks(name="syncHooks", *, check=False):
+    return subprocess.run([rendered[name]], text=True, capture_output=True, check=check)
+
+
+sync_hooks(check=True)
+expected = unrelated | {"hooks": rendered["hookSettings"]}
+assert json.loads(settings_path.read_text()) == expected
+assert settings_path.stat().st_mode & 0o777 == 0o600
+sync_hooks(check=True)
+assert json.loads(settings_path.read_text()) == expected
+sync_hooks("clearHooks", check=True)
+assert json.loads(settings_path.read_text()) == unrelated | {"hooks": {}}
+for invalid in ('{"hooks":', "[]", "null"):
+    settings_path.write_text(invalid)
+    assert sync_hooks().returncode != 0
+    assert settings_path.read_text() == invalid
+settings_path.unlink()
+sync_hooks(check=True)
+assert json.loads(settings_path.read_text()) == {"hooks": rendered["hookSettings"]}
+print(
+    "PASS: hook replacement, removal, idempotence, settings preservation, invalid input"
+)
 
 # Override the clock in the actual generated scripts' runtime PATH, ensuring
 # collision tests cannot pass merely by crossing a wall-clock second.

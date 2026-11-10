@@ -1,6 +1,7 @@
 # Render just the affected commands; no host or flake evaluation.
 {
   nixpkgs,
+  homeManager,
   dataHome,
   root ? ../.,
 }:
@@ -22,14 +23,58 @@ let
   sessionEnd =
     (builtins.head (builtins.head (import (hooks + "/session-end.nix") args).SessionEnd).hooks).command;
   commands = import (root + "/modules/home/programs/terminal/tools/lazygit/custom-commands.nix");
+  hmLib = import (homeManager + "/modules/lib/stdlib-extended.nix") pkgs.lib;
+  hookSettings = {
+    UserPromptSubmit = [
+      {
+        hooks = [
+          {
+            type = "command";
+            command = "current-hook";
+          }
+        ];
+      }
+    ];
+  };
+  hookActivation =
+    mutableSettings: hooks:
+    (import (root + "/modules/home/programs/terminal/tools/claude-code") {
+      inherit pkgs;
+      lib = hmLib;
+      inputs = { };
+      config = {
+        khanelinix.programs.terminal.tools.claude-code.enable = true;
+        programs.claude-code = {
+          inherit mutableSettings;
+          configDir = dataHome + "/claude";
+          settings = { inherit hooks; };
+        };
+      };
+    }).config.content.home.activation.claudeCodeHooks;
+  hookSync =
+    hooks:
+    pkgs.writeShellScript "claude-hook-sync" ''
+      set -euo pipefail
+      errorEcho() { printf '%s\n' "$*" >&2; }
+      ${(hookActivation true hooks).content.data}
+    '';
+  syncHooks = hookSync hookSettings;
+  clearHooks = hookSync { };
 in
 {
   scripts = [
     pre
     post
     sessionEnd
+    syncHooks
+    clearHooks
   ];
   rendered = {
+    inherit hookSettings;
+    syncHooks = toString syncHooks;
+    clearHooks = toString clearHooks;
+    hookSyncAfter = (hookActivation true hookSettings).content.after;
+    immutableHookSync = (hookActivation false hookSettings).condition;
     pre = "${pre}/bin/claude-pre-compact-backup";
     post = "${post}/bin/claude-post-compact-capture";
     sessionEnd = "${sessionEnd}/bin/claude-session-end-log";

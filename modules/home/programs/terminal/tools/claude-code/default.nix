@@ -139,6 +139,24 @@ in
   };
 
   config = mkIf cfg.enable {
+    # Mutable settings retain undeclared hook events, including commands whose
+    # store paths can be collected. Own the whole hook map, not other settings.
+    home.activation.claudeCodeHooks = mkIf config.programs.claude-code.mutableSettings (
+      lib.hm.dag.entryAfter [ "claudeCodeSettings" ] (
+        lib.hm.generators.mkImpureConfigMerger {
+          inherit pkgs;
+          path = "${config.programs.claude-code.configDir}/settings.json";
+          staticSettings = (pkgs.formats.json { }).generate "claude-code-hooks.json" {
+            inherit (config.programs.claude-code.settings) hooks;
+          };
+          jqOperation = ''if ($dynamic | type) == "object" then $dynamic + $static else error("expected a JSON object") end'';
+          format = "json";
+          empty = "{}";
+          mode = "600";
+        }
+      )
+    );
+
     systemd.user = mkIf (cfg.quotaWarmup.enable && pkgs.stdenv.hostPlatform.isLinux) {
       services.ai-quota-warmup-claude = {
         Unit.Description = "Warm Claude CLI quota window";
