@@ -80,8 +80,7 @@ in
       avahi = enabled;
 
       comfyui = {
-        # Restore after https://github.com/NixOS/nixpkgs/issues/560210 is resolved.
-        enable = false;
+        enable = true;
 
         models = import ./comfyui-models.nix { inherit lib pkgs; };
 
