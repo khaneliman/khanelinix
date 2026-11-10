@@ -38,6 +38,14 @@ updates:
         applies-to: security-updates
         patterns:
           - "*"
+  # Vendored upstream copy with no lockfile. Its dependencies change only when
+  # the copy is refreshed, so Dependabot should not update them here.
+  - package-ecosystem: "npm"
+    directory: "/modules/common/ai-tools/planning-with-files/pi/skills/planning-with-files/extensions/planning-with-files"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "*"
   - package-ecosystem: "pip"
     directory: "/templates/python"
     schedule:
