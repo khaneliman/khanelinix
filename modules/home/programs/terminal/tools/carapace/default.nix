@@ -35,6 +35,7 @@ in
 
       zsh.initContent = /* Bash */ ''
         zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
+        zstyle ':completion:*:warnings' format $'\e[2;37mNo matches for %d\e[m'
         zstyle ':completion:*:git:*' group-order 'main commands' 'alias commands' 'external commands'
       '';
     };
