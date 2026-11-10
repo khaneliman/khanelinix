@@ -309,6 +309,8 @@ in
       # interactive login per subscription; opt out per host when absent.
       services.cliproxyapi.enable = mkDefault cfg.aiEnable;
 
+      services.nix-prune-cache-roots.enable = mkDefault cfg.nixEnable;
+
       # FIXME: mlx metal support broken darwin
       # services.ollama.enable = mkDefault (cfg.aiEnable && pkgs.stdenv.hostPlatform.isDarwin);
     };
