@@ -68,10 +68,6 @@
     })
     (lib.mkIf config.khanelinix.suites.security.enable {
       services = {
-        cloudflared.tunnels.KHANELIMANCOM = {
-          credentialsFile = "/run/secrets/cloudflared/khanelimancom.json";
-          default = "http_status:404";
-        };
         vaultwarden = {
           environmentFile = "/run/secrets/vaultwarden/environment";
           config.DOMAIN = "https://vaultwarden.khaneliman.com";
