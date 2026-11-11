@@ -30,6 +30,6 @@
         seerr = "ghcr.io/seerr-team/seerr@sha256:f4768de5f616248d723e05891f3345a1402123775d03bf0890dbfedc0831bda1";
         self-service-password = "ltbproject/self-service-password@sha256:9735d99b0b45a3187ff4be5ee0ca1b569ea85cfb2428d9f00c309fdaedfd0142";
         timemachine = "mbentley/timemachine@sha256:2bcbb09008dde4099aa5dcd2ef9884b4c0e6cfdc2247956eac41763b5789b6f1";
-        wakapi = "ghcr.io/muety/wakapi@sha256:3f54a3e0f876d7f8182694527d5f50eafd4eb296820f96201ee509a9f9334910";
+        wakapi = "ghcr.io/muety/wakapi:2.18.2@sha256:7a14217db1b6a47816c8d8d0590cc40fa12fd409dfed6c194bbb4cd50f43d913";
       };
 }

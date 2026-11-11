@@ -51,6 +51,15 @@
             "--network=br0"
           ];
         };
+        wakapi = {
+          environment = {
+            WAKAPI_ALLOW_SIGNUP = lib.mkForce "false";
+            WAKAPI_INSECURE_COOKIES = "false";
+          };
+          # Give the one-time heartbeat index migration room to finish before
+          # health failures count against the container.
+          extraOptions = [ "--health-start-period=5m" ];
+        };
         profilarr.environment = {
           GIT_USER_NAME = "Khaneliman";
           GIT_USER_EMAIL = "khaneliman12@gmail.com";
