@@ -7,6 +7,13 @@
 {
   # The live tunnel is remotely managed; a local catch-all would discard its routes.
   services.cloudflared.enable = lib.mkForce false;
+
+  # The remote ingress rules reference this exact connector-local CA path.
+  environment.etc."cloudflared/certs/origin_ca_rsa_root.pem".source = pkgs.fetchurl {
+    url = "https://developers.cloudflare.com/ssl/static/origin_ca_rsa_root.pem";
+    hash = "sha256-kailVn76a/lBFiqoBrO6R2qt33hnZA5TBTs1+yJaXa4=";
+  };
+
   sops.secrets."cloudflared/token" = {
     sopsFile = lib.getFile "secrets/khanelilab/services.yaml";
     key = "cloudflared-token";
