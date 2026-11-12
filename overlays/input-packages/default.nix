@@ -36,12 +36,22 @@ in
   #
   # User-owned agent files may select configured providers. Project agents
   # retain the parent provider and authority boundary.
-  codex = inputs.llm-agents.packages.${system}.codex.overrideAttrs (old: {
-    patches = (old.patches or [ ]) ++ [
-      ./codex-force-multi-agent-v1.patch
-      ./codex-user-agent-provider.patch
-    ];
-  });
+  codex =
+    (inputs.llm-agents.packages.${system}.codex.override (old: {
+      # openssl-sys links aws-lc through its OpenSSL-compatible openssl.pc and
+      # cannot bind prefixed symbols. nixpkgs now prefixes symbols and ships
+      # the shim only on request. Drop this once llm-agents sets both itself.
+      aws-lc = old.aws-lc.override {
+        withOpenSSLShim = true;
+        symbolPrefix = null;
+      };
+    })).overrideAttrs
+      (old: {
+        patches = (old.patches or [ ]) ++ [
+          ./codex-force-multi-agent-v1.patch
+          ./codex-user-agent-provider.patch
+        ];
+      });
 
   claude-desktop =
     let

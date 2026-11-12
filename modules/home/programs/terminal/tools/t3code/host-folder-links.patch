@@ -75,10 +75,10 @@ index dc68a540..37a22c5d 100644
    it("recognizes markdown and MDX files case-insensitively", () => {
      expect(isMarkdownPreviewFile("README.md")).toBe(true);
 diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/components/files/FilePreviewPanel.tsx
-index ed55da7c..60f8a53f 100644
+index 0ec8e94f..d57a7e8e 100644
 --- a/apps/web/src/components/files/FilePreviewPanel.tsx
 +++ b/apps/web/src/components/files/FilePreviewPanel.tsx
-@@ -115,6 +115,7 @@ import {
+@@ -123,6 +123,7 @@ import {
    filePreviewReadErrorMessage,
    isMarkdownPreviewFile,
    resolveFilePreviewPath,
@@ -86,7 +86,7 @@ index ed55da7c..60f8a53f 100644
    shouldShowFileExplorer,
    workspaceAssetResource,
  } from "./filePreviewMode";
-@@ -1072,15 +1073,18 @@ export default function FilePreviewPanel({
+@@ -1106,15 +1107,18 @@ export default function FilePreviewPanel({
    const isFolder =
      attachment === undefined &&
      (file.isNotFile || (folderTrail !== undefined && file.data === null && file.error === null));
@@ -108,20 +108,20 @@ index ed55da7c..60f8a53f 100644
    const [explorerOpen, setExplorerOpen] = useState(initialExplorerOpen);
    const showExplorer = shouldShowFileExplorer({
      relativePath: previewPath,
-@@ -1542,9 +1546,9 @@ export default function FilePreviewPanel({
-         {showExplorer ? (
-           <FileExplorerPane resizable={Boolean(previewPath)}>
-             <FileBrowserPanel
--              key={`${environmentId}:${hostFolderPath ?? cwd}`}
-+              key={`${environmentId}:${explorerCwd}`}
-               environmentId={environmentId}
--              cwd={hostFolderPath ?? cwd}
-+              cwd={explorerCwd}
-               projectName={hostFolderPath ?? projectName}
-               hostFolder={hostFolderPath !== null}
-               selectedPath={
+@@ -1652,9 +1656,9 @@ export default function FilePreviewPanel({
+               }}
+             >
+               <FileBrowserPanel
+-                key={`${environmentId}:${hostFolderPath ?? cwd}`}
++                key={`${environmentId}:${explorerCwd}`}
+                 environmentId={environmentId}
+-                cwd={hostFolderPath ?? cwd}
++                cwd={explorerCwd}
+                 projectName={hostFolderPath ?? projectName}
+                 hostFolder={hostFolderPath !== null}
+                 selectedPath={
 diff --git a/apps/web/src/components/files/filePath.test.ts b/apps/web/src/components/files/filePath.test.ts
-index 3bc371b5..2dbdcf15 100644
+index fbe6a67e..2847a94b 100644
 --- a/apps/web/src/components/files/filePath.test.ts
 +++ b/apps/web/src/components/files/filePath.test.ts
 @@ -5,6 +5,7 @@ import {
@@ -132,7 +132,7 @@ index 3bc371b5..2dbdcf15 100644
    retainedBreadcrumbTrail,
  } from "./filePath";
  
-@@ -90,3 +91,23 @@ describe("retainedBreadcrumbTrail", () => {
+@@ -98,3 +99,23 @@ describe("retainedBreadcrumbTrail", () => {
      expect(retainedBreadcrumbTrail(trail, path)).toBe(expected);
    });
  });
