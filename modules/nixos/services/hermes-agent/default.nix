@@ -53,6 +53,17 @@ in
       restartSec = 5;
       inherit stateDir workingDirectory;
 
+      # hermes-agent backports a patchelf 0.19 fix without checking the
+      # version. nixpkgs went back to 0.15.2, where the patch neither applies
+      # nor is needed. Drop this once NousResearch/hermes-agent#152542 lands.
+      package = inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default.override {
+        pmPackages = lib.filterAttrs (_: lib.isDerivation) (
+          pkgs.callPackage "${inputs.hermes-agent}/nix/pm-packages.nix" {
+            patchelf = pkgs.patchelf.overrideAttrs { dontPatch = true; };
+          }
+        );
+      };
+
       environmentFiles = map toString cfg.environmentFiles;
 
       settings =
