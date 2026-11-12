@@ -14,7 +14,6 @@ in
     # ./disks.nix
     ./cloud-mounts.nix
     ./containers.nix
-    ./dockge.nix
     ./hardware.nix
     ./hermes.nix
     ./images.nix

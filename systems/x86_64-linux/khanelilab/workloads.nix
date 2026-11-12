@@ -24,7 +24,6 @@
         "qdirstat"
         "stash"
         "tinymm-gui-v5"
-        "yacht"
       ]
       (_: {
         autoStart = lib.mkForce false;

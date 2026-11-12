@@ -12,10 +12,7 @@
         ah-webapp-dev = "ghcr.io/khaneliman/austin-horstman-webapp@sha256:f881f49335b88e53757883540b30531e296329b8f90514d09b0b0b79c3d9e9ec";
         authelia = "authelia/authelia@sha256:bd97cff4fcbf715b5ff1f9ae286afbe6033afce385302520b0368122d43a6f54";
         cleanuparr = "ghcr.io/cleanuparr/cleanuparr@sha256:4ad626da7e1d2774ca51bbfa812f832d5639264b3fe308909e47de02ba2188f7";
-        dockersocket = "ghcr.io/tecnativa/docker-socket-proxy@sha256:1f5038b54f06c3e18422902cf00ba21803d1c97805aae032e5e6673d532d3459";
-        dockge = "louislam/dockge@sha256:335c6368b880ecc203236ed89e6e5232e0d6578e8ef5920e4a502390451502bf";
         flaresolverr = "flaresolverr/flaresolverr@sha256:c80ae007ce2ccdcd217a12426e4f039ef763ff90738c808d38810c3e59323767";
-        hermes-docker-proxy = "ghcr.io/tecnativa/docker-socket-proxy@sha256:1f5038b54f06c3e18422902cf00ba21803d1c97805aae032e5e6673d532d3459";
         immich = "ghcr.io/imagegenius/immich@sha256:1318aa448e829aba60611599fe77650b88286d62e2d1de3606440b045c8f735e";
         kometa = "kometateam/kometa@sha256:6c3971a4aaa928b045e5f22514196b6db7f9b2b186158ebfe3239f4b328dfb0a";
         mariadb = "linuxserver/mariadb@sha256:75ffa39d652653e73848328a667d169a20a1e084fd51a66c4be3eb754a2492c9";

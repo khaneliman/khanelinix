@@ -52,35 +52,6 @@ in
         };
       };
 
-      dockersocket = {
-        image = "tecnativa/docker-socket-proxy";
-        autoStart = true;
-        volumes = [ "/var/run/docker.sock:/var/run/docker.sock:ro" ];
-        environment = {
-          ALLOW_START = "0";
-          ALLOW_STOP = "0";
-          ALLOW_RESTARTS = "0";
-          AUTH = "0";
-          BUILD = "0";
-          CONTAINERS = "0";
-          DISTRIBUTION = "0";
-          EVENTS = "1";
-          EXEC = "0";
-          IMAGES = "1";
-          INFO = "0";
-          NETWORKS = "0";
-          PING = "1";
-          POST = "0";
-          PULL = "0";
-          PUSH = "0";
-          SERVICES = "0";
-          SYSTEM = "0";
-          TASKS = "0";
-          VERSION = "1";
-          VOLUMES = "0";
-        };
-      };
-
       cleanuparr = {
         image = "ghcr.io/cleanuparr/cleanuparr:latest";
         autoStart = true;
@@ -252,24 +223,6 @@ in
         };
       };
 
-      yacht = {
-        image = "selfhostedpro/yacht";
-        autoStart = true;
-        # Port:
-        # - 8000/tcp: yacht web UI
-        ports = [ "8000:8000" ];
-        volumes = [
-          "${appdataDir}/yacht:/config"
-          "/var/run/docker.sock:/var/run/docker.sock"
-        ];
-        environment = {
-          ADMIN_EMAIL = "admin@yacht.local";
-          PUID = "99";
-          PGID = "100";
-          TZ = "America/Chicago";
-        };
-      };
-
       seerr = {
         image = "ghcr.io/seerr-team/seerr:latest";
         autoStart = true;
@@ -345,11 +298,6 @@ in
       {
         # wakapi
         allowedTCPPorts = [ 5000 ];
-      }
-
-      {
-        # yacht
-        allowedTCPPorts = [ 8000 ];
       }
 
       {

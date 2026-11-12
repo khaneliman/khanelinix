@@ -27,10 +27,6 @@ let
       address = "172.18.0.2";
       alias = "Cleanuparr";
     };
-    dockersocket = {
-      address = "172.18.0.14";
-      alias = "dockersocket";
-    };
     flaresolverr = {
       address = "172.18.0.11";
       alias = "flaresolverr";
@@ -117,9 +113,6 @@ in
         extraOptions = map (name: "--add-host=${name}:172.18.0.1") nativeNames;
       }) endpoints)
       {
-        dockersocket.networks = [
-          "name=network_docker_socket_proxy,ip=172.21.0.2"
-        ];
         timemachine = {
           networks = [ "name=br0,ip=192.168.4.2" ];
           extraOptions = lib.mkForce [ ];
@@ -147,6 +140,15 @@ in
       "127.0.0.1" = nativeNames;
     };
   networking.firewall.interfaces.khaneproxy.allowedTCPPorts = [ 6379 ];
+
+  assertions = [
+    {
+      assertion = lib.all (
+        container: lib.all (volume: !(lib.hasInfix "docker.sock" volume)) (container.volumes or [ ])
+      ) (lib.attrValues config.virtualisation.oci-containers.containers);
+      message = "khanelilab containers must not mount the Docker socket";
+    }
+  ];
 
   services.redis = {
     package = pkgs.valkey;
@@ -205,7 +207,6 @@ in
           ensure_network khaneproxy bridge 172.18.0.0/16 172.18.0.1 \
             -o com.docker.network.bridge.name=khaneproxy
           docker network inspect khaneproxy | jq -e '.[0].Options["com.docker.network.bridge.name"] == "khaneproxy"' >/dev/null
-          ensure_network network_docker_socket_proxy bridge 172.21.0.0/16 172.21.0.1
           ensure_network br0 ipvlan 192.168.4.0/22 192.168.4.1 \
             -o parent=br0 -o ipvlan_mode=l2 --aux-address=server=192.168.4.42
           docker network inspect br0 | jq -e '.[0].Options.parent == "br0" and .[0].Options.ipvlan_mode == "l2"' >/dev/null

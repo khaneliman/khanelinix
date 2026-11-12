@@ -20,7 +20,7 @@ host.
 | ------------------------------------------ | ---------------------------------------------------------------------- |
 | Plex, Jellyfin                             | Native services, existing state and GPU access                         |
 | Lidarr, Radarr, Sonarr, Prowlarr, Tautulli | Native services, retained application paths                            |
-| HermesAgent                                | Native gateway, flat existing state and dedicated Docker proxy         |
+| HermesAgent                                | Native gateway with flat existing state and no Docker control path     |
 | Redis                                      | Native Valkey, loopback and the private application bridge             |
 | Unraid-Cloudflared-Tunnel                  | Native token-managed tunnel; routes remain remotely managed            |
 | GitHub-Triage                              | Native nginx serving the existing Hermes reports                       |
@@ -93,9 +93,11 @@ Unraid's entire libvirt configuration or autostart directory. Systemd owns the
 mount-guarded guest startup. Libvirt may change individual disk/NVRAM ownership
 while a guest runs; verify parent-directory traversal on the target.
 
-Dockge and Hermes share the copied Compose projects. `/opt/stacks` points to
-that location. Review project paths before use, and do not start old stacks that
-duplicate workloads now managed by NixOS.
+The copied Compose projects are retained only as migration evidence. They are
+not mounted into Hermes or a container-management application. Do not start old
+stacks that duplicate workloads now managed by NixOS. A future project-control
+broker must use fixed project definitions and explicit owner approval; it must
+not restore a generic Docker socket or API path.
 
 `secrets/khanelilab/services.yaml` contains encrypted migration credentials.
 System services consume runtime SOPS files, not plaintext Nix-store values. The
