@@ -73,6 +73,43 @@ class PresentationTests(unittest.TestCase):
         )
         self.assertEqual(rows[1].value, "23.2% used")
 
+    def test_antigravity_argon_allowance_is_its_own_scope(self):
+        short, weekly, argon = window(), window(0.2, 10080), window(55.14733, 10080)
+
+        def extra(scope, title, value):
+            return {
+                "id": f"antigravity-quota-summary-{scope}",
+                "title": title,
+                "window": value,
+            }
+
+        entry = {
+            "provider": "antigravity",
+            "usage": {
+                # CodexBar reports the Gemini group's fullest window as primary.
+                "primary": argon,
+                "secondary": short,
+                "extraRateWindows": [
+                    extra("gemini-5h", "Gemini 5-hour", short),
+                    extra("gemini-weekly", "Gemini weekly", weekly),
+                    extra("gemini-argon-wtu-weekly", "Gemini weekly", argon),
+                    extra("3p-5h", "Claude/GPT 5-hour", short),
+                    extra("3p-weekly", "Claude/GPT weekly", window(0, 10080)),
+                ],
+            },
+        }
+        rows = quota_rows(entry, NOW)
+        self.assertEqual(
+            [(row.title, row.value) for row in rows],
+            [
+                ("Gemini · 5-hour", "0% used"),
+                ("Gemini · Weekly", "0.2% used"),
+                ("Gemini Argon · Weekly", "55.1% used"),
+                ("Claude/GPT · 5-hour", "0% used"),
+                ("Claude/GPT · Weekly", "0% used"),
+            ],
+        )
+
     def test_antigravity_partial_or_conflicting_extra_does_not_hide_base(self):
         entry = {
             "provider": "antigravity",

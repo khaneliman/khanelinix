@@ -21,6 +21,13 @@ PROVIDERS = {
     "commandcode": "Command Code",
     "zai": "z.ai",
 }
+# Antigravity files Argon's own allowance under its Gemini group, so the Argon
+# prefix must match before the general Gemini one.
+ANTIGRAVITY_SCOPES = (
+    ("gemini-argon", "Gemini Argon"),
+    ("gemini", "Gemini"),
+    ("3p", "Claude/GPT"),
+)
 
 
 def provider_name(provider):
@@ -154,9 +161,16 @@ def quota_rows(entry, now=None, exact_mode=None):
         title = str(item.get("title") or item.get("id") or "Additional quota")
         if entry.get("provider") == "antigravity":
             identifier = str(item.get("id") or "")
-            for scope_id, scope in (("gemini", "Gemini"), ("3p", "Claude/GPT")):
-                if identifier.startswith(f"antigravity-quota-summary-{scope_id}-"):
-                    title = f"{scope} · {period(window, 'Quota')}"
+            scope = next(
+                (
+                    name
+                    for scope_id, name in ANTIGRAVITY_SCOPES
+                    if identifier.startswith(f"antigravity-quota-summary-{scope_id}-")
+                ),
+                None,
+            )
+            if scope:
+                title = f"{scope} · {period(window, 'Quota')}"
         elif (
             entry.get("provider") == "claude"
             and period(window) == "Weekly"
