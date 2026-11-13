@@ -13,23 +13,30 @@ by `route-model.py` and its JSON contract.
 
 <!-- BEGIN GENERATED SUBSCRIPTIONS -->
 
-| Subscription         | Model agents                                                                                                   |
-| -------------------- | -------------------------------------------------------------------------------------------------------------- |
-| OpenAI (Codex)       | `gpt-6-luna`, `gpt-5-6-terra`, `gpt-6-1-sol`, `gpt-6-astra`                                                    |
-| Anthropic            | `opus-5-5`, `fable-5-2`, `sonnet-5-5`, `haiku-5-5`                                                             |
-| Google (Antigravity) | `gpt-oss-120b`, `google-opus-5-5`, `google-sonnet-5-5`, `gemini-4-argon`, `gemini-3-8-flash`, `gemini-3-1-pro` |
+| Subscription         | Model agents                                                                                                                        |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| OpenAI (Codex)       | `gpt-6-luna`, `gpt-5-6-terra`, `gpt-6-1-sol`, `gpt-6-astra`                                                                         |
+| Anthropic            | `opus-5-5`, `fable-5-2`, `sonnet-5-5`, `haiku-5-5`                                                                                  |
+| Google (Antigravity) | `gpt-oss-120b`, `google-opus-5-5`, `google-sonnet-5-5`, `gemini-4-argon`, `gemini-4-hydrogen`, `gemini-3-8-flash`, `gemini-3-1-pro` |
 
 <!-- END GENERATED SUBSCRIPTIONS -->
 
 Favor the existing Codex and Claude subscriptions for ordinary coding work.
 Google AI Pro is secondary: use Gemini for supported multimodal inputs, bounded
 overflow, or a useful independent perspective. Compare accepted work, rework,
-elapsed time, and actual subscription usage, not API prices alone. Within
-Google, Gemini 4 Argon is the stronger agentic model (Terminal-Bench 4.0 57% vs
-20% for 3.8 Flash) and takes implementation, reproduction, diagnosis, review,
-multimodal, and deliberation seats. Gemini 3.8 Flash matches Argon on
-long-context reading (AA-LCR) at about 40% less cost per task, so it keeps the
-lookup, discovery, and validation fallbacks.
+elapsed time, and actual subscription usage, not API prices alone.
+
+Within Google, Gemini 4 Hydrogen is the execution model. It replaces Gemini 3.8
+Flash on the lookup, discovery, and validation fallbacks and takes the
+implementation and reproduction fallbacks from Argon. It scores at or above
+Argon on general capability and on independent coding runs, finishes about twice
+as fast, and draws on the general Gemini quota windows, not Argon's separate
+weekly cap. Google positions Hydrogen for work that needs no separate planning
+phase, so hand it a settled plan. Gemini 4 Argon keeps the judgment seats
+(diagnosis, review, and deliberation) and stays preferred for multimodal
+analysis until evidence specific to those tasks favors Hydrogen. Gemini 3.8
+Flash holds no route and stays available for explicit requests only. See the
+[November 2026 Hydrogen evidence](routing-evidence-2026-11.md).
 
 Use Luna for bounded discovery, reproduction, mechanical edits, and checks; Sol
 for routine implementation and review; Opus or Astra for serious review and
@@ -67,18 +74,18 @@ Every subscription requires a live route and current authentication.
 
 | Need                                       | Preferred                 | Fallback                                                        | Semantic role  | Write policy                      |
 | ------------------------------------------ | ------------------------- | --------------------------------------------------------------- | -------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-6-luna`              | `haiku-5-5`, `gemini-3-8-flash`                                 | `mechanic`     | read-only unless edit is explicit |
-| repository discovery                       | `gpt-6-luna`              | `haiku-5-5`, `gpt-6-1-sol`, `gemini-3-8-flash`                  | `fact-finder`  | read-only                         |
-| bounded reproduction                       | `gpt-6-luna`              | `haiku-5-5`, `gpt-6-1-sol`, `opus-5-5`, `gemini-4-argon`        | `probe-runner` | build artifacts only              |
-| focused validation                         | `gpt-6-luna`              | `haiku-5-5`, `gemini-3-8-flash`                                 | `checker`      | build artifacts only              |
-| noisy validation                           | `gpt-6-luna`              | `haiku-5-5`, `gemini-3-8-flash`, `gpt-oss-120b`                 | `test-runner`  | build artifacts only              |
-| implementation                             | `gpt-6-1-sol`             | `opus-5-5`, `gpt-6-luna`, `haiku-5-5`, `gemini-4-argon`         | `implementer`  | workspace write                   |
-| difficult implementation                   | `gpt-6-1-sol`, `opus-5-5` | `gpt-6-luna`, `haiku-5-5`, `gemini-4-argon`                     | `implementer`  | workspace write                   |
+| obvious lookup or mechanical one-file edit | `gpt-6-luna`              | `haiku-5-5`, `gemini-4-hydrogen`                                | `mechanic`     | read-only unless edit is explicit |
+| repository discovery                       | `gpt-6-luna`              | `haiku-5-5`, `gpt-6-1-sol`, `gemini-4-hydrogen`                 | `fact-finder`  | read-only                         |
+| bounded reproduction                       | `gpt-6-luna`              | `haiku-5-5`, `gpt-6-1-sol`, `opus-5-5`, `gemini-4-hydrogen`     | `probe-runner` | build artifacts only              |
+| focused validation                         | `gpt-6-luna`              | `haiku-5-5`, `gemini-4-hydrogen`                                | `checker`      | build artifacts only              |
+| noisy validation                           | `gpt-6-luna`              | `haiku-5-5`, `gemini-4-hydrogen`, `gpt-oss-120b`                | `test-runner`  | build artifacts only              |
+| implementation                             | `gpt-6-1-sol`             | `opus-5-5`, `gpt-6-luna`, `haiku-5-5`, `gemini-4-hydrogen`      | `implementer`  | workspace write                   |
+| difficult implementation                   | `gpt-6-1-sol`, `opus-5-5` | `gpt-6-luna`, `haiku-5-5`, `gemini-4-hydrogen`                  | `implementer`  | workspace write                   |
 | ambiguous diagnosis                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-4-argon`                                    | `debugger`     | read-only                         |
 | plan or code review                        | `opus-5-5`, `gpt-6-astra` | `gpt-6-1-sol`, `gemini-4-argon`, `fable-5-2`, `google-opus-5-5` | `reviewer`     | read-only                         |
 | routine code review                        | `gpt-6-1-sol`             | `opus-5-5`, `gemini-4-argon`                                    | `reviewer`     | read-only                         |
 | bounded Sonnet trial                       | `sonnet-5-5`              | `gpt-6-1-sol`, `opus-5-5`                                       | `implementer`  | workspace write                   |
-| multimodal analysis                        | `gemini-4-argon`          | `gpt-6-1-sol`, `opus-5-5`                                       | `fact-finder`  | read-only                         |
+| multimodal analysis                        | `gemini-4-argon`          | `gemini-4-hydrogen`, `gpt-6-1-sol`, `opus-5-5`                  | `fact-finder`  | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5-5`, Google
 `gemini-4-argon` with `google-opus-5-5` fallback (degraded family diversity),
@@ -322,9 +329,10 @@ targets do not use local model-named agent registrations, and native success
 does not reopen a failed local named-agent surface. Claim revisions, provider
 quota failures, and categorical outcomes retain the same protections.
 
-- Google: Opus, Sonnet, and GPT-OSS share `claude-gpt`; Gemini Argon, Flash, and
-  Pro share `gemini`. Run [check-google-quota](../scripts/check-google-quota.sh)
-  once before Google dispatch when `codexbar` is available.
+- Google: Opus, Sonnet, and GPT-OSS share `claude-gpt`; Gemini Argon, Hydrogen,
+  Flash, and Pro share `gemini`. Run
+  [check-google-quota](../scripts/check-google-quota.sh) once before Google
+  dispatch when `codexbar` is available.
 - OpenAI: Luna, Terra, Sol, and Astra share `general` conservatively. Do not
   preflight without reliable pool telemetry. A `429` opens this shared pool;
   switch providers rather than retry another OpenAI model.
@@ -349,7 +357,7 @@ quota failures, and categorical outcomes retain the same protections.
 
 - Give frontier reasoning seats such as Astra, Opus, Fable, Sol, or comparable
   models time to research, reason, and synthesize on large tasks. Fast models
-  such as Luna, Flash, or Haiku should receive narrower packets and may be
+  such as Luna, Hydrogen, or Haiku should receive narrower packets and may be
   redirected sooner.
 - Treat a wait or poll timeout as observer cadence, not worker failure or a
   runtime deadline. Repeat polls without changing healthy seat state; use longer

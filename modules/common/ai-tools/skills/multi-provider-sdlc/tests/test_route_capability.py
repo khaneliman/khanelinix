@@ -482,7 +482,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(claim["planRevision"], 0)
         self.assertEqual(
             claim["plannedCandidates"],
-            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-argon"],
+            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
         )
         self.assertIsNone(claim["candidateOverride"])
         self.assertEqual(
@@ -510,7 +510,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(stored_claim["plan_revision"], 0)
         self.assertEqual(
             stored_claim["planned_candidates"],
-            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-argon"],
+            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
         )
         self.assertIsNone(stored_claim["candidate_override"])
 
@@ -591,7 +591,7 @@ class RouteCapabilityTests(unittest.TestCase):
         )
         self.assertEqual(
             claim["plannedCandidates"],
-            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-argon"],
+            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
         )
         self.assertEqual(stored_claim["candidate_override"], claim["candidateOverride"])
 
@@ -1063,7 +1063,7 @@ class RouteCapabilityTests(unittest.TestCase):
         claim["planned_candidates"] = [
             "opus-5-5",
             "gpt-6-luna",
-            "gemini-4-argon",
+            "gemini-4-hydrogen",
         ]
         claim["candidate_override"] = {
             "marker": "non-candidate",

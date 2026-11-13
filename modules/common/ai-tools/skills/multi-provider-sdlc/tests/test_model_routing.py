@@ -115,9 +115,9 @@ class ModelRoutingTests(unittest.TestCase):
         )
         self.assertEqual(
             routes["difficult implementation"]["fallbacks"],
-            ["gpt-6-luna", "haiku-5-5", "gemini-4-argon"],
+            ["gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
         )
-        self.assertTrue(self.registry["models"]["gemini-4-argon"]["write"])
+        self.assertTrue(self.registry["models"]["gemini-4-hydrogen"]["write"])
         self.assertTrue(self.registry["models"]["gpt-6-1-sol"]["workspace_write"])
         self.assertFalse(self.registry["models"]["gpt-6-astra"]["write"])
 
@@ -364,7 +364,7 @@ class ModelRoutingTests(unittest.TestCase):
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
             False: "c68a39ff7d2dc98499c56c5265c9c9452f7b8546f3472da4fb6bcc2eb118e5e4",
-            True: "8979199d66d681698e2aabb0323398c6903be8c7700f9ee77ef821c51c995e88",
+            True: "d512940bfb4f601b388e2b25ed879e574d6537f32449feea159bcdcf1248b41b",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():
