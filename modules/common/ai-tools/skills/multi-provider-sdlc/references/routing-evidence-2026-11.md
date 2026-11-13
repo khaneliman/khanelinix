@@ -71,9 +71,13 @@ which report them from Artificial Analysis.
 - Antigravity CLI 1.5.8 lists Hydrogen at `low`, `medium`, `high`, and `xhigh`.
   A one-prompt run at `high` succeeded on the Google AI Pro account.
 - That run moved the general Gemini five-hour and weekly quota windows by about
-  one point each. Argon's separate weekly window stayed at 55%.
-  `check-google-quota.sh` still folds all three windows into one `gemini` pool,
-  so an exhausted Argon cap also blocks Hydrogen and Flash.
+  0.3 points each and left Argon's weekly window at 55%. A one-prompt Argon run
+  did the reverse: it moved only Argon's window, by about 0.2 points. That
+  matches Antigravity's October 15 rollout note, quoted in
+  [rollout coverage](https://www.techcityauthority.com/2026/10/antigravity-gemini-4-argon-google-ai-pro.html),
+  of "a separate weekly-only Argon quota for Pro on top of the existing Gemini
+  bucket". Antigravity lists all three windows under one Gemini group, but they
+  meter separately, so the registry gives Argon its own `gemini-argon` pool.
 - The gateway discovers Antigravity models at runtime and publishes Hydrogen
   only as `gemini-4-hydrogen-xhigh`, so the registry uses that ID. The thinking
   level a gateway request runs at was not established.

@@ -111,6 +111,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self,
         claude_status: str = "available",
         gemini_status: str = "available",
+        argon_status: str = "available",
     ) -> dict[str, object]:
         def report(pool: str, status_value: str) -> dict[str, object]:
             value: dict[str, object] = {
@@ -126,6 +127,7 @@ class RouteCapabilityTests(unittest.TestCase):
             "pools": {
                 "claude-gpt": report("claude-gpt", claude_status),
                 "gemini": report("gemini", gemini_status),
+                "gemini-argon": report("gemini-argon", argon_status),
             },
         }
 
@@ -1100,6 +1102,10 @@ class RouteCapabilityTests(unittest.TestCase):
                             "id": "antigravity-quota-summary-gemini-test",
                             "window": {"usedPercent": 25},
                         },
+                        {
+                            "id": "antigravity-quota-summary-gemini-argon-test",
+                            "window": {"usedPercent": 100},
+                        },
                     ]
                 }
             }
@@ -1123,10 +1129,9 @@ class RouteCapabilityTests(unittest.TestCase):
 
         self.assertEqual(report["pools"]["claude-gpt"]["status"], "exhausted")
         self.assertEqual(report["pools"]["gemini"]["status"], "available")
-        self.assertEqual(
-            report["pools"]["claude-gpt"]["models"],
-            self.pool_models("claude-gpt"),
-        )
+        self.assertEqual(report["pools"]["gemini-argon"]["status"], "exhausted")
+        for pool in ("claude-gpt", "gemini", "gemini-argon"):
+            self.assertEqual(report["pools"][pool]["models"], self.pool_models(pool))
         self.assertNotIn("usedPercent", result.stdout)
         self.assertNotIn("resetsAt", result.stdout)
 

@@ -88,7 +88,7 @@
 		"gemini-4-argon": {
 			"subscription": "google",
 			"model_family": "google-gemini",
-			"quota_pool": "gemini",
+			"quota_pool": "gemini-argon",
 			"upstream_provider": "antigravity",
 			"upstream_model": "gemini-4-argon-high",
 			"gateway_alias": "claude-gemini-4-argon",
@@ -494,7 +494,7 @@
 	},
 	"quota_pools": {
 		"openai": ["general"],
-		"google": ["claude-gpt", "gemini"],
+		"google": ["claude-gpt", "gemini", "gemini-argon"],
 		"anthropic": ["general"]
 	}
 }

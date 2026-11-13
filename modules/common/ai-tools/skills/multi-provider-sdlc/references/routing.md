@@ -329,10 +329,11 @@ targets do not use local model-named agent registrations, and native success
 does not reopen a failed local named-agent surface. Claim revisions, provider
 quota failures, and categorical outcomes retain the same protections.
 
-- Google: Opus, Sonnet, and GPT-OSS share `claude-gpt`; Gemini Argon, Hydrogen,
-  Flash, and Pro share `gemini`. Run
-  [check-google-quota](../scripts/check-google-quota.sh) once before Google
-  dispatch when `codexbar` is available.
+- Google: Opus, Sonnet, and GPT-OSS share `claude-gpt`; Gemini Hydrogen, Flash,
+  and Pro share `gemini`. Gemini Argon has its own weekly allowance in
+  `gemini-argon`, so either Gemini pool can run out while the other still has
+  quota. Run [check-google-quota](../scripts/check-google-quota.sh) once before
+  Google dispatch when `codexbar` is available.
 - OpenAI: Luna, Terra, Sol, and Astra share `general` conservatively. Do not
   preflight without reliable pool telemetry. A `429` opens this shared pool;
   switch providers rather than retry another OpenAI model.

@@ -62,18 +62,19 @@ printf '%s\n' "$usage_json" | jq -c --slurpfile registry "$registry" \
           { status: "available", models: $models }
         end;
 
+    def scoped($scope):
+      select(.id | startswith("antigravity-quota-summary-" + $scope + "-"));
+
     .[0].usage.extraRateWindows as $windows
+    | [$windows[] | scoped("gemini-argon")] as $argon
     | {
         provider: "google",
         pools: {
-          "claude-gpt": summarize(
-            [$windows[] | select(.id | startswith("antigravity-quota-summary-3p-"))];
-            "claude-gpt"
-          ),
-          gemini: summarize(
-            [$windows[] | select(.id | startswith("antigravity-quota-summary-gemini-"))];
-            "gemini"
-          )
+          "claude-gpt": summarize([$windows[] | scoped("3p")]; "claude-gpt"),
+          # Argon draws only on its own allowance, so its windows must not
+          # block the models that share the general Gemini windows.
+          gemini: summarize([$windows[] | scoped("gemini")] - $argon; "gemini"),
+          "gemini-argon": summarize($argon; "gemini-argon")
         }
       }
   '
