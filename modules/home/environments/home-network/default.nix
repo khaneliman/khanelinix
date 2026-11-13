@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   osConfig ? { },
   ...
 }:
@@ -46,6 +47,15 @@ let
     PreferredAuthentications = "publickey";
     User = "root";
   };
+
+  # Hermes is a Docker container on the home server, so its repair steps need
+  # root there and travel as one script over the SSH session.
+  hermesReauth = pkgs.writeShellApplication {
+    name = "hermes-reauth";
+    text = ''
+      exec ssh -tt austinserver-root-ts "$(< ${./hermes-reauth.sh})"
+    '';
+  };
 in
 {
   options.khanelinix.environments.home-network = with types; {
@@ -66,6 +76,8 @@ in
     khanelinix.services.mpd.musicDirectory = mkIf config.khanelinix.services.mpd.enable (
       lib.mkDefault "nfs://${serverHostname}/mnt/user/data/media/music"
     );
+
+    home.packages = mkIf tailscaleEnabled [ hermesReauth ];
 
     # Run once from each client host that needs access:
     # ssh-copy-id -i ~/.ssh/id_ed25519.pub ${config.khanelinix.user.name}@${serverLocalHostname}
