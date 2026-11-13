@@ -44,8 +44,8 @@ in
 
         # Task shortcuts
         "agy-deep" = "agy --model \"Gemini 4 Argon (High)\"";
-        "agy-quick" = "agy --model \"Gemini 3.8 Flash (High)\"";
-        "agy-nano" = "agy --model \"Gemini 3.8 Flash (Low)\"";
+        "agy-quick" = "agy --model \"Gemini 4 Hydrogen (High)\"";
+        "agy-nano" = "agy --model \"Gemini 4 Hydrogen (Low)\"";
       };
     };
 
