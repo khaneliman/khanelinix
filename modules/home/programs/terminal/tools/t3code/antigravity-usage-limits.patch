@@ -1,7 +1,7 @@
 # Retain nonblocking quota reads and account-switch guards on upstream usage limits.
-# Rebased on 4fd40e1a16e3800418b8f6a32932b68179098c8d.
+# Rebased on c24255826be5aabb0f32ee18f6ac7dec0b3f1347.
 diff --git a/apps/server/src/provider/AntigravityProvider.test.ts b/apps/server/src/provider/AntigravityProvider.test.ts
-index 791ed748de..cc67b6cb88 100644
+index a676273827..26f23ec504 100644
 --- a/apps/server/src/provider/AntigravityProvider.test.ts
 +++ b/apps/server/src/provider/AntigravityProvider.test.ts
 @@ -9,6 +9,7 @@ import {
@@ -47,54 +47,54 @@ index 791ed748de..cc67b6cb88 100644
      },
    );
    const initialUpdate = yield* Stream.toPull(
-@@ -713,25 +719,15 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
-           const published = yield* harness.nextPublish((snapshot) => !!snapshot.usageLimits);
-           yield* harness.initialize;
-           expect((yield* published)?.usageLimits).toEqual(limits);
--          // The second health check is the one the failed background read triggers.
--          const checks = yield* Ref.make(0);
--          const failedReadApplied = yield* Deferred.make<void>();
--          yield* Ref.set(
--            harness.probe,
--            Ref.updateAndGet(checks, (count) => count + 1).pipe(
--              Effect.tap((count) =>
--                count === 2 ? Deferred.succeed(failedReadApplied, undefined) : Effect.void,
--              ),
--              Effect.as(initializeResult),
+@@ -682,25 +688,15 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
+         const published = yield* harness.nextPublish((snapshot) => !!snapshot.usageLimits);
+         yield* harness.initialize;
+         expect((yield* published)?.usageLimits).toEqual(limits);
+-        // The second health check is the one the failed background read triggers.
+-        const checks = yield* Ref.make(0);
+-        const failedReadApplied = yield* Deferred.make<void>();
+-        yield* Ref.set(
+-          harness.probe,
+-          Ref.updateAndGet(checks, (count) => count + 1).pipe(
+-            Effect.tap((count) =>
+-              count === 2 ? Deferred.succeed(failedReadApplied, undefined) : Effect.void,
 -            ),
--          );
-+          yield* Ref.set(harness.probe, Effect.succeed(initializeResult));
-           yield* Ref.set(usage, {
-             checkedAt: "2026-10-09T12:01:00.000Z",
-             windows: [],
-             unavailable: { reason: "probeFailed" },
-           });
-+          yield* TestClock.adjust("30 seconds");
-           yield* harness.provider.snapshot.refresh;
--          yield* Deferred.await(failedReadApplied);
-+          yield* TestClock.adjust("0 seconds");
-           expect((yield* harness.provider.snapshot.getSnapshot).usageLimits).toEqual(limits);
-           yield* harness.provider.onSignedOut;
-           expect((yield* harness.provider.snapshot.getSnapshot).usageLimits).toBeUndefined();
-@@ -743,7 +739,7 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
-           const unsupported = yield* harness.nextPublish(
-             (snapshot) => snapshot.usageLimits?.unavailable?.reason === "unsupported",
-           );
--          yield* harness.provider.snapshot.refresh;
-+          yield* harness.provider.onSessionStarted(started);
-           expect((yield* unsupported)?.usageLimits?.windows).toEqual([]);
-         }),
-       ),
-@@ -764,6 +760,7 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
-           usage,
-           Deferred.succeed(readStarted, undefined).pipe(Effect.andThen(Deferred.await(readResult))),
-         );
+-            Effect.as(initializeResult),
+-          ),
+-        );
++        yield* Ref.set(harness.probe, Effect.succeed(initializeResult));
+         yield* Ref.set(usage, {
+           checkedAt: "2026-10-09T12:01:00.000Z",
+           windows: [],
+           unavailable: { reason: "probeFailed" },
+         });
 +        yield* TestClock.adjust("30 seconds");
-         const refresh = yield* harness.provider.snapshot.refresh.pipe(Effect.forkChild);
-         yield* Deferred.await(readStarted);
+         yield* harness.provider.snapshot.refresh;
+-        yield* Deferred.await(failedReadApplied);
++        yield* TestClock.adjust("0 seconds");
+         expect((yield* harness.provider.snapshot.getSnapshot).usageLimits).toEqual(limits);
          yield* harness.provider.onSignedOut;
-@@ -849,3 +846,491 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
-     ),
+         expect((yield* harness.provider.snapshot.getSnapshot).usageLimits).toBeUndefined();
+@@ -712,7 +708,7 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
+         const unsupported = yield* harness.nextPublish(
+           (snapshot) => snapshot.usageLimits?.unavailable?.reason === "unsupported",
+         );
+-        yield* harness.provider.snapshot.refresh;
++        yield* harness.provider.onSessionStarted(started);
+         expect((yield* unsupported)?.usageLimits?.windows).toEqual([]);
+       }),
+   );
+@@ -731,6 +727,7 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
+         usage,
+         Deferred.succeed(readStarted, undefined).pipe(Effect.andThen(Deferred.await(readResult))),
+       );
++      yield* TestClock.adjust("30 seconds");
+       const refresh = yield* harness.provider.snapshot.refresh.pipe(Effect.forkChild);
+       yield* Deferred.await(readStarted);
+       yield* harness.provider.onSignedOut;
+@@ -807,3 +804,491 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
+     }),
    );
  });
 +
@@ -586,10 +586,10 @@ index 791ed748de..cc67b6cb88 100644
 +  );
 +});
 diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/provider/AntigravityProvider.ts
-index ed047331e7..7310571d37 100644
+index b140c7511c..a8b5863e87 100644
 --- a/apps/server/src/provider/AntigravityProvider.ts
 +++ b/apps/server/src/provider/AntigravityProvider.ts
-@@ -9,12 +9,13 @@ import {
+@@ -10,12 +10,13 @@ import {
    type ServerProviderUsageLimits,
  } from "@t3tools/contracts";
  import { createModelCapabilities } from "@t3tools/shared/model";
@@ -605,7 +605,7 @@ index ed047331e7..7310571d37 100644
  import * as Predicate from "effect/Predicate";
  import * as Result from "effect/Result";
  import * as Stream from "effect/Stream";
-@@ -44,11 +45,6 @@ const HEALTH_CHECK_TIMEOUT = "90 seconds";
+@@ -45,11 +46,6 @@ const HEALTH_CHECK_TIMEOUT_MS = 90_000;
  const SIGN_IN_MESSAGE = "Sign in with Google to use Antigravity.";
  const AUTH_UNCHECKED_MESSAGE =
    "Antigravity is installed. Google account access is not checked yet.";
@@ -617,7 +617,7 @@ index ed047331e7..7310571d37 100644
  type SessionSetupResult = Pick<
    AcpSessionRuntime.AcpSessionRuntimeStartResult["sessionSetupResult"],
    "configOptions" | "models"
-@@ -152,6 +148,7 @@ function isMissingInstallation(error: EffectAcpErrors.AcpError | ProviderSetupEr
+@@ -153,6 +149,7 @@ function isMissingInstallation(error: EffectAcpErrors.AcpError | ProviderSetupEr
  interface AntigravityProviderState {
    readonly draft: ServerProviderDraft;
    readonly authRevision: number;
@@ -625,7 +625,7 @@ index ed047331e7..7310571d37 100644
  }
  
  interface AntigravityProviderOptions {
-@@ -163,6 +160,8 @@ interface AntigravityProviderOptions {
+@@ -165,6 +162,8 @@ interface AntigravityProviderOptions {
    readonly supportsTextGeneration: Effect.Effect<boolean>;
    readonly probeUsage?: Effect.Effect<ServerProviderUsageLimits>;
    readonly clearUsage?: Effect.Effect<void>;
@@ -634,7 +634,7 @@ index ed047331e7..7310571d37 100644
    readonly maintenanceCapabilities?: ProviderMaintenanceCapabilities;
    readonly auth?: { readonly type: string; readonly label: string };
  }
-@@ -180,6 +179,7 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -182,6 +181,7 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
      ? `Antigravity is installed. Connect with ${options.auth.label} to load models.`
      : AUTH_UNCHECKED_MESSAGE;
    const checkedAt = DateTime.formatIso(yield* DateTime.now);
@@ -642,7 +642,7 @@ index ed047331e7..7310571d37 100644
    const initialDraft = {
      ...buildServerProvider({
        presentation: {
-@@ -209,6 +209,7 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -211,6 +211,7 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
    const metadata = yield* SubscriptionRef.make<AntigravityProviderState>({
      draft: initialDraft,
      authRevision: 0,
@@ -650,7 +650,7 @@ index ed047331e7..7310571d37 100644
    });
    // Preserve disk-discovered skills when callbacks replace workspace commands; the registry will not rescan them.
    const discoveredSkills = new Map<string, ServerProvider["skills"]>();
-@@ -227,45 +228,119 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -229,45 +230,119 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
      Effect.flatMap((state) => options.stampIdentity(state.draft)),
    );
  
@@ -802,7 +802,7 @@ index ed047331e7..7310571d37 100644
    });
  
    const checkProvider = Effect.fn("checkAntigravityProvider")(function* () {
-@@ -333,8 +408,10 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -337,8 +412,10 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
          },
        } satisfies AntigravityProviderState;
      });
@@ -815,7 +815,7 @@ index ed047331e7..7310571d37 100644
    });
  
    const maintenanceCapabilities =
-@@ -353,11 +430,14 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -357,11 +434,14 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
      enrichSnapshot: ({ publishSnapshot }) =>
        SubscriptionRef.changes(metadata).pipe(
          Stream.runForEach((state) =>
@@ -832,7 +832,7 @@ index ed047331e7..7310571d37 100644
  
    const onSessionStarted = Effect.fn("AntigravityProvider.onSessionStarted")(function* (
      started: AcpSessionRuntime.AcpSessionRuntimeStartResult,
-@@ -366,20 +446,19 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -370,20 +450,19 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
      if (!settings.enabled) return;
      observeThinkingLevels(started.sessionSetupResult.configOptions);
      const before = yield* SubscriptionRef.get(metadata);
@@ -859,7 +859,7 @@ index ed047331e7..7310571d37 100644
          draft: {
            ...draft,
            installed: true,
-@@ -408,8 +487,14 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -412,8 +491,14 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
              : {}),
          },
        } satisfies AntigravityProviderState;
@@ -875,7 +875,7 @@ index ed047331e7..7310571d37 100644
    });
  
    const onConfigOptionsUpdated = Effect.fn("AntigravityProvider.onConfigOptionsUpdated")(function* (
-@@ -462,11 +547,13 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -466,11 +551,13 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
      yield* resetUsage;
      if (!settings.enabled) return;
      const updatedAt = DateTime.formatIso(yield* DateTime.now);
@@ -889,7 +889,7 @@ index ed047331e7..7310571d37 100644
            draft: {
              ...state.draft,
              auth: {
-@@ -522,22 +609,15 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
+@@ -526,22 +613,15 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
      onSessionStarted,
      onConfigOptionsUpdated,
      onAvailableCommands,
@@ -919,10 +919,10 @@ index ed047331e7..7310571d37 100644
      onSignedOut: clearAccountMetadata(),
      onAuthRequired: clearAccountMetadata(),
 diff --git a/apps/server/src/provider/Drivers/AntigravityDriver.ts b/apps/server/src/provider/Drivers/AntigravityDriver.ts
-index 7bb1f25b67..44b0d39332 100644
+index 75bca5acc8..dddb143e92 100644
 --- a/apps/server/src/provider/Drivers/AntigravityDriver.ts
 +++ b/apps/server/src/provider/Drivers/AntigravityDriver.ts
-@@ -437,6 +437,7 @@ export const AntigravityDriver: ProviderDriver<
+@@ -438,6 +438,7 @@ export const AntigravityDriver: ProviderDriver<
        stampIdentity: classifyModels,
        probe,
        probeUsage: usage.probe,
@@ -969,10 +969,10 @@ index ede0e5c47d..fd76bbceea 100644
        cached = undefined;
        generation++;
 diff --git a/packages/provider-core/src/server/managedProvider.test.ts b/packages/provider-core/src/server/managedProvider.test.ts
-index 67549e3a52..a9f7abf15b 100644
+index f878b2f44e..f6ae20b78f 100644
 --- a/packages/provider-core/src/server/managedProvider.test.ts
 +++ b/packages/provider-core/src/server/managedProvider.test.ts
-@@ -746,6 +746,49 @@ describe("makeManagedServerProvider", () => {
+@@ -791,6 +791,49 @@ describe("makeManagedServerProvider", () => {
      ).pipe(Effect.provide(layerAlwaysRunTest)),
    );
  
@@ -1023,7 +1023,7 @@ index 67549e3a52..a9f7abf15b 100644
      { name: "a live plan", clearPlan: false },
      { name: "a cleared plan", clearPlan: true },
 diff --git a/packages/provider-core/src/server/managedProvider.ts b/packages/provider-core/src/server/managedProvider.ts
-index 9f3a5277af..4edbc842ce 100644
+index 33a8273359..15dd28b36e 100644
 --- a/packages/provider-core/src/server/managedProvider.ts
 +++ b/packages/provider-core/src/server/managedProvider.ts
 @@ -59,7 +59,10 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
@@ -1073,10 +1073,10 @@ index 9f3a5277af..4edbc842ce 100644
        .pipe(Effect.ignoreCause({ log: true }), Effect.forkIn(scope));
  
 diff --git a/packages/provider-core/src/server/usageLimits.test.ts b/packages/provider-core/src/server/usageLimits.test.ts
-index 4b9c1b39c8..264666dadf 100644
+index 2acdb0ba15..9b3cc568b0 100644
 --- a/packages/provider-core/src/server/usageLimits.test.ts
 +++ b/packages/provider-core/src/server/usageLimits.test.ts
-@@ -112,6 +112,23 @@ describe("resolveUsageLimitsAfterProbe", () => {
+@@ -136,6 +136,23 @@ describe("resolveUsageLimitsAfterProbe", () => {
      expect(resolveUsageLimitsAfterProbe({ published: live, probed: newer })).toEqual(newer);
    });
  
@@ -1101,10 +1101,10 @@ index 4b9c1b39c8..264666dadf 100644
      const failed = { checkedAt, windows: [], unavailable: { reason: "probeFailed" as const } };
      const unsupported = { checkedAt, windows: [], unavailable: { reason: "unsupported" as const } };
 diff --git a/packages/provider-core/src/server/usageLimits.ts b/packages/provider-core/src/server/usageLimits.ts
-index 1e4bcd0090..91870f7acb 100644
+index 7d1f6e6a91..8f4ac384cc 100644
 --- a/packages/provider-core/src/server/usageLimits.ts
 +++ b/packages/provider-core/src/server/usageLimits.ts
-@@ -104,7 +104,14 @@ export function resolveUsageLimitsAfterProbe(input: {
+@@ -115,7 +115,14 @@ export function resolveUsageLimitsAfterProbe(input: {
    readonly probed: ServerProviderUsageLimits | undefined;
  }): ServerProviderUsageLimits | undefined {
    const { published, probed } = input;
