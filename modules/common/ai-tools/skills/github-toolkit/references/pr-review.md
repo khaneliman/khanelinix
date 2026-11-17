@@ -298,7 +298,11 @@ Missing coverage can be a finding when repository policy or risk requires it.
   replacement code. Validate that exact replacement with a focused check in an
   isolated scratch copy or worktree; leave the reviewed checkout unchanged. Use
   repository-ignored build scratch or the user cache, not installed skills. This
-  tests the proposed fix, not the unchanged PR's CI status.
+  tests the proposed fix, not the unchanged PR's CI status. To compare with the
+  unfixed head, copy files aside or restore them with `git show HEAD:<path>`.
+  Never use `git stash` in the scratch worktree: worktrees share the user's
+  stash list, so a failed push followed by `pop` or `drop` acts on their
+  entries.
 - For a bug fix, reproduce the relevant failure and check the replacement on
   that case. Reuse an existing check when adequate; do not automatically ask the
   author to add a new regression test. Explain what was checked and what
