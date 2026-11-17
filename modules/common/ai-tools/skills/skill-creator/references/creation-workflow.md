@@ -50,7 +50,16 @@ schema, troubleshooting area, or examples. If reference becomes broad, split it.
 Run:
 
 ```bash
-python scripts/quick_validate.py <skill-dir>
+python3 scripts/quick_validate.py <skill-dir>
+```
+
+The validator and `scripts/package_skill.py` need PyYAML. If `python3` is
+missing or cannot import `yaml`, as on a Nix system without a global Python
+environment, run them through a temporary interpreter instead:
+
+```bash
+nix-shell -p 'python3.withPackages (ps: [ ps.pyyaml ])' \
+  --run 'python3 scripts/quick_validate.py <skill-dir>'
 ```
 
 Package with `scripts/package_skill.py` only when an archive is requested.

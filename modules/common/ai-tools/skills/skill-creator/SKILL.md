@@ -52,7 +52,9 @@ location and create only resources with a current use. Use
 
 ## Validation
 
-Run `scripts/quick_validate.py <skill-dir>`. Check reference reachability,
+Run `scripts/quick_validate.py <skill-dir>`; it needs PyYAML, and
+[creation-workflow.md](references/creation-workflow.md) shows how to run it on
+Nix without a global Python. Check reference reachability,
 metadata preservation, and trigger precision. Run new or changed scripts against
 representative inputs. Structural validation does not prove useful behavior.
 
