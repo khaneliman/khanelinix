@@ -11,8 +11,11 @@ let
   t3codePatches = import ./patches.nix;
 in
 {
-  options.khanelinix.programs.terminal.tools.t3code.enable =
-    lib.mkEnableOption "T3 Code configuration";
+  options.khanelinix.programs.terminal.tools.t3code = {
+    enable = lib.mkEnableOption "T3 Code configuration";
+    # The host firewall must also admit the server port on its LAN interface.
+    lan = lib.mkEnableOption "T3 Code server LAN and tailnet routes";
+  };
 
   config =
     let
@@ -257,8 +260,9 @@ in
 
       systemd.user = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
         services = {
-          t3code.Service.Environment = lib.optional tailscaleEnabled
-            "PATH=${lib.makeBinPath [ pkgs.tailscale ]}:${config.home.profileDirectory}/bin:/run/current-system/sw/bin";
+          t3code.Service.Environment = lib.optional tailscaleEnabled "PATH=${
+            lib.makeBinPath [ pkgs.tailscale ]
+          }:${config.home.profileDirectory}/bin:/run/current-system/sw/bin";
 
           t3code-storage-gc = {
             Unit.Description = "Reclaim storage left by T3 agent runs";
@@ -298,14 +302,25 @@ in
 
         server = {
           enable = true;
-          extraArgs = [
-            "--host"
-            "127.0.0.1"
-            "--port"
-            "3773"
-          ]
-          ++ lib.optional tailscaleEnabled "--tailscale-serve"
-          ++ [ githubRoot ];
+          # Without --host, --lan binds every interface and advertises only
+          # private addresses as routes; pairing auth, not the bind, gates
+          # peers. Tailscale Serve still proxies to loopback.
+          extraArgs =
+            (
+              if cfg.lan then
+                [ "--lan" ]
+              else
+                [
+                  "--host"
+                  "127.0.0.1"
+                ]
+            )
+            ++ [
+              "--port"
+              "3773"
+            ]
+            ++ lib.optional tailscaleEnabled "--tailscale-serve"
+            ++ [ githubRoot ];
 
           # Paired desktop clients run no local server, so this covers analytics.
           environmentFile = pkgs.writeText "t3code-server.env" ''
@@ -380,11 +395,8 @@ in
             lib.optionalAttrs (config.programs.codex.enable or false) {
               codex = {
                 # Existing native model IDs and histories must not switch accounts.
-                binaryPath = lib.getExe (
-                  config.programs.codex.package.direct or config.programs.codex.package
-                );
-                homePath =
-                  config.home.sessionVariables.CODEX_HOME or "${config.home.homeDirectory}/.codex";
+                binaryPath = lib.getExe (config.programs.codex.package.direct or config.programs.codex.package);
+                homePath = config.home.sessionVariables.CODEX_HOME or "${config.home.homeDirectory}/.codex";
               };
             }
             // lib.optionalAttrs claudeCodeEnabled {

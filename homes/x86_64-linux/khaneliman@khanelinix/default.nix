@@ -513,6 +513,9 @@ in
     ];
   };
 
+  # Lets the phone prefer a direct LAN route over Tailscale at home.
+  khanelinix.programs.terminal.tools.t3code.lan = true;
+
   khanelinix.programs.terminal.tools.mcp.blender.enable = true;
   khanelinix.programs.terminal.tools.mcp.firefox.enable = true;
   khanelinix.programs.terminal.tools.mcp.freecad.enable = true;
