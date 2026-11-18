@@ -93,11 +93,11 @@ class ModelRoutingTests(unittest.TestCase):
 
         self.assertEqual(
             routes["plan or code review"]["preferred"],
-            ["opus-5-5", "gpt-6-astra"],
+            ["opus-5-5", "gpt-6-2-astra"],
         )
         self.assertEqual(
             routes["plan or code review"]["fallbacks"],
-            ["gpt-6-1-sol", "gemini-4-argon", "fable-5-2", "google-opus-5-5"],
+            ["gpt-6-2-sol", "gemini-4-argon", "fable-5-2", "google-opus-5-5"],
         )
         self.assertEqual(
             self.registry["semantic_roles"]["reviewer"]["gateway"]["claude"],
@@ -107,23 +107,23 @@ class ModelRoutingTests(unittest.TestCase):
         self.assertFalse(self.registry["models"]["fable-5-2"]["workspace_write"])
         self.assertEqual(
             routes["implementation"]["preferred"],
-            ["gpt-6-1-sol"],
+            ["gpt-6-2-sol"],
         )
         self.assertEqual(
             routes["difficult implementation"]["preferred"],
-            ["gpt-6-1-sol", "opus-5-5"],
+            ["gpt-6-2-sol", "opus-5-5"],
         )
         self.assertEqual(
             routes["difficult implementation"]["fallbacks"],
             ["gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
         )
         self.assertTrue(self.registry["models"]["gemini-4-hydrogen"]["write"])
-        self.assertTrue(self.registry["models"]["gpt-6-1-sol"]["workspace_write"])
-        self.assertFalse(self.registry["models"]["gpt-6-astra"]["write"])
+        self.assertTrue(self.registry["models"]["gpt-6-2-sol"]["workspace_write"])
+        self.assertFalse(self.registry["models"]["gpt-6-2-astra"]["write"])
 
     def test_astra_gateway_default_effort_is_low(self) -> None:
         self.assertEqual(
-            self.registry["models"]["gpt-6-astra"]["reasoning_effort"],
+            self.registry["models"]["gpt-6-2-astra"]["reasoning_effort"],
             "low",
         )
 
@@ -236,7 +236,7 @@ class ModelRoutingTests(unittest.TestCase):
             ),
             "rendered model ID": lambda value: value["semantic_roles"]["reviewer"][
                 "native"
-            ].__setitem__("codex", "gpt-6.1-sol\nname = injected"),
+            ].__setitem__("codex", "gpt-6.2-sol\nname = injected"),
         }
 
         for label, mutate in cases.items():
@@ -363,8 +363,8 @@ class ModelRoutingTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
-            False: "c68a39ff7d2dc98499c56c5265c9c9452f7b8546f3472da4fb6bcc2eb118e5e4",
-            True: "d512940bfb4f601b388e2b25ed879e574d6537f32449feea159bcdcf1248b41b",
+            False: "9101295885f20711e258a46d89b38a46ab5cf145119ac63a01b6d66143303f27",
+            True: "d60a60bdb4daae7168b435dffb2723fd300175ab405ab5dc49a60a87fe098295",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():

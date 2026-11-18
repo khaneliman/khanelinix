@@ -375,11 +375,11 @@ in
             }
             {
               provider = "codex";
-              model = "gpt-6-astra";
+              model = "gpt-6.2-astra";
             }
             {
               provider = "codex";
-              model = "gpt-6.1-sol";
+              model = "gpt-6.2-sol";
             }
             {
               provider = "codex";

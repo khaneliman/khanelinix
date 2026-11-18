@@ -87,10 +87,19 @@ let
         "--model"
         (proxyModel provider model)
       ]
-      ++ lib.optionals (provider == "codex" && model == "gpt-6-astra") [
-        "--effort"
-        modelRouting.models."gpt-6-astra".reasoning_effort
-      ]
+      ++
+        lib.optionals
+          (
+            provider == "codex"
+            && builtins.elem model [
+              "gpt-6.2-astra"
+              "gpt-6-astra"
+            ]
+          )
+          [
+            "--effort"
+            modelRouting.models.${builtins.replaceStrings [ "." ] [ "-" ] model}.reasoning_effort
+          ]
     );
 
   codexCommand =

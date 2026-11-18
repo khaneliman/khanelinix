@@ -45,7 +45,9 @@ class NativeDispatchTests(unittest.TestCase):
         return {
             "providers": [
                 provider(
-                    "work-openai", "codex", ["gpt-6.1-sol", "gpt-6-luna", "gpt-6-astra"]
+                    "work-openai",
+                    "codex",
+                    ["gpt-6.2-sol", "gpt-6-luna", "gpt-6.2-astra"],
                 ),
                 provider(
                     "work-anthropic",
@@ -75,7 +77,7 @@ class NativeDispatchTests(unittest.TestCase):
         self.assertNotIn("agent_type", review)
         self.assertEqual(review["write_policy"], "read-only")
         implementation = resolver.resolve(self.t3_request())
-        self.assertEqual(implementation["target"]["model"], "gpt-6.1-sol")
+        self.assertEqual(implementation["target"]["model"], "gpt-6.2-sol")
         self.assertEqual(
             implementation["target"]["options"], {"reasoningEffort": "medium"}
         )
@@ -105,7 +107,7 @@ class NativeDispatchTests(unittest.TestCase):
         self.assertEqual(result["status"], "blocked")
         catalog = {
             "providers": [
-                provider("wrong", "antigravity", ["claude-opus-5-5", "gpt-6.1-sol"])
+                provider("wrong", "antigravity", ["claude-opus-5-5", "gpt-6.2-sol"])
             ]
         }
         self.assertEqual(
@@ -114,7 +116,7 @@ class NativeDispatchTests(unittest.TestCase):
 
     def test_gateway_alias_and_unsupported_effort_are_not_guessed(self) -> None:
         catalog = self.catalog()
-        catalog["providers"][0]["models"][0]["id"] = "claude-gpt-6.1-sol"
+        catalog["providers"][0]["models"][0]["id"] = "claude-gpt-6.2-sol"
         self.assertEqual(
             resolver.resolve(self.t3_request(capabilities=catalog))["model_id"],
             "opus-5-5",
@@ -159,13 +161,13 @@ class NativeDispatchTests(unittest.TestCase):
     def test_t3_does_not_depend_on_or_recover_local_named_surface(self) -> None:
         request = self.state_request(gateway=False, capabilities=self.catalog())
         claim = self.capability.claim_route(
-            self.state, "task-001", 0, "implementation", "gpt-6-1-sol"
+            self.state, "task-001", 0, "implementation", "gpt-6-2-sol"
         )
         self.capability.record_outcome(
             self.state, "task-001", claim["claimId"], "agent-type-unavailable"
         )
         result = resolver.resolve(request)
-        self.assertEqual(result["target"]["model"], "gpt-6.1-sol")
+        self.assertEqual(result["target"]["model"], "gpt-6.2-sol")
         native_claim = self.claim_result(result)
         self.capability.record_outcome(
             self.state, "task-001", native_claim["claimId"], "success"

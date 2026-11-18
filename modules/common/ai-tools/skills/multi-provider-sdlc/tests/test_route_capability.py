@@ -367,7 +367,7 @@ class RouteCapabilityTests(unittest.TestCase):
         for need in ("implementation", "ambiguous diagnosis"):
             with self.subTest(need=need):
                 plan = capability.plan_route(self.state, self.task_id, need)
-                self.assertEqual(plan["selected"], "gpt-6-1-sol")
+                self.assertEqual(plan["selected"], "gpt-6-2-sol")
                 self.assertFalse(plan["selectionRequired"])
 
     def test_luna_stays_first_for_cheap_read_work(self) -> None:
@@ -377,16 +377,16 @@ class RouteCapabilityTests(unittest.TestCase):
                 plan = capability.plan_route(self.state, self.task_id, need)
                 preferred = [item["model"] for item in plan["preferredCandidates"]]
                 self.assertEqual(preferred[0], "gpt-6-luna")
-                self.assertNotIn("gpt-6-1-sol", preferred)
+                self.assertNotIn("gpt-6-2-sol", preferred)
 
     def test_sol_quota_failure_uses_an_independent_pool(self) -> None:
         self.initialize()
-        self.complete("gpt-6-1-sol", "quota-exhausted")
+        self.complete("gpt-6-2-sol", "quota-exhausted")
         plan = capability.plan_route(self.state, self.task_id, "implementation")
         self.assertEqual(plan["selected"], "opus-5-5")
         self.assertEqual(
             {item["model"] for item in plan["blocked"]},
-            {"gpt-6-1-sol", "gpt-6-luna"},
+            {"gpt-6-2-sol", "gpt-6-luna"},
         )
 
     def test_haiku_covers_luna_routes_when_openai_pool_is_exhausted(self) -> None:
@@ -452,15 +452,15 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertTrue(plan["selectionRequired"])
         self.assertEqual(
             [candidate["model"] for candidate in plan["preferredCandidates"]],
-            ["opus-5-5", "gpt-6-astra"],
+            ["opus-5-5", "gpt-6-2-astra"],
         )
         self.assertEqual(plan["candidates"][0]["modelFamily"], "anthropic-claude")
         self.assertEqual(
             [candidate["model"] for candidate in plan["candidates"]],
             [
                 "opus-5-5",
-                "gpt-6-astra",
-                "gpt-6-1-sol",
+                "gpt-6-2-astra",
+                "gpt-6-2-sol",
                 "gemini-4-argon",
                 "fable-5-2",
                 "google-opus-5-5",
@@ -484,7 +484,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(claim["planRevision"], 0)
         self.assertEqual(
             claim["plannedCandidates"],
-            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
+            ["gpt-6-2-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
         )
         self.assertIsNone(claim["candidateOverride"])
         self.assertEqual(
@@ -512,17 +512,17 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(stored_claim["plan_revision"], 0)
         self.assertEqual(
             stored_claim["planned_candidates"],
-            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
+            ["gpt-6-2-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
         )
         self.assertIsNone(stored_claim["candidate_override"])
 
     def test_known_route_allows_many_concurrent_workers(self) -> None:
         self.initialize()
-        self.complete("gpt-6-1-sol", "success")
+        self.complete("gpt-6-2-sol", "success")
         revision = self.load_state()["revision"]
         claims = []
         for _ in range(64):
-            claim = self.claim("gpt-6-1-sol", revision)
+            claim = self.claim("gpt-6-2-sol", revision)
             self.assertFalse(claim["probe"])
             self.assertEqual(claim["reservedScopes"], [])
             claims.append(claim["claimId"])
@@ -534,18 +534,18 @@ class RouteCapabilityTests(unittest.TestCase):
 
     def test_unknown_route_probe_stays_exclusive_in_known_pool(self) -> None:
         self.initialize()
-        self.complete("gpt-6-1-sol", "success")
+        self.complete("gpt-6-2-sol", "success")
         claim = self.claim("gpt-6-luna", 2)
         self.assertEqual(claim["reservedScopes"], ["route:gpt-6-luna"])
         with self.assertRaises(capability.CapabilityError):
             self.claim("gpt-6-luna", claim["revision"])
-        self.claim("gpt-6-1-sol", claim["revision"])
+        self.claim("gpt-6-2-sol", claim["revision"])
 
     def test_parallel_success_does_not_clear_a_quota_failure(self) -> None:
         self.initialize()
-        self.complete("gpt-6-1-sol", "success")
-        first = self.claim("gpt-6-1-sol", 2)
-        second = self.claim("gpt-6-1-sol", first["revision"])
+        self.complete("gpt-6-2-sol", "success")
+        first = self.claim("gpt-6-2-sol", 2)
+        second = self.claim("gpt-6-2-sol", first["revision"])
         capability.record_outcome(
             self.state, self.task_id, first["claimId"], "quota-exhausted"
         )
@@ -555,17 +555,17 @@ class RouteCapabilityTests(unittest.TestCase):
         state = self.load_state()
         self.assertEqual(state["pools"]["openai"]["general"], "open")
         with self.assertRaises(capability.CapabilityError):
-            self.claim("gpt-6-1-sol", state["revision"])
+            self.claim("gpt-6-2-sol", state["revision"])
 
     def test_state_size_guard_rejects_claim_without_corrupting_state(self) -> None:
         self.initialize()
-        self.complete("gpt-6-1-sol", "success")
+        self.complete("gpt-6-2-sol", "success")
         before = self.state.read_bytes()
         with (
             mock.patch.object(capability, "MAX_STATE_BYTES", len(before)),
             self.assertRaisesRegex(capability.CapabilityError, "exceeds"),
         ):
-            self.claim("gpt-6-1-sol", 2)
+            self.claim("gpt-6-2-sol", 2)
         self.assertEqual(self.state.read_bytes(), before)
 
     def test_non_candidate_requires_categorical_override(self) -> None:
@@ -593,7 +593,7 @@ class RouteCapabilityTests(unittest.TestCase):
         )
         self.assertEqual(
             claim["plannedCandidates"],
-            ["gpt-6-1-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
+            ["gpt-6-2-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
         )
         self.assertEqual(stored_claim["candidate_override"], claim["candidateOverride"])
 
@@ -688,7 +688,7 @@ class RouteCapabilityTests(unittest.TestCase):
         plan = capability.plan_route(self.state, self.task_id, "plan or code review")
         state = self.load_state()
 
-        self.assertEqual(plan["selected"], "gpt-6-astra")
+        self.assertEqual(plan["selected"], "gpt-6-2-astra")
         self.assertFalse(plan["selectionRequired"])
         self.assertEqual(
             plan["blocked"], [{"model": "opus-5-5", "reason": "route:opus-5-5"}]
@@ -702,7 +702,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
         plan = capability.plan_route(self.state, self.task_id, "plan or code review")
 
-        self.assertEqual(plan["selected"], "gpt-6-astra")
+        self.assertEqual(plan["selected"], "gpt-6-2-astra")
         self.assertEqual(
             {blocked["model"] for blocked in plan["blocked"]},
             {"opus-5-5", "fable-5-2"},
@@ -720,7 +720,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
         plan = capability.plan_route(self.state, self.task_id, "plan or code review")
 
-        self.assertEqual(plan["selected"], "gpt-6-astra")
+        self.assertEqual(plan["selected"], "gpt-6-2-astra")
         self.assertEqual(
             {blocked["reason"] for blocked in plan["blocked"]},
             {"provider:anthropic"},
@@ -770,7 +770,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertIsNone(opened["selected"])
         self.assertEqual(opened["semanticFallback"], "implementer")
         self.assertEqual(state["named_agents"], "available")
-        self.assertEqual(recovered["selected"], "gpt-6-1-sol")
+        self.assertEqual(recovered["selected"], "gpt-6-2-sol")
         self.assertEqual(recovered["blocked"], [])
 
     def test_explicit_agent_type_available_closes_surface_only(self) -> None:
@@ -861,7 +861,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(state["providers"]["openai"], "available")
         self.assertEqual(state["pools"]["openai"]["general"], "available")
         self.assertEqual(state["routes"]["gpt-6-luna"], "available")
-        self.assertEqual(state["routes"]["gpt-6-1-sol"], "unknown")
+        self.assertEqual(state["routes"]["gpt-6-2-sol"], "unknown")
 
     def test_open_pool_is_sticky_after_available_telemetry(self) -> None:
         self.initialize()

@@ -80,7 +80,7 @@ let
     package = codexBasePackage;
   };
   codexPackage = if gatewayEnabled then gateway.package else codexBasePackage;
-  defaultModel = "gpt-6-astra";
+  defaultModel = "gpt-6.2-astra";
   defaultWebSearch = "live";
   localCatalogOverride = lib.optionalString gatewayEnabled (
     " -c " + lib.escapeShellArg "model_catalog_json=${builtins.toJSON gateway.bundledCatalogPath}"

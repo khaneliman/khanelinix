@@ -73,7 +73,7 @@ in
         lib.recursiveUpdate {
           model = {
             provider = "openai-codex";
-            default = "gpt-6-astra";
+            default = "gpt-6.2-astra";
           };
 
           fallback_providers = [

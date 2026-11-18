@@ -85,7 +85,7 @@ let
       model_reasoning_effort = {
         codex = reasoningEffort;
       }
-      // lib.optionalAttrs (name == "gpt-6-astra") {
+      // lib.optionalAttrs (lib.hasSuffix "-astra" name) {
         claude = reasoningEffort;
       };
       sandbox_mode.codex = if workspaceWrite then "workspace-write" else "read-only";

@@ -302,7 +302,7 @@ def select(request: Any) -> dict[str, Any]:
         + model["gateway_alias"],
         "subscription": model["subscription"],
         "reasoning_effort": model["reasoning_effort"]
-        if provider == "codex" or (provider == "claude" and model_id == "gpt-6-astra")
+        if provider == "codex" or (provider == "claude" and model_id.endswith("-astra"))
         else None,
     }
     if state_request:

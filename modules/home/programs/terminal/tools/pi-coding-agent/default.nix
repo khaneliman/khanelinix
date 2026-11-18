@@ -121,7 +121,7 @@ in
       };
 
       shellAliases = {
-        pi-deep = "pi --model openai-codex/gpt-6-astra --thinking high";
+        pi-deep = "pi --model openai-codex/gpt-6.2-astra --thinking high";
         pi-json = "pi --mode json";
         pi-print = "pi --print";
         pi-quick = "pi --model openai-codex/gpt-6-luna --thinking low";
@@ -139,8 +139,8 @@ in
         defaultModel = "gpt-6-luna";
         defaultThinkingLevel = "high";
         modelThinkingLevels = {
-          "openai-codex/gpt-6-astra" = "low";
-          "openai/gpt-6-astra" = "low";
+          "openai-codex/gpt-6.2-astra" = "low";
+          "openai/gpt-6.2-astra" = "low";
         };
         enableInstallTelemetry = false;
         collapseChangelog = true;

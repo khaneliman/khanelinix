@@ -20,9 +20,9 @@ in
 {
   config = {
     programs.opencode.settings.provider = {
-      openai.models."gpt-6-astra".options.reasoningEffort = "low";
+      openai.models."gpt-6.2-astra".options.reasoningEffort = "low";
       cliproxyapi = lib.mkIf (config.khanelinix.services.cliproxyapi.enable or false) {
-        models."claude-gpt-6-astra".options.reasoningEffort = "low";
+        models."claude-gpt-6.2-astra".options.reasoningEffort = "low";
       };
 
       exo = lib.mkIf config.services.exo.enable {
