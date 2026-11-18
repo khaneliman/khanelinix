@@ -1,8 +1,8 @@
 diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/src/components/PersistentThreadTerminals.tsx
-index 5e2fe0dbe9..9b57c5fbb2 100644
+index f389dbd..881e027 100644
 --- a/apps/web/src/components/PersistentThreadTerminals.tsx
 +++ b/apps/web/src/components/PersistentThreadTerminals.tsx
-@@ -9,7 +9,7 @@
+@@ -9,7 +9,7 @@ import { scopeProjectRef } from "@t3tools/client-runtime/environment";
  import { projectScriptCwd, projectScriptRuntimeEnv } from "@t3tools/shared/projectScripts";
  import { resolveTerminalSessionLabel } from "@t3tools/shared/terminalLabelsCopy";
  import { useMessages } from "gt-react";
@@ -11,8 +11,8 @@ index 5e2fe0dbe9..9b57c5fbb2 100644
  import { useComposerDraftStore } from "../composerDraftStore";
  import { useStableCallback } from "../hooks/useStableCallback";
  import type { TerminalContextSelection } from "../lib/terminalContext";
-@@ -24,9 +24,10 @@ import { useEnvironmentScope } from "../state/session";
- import { useKnownTerminalSessions } from "../state/terminalSessions";
+@@ -25,9 +25,10 @@ import { useEnvironmentScope } from "../state/session";
+ import { useKnownTerminalSessions, useTerminalDrawerSessions } from "../state/terminalSessions";
  import { selectThreadTerminalUiState, useTerminalUiStateStore } from "../terminalUiStateStore";
  import { useThreadTerminalActions } from "./terminal/useThreadTerminalActions";
 -import ThreadTerminalDrawer from "./ThreadTerminalDrawer";
@@ -23,7 +23,7 @@ index 5e2fe0dbe9..9b57c5fbb2 100644
  /** Where a drawer or panel opens new terminals when a script run overrides the thread's own. */
  export type PersistentTerminalLaunchContext = {
    readonly cwd: string;
-@@ -249,35 +250,39 @@ export const PersistentThreadTerminalDrawer = memo(function PersistentThreadTerm
+@@ -209,35 +210,39 @@ export const PersistentThreadTerminalDrawer = memo(function PersistentThreadTerm
        )}
      >
        <div className="min-h-0 overflow-clip">
@@ -92,7 +92,7 @@ index 5e2fe0dbe9..9b57c5fbb2 100644
        </div>
      </div>
    );
-@@ -378,39 +383,43 @@ export const PersistentThreadTerminalPanel = memo(function PersistentThreadTermi
+@@ -339,39 +344,43 @@ export const PersistentThreadTerminalPanel = memo(function PersistentThreadTermi
    if (!project || !cwd) return null;
  
    return (
@@ -171,10 +171,10 @@ index 5e2fe0dbe9..9b57c5fbb2 100644
    );
  });
 diff --git a/apps/web/vite.config.ts b/apps/web/vite.config.ts
-index 501bac5dba..d337c89863 100644
+index 073fca7..f3fc59d 100644
 --- a/apps/web/vite.config.ts
 +++ b/apps/web/vite.config.ts
-@@ -384,6 +384,17 @@ export default defineConfig(() => {
+@@ -435,6 +435,17 @@ export default defineConfig(({ command }) => {
              asset.originalFileNames.some((path) => /[/\\]pdfjs-dist[/\\]wasm[/\\]/.test(path))
                ? `assets/pdfjs-${pdfjsPkg.version}/[name][extname]`
                : "assets/[name]-[hash][extname]",
