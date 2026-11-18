@@ -64,6 +64,9 @@ in
             };
             version = t3codeVersion;
             patches = (old.patches or [ ]) ++ t3codePatches;
+            # Reject fuzzy matches so upstream context shifts cannot silently
+            # place a hunk in a different function.
+            patchFlags = (old.patchFlags or [ "-p1" ]) ++ [ "--fuzz=0" ];
             nativeBuildInputs =
               (old.nativeBuildInputs or [ ])
               ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.pkg-config ];
@@ -88,7 +91,7 @@ in
                 pnpm config set fetch-retries 5
                 pnpm config set network-concurrency 8
               '';
-              hash = "sha256-27Ljt2lY4J1Fi3ddVIflPQ5erRqmgaZ8+YBH9fhCLzo=";
+              hash = "sha256-s/vm8Ox4o/AYpNC/amYP1KFWwh7SY5bCmVBuIJn9f/c=";
             };
             # License generation otherwise downloads SPDX notices during the sandboxed build.
             preBuild = ''

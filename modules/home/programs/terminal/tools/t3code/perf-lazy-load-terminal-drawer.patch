@@ -2,10 +2,10 @@ diff --git a/apps/web/src/components/PersistentThreadTerminals.tsx b/apps/web/sr
 index 5e2fe0dbe9..9b57c5fbb2 100644
 --- a/apps/web/src/components/PersistentThreadTerminals.tsx
 +++ b/apps/web/src/components/PersistentThreadTerminals.tsx
-@@ -8,7 +8,7 @@ import {
- import { scopeProjectRef } from "@t3tools/client-runtime/environment";
+@@ -9,7 +9,7 @@
  import { projectScriptCwd, projectScriptRuntimeEnv } from "@t3tools/shared/projectScripts";
- import { resolveTerminalSessionLabel } from "@t3tools/shared/terminalLabels";
+ import { resolveTerminalSessionLabel } from "@t3tools/shared/terminalLabelsCopy";
+ import { useMessages } from "gt-react";
 -import { memo, useEffect } from "react";
 +import { lazy, memo, Suspense, useEffect } from "react";
  import { useComposerDraftStore } from "../composerDraftStore";

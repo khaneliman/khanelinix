@@ -1316,11 +1316,11 @@
     "t3code": {
       "flake": false,
       "locked": {
-        "lastModified": 1794865507,
-        "narHash": "sha256-WpoMsCsAfkWr2xFVjrsMVh5WFm3Jqyk+Aen2frAWdQY=",
+        "lastModified": 1795011958,
+        "narHash": "sha256-E5hboNgXy0jsdV7vdEFwnNtT/AK43R/dbcXquGkIl7s=",
         "owner": "pingdotgg",
         "repo": "t3code",
-        "rev": "c24255826be5aabb0f32ee18f6ac7dec0b3f1347",
+        "rev": "8cf97b5f06f30a872ce30ab8a888f2ff012365a2",
         "type": "github"
       },
       "original": {

@@ -160,11 +160,14 @@ diff --git a/apps/web/src/components/files/filePreviewMode.ts b/apps/web/src/com
 index 4fca2af1..bb7fa2dd 100644
 --- a/apps/web/src/components/files/filePreviewMode.ts
 +++ b/apps/web/src/components/files/filePreviewMode.ts
-@@ -1,12 +1,32 @@
+@@ -1,15 +1,35 @@
  import type { AssetResource, ProjectReadFileError, ScopedThreadRef } from "@t3tools/contracts";
  import { mediaFileReference } from "@t3tools/client-runtime/media-reference";
 -import { isHostPath, workspaceRelativeFilePath } from "@t3tools/shared/path";
 +import { isAbsolutePath, isHostPath, workspaceRelativeFilePath } from "@t3tools/shared/path";
+ import { msg } from "gt-react";
+ 
+ import { m, type MessageResolver } from "~/i18n/messages";
  
  export function resolveFilePreviewPath(path: string | null, cwd: string): string | null {
    if (path === null) return null;

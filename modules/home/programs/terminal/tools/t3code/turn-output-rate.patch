@@ -119,15 +119,15 @@ diff --git a/apps/web/src/components/chat/TimelineAssistantRows.tsx b/apps/web/s
 index 458d84b9e9..5c9d9a7536 100644
 --- a/apps/web/src/components/chat/TimelineAssistantRows.tsx
 +++ b/apps/web/src/components/chat/TimelineAssistantRows.tsx
-@@ -164,6 +164,7 @@ function AssistantMessageMeta({
-   alwaysVisible?: boolean;
+@@ -231,6 +231,7 @@ function AssistantMessageMeta({
  }) {
    const ctx = use(TimelineRowCtx);
+   const m = useMessages();
 +  const outputRate = message.runId ? ctx.outputRateByRunId.get(message.runId) : undefined;
  
    return (
      <div
-@@ -198,6 +199,16 @@ function AssistantMessageMeta({
+@@ -272,6 +273,16 @@ function AssistantMessageMeta({
            </TooltipPopup>
          </Tooltip>
        )}
