@@ -152,6 +152,19 @@ in
           "snapraid-scrub.service"
         ]
         ++ lib.optional config.services.fstrim.enable "fstrim.service"
+        # All scheduled mount paths, including escaped ones, use this template.
+        ++ lib.optional config.services.btrfs.autoScrub.enable "btrfs-scrub@.service"
+        ++ lib.optional config.khanelinix.security.clamav.enable "clamav-scan.service"
+        ++ lib.optionals config.power.ups.enable (
+          lib.optional config.power.ups.upsmon.enable "upsmon.service"
+          ++ lib.optionals config.power.ups.upsd.enable (
+            [
+              "upsd.service"
+              "upsdrv.service"
+            ]
+            ++ lib.optional (config.power.ups.upsmon.settings.POWERDOWNFLAG != null) "ups-killpower.service"
+          )
+        )
         ++ lib.optional (config.services.fast-nix-gc.enable or false) "fast-nix-gc.service"
         ++ map (name: "restic-backups-${name}.service") (builtins.attrNames config.services.restic.backups)
       );

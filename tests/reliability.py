@@ -738,29 +738,41 @@ for name, host in [
     )
 evaluate(
     "observability-opt-in-lab",
-    """let
+    r"""let
       names = [ "node" "systemd" "smartctl" ];
       address = "100.64.0.10";
       url = "https://prometheus.example.invalid";
       credentialFile = "/run/secrets/observability-test-url";
-      c = (f.nixosConfigurations.khanelilab.extendModules { modules = [ {
+      lab = f.nixosConfigurations.khanelilab.extendModules { modules = [ {
         khanelinix.suites.observability = {
           enable = lib.mkForce true;
           exporters = { collectors = names; listenAddress = address; };
           grafana.prometheusUrl = url;
         };
-        khanelinix.services.notify-failure.webhookUrlFile = credentialFile;
+        services.btrfs.autoScrub = {
+          enable = true;
+          fileSystems = lib.mkForce [ "/" "/srv/archive-set A" ];
+        };
+        khanelinix.security.clamav.enable = true;
+        khanelinix.hardware.ups.enable = true;
         services.restic.backups.observability-test = {
           repositoryFile = "/run/secrets/restic-test-repository";
           passwordFile = "/run/secrets/restic-test-password";
           runCheck = true;
           timerConfig = null;
         };
+      } ]; };
+      c = (lab.extendModules { modules = [ {
+        khanelinix.services.notify-failure.webhookUrlFile = credentialFile;
       } ]; }).config;
       grafana = c.services.grafana;
       provider = builtins.head grafana.provision.dashboards.settings.providers;
       notifier = c.systemd.units."notify-failure@.service".text;
-      targets = [ "snapraid-sync" "snapraid-scrub" "fast-nix-gc" "fstrim" "restic-backups-observability-test" ];
+      targets = [
+        "snapraid-sync" "snapraid-scrub" "fast-nix-gc" "fstrim" "restic-backups-observability-test"
+        "btrfs-scrub@" "clamav-scan" "upsmon" "upsd" "upsdrv" "ups-killpower"
+      ];
+      scrubInstances = [ "btrfs-scrub@-" ''btrfs-scrub@srv-archive\x2dset\x20A'' ];
       exporter = name:
         let
           cfg = c.services.prometheus.exporters.${name};
@@ -783,6 +795,12 @@ evaluate(
       notifierTemplate = lib.hasInfix " %i" notifier && !(lib.hasInfix "WantedBy=" notifier);
       hooks = lib.genAttrs targets (name: lib.hasInfix "OnFailure=notify-failure@%n.service"
         c.systemd.units."${name}.service".text);
+      scrubUsesTemplate = lib.all (instance:
+        builtins.elem "${instance}.timer" c.systemd.targets.timers.wants
+        && !(builtins.hasAttr "${instance}.service" c.systemd.units)) scrubInstances;
+      noWebhook = !(lab.config.systemd.services ? "notify-failure@")
+        && lib.all (name: !(builtins.elem "notify-failure@%n.service"
+          (lab.config.systemd.services.${name}.onFailure or []))) targets;
       resticTimer = c.systemd.timers ? restic-backups-observability-test;
       inherit (c.system.build.toplevel) drvPath;
     }""",
@@ -810,8 +828,30 @@ evaluate(
         and value["credential"]
         and value["notifierTemplate"]
         and all(value["hooks"].values())
+        and value["scrubUsesTemplate"]
+        and value["noWebhook"]
         and not value["resticTimer"]
     ),
+)
+evaluate(
+    "observability-maintenance-neutral",
+    f"let base = ({consumers}).nixos; "
+    + """notified = base.extendModules { modules = [ {
+      khanelinix.services.notify-failure.webhookUrlFile = "/run/secrets/observability-test-url";
+    } ]; };
+    client = (notified.extendModules { modules = [ {
+      power.ups = {
+        enable = true;
+        mode = "netclient";
+        upsmon.monitor.test = { user = "monitor"; passwordFile = "/run/secrets/ups-test"; };
+      };
+    } ]; }).config;
+    units = [ "btrfs-scrub@" "clamav-scan" "upsmon" "upsd" "upsdrv" "ups-killpower" ];
+    hook = name: builtins.elem "notify-failure@%n.service"
+      (client.systemd.services.${name}.onFailure or []);
+    in lib.all (name: !(builtins.hasAttr name notified.config.systemd.services)) units
+      && builtins.filter hook units == [ "upsmon" ]""",
+    validate=lambda value: value is True,
 )
 evaluate(
     "observability-opt-in-exporter-only",
