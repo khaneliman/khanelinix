@@ -196,7 +196,12 @@ in
           /var/lib/comfyui/user/default \
           /var/lib/comfyui/user/default/workflows/khanelinix
 
-        ln -sfnT ${./local_first} /var/lib/comfyui/custom_nodes/khanelinix_local_first
+        ln -sfnT ${
+          lib.fileset.toSource {
+            root = ./local_first;
+            fileset = lib.fileset.fileFilter (file: !file.hasExt "pyc") ./local_first;
+          }
+        } /var/lib/comfyui/custom_nodes/khanelinix_local_first
         ln -sfnT ${comfyUiGguf} /var/lib/comfyui/custom_nodes/ComfyUI-GGUF
 
         presetDir=/var/lib/comfyui/user/default/workflows/khanelinix
