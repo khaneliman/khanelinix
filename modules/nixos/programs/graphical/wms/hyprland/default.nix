@@ -149,7 +149,7 @@ in
                       "keyword decoration:fullscreen_opacity 1.0;"
                       "keyword debug:vfr 1;"
                     ]
-                    ++ lib.optional cfg.gamemode.vrr.enable "keyword misc:vrr 2"
+                    ++ lib.optional cfg.gamemode.vrr.enable "keyword misc:vrr 0"
                   )
                 }'
 
