@@ -6,4 +6,6 @@ clangStdenv.mkDerivation {
   src = ./.;
 
   makeFlags = [ "PREFIX=$(out)" ];
+
+  meta.mainProgram = "foo-bar";
 }
