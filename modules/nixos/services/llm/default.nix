@@ -26,6 +26,7 @@ in
 {
   imports = [
     ./colibri.nix
+    ./gpu-coordination.nix
     ./llama-swap.nix
   ];
 

@@ -11,6 +11,7 @@ repository discovery use real Git in a temporary, uncommitted repository.
 Grep and !alias expansion use locked Git; nested alias commands are recorded
 with GIT_EXEC_PATH isolated and all Git network protocols denied.
 Darwin window settings are rendered on Linux, not tested on a Darwin runtime.
+llm-gpu uses a fake curl binary that records requests without using the network.
 """
 
 import argparse
@@ -83,6 +84,122 @@ def check(name, test):
 
 with tempfile.TemporaryDirectory(prefix="runtime-", dir=cache) as directory:
     work = Path(directory)
+
+    def local_models():
+        variants = render["localModels"]
+        enabled = variants["enabled"]
+        endpoint = "http://127.0.0.1:18090/v1"
+        assert enabled["opencode"]["condition"]
+        assert enabled["opencode"]["content"]["options"]["baseURL"] == endpoint
+        assert enabled["opencode"]["content"]["models"] == {
+            "fixture-stream": {"name": "fixture-stream"},
+            "qwen3-coder-30b": {
+                "name": "Fixture coder",
+                "limit": {"context": 32768, "output": 4096},
+            },
+        }
+        assert enabled["pi"]["baseUrl"] == endpoint
+        assert enabled["pi"]["models"] == [
+            {
+                "id": "fixture-stream",
+                "name": "fixture-stream",
+                "contextWindow": 16384,
+            },
+            {
+                "id": "qwen3-coder-30b",
+                "name": "Fixture coder",
+                "contextWindow": 32768,
+                "maxTokens": 4096,
+            },
+        ]
+        assert enabled["aliases"] == {
+            "opencode-local-coder": "opencode --model llama-swap/qwen3-coder-30b"
+        }
+        for name in ("absent", "disabled", "swapDisabled", "empty"):
+            assert not variants[name]["opencode"]["condition"], name
+            assert variants[name]["pi"] is None, name
+            assert variants[name]["aliases"] == {}, name
+
+    def gpu_coordination():
+        http_log = work / "gpu-http.jsonl"
+        fixture = os.environ | {
+            "HTTP_LOG": str(http_log),
+            "SWAP_FIXTURE": '{"running":[{"model":"fixture-stream"}]}',
+            "OLLAMA_FIXTURE": json.dumps(
+                {"models": [{"name": "model:a"}, {"name": 'model with "quotes"'}]}
+            ),
+        }
+        swap_status = "http://127.0.0.1:18090/running"
+        ollama_status = "http://[::1]:11435/api/ps"
+        swap_unload = "http://127.0.0.1:18090/api/models/unload"
+        ollama_unload = "http://[::1]:11435/api/generate"
+
+        def invoke(*args, expect=0, **overrides):
+            http_log.write_text("")
+            result = run([render["llmGpu"], *args], env=fixture | overrides)
+            assert result.returncode == expect, (args, result.stderr)
+            return [json.loads(line) for line in http_log.read_text().splitlines()]
+
+        assert invoke("--help") == []
+        assert invoke(expect=2) == []
+        assert invoke("status", "--apply", expect=2) == []
+        for mode in ("status", "llama-swap", "ollama", "desktop"):
+            calls = invoke(mode)
+            assert [argv[-1] for argv in calls] == [swap_status, ollama_status]
+            assert all(
+                "--request" not in argv and "--json" not in argv for argv in calls
+            )
+
+        for mode, expected in (
+            ("llama-swap", [ollama_unload, ollama_unload]),
+            ("ollama", [swap_unload]),
+            ("desktop", [swap_unload, ollama_unload, ollama_unload]),
+        ):
+            calls = invoke(mode, "--apply")
+            assert [argv[-1] for argv in calls] == [
+                swap_status,
+                ollama_status,
+                *expected,
+            ]
+            for argv in calls[2:]:
+                if argv[-1] == swap_unload:
+                    assert argv[-3:-1] == ["--request", "POST"]
+                else:
+                    assert argv[-3] == "--json"
+            assert [
+                json.loads(argv[-2]) for argv in calls[2:] if argv[-1] == ollama_unload
+            ] == (
+                [
+                    {"model": "model:a", "keep_alive": 0},
+                    {"model": 'model with "quotes"', "keep_alive": 0},
+                ]
+                if mode != "ollama"
+                else []
+            )
+        assert [
+            argv[-1]
+            for argv in invoke(
+                "desktop",
+                "--apply",
+                SWAP_FIXTURE='{"running":[]}',
+                OLLAMA_FIXTURE='{"models":[]}',
+            )
+        ] == [swap_status, ollama_status]
+        assert [
+            argv[-1]
+            for argv in invoke("desktop", "--apply", OLLAMA_FIXTURE="{}", expect=5)
+        ] == [swap_status, ollama_status]
+        assert [
+            argv[-1]
+            for argv in invoke("desktop", "--apply", UNLOAD_STATUS="17", expect=17)
+        ] == [swap_status, ollama_status, swap_unload]
+
+    check(
+        "llama-swap catalogs: model metadata, endpoint, and inactive cases",
+        local_models,
+    )
+    check("llm-gpu modes: mocked HTTP requests only", gpu_coordination)
+
     env = os.environ | {
         "HOME": str(work / "home"),
         "XDG_CONFIG_HOME": str(work / "config"),
@@ -617,5 +734,5 @@ with tempfile.TemporaryDirectory(prefix="runtime-", dir=cache) as directory:
 
     check("Fish git saved exit status, without invoking code", git_status)
 
-print(f"{15 - len(failures)}/15 groups passed; failures: {failures}")
+print(f"{17 - len(failures)}/17 groups passed; failures: {failures}")
 raise SystemExit(bool(failures))

@@ -4,6 +4,33 @@ On `khanelinix`, llama-swap owns the Qwen agent models and Colibri. Ollama
 stores the downloaded weights and serves the remaining models. These managers do
 not coordinate GPU memory with each other or with desktop applications.
 
+## Switch GPU workloads
+
+On an AMD host with ROCm and both model servers enabled, set
+`khanelinix.services.llm.gpuCoordination.enable = true` to install `llm-gpu`.
+Both servers must listen on loopback or a wildcard address. The helper connects
+over loopback on their configured ports and does nothing at startup.
+
+```sh
+llm-gpu status
+llm-gpu llama-swap       # Preview unloading Ollama models
+llm-gpu ollama          # Preview unloading llama-swap models
+llm-gpu desktop         # Preview unloading both sets of models
+llm-gpu desktop --apply
+```
+
+Wait for active requests to finish before applying a switch. The helper only
+unloads models; it does not stop services, delete weights, load a target model,
+or prevent another client from loading one. Check `llm-gpu status` and
+`amdgpu_top` before starting the next workload: an unload response does not mean
+the GPU has released the memory yet.
+
+OpenCode and Pi read the model IDs and endpoint from the configured llama-swap
+service. Set `displayName` on a model to show a label instead of its ID.
+`maxOutputTokens` advertises an optional client limit without changing the
+server. OpenCode needs both the context and output limit to set its model
+limits; Pi can accept either independently.
+
 ## Check residency and competing applications
 
 ```sh

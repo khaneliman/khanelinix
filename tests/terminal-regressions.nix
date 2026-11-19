@@ -18,6 +18,7 @@ let
         tools = {
           codex.enable = true;
           opencode.enable = true;
+          pi-coding-agent.enable = true;
         };
         emulators.alacritty = {
           enable = true;
@@ -47,13 +48,108 @@ let
     };
     programs.gh.enable = false;
   };
+  modelOptions = { config, ... }: {
+    inherit
+      (import (repo + "/modules/nixos/services/llm/llama-swap.nix") {
+        inherit config lib pkgs;
+      })
+      options
+      ;
+  };
+  localLlm =
+    (lib.evalModules {
+      modules = [
+        modelOptions
+        {
+          options.khanelinix.services.llm.enable = lib.mkEnableOption "fixture LLM service";
+          config.khanelinix.services.llm = {
+            enable = true;
+            llamaSwap = {
+              enable = true;
+              port = 18090;
+              models = {
+                qwen3-coder-30b = {
+                  tag = "qwen3-coder:30b";
+                  displayName = "Fixture coder";
+                  contextSize = 65536;
+                  parallelSlots = 2;
+                  maxOutputTokens = 4096;
+                };
+                fixture-stream = {
+                  backend = "colibri";
+                  contextSize = 16384;
+                };
+              };
+            };
+          };
+        }
+      ];
+    }).config.khanelinix.services.llm;
   args = {
     inherit config lib pkgs;
     inputs = { };
-    osConfig.khanelinix.services.llm.llamaSwap.enable = true;
+    osConfig.khanelinix.services.llm = localLlm;
   };
   codex = import (source + "/tools/codex") args;
   opencode = import (source + "/tools/opencode") args;
+  renderLocalModels =
+    osConfig:
+    let
+      clientArgs = args // {
+        inherit osConfig;
+      };
+      provider = import (source + "/tools/opencode/provider.nix") (
+        removeAttrs clientArgs [
+          "inputs"
+          "pkgs"
+        ]
+      );
+      pi = import (source + "/tools/pi-coding-agent") clientArgs;
+      opencodeAliases = (import (source + "/tools/opencode") clientArgs).config.content.home.shellAliases;
+    in
+    {
+      opencode = provider.config.programs.opencode.settings.provider.llama-swap;
+      pi = pi.config.content.programs.pi-coding-agent.models.content.providers.llama-swap or null;
+      aliases = lib.filterAttrs (name: _: lib.hasPrefix "opencode-local-" name) opencodeAliases;
+    };
+  mockCurl = pkgs.writeShellScriptBin "curl" ''
+    printf '%s\n' "$@" | ${lib.getExe pkgs.jq} -Rcs 'split("\n")[:-1]' >> "$HTTP_LOG"
+    case "''${!#}" in
+      "http://127.0.0.1:18090/running") printf '%s\n' "$SWAP_FIXTURE" ;;
+      "http://[::1]:11435/api/ps") printf '%s\n' "$OLLAMA_FIXTURE" ;;
+      "http://127.0.0.1:18090/api/models/unload" | "http://[::1]:11435/api/generate")
+        exit "''${UNLOAD_STATUS:-0}"
+        ;;
+      *) exit 42 ;;
+    esac
+  '';
+  gpuConfig =
+    (import (repo + "/modules/nixos/services/llm/gpu-coordination.nix") {
+      inherit lib;
+      pkgs = pkgs // {
+        curl = mockCurl;
+      };
+      config = {
+        khanelinix.hardware.gpu.amd = {
+          enable = true;
+          enableRocmSupport = true;
+        };
+        khanelinix.services.llm = localLlm // {
+          gpuCoordination.enable = true;
+          llamaSwap = localLlm.llamaSwap // {
+            host = "0.0.0.0";
+          };
+        };
+        services.ollama = {
+          enable = true;
+          host = "[::]";
+          port = 11435;
+        };
+      };
+    }).config.content;
+  gpuHelper =
+    assert lib.all (entry: entry.assertion) gpuConfig.assertions;
+    builtins.head gpuConfig.environment.systemPackages.content;
   notifier = pkgs.writeShellScriptBin "notify-send" ''
     printf '%s\n' "$@" > "$NOTIFY_LOG"
   '';
@@ -105,7 +201,32 @@ in
     pkgs.git
     pkgs.perl
     pkgs.libnotify
+    gpuHelper
   ];
+  llmGpu = lib.getExe gpuHelper;
+  localModels = {
+    enabled = renderLocalModels args.osConfig;
+    absent = renderLocalModels { };
+    disabled = renderLocalModels {
+      khanelinix.services.llm = localLlm // {
+        enable = false;
+      };
+    };
+    swapDisabled = renderLocalModels {
+      khanelinix.services.llm = localLlm // {
+        llamaSwap = localLlm.llamaSwap // {
+          enable = false;
+        };
+      };
+    };
+    empty = renderLocalModels {
+      khanelinix.services.llm = localLlm // {
+        llamaSwap = localLlm.llamaSwap // {
+          clientCatalog = { };
+        };
+      };
+    };
+  };
   notifyDrvs = map (path: builtins.head (builtins.attrNames (builtins.getContext path))) (
     codex.config.content.programs.codex.settings.notify
     ++ [
