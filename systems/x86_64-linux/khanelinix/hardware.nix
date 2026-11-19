@@ -105,6 +105,7 @@ in
 
           scrubMounts = [
             "/"
+            "/mnt/kvm"
             "/mnt/steam"
           ];
         };
