@@ -40,7 +40,6 @@ let
       },
     })
 
-    hl.bind("SUPER + RETURN", hl.dsp.exec_cmd(${builtins.toJSON (getExe pkgs.wezterm)}))
     hl.bind("SUPER + SHIFT + RETURN", hl.dsp.exec_cmd(${builtins.toJSON (getExe pkgs.nwg-hello)}))
     hl.bind("SUPER + CTRL + SHIFT + RETURN", hl.dsp.exec_cmd(${builtins.toJSON (getExe pkgs.greetd.regreet)}))
 
@@ -93,7 +92,7 @@ in
       greetd = {
         settings = {
           default_session = {
-            command = "${getExe pkgs.hyprland-unwrapped} --config ${greetdHyprlandConfig} > /tmp/hyprland-log-out.txt 2>&1";
+            command = "${getExe pkgs.hyprland-unwrapped} --config ${greetdHyprlandConfig}";
           };
         };
 

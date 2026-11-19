@@ -52,7 +52,6 @@ in
         # A oneshot remains in its start phase until clamscan exits.
         # RuntimeMaxSec does not apply to oneshot services.
         TimeoutStartSec = "6h";
-        SuccessExitStatus = [ 1 ];
 
         # The scanner parses untrusted file contents as root; contain it.
         # ProtectHome stays off (scans /home) and ProtectSystem stays at

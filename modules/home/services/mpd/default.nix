@@ -92,6 +92,7 @@ in
            type		              "httpd"
            name		              "lossless"
            encoder		          "flac"
+           bind_to_address      "127.0.0.1"
            port		              "8000"
            max_clients	        "8"
            mixer_type	          "software"

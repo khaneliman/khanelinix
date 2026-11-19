@@ -76,13 +76,8 @@ in
       };
 
       # Add user to gamemode group for renice and parking permissions
-      users.users.${config.khanelinix.user.name}.extraGroups = [ "gamemode" ];
-
-      # Allow reading CPU power consumption for gamemode monitoring
-      systemd.tmpfiles.settings."10-gamemode-powercap" = {
-        "/sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/intel-rapl:0:0/energy_uj".z = {
-          mode = "0644";
-        };
+      users.users = lib.mkIf (config.khanelinix.user.name != null) {
+        ${config.khanelinix.user.name}.extraGroups = [ "gamemode" ];
       };
 
       # <https://www.phoronix.com/news/Fedora-39-VM-Max-Map-Count>

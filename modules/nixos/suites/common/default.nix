@@ -65,7 +65,6 @@ in
         clamav = mkDefault enabled;
         gpg = mkDefault enabled;
         pam = mkDefault enabled;
-        usbguard = mkDefault enabled;
       };
 
       services = {

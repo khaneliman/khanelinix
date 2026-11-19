@@ -69,8 +69,6 @@ in
         security = {
           # Antivirus not needed in WSL
           clamav.enable = mkForce false;
-          # USB devices not available in WSL
-          usbguard.enable = mkForce false;
         };
 
         services = {

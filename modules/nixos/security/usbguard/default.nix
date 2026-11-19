@@ -14,12 +14,15 @@ in
 
   config = lib.mkIf cfg.enable {
     services.usbguard = {
+      enable = true;
       IPCAllowedUsers = [
         "root"
-        "${config.khanelinix.user.name}"
-      ];
+      ]
+      ++ lib.optional (config.khanelinix.user.name != null) config.khanelinix.user.name;
       presentDevicePolicy = "allow";
       rules = ''
+        allow with-interface equals { 09:*:* }
+        allow with-interface equals { 03:*:* }
         allow with-interface equals { 08:*:* }
 
         # Reject devices with suspicious combination of interfaces
