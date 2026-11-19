@@ -8,11 +8,18 @@
 let
   inherit (lib) mkIf;
 
-  cfg = config.khanelinix.services.ddccontrol;
+  cfg = config.khanelinix.services.ddc;
 in
 {
-  options.khanelinix.services.ddccontrol = {
-    enable = lib.mkEnableOption "ddccontrol";
+  imports = [
+    (lib.mkRenamedOptionModule
+      [ "khanelinix" "services" "ddccontrol" "enable" ]
+      [ "khanelinix" "services" "ddc" "enable" ]
+    )
+  ];
+
+  options.khanelinix.services.ddc = {
+    enable = lib.mkEnableOption "DDC display control";
   };
 
   config = mkIf cfg.enable {
