@@ -36,6 +36,15 @@ in
 {
   options.khanelinix.programs.graphical.bars.sketchybar = {
     enable = lib.mkEnableOption "sketchybar in the desktop environment";
+
+    dynamicIsland.keepAlive = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = ''
+        Whether launchd restarts Dynamic Island SketchyBar after it exits on macOS.
+        The agent still starts when loaded if this option is disabled.
+      '';
+    };
   };
 
   config = mkIf cfg.enable {
@@ -87,7 +96,7 @@ in
           BAR_NAME = "dynamic-island-sketchybar";
           PATH = "/etc/profiles/per-user/${config.home.username}/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin";
         };
-        KeepAlive = true;
+        KeepAlive = cfg.dynamicIsland.keepAlive;
         ProcessType = "Interactive";
         ProgramArguments = [
           "/bin/sh"
