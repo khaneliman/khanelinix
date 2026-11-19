@@ -10,6 +10,9 @@ let
   inherit (config.khanelinix) user;
 
   cfg = config.khanelinix.programs.graphical.addons.looking-glass-client;
+  libvirtdEnabled = config.virtualisation.libvirtd.enable;
+  deviceGroup = if libvirtdEnabled then "qemu-libvirtd" else "kvm";
+  deviceOwner = lib.optionalString (user.name != null) ''OWNER="${user.name}", '';
 in
 {
   options.khanelinix.programs.graphical.addons.looking-glass-client = {
@@ -44,15 +47,20 @@ in
     ];
 
     environment.etc."looking-glass-client.ini" = {
-      source = ./client.ini;
+      text =
+        builtins.readFile ./client.ini
+        + lib.optionalString cfg.enableKvmfr ''
+
+          [app]
+          shmFile=/dev/kvmfr0
+        '';
     }
     // lib.optionalAttrs (user.name != null) {
       user = user.name;
     };
 
-    # Allow user and qemu-libvirtd (both in group kvm) access to kvmfr.
     services.udev.extraRules = lib.mkIf cfg.enableKvmfr ''
-      SUBSYSTEM=="kvmfr", OWNER="qemu-libvirtd", GROUP="kvm", MODE="0660"
+      SUBSYSTEM=="kvmfr", KERNEL=="kvmfr0", ${deviceOwner}GROUP="${deviceGroup}", MODE="0660"
     '';
 
     # Only set up /dev/shm when not using kvmfr
@@ -60,7 +68,7 @@ in
       "looking-glass" = {
         "/dev/shm/looking-glass".f = {
           age = "-";
-          group = "kvm";
+          group = deviceGroup;
           mode = "0660";
           user = user.name;
         };
@@ -68,25 +76,34 @@ in
     };
 
     virtualisation.libvirtd.qemu.verbatimConfig =
-      let
-        aclDevices =
-          lib.optional cfg.enableKvmfr "/dev/kvmfr0"
-          ++ [ "/dev/vfio/vfio" ]
-          ++ cfg.vfioDevicePaths
-          ++ [
-            "/dev/null"
-            "/dev/full"
-            "/dev/zero"
-            "/dev/random"
-            "/dev/urandom"
-            "/dev/ptmx"
-            "/dev/kvm"
-          ];
-      in
-      ''
-        cgroup_device_acl = [
-          ${lib.concatMapStringsSep ",\n  " builtins.toJSON aclDevices}
-        ]
-      '';
+      lib.mkIf (libvirtdEnabled && (cfg.enableKvmfr || cfg.vfioDevicePaths != [ ]))
+        (
+          let
+            aclDevices =
+              lib.optional cfg.enableKvmfr "/dev/kvmfr0"
+              ++ lib.optional (cfg.vfioDevicePaths != [ ]) "/dev/vfio/vfio"
+              ++ cfg.vfioDevicePaths
+              ++ [
+                "/dev/null"
+                "/dev/full"
+                "/dev/zero"
+                "/dev/random"
+                "/dev/urandom"
+                "/dev/ptmx"
+                "/dev/kvm"
+                "/dev/userfaultfd"
+              ];
+          in
+          # Like the upstream default, make /dev/kvmfr0 visible to QEMU. The KVM
+          # wrapper already sets this when it owns the libvirt configuration.
+          lib.optionalString (cfg.enableKvmfr && !config.khanelinix.virtualisation.kvm.enable) ''
+            namespaces = []
+          ''
+          + ''
+            cgroup_device_acl = [
+              ${lib.concatMapStringsSep ",\n  " builtins.toJSON aclDevices}
+            ]
+          ''
+        );
   };
 }
