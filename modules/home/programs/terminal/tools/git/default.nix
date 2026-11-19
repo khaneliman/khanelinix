@@ -66,7 +66,7 @@ in
     wslAgentBridge = lib.mkEnableOption "the wsl agent bridge";
     wslGitCredentialManagerPath =
       mkOpt types.str "/mnt/c/Program Files/Git/mingw64/bin/git-credential-manager.exe"
-        "The windows git credential manager path.";
+        "The unescaped path to Windows Git Credential Manager.";
     _1password = lib.mkEnableOption "1Password integration";
   };
 
@@ -134,7 +134,7 @@ in
 
           credential = {
             helper =
-              lib.optionalString cfg.wslAgentBridge cfg.wslGitCredentialManagerPath
+              lib.optionalString cfg.wslAgentBridge "!${lib.escapeShellArg cfg.wslGitCredentialManagerPath}"
               + lib.optionalString (!cfg.wslAgentBridge && pkgs.stdenv.hostPlatform.isLinux) (
                 getExe' config.programs.git.package "git-credential-libsecret"
               )

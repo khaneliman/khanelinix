@@ -111,7 +111,6 @@ in
             enable = true;
             userEmail = "Austin_Horstman@secura.net";
             wslAgentBridge = true;
-            wslGitCredentialManagerPath = ''/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe'';
             includes = [
               {
                 condition = "gitdir:/mnt/c/";
@@ -121,7 +120,6 @@ in
           };
           gh = {
             gitCredentialHelper.hosts = [
-              "https://core-bts-02@dev.azure.com"
               "https://github.com/SECURAInsurance"
             ];
           };
