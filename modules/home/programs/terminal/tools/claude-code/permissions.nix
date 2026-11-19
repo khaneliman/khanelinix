@@ -267,7 +267,8 @@ in
         ];
 
         # Standard profile additions - balanced permissions
-        standardAllow = baseAllow ++ [
+        standardAllow = baseAllow ++ standardAdditions;
+        standardAdditions = [
           # System info
           "Bash(systemctl list-units:*)"
           "Bash(systemctl list-timers:*)"
@@ -342,7 +343,7 @@ in
 
         ask =
           if cfg.permissionProfile == "conservative" then
-            standardAllow # Conservative: ask for everything standard allows
+            standardAdditions
           else if cfg.permissionProfile == "standard" then
             standardAsk
           else if cfg.permissionProfile == "autonomous" then
