@@ -166,10 +166,11 @@ broker must use fixed project definitions and explicit owner approval; it must
 not restore a generic Docker socket or API path.
 
 `secrets/khanelilab/services.yaml` contains encrypted migration credentials.
-System services consume runtime SOPS files, not plaintext Nix-store values. The
-rclone configuration and Samba password database are seeded only when their
-persistent files are absent. Later OAuth refreshes and password changes are
-preserved. Replacing the encrypted seed alone does not rotate those live files.
+System services consume runtime SOPS files, not plaintext Nix-store values. Samba
+installs a fresh writable password database from `samba-passwd` before each smbd
+start. Rotating that secret restarts smbd; make lasting password changes in SOPS,
+since local changes are overwritten on the next start. The rclone configuration
+is seeded only when absent so that OAuth refreshes survive restarts.
 Refresh the captured credentials before cutover if the source has changed. The
 main user's pre-existing Home Manager secrets also require their personal
 SSH/age identity or a deliberate rekey; the imported server key does not replace

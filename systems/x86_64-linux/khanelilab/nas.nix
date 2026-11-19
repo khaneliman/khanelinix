@@ -67,6 +67,7 @@ in
   sops.secrets."samba/passwd" = {
     sopsFile = lib.getFile "secrets/khanelilab/services.yaml";
     key = "samba-passwd";
+    restartUnits = lib.optional smbdEnabled "samba-smbd.service";
   };
 
   services.nfs.server.exports = lib.mkForce (
@@ -97,13 +98,17 @@ in
       ];
       script = ''
         install -d -m 0700 /var/lib/samba/private
-        if [ ! -e /var/lib/samba/private/smbpasswd ]; then
-          install -m 0600 ${config.sops.secrets."samba/passwd".path} /var/lib/samba/private/smbpasswd
-        fi
         net -s /etc/samba/smb.conf setlocalsid S-1-5-21-3080858225-3095825074-865487820
       '';
     };
     samba-smbd = lib.mkIf smbdEnabled {
+      preStart = ''
+        database=/var/lib/samba/private/smbpasswd
+        pending=$(mktemp "$database.XXXXXX")
+        trap 'rm -f "$pending"' EXIT
+        install -m 0600 ${config.sops.secrets."samba/passwd".path} "$pending"
+        mv -fT "$pending" "$database"
+      '';
       requires = [ "samba-identity.service" ];
       after = [ "samba-identity.service" ];
       unitConfig.RequiresMountsFor = [ "/mnt/user" ];
