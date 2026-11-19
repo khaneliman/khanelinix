@@ -358,6 +358,8 @@ in
         deny = [
           "Bash(rm -rf /*)"
           "Bash(rm -rf /)"
+          "Bash(sudo rm -rf /*)"
+          "Bash(sudo rm -rf /)"
         ];
 
         defaultMode =
