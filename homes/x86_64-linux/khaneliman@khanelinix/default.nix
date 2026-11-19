@@ -138,6 +138,8 @@ in
           };
         };
 
+        launchers.vicinae.workspacePalette.enable = true;
+
         browsers = {
           firefox = {
             extensions.installMethod = "policy";
@@ -193,7 +195,10 @@ in
           };
         };
 
-        emulators.limux = enabled;
+        emulators.limux = {
+          enable = true;
+          layouts.projectRoots = [ "${config.home.homeDirectory}/Documents/github" ];
+        };
 
         tools = {
           claude-code.quotaWarmup.enable = true;
