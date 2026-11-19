@@ -49,8 +49,8 @@ in
           # Skill, command, and agent references live outside the project root
           # (the Claude configDir plus Nix store symlinks), so Read(*) - which is
           # scoped to the workspace - does not cover them.
-          "Read(${config.home.homeDirectory}/.claude/**)"
-          "Read(/nix/store/**)"
+          "Read(/${config.programs.claude-code.configDir}/**)"
+          "Read(//nix/store/**)"
 
           # Safe read-only git commands
           "Bash(git status)"
@@ -292,8 +292,8 @@ in
           "Bash(coredumpctl list:*)"
 
           # Additional home directory reads
-          "Read(${config.home.homeDirectory}/Documents/github/home-manager/**)"
-          "Read(${config.home.homeDirectory}/.config/sway/**)"
+          "Read(~/Documents/github/home-manager/**)"
+          "Read(~/.config/sway/**)"
         ];
 
         # Autonomous profile additions - full autonomy for trusted workflows
