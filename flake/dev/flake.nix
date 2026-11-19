@@ -11,11 +11,14 @@
         adv360-zmk.follows = "";
         anyrun-nixos-options.follows = "";
         catppuccin.follows = "";
+        claude-plugins-official.follows = "";
         codex-desktop-linux.follows = "";
         disko.follows = "";
         fast-nix-gc.follows = "";
         firefox-addons.follows = "";
+        flake-parts.follows = "";
         hermes-agent.follows = "";
+        jovian.follows = "";
         khanelivim.follows = "";
         lanzaboote.follows = "";
         llm-agents.follows = "";
@@ -26,7 +29,9 @@
         nix-index-database.follows = "";
         nix-rosetta-builder.follows = "";
         nixos-wsl.follows = "";
+        plasma-manager.follows = "";
         stylix.follows = "";
+        systems.follows = "";
         t3code.follows = "";
         tokyonight.follows = "";
         waybar.follows = "";
@@ -43,15 +48,6 @@
     sops-nix.follows = "root/sops-nix";
 
     # keep-sorted start block=yes newline_separated=yes
-    flake-parts-website = {
-      url = "github:hercules-ci/flake.parts-website";
-    };
-
-    devshell = {
-      url = "github:numtide/devshell";
-      inputs.nixpkgs.follows = "root/nixpkgs";
-    };
-
     git-hooks-nix = {
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "root/nixpkgs";
