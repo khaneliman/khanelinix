@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import copy
-import hashlib
 import importlib.util
 import json
 import shutil
@@ -367,18 +366,77 @@ class ModelRoutingTests(unittest.TestCase):
         self.assertIn('"edit": "deny"', projection["opencode"]["fable-5-2"])
 
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
-    def test_provider_projections_match_frozen_baseline(self) -> None:
-        expected_digests = {
-            False: "9101295885f20711e258a46d89b38a46ab5cf145119ac63a01b6d66143303f27",
-            True: "40bc10af35a1cf964d790b29691f6d23659de13679106c8bc679017a21acc1f6",
-        }
+    def test_provider_projections_follow_routing_registry(self) -> None:
+        roles = self.registry["semantic_roles"]
+        models = self.registry["models"]
 
-        for gateway_enabled, expected_digest in expected_digests.items():
-            with self.subTest(gateway_enabled=gateway_enabled):
-                expression = self._provider_projection_expression(gateway_enabled)
-                result = self._nix_eval(expression)
+        for gateway_enabled in (False, True):
+            projection = json.loads(
+                self._nix_eval(self._provider_projection_expression(gateway_enabled))
+            )
+            self.assertEqual(
+                set(projection), {"claude", "codex", "copilot", "opencode"}
+            )
 
-                self.assertEqual(hashlib.sha256(result).hexdigest(), expected_digest)
+            for provider, agents in projection.items():
+                gateway_agents = (
+                    models if gateway_enabled and provider != "copilot" else {}
+                )
+                expected_names = roles.keys() | gateway_agents.keys()
+                with self.subTest(gateway_enabled=gateway_enabled, provider=provider):
+                    self.assertEqual(set(agents), expected_names)
+
+                for name in sorted(expected_names & agents.keys()):
+                    with self.subTest(
+                        gateway_enabled=gateway_enabled, provider=provider, agent=name
+                    ):
+                        agent = agents[name]
+                        gateway_model = gateway_agents.get(name)
+                        using_gateway = gateway_model is not None
+                        if gateway_model is not None:
+                            expected_model = gateway_model["gateway_alias"]
+                            expected_effort = gateway_model["reasoning_effort"]
+                        else:
+                            role = roles[name]
+                            expected_model = role["native"][provider]
+                            expected_effort = role["reasoning_effort"].get(provider)
+                            if gateway_enabled and provider in role["gateway"]:
+                                using_gateway = True
+                                expected_model = models[role["gateway"][provider]][
+                                    "gateway_alias"
+                                ]
+
+                        if provider == "codex":
+                            self.assertEqual(agent["name"], name)
+                            self.assertEqual(agent["model"], expected_model)
+                            self.assertEqual(
+                                agent.get("model_reasoning_effort"), expected_effort
+                            )
+                            if gateway_model is None:
+                                self.assertNotIn("model_provider", agent)
+                            else:
+                                self.assertEqual(agent["model_provider"], "cliproxyapi")
+                                self.assertEqual(
+                                    agent["sandbox_mode"],
+                                    "workspace-write"
+                                    if gateway_model["workspace_write"]
+                                    else "read-only",
+                                )
+                            continue
+
+                        if provider == "opencode" and using_gateway:
+                            expected_model = f"cliproxyapi/{expected_model}"
+
+                        opening, frontmatter, _body = agent.split("---\n", 2)
+                        self.assertEqual(opening, "")
+                        self.assertEqual(
+                            [
+                                line
+                                for line in frontmatter.splitlines()
+                                if line.startswith("model:")
+                            ],
+                            [f"model: {json.dumps(expected_model)}"],
+                        )
 
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_frontmatter_string_scalars_use_safe_deterministic_quotes(self) -> None:
