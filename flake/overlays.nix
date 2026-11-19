@@ -8,16 +8,18 @@ let
   dynamicOverlaysSet =
     if builtins.pathExists overlaysPath then
       let
-        overlayDirs = builtins.attrNames (builtins.readDir overlaysPath);
+        overlayDirs = lib.filterAttrs (
+          name: kind: kind == "directory" && builtins.pathExists (overlaysPath + "/${name}/default.nix")
+        ) (builtins.readDir overlaysPath);
       in
-      lib.genAttrs overlayDirs (
-        name:
+      lib.mapAttrs (
+        name: _:
         let
           overlayPath = overlaysPath + "/${name}";
           overlayFn = import overlayPath;
         in
         if lib.isFunction overlayFn then overlayFn { inherit inputs; } else overlayFn
-      )
+      ) overlayDirs
     else
       { };
 
@@ -34,7 +36,7 @@ let
       khanelinix = prev.lib.fix (
         self:
         prev.lib.mapAttrs (
-          _name: func: final.callPackage func (self // { inherit inputs; })
+          _name: package: final.callPackage (package.default or package) (self // { inherit inputs; })
         ) packageFunctions
       );
     };
