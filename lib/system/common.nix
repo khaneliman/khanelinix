@@ -212,10 +212,6 @@ let
         "freeimage-3.18.0-unstable-2024-04-18"
         "mbedtls-2.28.10"
         # dev shells
-        "aspnetcore-runtime-6.0.36"
-        "aspnetcore-runtime-7.0.20"
-        "aspnetcore-runtime-wrapped-7.0.20"
-        "aspnetcore-runtime-wrapped-6.0.36"
         "dotnet-combined"
         # NOTE: vesktop/stylelint
         "pnpm-9.15.9"
