@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
@@ -10,6 +11,23 @@ let
   catppuccin = import (lib.getFile "modules/home/theme/catppuccin/colors.nix");
 
   cfg = config.khanelinix.programs.graphical.screenlockers.hyprlock;
+  layout = config.khanelinix.system.display.layout or null;
+  backgrounds =
+    if layout == null then
+      [
+        {
+          monitor = "";
+          path = "screenshot";
+        }
+      ]
+    else
+      map (output: {
+        monitor = output.name;
+        path = lib.khanelinix.theme.wallpaperPath {
+          inherit config pkgs;
+          name = config.khanelinix.theme.wallpaper.${output.wallpaper};
+        };
+      }) (lib.reverseList layout.outputs);
 in
 {
   options.khanelinix.programs.graphical.screenlockers.hyprlock = {
@@ -42,12 +60,11 @@ in
           };
         };
 
-        background = [
+        background = map (
+          background:
           {
-            monitor = "";
             brightness = "0.817200";
             color = lib.mkDefault "rgba(25, 20, 20, 1.0)";
-            path = "screenshot";
             blur_passes = 3;
             blur_size = 8;
             contrast = "0.891700";
@@ -55,7 +72,8 @@ in
             vibrancy = "0.168600";
             vibrancy_darkness = "0.050000";
           }
-        ];
+          // background
+        ) backgrounds;
 
         input-field = [
           {

@@ -1,6 +1,7 @@
 { config, lib, ... }:
 let
   inherit (lib) getExe';
+  layout = config.khanelinix.system.display.layout or null;
 in
 {
   "sway/mode" = {
@@ -36,16 +37,24 @@ in
       "default" = "";
       "empty" = "󱓼";
     };
-    persistent-workspaces = {
-      "1" = [ "DP-3" ];
-      "2" = [ "DP-1" ];
-      "3" = [ "DP-1" ];
-      "4" = [ "DP-1" ];
-      "5" = [ "DP-1" ];
-      "6" = [ "DP-1" ];
-      "7" = [ "DP-1" ];
-      "8" = [ "DP-1" ];
-    };
+    persistent-workspaces =
+      if layout == null then
+        {
+          "1" = [ "DP-3" ];
+          "2" = [ "DP-1" ];
+          "3" = [ "DP-1" ];
+          "4" = [ "DP-1" ];
+          "5" = [ "DP-1" ];
+          "6" = [ "DP-1" ];
+          "7" = [ "DP-1" ];
+          "8" = [ "DP-1" ];
+        }
+      else
+        builtins.listToAttrs (
+          map (
+            assignment: lib.nameValuePair assignment.workspace (lib.toList assignment.output)
+          ) config.wayland.windowManager.sway.config.workspaceOutputAssign
+        );
     window-format = "<span color='@text'>{name}</span>";
     window-rewrite-default = "";
     window-rewrite = {
