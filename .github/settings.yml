@@ -119,4 +119,4 @@ branches:
       # teams: []
 actions:
   default_workflow_permissions: "write"
-  can_approve_pull_request_reviews": true
+  can_approve_pull_request_reviews: true
