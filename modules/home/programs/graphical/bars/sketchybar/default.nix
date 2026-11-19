@@ -10,6 +10,9 @@ let
   inherit (lib) mkIf;
 
   cfg = config.khanelinix.programs.graphical.bars.sketchybar;
+  yabaiEnabled =
+    osConfig.khanelinix.services.yabai.enable
+      or (osConfig.khanelinix.desktop.wms.yabai.enable or false);
 
   userHome = config.home.homeDirectory;
   sketchybar = lib.getExe (config.programs.sketchybar.finalPackage or pkgs.sketchybar);
@@ -134,7 +137,7 @@ in
             pkgs.khanelinix.sketchyhelper
             wttrbar
           ]
-          ++ lib.optionals (osConfig.khanelinix.desktop.wms.yabai.enable or false) [
+          ++ lib.optionals yabaiEnabled [
             osConfig.services.yabai.package
           ]
           ++ lib.optionals config.khanelinix.programs.graphical.wms.aerospace.enable [
@@ -174,9 +177,7 @@ in
           use_aerospace = ${
             if (config.khanelinix.programs.graphical.wms.aerospace.enable or false) then "true" else "false"
           },
-          use_yabai = ${
-            if (osConfig.khanelinix.desktop.wms.yabai.enable or false) then "true" else "false"
-          },
+          use_yabai = ${if yabaiEnabled then "true" else "false"},
         }
       '';
 

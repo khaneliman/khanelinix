@@ -19,8 +19,6 @@ in
       workstation = enabled;
     };
 
-    desktop.wms.yabai.enableScriptingAddition = true;
-
     environments = {
       home-network = enabled;
     };
@@ -51,6 +49,8 @@ in
     };
 
     services = {
+      yabai.enableScriptingAddition = true;
+
       harmonia = {
         enable = true;
         signKeyPath = config.sops.secrets."harmonia-signing-key".path;

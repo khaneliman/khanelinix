@@ -35,11 +35,7 @@ in
         khanelinix.programs.graphical.apps.raycast = mkDefault enabled;
       };
 
-      desktop = {
-        wms = {
-          yabai = mkDefault enabled;
-        };
-      };
+      services.yabai = mkDefault enabled;
 
       system = {
         fonts = mkDefault enabled;

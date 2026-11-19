@@ -163,7 +163,7 @@
               # Unique files
               "homes/x86_64-linux/nixos@CORE-PW0D2M1A/git/windows-compat-config"
               "lib/base64/ascii"
-              "modules/darwin/desktop/wms/yabai/extraConfig"
+              "modules/darwin/services/yabai/extraConfig"
               "modules/home/programs/graphical/bars/sketchybar/dynamic-island-sketchybar/helper/islandhelper"
               "modules/home/programs/graphical/bars/sketchybar/dynamic-island-sketchybar/scripts/islands/music/get_artwork.scpt"
               "modules/home/programs/graphical/bars/sketchybar/dynamic-island-sketchybar/scripts/islands/volume/data/cache"
