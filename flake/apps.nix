@@ -217,7 +217,8 @@ _: {
 
         fleet-status =
           let
-            inherit ((import ../systems/fleet-defaults.nix { inherit lib; }).khanelinix.programs.terminal.tools.ssh)
+            inherit
+              ((import ../systems/fleet-defaults.nix { inherit lib; }).khanelinix.programs.terminal.tools.ssh)
               hosts
               magicDnsSuffix
               ;
@@ -225,7 +226,13 @@ _: {
               builtins.toJSON {
                 inherit magicDnsSuffix;
                 hosts = lib.mapAttrs (
-                  _: host: builtins.intersectAttrs { hostname = null; system = null; username = null; tailscaleIp = null; } host
+                  _: host:
+                  builtins.intersectAttrs {
+                    hostname = null;
+                    system = null;
+                    username = null;
+                    tailscaleIp = null;
+                  } host
                 ) hosts;
               }
             );
