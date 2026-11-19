@@ -296,6 +296,34 @@ let
       emulator = builtins.elem package config.environment.systemPackages;
       controllers = builtins.elem package config.services.udev.packages;
     };
+  restic =
+    enabled:
+    (import (nixpkgs + "/nixos/lib/eval-config.nix") {
+      system = builtins.currentSystem;
+      modules = [
+        (root + "/modules/nixos/services/restic")
+        {
+          system.stateVersion = "26.11";
+          khanelinix.services.restic = {
+            enable = lib.mkIf enabled true;
+            backups = {
+              manual = {
+                repositoryFile = "/run/secrets/restic-repository";
+                passwordFile = "/run/secrets/restic-password";
+                paths = [ "/var/lib/backup-staging" ];
+                timerConfig = null;
+              };
+              verify = {
+                repositoryFile = "/run/secrets/restic-repository";
+                passwordFile = "/run/secrets/restic-password";
+                runCheck = true;
+              };
+            };
+          };
+        }
+        { services.restic.backups = lib.mkIf enabled { manual.checkOpts = [ "--read-data" ]; }; }
+      ];
+    }).config;
   lightdm =
     cursor: icon:
     let
@@ -394,4 +422,34 @@ in
     enabled = dolphin true;
     disabled = dolphin false;
   };
+  restic =
+    let
+      disabled = restic false;
+      enabled = restic true;
+      manual = "restic-backups-manual";
+      verify = "restic-backups-verify";
+    in
+    assert disabled.services.restic.backups == { };
+    assert !(disabled.systemd.services ? ${manual} || disabled.systemd.services ? ${verify});
+    assert !(disabled.systemd.timers ? ${manual} || disabled.systemd.timers ? ${verify});
+    assert !(enabled.systemd.timers ? ${manual});
+    assert enabled.systemd.timers.${verify}.timerConfig.OnCalendar == "daily";
+    assert
+      enabled.systemd.services.${manual}.environment.RESTIC_REPOSITORY_FILE
+      == "/run/secrets/restic-repository";
+    assert
+      enabled.systemd.services.${manual}.environment.RESTIC_PASSWORD_FILE
+      == "/run/secrets/restic-password";
+    assert
+      map (lib.hasInfix " check --read-data") enabled.systemd.services.${manual}.serviceConfig.ExecStart
+      == [
+        false
+        true
+      ];
+    assert lib.hasInfix " backup " (
+      builtins.head enabled.systemd.services.${manual}.serviceConfig.ExecStart
+    );
+    assert
+      map (lib.hasInfix " check ") enabled.systemd.services.${verify}.serviceConfig.ExecStart == [ true ];
+    true;
 }
