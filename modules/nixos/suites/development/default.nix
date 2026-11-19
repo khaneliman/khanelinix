@@ -1,23 +1,19 @@
 {
   config,
   lib,
-  pkgs,
 
   ...
 }:
 let
-
   cfg = config.khanelinix.suites.development;
-  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
   homeCfg = lib.khanelinix.hmUserConfig config;
   exoEnabled = homeCfg.services.exo.enable or false;
   exoLibp2pPort = 52416;
-  tomlFormat = pkgs.formats.toml { };
 in
 {
+  imports = [ ../../../common/suites/development ];
+
   options.khanelinix.suites.development = {
-    enable = lib.mkEnableOption "common development configuration";
-    aiEnable = lib.mkEnableOption "ai development configuration";
     dockerEnable = lib.mkEnableOption "docker development configuration";
     openDevPorts = lib.mkEnableOption "opening common local development TCP ports";
     sqlEnable = lib.mkEnableOption "sql development configuration";
@@ -63,17 +59,6 @@ in
       virtualisation = {
         podman.enable = cfg.dockerEnable;
       };
-    };
-
-    nix.settings = {
-      keep-derivations = true;
-      keep-outputs = true;
-    };
-
-    environment.etc = lib.mkIf cfg.aiEnable {
-      "codex/requirements.toml".source =
-        tomlFormat.generate "codex-requirements" aiTools.codex.managedRequirements;
-      "codex/hooks".source = aiTools.codex.hooksDir;
     };
   };
 }

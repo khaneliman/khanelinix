@@ -1,15 +1,12 @@
 {
   config,
   lib,
-  pkgs,
 
   ...
 }:
 let
   cfg = config.khanelinix.suites.development;
   homeCfg = lib.khanelinix.hmUserConfig config;
-  aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
-  tomlFormat = pkgs.formats.toml { };
   acceptXcodeLicense = /* Bash */ ''
     if developerDirectory="$(/usr/bin/xcode-select -p 2>/dev/null)" \
       && [ -x "$developerDirectory/usr/bin/xcodebuild" ]; then
@@ -21,9 +18,9 @@ let
   '';
 in
 {
+  imports = [ ../../../common/suites/development ];
+
   options.khanelinix.suites.development = {
-    enable = lib.mkEnableOption "common development configuration";
-    aiEnable = lib.mkEnableOption "ai development configuration";
     containerBackend = lib.mkOption {
       type = lib.types.enum [
         "none"
@@ -96,17 +93,6 @@ in
     khanelinix.home.extraOptions.khanelinix.suites.development.dockerEnable = lib.mkDefault (
       cfg.containerBackend != "none"
     );
-
-    nix.settings = {
-      keep-derivations = true;
-      keep-outputs = true;
-    };
-
-    environment.etc = lib.mkIf cfg.aiEnable {
-      "codex/requirements.toml".source =
-        tomlFormat.generate "codex-requirements" aiTools.codex.managedRequirements;
-      "codex/hooks".source = aiTools.codex.hooksDir;
-    };
 
     # Homebrew checks the active Xcode license before it processes the bundle.
     system.activationScripts.preActivation.text = lib.mkAfter acceptXcodeLicense;
