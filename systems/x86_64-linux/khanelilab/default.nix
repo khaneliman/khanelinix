@@ -33,8 +33,6 @@ in
     nix = enabled;
 
     hardware = {
-      audio = enabled;
-      bluetooth = enabled;
       cpu.intel = enabled;
       opengl = enabled;
 
@@ -46,10 +44,7 @@ in
 
     services = {
       avahi = enabled;
-      geoclue = enabled;
-      printing = enabled;
       openssh = enabled;
-      sunshine = enabled;
       tailscale = {
         enable = true;
         advertiseExitNode = true;
@@ -65,7 +60,6 @@ in
 
     security = {
       sudo-rs = enabled;
-      keyring = enabled;
       sops = {
         enable = true;
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
@@ -79,7 +73,6 @@ in
         secureBoot = true;
       };
 
-      fonts = enabled;
       networking = enabled;
       time = enabled;
     };
