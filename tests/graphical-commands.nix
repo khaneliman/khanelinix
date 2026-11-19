@@ -23,13 +23,19 @@ let
       userDir =
         _: _: fallback:
         "/home/fixture/${fallback}";
-      theme.wallpaperPath = _: "/home/fixture/wallpaper.png";
+      theme = {
+        wallpaperPath = _: "/home/fixture/wallpaper.png";
+        wallpaperTheme = _: "nord";
+        wallpaperDir = _: "/home/fixture/wallpapers/";
+      };
     };
   };
   # Capture the native render before building; no compositor validation hook runs.
   pkgs = pkgsBase // {
     writeTextFile = args: (pkgsBase.writeTextFile args) // { renderedText = args.text; };
     writeText = name: text: (pkgsBase.writeText name text) // { renderedText = text; };
+    writeShellScriptBin =
+      name: text: (pkgsBase.writeShellScriptBin name text) // { renderedText = text; };
     khanelinix = {
       codexbar-cli = pkgsBase.hello;
       codexbar-waybar = pkgsBase.hello;
@@ -66,18 +72,27 @@ let
   graphical = root + "/modules/home/programs/graphical";
   hm = import (homeManager + "/lib") { inherit lib; };
   evaluate =
-    swayEnabled: hyprEnabled: satty:
+    swayEnabled: hyprEnabled: satty: wallpapers:
     (hm.homeManagerConfiguration {
       inherit pkgs;
-      extraSpecialArgs = { inherit lib pkgs; };
+      extraSpecialArgs = {
+        inherit lib pkgs;
+        inputs.self = repo;
+      };
       modules = [
         settings.module
         (graphical + "/wms/niri/binds.nix")
+        (graphical + "/wms/sway/apps.nix")
         (graphical + "/wms/sway/binds.nix")
+        (graphical + "/wms/hyprland/binds.nix")
         (graphical + "/addons/wlogout")
         (repo + "/modules/home/programs/graphical/screenlockers/swaylock")
+        (root + "/modules/home/services/niri-wallpaper-watch")
+        (root + "/modules/home/services/hyprpaper")
         {
+          options.programs.niri.package = lib.mkOption { type = lib.types.package; };
           options.khanelinix = {
+            suites = lib.mkOption { type = lib.types.attrs; };
             programs.graphical =
               builtins.listToAttrs (
                 map
@@ -94,7 +109,10 @@ let
               // {
                 addons.satty = lib.mkOption { type = lib.types.attrs; };
               };
-            services = lib.mkOption { type = lib.types.attrs; };
+            services = {
+              voxtype = lib.mkOption { type = lib.types.attrs; };
+              sops = lib.mkOption { type = lib.types.attrs; };
+            };
             theme = lib.mkOption { type = lib.types.attrs; };
           };
           config = {
@@ -104,11 +122,16 @@ let
               stateVersion = "25.11";
             };
             khanelinix = {
+              suites = {
+                social.enable = false;
+                business.enable = false;
+              };
               programs.graphical = {
                 inherit launchers;
                 wms = {
                   niri.enable = true;
                   sway.enable = true;
+                  hyprland.enable = true;
                 };
                 addons = {
                   satty.enable = satty;
@@ -120,11 +143,20 @@ let
               services = {
                 voxtype.enable = false;
                 sops.enable = false;
+                hyprpaper = {
+                  enable = true;
+                  monitors = [ ];
+                };
+                niri-wallpaper-watch = {
+                  enable = true;
+                  inherit wallpapers;
+                };
               };
               theme.wallpaper.lock = "fixture";
             };
             programs = {
               hyprlock.enable = hyprEnabled;
+              niri.package = pkgs.writeShellScriptBin "niri" "exit 1";
               waybar = {
                 enable = true;
                 settings = [ { "custom/power" = (waybar cfg)."custom/power"; } ];
@@ -144,11 +176,17 @@ let
                 terminal = "kitty";
               };
             };
+            wayland.windowManager.hyprland.configType = "lua";
           };
         }
       ];
     }).config;
-  cfg = evaluate true true true;
+  cfg = evaluate true true true [ ];
+  wallpaperExec =
+    (evaluate true true true [
+      "/fixture/first wallpaper.png"
+      "/fixture/second \"wallpaper\".png"
+    ]).systemd.user.services.niri-wallpaper-watch.Service.ExecStart;
   waybar =
     config:
     import (graphical + "/bars/waybar/modules/custom-modules.nix") {
@@ -161,12 +199,26 @@ in
       lib.filterAttrs (_: v: v.action ? spawn) cfg.programs.niri.settings.binds
     );
     kdl = cfg.programs.niri.finalConfig;
-    swappy = (evaluate true true false).programs.niri.settings.binds."Ctrl+Alt+Print".action.spawn;
+    swappy = (evaluate true true false [ ]).programs.niri.settings.binds."Ctrl+Alt+Print".action.spawn;
+    emptyWallpaperUnit = cfg.systemd.user.services ? niri-wallpaper-watch;
+    inherit wallpaperExec;
   };
+  shellDerivations = builtins.attrNames (
+    builtins.getContext (
+      cfg.xdg.configFile."sway/config".source.renderedText + lib.concatStrings wallpaperExec
+    )
+  );
   sway = {
     binds = cfg.wayland.windowManager.sway.config.keybindings;
     rendered = cfg.xdg.configFile."sway/config".source.renderedText;
     grace = cfg.programs.swaylock.settings.grace;
+    startup = cfg.wayland.windowManager.sway.config.startup;
+  };
+  hyprland = {
+    brightness = lib.filter (
+      binding: lib.hasPrefix "XF86MonBrightness" (builtins.head binding._args)
+    ) cfg.wayland.windowManager.hyprland.settings.bind;
+    wallpaperCallback = builtins.elemAt (builtins.head cfg.wayland.windowManager.hyprland.settings.on)._args 1;
   };
   wlogout = cfg.xdg.configFile."wlogout/layout".source.renderedText;
   waybarRender = cfg.xdg.configFile."waybar/config".source.value;
@@ -175,12 +227,17 @@ in
       (
         bits:
         let
-          c = evaluate (builtins.elemAt bits 0) (builtins.elemAt bits 1) true;
+          c = evaluate (builtins.elemAt bits 0) (builtins.elemAt bits 1) true [ ];
         in
         {
           inherit bits;
           wlogout = (builtins.head c.programs.wlogout.layout).action;
           waybar = (waybar c)."custom/power".menu-actions.lock;
+          ashell =
+            (import (graphical + "/bars/ashell/helpers.nix") {
+              config = c;
+              inherit lib pkgs;
+            }).lockScript.renderedText;
         }
       )
       [
@@ -204,5 +261,11 @@ in
   packages = {
     swaylock = lib.getExe cfg.programs.swaylock.package;
     hyprlock = lib.getExe cfg.programs.hyprlock.package;
+    brightnessctl = lib.getExe pkgs.brightnessctl;
+    jq = lib.getExe pkgs.jq;
+    niri = lib.getExe' cfg.programs.niri.package "niri";
+    swaybg = lib.getExe pkgs.swaybg;
+    tailscale = lib.getExe pkgs.tailscale;
+    wayvnc = lib.getExe pkgs.wayvnc;
   };
 }

@@ -7,6 +7,7 @@ Optional --root tests unapplied copies; --repo supplies their library.
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -17,6 +18,8 @@ for option in ("nixpkgs", "home-manager", "niri", "scratch"):
 parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
 parser.add_argument("--repo", type=Path)
 parser.add_argument("--niri-bin", type=Path)
+parser.add_argument("--sway-bin", type=Path)
+parser.add_argument("--lua-bin", type=Path)
 args = parser.parse_args()
 scratch = args.scratch.resolve()
 scratch.mkdir(parents=True, exist_ok=True)
@@ -62,7 +65,7 @@ stub.write_text(
     + sys.executable
     + "\n"
     + """
-import json, os, sys
+import json, os, sys, time
 from pathlib import Path
 name = Path(sys.argv[0]).name
 payload = sys.stdin.read() if name in ("rofi", "cliphist", "wl-copy", "satty", "swappy") else ""
@@ -71,10 +74,22 @@ with open(os.environ["CALL_LOG"], "a") as out:
                              display=os.environ.get("WAYLAND_DISPLAY"))) + "\\n")
 if name == "pkill":
     sys.exit(int(os.environ.get("PKILL_RESULT", "1")))
+elif name == "niri" and sys.argv[1:] == ["msg", "--json", "event-stream"]:
+    for _ in range(200):
+        if '"swaybg"' in Path(os.environ["CALL_LOG"]).read_text():
+            break
+        time.sleep(0.01)
+    else:
+        sys.exit(1)
+    print('{"WorkspacesChanged": {}}')
+    print('{"WorkspaceActivated": {"id": 2}}')
 elif name == "niri":
     print("Hex: #aabbcc")
+elif name == "tailscale":
+    print(os.environ.get("TAILSCALE_IP", ""))
+    sys.exit(int(os.environ.get("TAILSCALE_STATUS", "0")))
 elif name == "swaymsg":
-    print(json.dumps({"nodes": [{"focused": True, "name": "spaces and " + chr(34) + "quotes", "rect": {"x": 1}}]}))
+    print(json.dumps({"nodes": [{"focused": not os.environ.get("NO_FOCUS"), "name": "spaces and " + chr(34) + "quotes", "rect": {"x": 1, "y": 2, "width": 30, "height": 40}}]}))
 elif name == "slurp":
     print("1,2 30x40")
 elif name == "grim":
@@ -104,6 +119,11 @@ for name in (
     "pkill",
     "swaylock",
     "hyprlock",
+    "loginctl",
+    "brightnessctl",
+    "tailscale",
+    "wayvnc",
+    "swaybg",
 ):
     path = bin_dir / name
     if not path.exists():
@@ -115,6 +135,11 @@ env = os.environ | {
 }
 # Relocate only executable store references. Every dispatched executable is inert.
 replacements = dict(data["packages"])
+jq_link = bin_dir / "jq"
+if not jq_link.exists():
+    jq = shutil.which("jq")
+    assert jq is not None, "jq is required"
+    jq_link.symlink_to(jq)
 for argv in data["niri"]["argv"].values():
     if len(argv) == 3 and argv[:2] == ["sh", "-c"]:
         import re
@@ -128,6 +153,20 @@ def relocate(command):
         command = command.replace(path, str(bin_dir / name))
     # The color picker writes nothing through the stub, but keep scratch paths local.
     return command.replace("/tmp/color.png", str(scratch / "color.png"))
+
+
+def load_script(name, executable, dependencies=()):
+    drv = next(p for p in data["shellDerivations"] if p.endswith(f"-{name}.drv"))
+    output = json.loads(subprocess.check_output(["nix", "derivation", "show", drv]))
+    definition = next(iter(output.get("derivations", output).values()))
+    text = definition.get("structuredAttrs", definition["env"])["text"]
+    for dependency in dependencies:
+        assert data["packages"][dependency] in text, dependency
+    script = bin_dir / name
+    script.write_text(relocate(text))
+    script.chmod(0o755)
+    replacements[name] = executable
+    return [executable]
 
 
 def run(command, extra=None, check=True):
@@ -184,6 +223,28 @@ _, calls = run(data["niri"]["swappy"])
 assert calls[-1]["name"] == "swappy" and calls[-1]["argv"] == ["-f", "-"]
 
 binds = data["sway"]["binds"]
+assert not data["niri"]["emptyWallpaperUnit"]
+for key, step in (("XF86MonBrightnessUp", "5%+"), ("XF86MonBrightnessDown", "5%-")):
+    argv = [data["packages"]["brightnessctl"], "--class=backlight", "set", step]
+    assert data["niri"]["argv"][key] == argv
+    assert binds[key] == "exec " + " ".join(argv)
+    for command in (argv, binds[key].removeprefix("exec ")):
+        _, calls = run(command)
+        assert calls[0]["name"] == "brightnessctl" and calls[0]["argv"] == argv[1:]
+    _, dispatch, flags = next(
+        b["_args"] for b in data["hyprland"]["brightness"] if b["_args"][0] == key
+    )
+    assert dispatch["expr"] == f'hl.dsp.exec_cmd("run-as-service {" ".join(argv)}")'
+    assert flags["locked"] and flags["repeating"]
+assert binds["Mod4+u"] == "output * power on"
+for workspace in range(1, 11):
+    digit = workspace % 10
+    assert binds[f"Control+Alt+{digit}"] == f"workspace number {workspace}"
+    for modifiers in ("Control+Alt+Shift", "Mod4+Shift"):
+        assert (
+            binds[f"{modifiers}+{digit}"]
+            == f"move container to workspace number {workspace}"
+        )
 assert data["sway"]["grace"] == 300
 for key, argv in (("Mod4+l", []), ("Mod4+Control+l", ["--grace", "0"])):
     command = binds[key].removeprefix("exec ")
@@ -200,6 +261,53 @@ _, calls = run(binds["Mod4+i"].removeprefix("exec "))
 assert calls[-1]["name"] == "notify-send"
 assert calls[-1]["argv"][0] == "Window Info"
 assert json.loads(calls[-1]["argv"][1])["name"] == 'spaces and "quotes'
+
+startup = next(
+    s["command"] for s in data["sway"]["startup"] if "wayvnc" in s["command"]
+)
+wrapper, executable = startup.split()
+assert wrapper == "run-as-service"
+vnc = load_script("sway-start-wayvnc", executable, ("tailscale", "wayvnc"))
+_, calls = run(vnc, {"TAILSCALE_IP": "100.64.0.10"})
+assert [(c["name"], c["argv"]) for c in calls] == [
+    ("tailscale", ["ip", "--4"]),
+    ("wayvnc", ["100.64.0.10"]),
+]
+for overrides in (
+    {"TAILSCALE_IP": ""},
+    {"TAILSCALE_STATUS": "1", "TAILSCALE_IP": "100.64.0.10"},
+):
+    result, calls = run(vnc, overrides, check=False)
+    assert result.returncode != 0 and [c["name"] for c in calls] == ["tailscale"]
+
+capture = binds["Control+Print"].removeprefix("exec ")
+geometry = capture.split("$(", 1)[1].split(")", 1)[0]
+load_script("sway-active-geometry", geometry)
+for binding, capture_args, recipient in (
+    ("Control+Print", ["-"], "wl-copy"),
+    ("Alt+Print", ["-t", "ppm", "-"], "satty"),
+):
+    command = binds[binding].removeprefix("exec ")
+    _, calls = run(command)
+    assert any(
+        c["name"] == "grim" and c["argv"] == ["-g", "1,2 30x40", *capture_args]
+        for c in calls
+    )
+    assert any(c["name"] == recipient and c["stdin"] == "image\n" for c in calls)
+    result, calls = run(command, {"NO_FOCUS": "1"}, check=False)
+    assert result.returncode != 0 and [c["name"] for c in calls] == ["swaymsg"]
+
+watcher = load_script(
+    "niri-wallpaper-watch", data["niri"]["wallpaperExec"][0], ("niri", "jq", "swaybg")
+)
+_, calls = run(watcher)
+assert [c["argv"] for c in calls if c["name"] == "niri"] == [
+    ["msg", "--json", "event-stream"]
+]
+assert [c["argv"] for c in calls if c["name"] == "swaybg"] == [
+    ["-o", "DP-3", "-i", path, "-o", "DP-1", "-i", path, "-m", "fill"]
+    for path in ("/fixture/first wallpaper.png", '/fixture/second "wallpaper".png')
+]
 # Native Wlogout layout is newline-separated objects, not a JSON array.
 layout = [json.loads(line) for line in data["wlogout"].splitlines()]
 assert (
@@ -236,15 +344,25 @@ for menu in data["menus"]:
             )
         else:
             assert result.returncode == 1 and not calls
+        _, calls = run(menu["ashell"], {"XDG_CURRENT_DESKTOP": desktop})
+        if menu["bits"][index]:
+            assert len(calls) == 1 and calls[0]["name"] == name and not calls[0]["argv"]
+        else:
+            assert len(calls) == 1 and calls[0]["name"] == "loginctl"
+            assert calls[0]["argv"] == ["lock-session"]
     for desktop in ("", "GNOME", "notniri"):
         result, calls = run(
             menu["wlogout"], {"XDG_CURRENT_DESKTOP": desktop}, check=False
         )
         assert result.returncode == 1 and not calls
+        _, calls = run(menu["ashell"], {"XDG_CURRENT_DESKTOP": desktop})
+        assert len(calls) == 1 and calls[0]["name"] == "loginctl"
+        assert calls[0]["argv"] == ["lock-session"]
     # Enablement, not executable closure presence: both stubs exist for every case.
     for index, name in enumerate(("swaylock", "hyprlock")):
         if not menu["bits"][index]:
             assert data["packages"][name] not in menu["wlogout"]
+            assert data["packages"][name] not in menu["ashell"]
 
 locker = Path(data["packages"]["swaylock"])
 for flag, valid in (("--immediate", False), ("--grace", True)):
@@ -256,7 +374,44 @@ if args.niri_bin:
     config = scratch / "niri.kdl"
     config.write_text(data["niri"]["kdl"])
     subprocess.run([str(args.niri_bin), "validate", "-c", str(config)], check=True)
+if args.sway_bin:
+    config = scratch / "sway.conf"
+    config.write_text(data["sway"]["rendered"])
+    sway_env = os.environ | {
+        "WLR_BACKENDS": "headless",
+        "WLR_RENDERER": "pixman",
+        "XDG_RUNTIME_DIR": str(scratch),
+    }
+    subprocess.run(
+        [str(args.sway_bin), "--validate", "-c", str(config)], env=sway_env, check=True
+    )
+if args.lua_bin:
+    callback = data["hyprland"]["wallpaperCallback"]["expr"]
+    subprocess.run(
+        [str(args.lua_bin), "-"],
+        input=f"local callback = {callback}\n"
+        + """
+local commands = {}
+local active
+hl = {
+  get_active_monitor = function() return active end,
+  exec_cmd = function(command) table.insert(commands, command) end,
+}
+callback({ id = 1 })
+assert(#commands == 0)
+active = { name = "DP-1" }
+callback({ id = 1 })
+callback({ id = 1, monitor = { name = "DP-1" } })
+callback({ id = 1, monitor = "DP-2" })
+callback({ id = 2, monitor = "DP-2", special = true })
+assert(#commands == 2)
+assert(commands[1]:match("^hyprctl hyprpaper wallpaper DP%-1,"))
+assert(commands[2]:match("^hyprctl hyprpaper wallpaper DP%-2,"))
+""",
+        text=True,
+        check=True,
+    )
 
 print(
-    "PASS: native HM/Niri renders, nine Niri actions, both annotation branches, Sway lock/inspector flows, 4 enablement x 8 desktop menu cases and real help-only flag parsing"
+    "PASS: native graphical renders, brightness, Sway workspace and command flow, Niri wallpaper service, locker menu matrix and flag parsing"
 )
