@@ -21,7 +21,7 @@ in
     ] "Monitors to update";
   };
 
-  config = mkIf cfg.enable {
+  config = mkIf (cfg.enable && cfg.wallpapers != [ ]) {
     systemd.user.services.niri-wallpaper-watch = {
       Unit = {
         Description = "Watch Niri workspaces and update swaybg";
@@ -38,17 +38,8 @@ in
         ExecStart =
           let
             script = pkgs.writeShellScriptBin "niri-wallpaper-watch" ''
-              PATH=$PATH:${
-                lib.makeBinPath [
-                  pkgs.jq
-                  pkgs.swaybg
-                  pkgs.coreutils
-                  pkgs.procps
-                ]
-              }
-
-              WALLPAPERS=(${toString (map (w: "\"${w}\"") cfg.wallpapers)})
-              MONITORS=(${toString (map (m: "\"${m}\"") cfg.monitors)})
+              WALLPAPERS=(${lib.escapeShellArgs cfg.wallpapers})
+              MONITORS=(${lib.escapeShellArgs cfg.monitors})
               WALL_COUNT=''${#WALLPAPERS[@]}
               SWAYBG_PID=""
 
@@ -61,7 +52,7 @@ in
                 done
 
                 # Spawn new swaybg first
-                swaybg "''${ARGS[@]}" -m fill &
+                ${getExe pkgs.swaybg} "''${ARGS[@]}" -m fill &
                 NEW_PID=$!
                 
                 # Kill old one after a brief moment to allow transition (simulated)
@@ -77,12 +68,13 @@ in
               # Set initial wallpaper (index 0)
               update_wallpaper "''${WALLPAPERS[0]}"
 
-              niri msg --json event-stream 2>/dev/null | while read -r event; do
+              ${
+                lib.getExe' (config.programs.niri.package or pkgs.niri) "niri"
+              } msg --json event-stream 2>/dev/null | while read -r event; do
                 # Skip lines that don't look like JSON objects
                 if [[ ! "$event" =~ ^\{ ]]; then continue; fi
                 
-                if echo "$event" | jq -e '.WorkspaceActivated' >/dev/null 2>&1; then
-                  ID=$(echo "$event" | jq -r '.WorkspaceActivated.id')
+                if ID=$(${getExe pkgs.jq} -er '.WorkspaceActivated.id' <<< "$event" 2>/dev/null); then
                   INDEX=$(( (ID - 1) % WALL_COUNT ))
                   # Handle negative modulo
                   if [ $INDEX -lt 0 ]; then INDEX=$((INDEX + WALL_COUNT)); fi
