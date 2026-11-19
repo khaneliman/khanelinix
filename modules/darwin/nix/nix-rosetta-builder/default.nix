@@ -37,7 +37,7 @@ in
     };
   };
 
-  config = {
+  config = lib.mkIf cfg.enable {
     nix-rosetta-builder = {
       inherit (cfg)
         enable
