@@ -15,8 +15,6 @@ writeShellApplication {
 
   passthru.updateScript = null;
 
-  checkPhase = "";
-
   runtimeInputs = [ coreutils ];
 
   text = ''
@@ -70,6 +68,8 @@ writeShellApplication {
       esac
     }
 
+    # compare_component calls this through its release_command argument.
+    # shellcheck disable=SC2329
     kernel_release() {
       local modules="$1/lib/modules"
       local release
@@ -85,6 +85,8 @@ writeShellApplication {
       true
     }
 
+    # compare_component calls this through its release_command argument.
+    # shellcheck disable=SC2329
     systemd_release() {
       local name
 
