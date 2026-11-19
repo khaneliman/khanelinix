@@ -108,7 +108,7 @@ in
 
         ${optionalString seshCfg.enable ''
           bind-key 9 run-shell "sesh connect --root '#{pane_current_path}'"
-          bind-key L run-shell "sesh last"
+          bind-key M-l run-shell "sesh last"
           bind-key S display-popup -E -w 80% -h 70% "sesh connect \"$(sesh list | fzf)\""
         ''}
 
