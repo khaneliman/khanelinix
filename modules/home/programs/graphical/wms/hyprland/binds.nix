@@ -476,7 +476,7 @@ in
               (mkExecBind "$mainMod" "N" "$notification_center -t -sw")
               (mkExecBind "$mainMod" "V" "$cliphist")
               # TODO: handle when you need to specify port manually `-p 5901`
-              (mkExecBind "$mainMod" "W" "$looking-glass")
+              (mkExecBind "SUPER_SHIFT" "W" "$looking-glass")
             ];
 
             voxtypeBinds = lib.optionals config.khanelinix.services.voxtype.enable [
@@ -1219,7 +1219,7 @@ in
               })
               (mkBind {
                 mods = "SUPER";
-                key = "R";
+                key = "W";
                 dispatcher = "submap";
                 args = "reset";
               })
