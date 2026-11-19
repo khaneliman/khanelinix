@@ -1,4 +1,3 @@
-#include <math.h>
 #include <net/if.h>
 #include <net/if_mib.h>
 #include <stdbool.h>
@@ -64,27 +63,24 @@ static inline void network_update(struct network *net) {
   double delta_obytes =
       (double)(net->data.ifmd_data.ifi_obytes - obytes_nm1) / time_scale;
 
-  double exponent_ibytes = log10(delta_ibytes);
-  double exponent_obytes = log10(delta_obytes);
-
-  if (exponent_ibytes < 3) {
+  if (delta_ibytes < 1000) {
     net->down_unit = UNIT_BPS;
     net->down = delta_ibytes;
-  } else if (exponent_ibytes < 6) {
+  } else if (delta_ibytes < 1000000) {
     net->down_unit = UNIT_KBPS;
     net->down = delta_ibytes / 1000.0;
-  } else if (exponent_ibytes < 9) {
+  } else {
     net->down_unit = UNIT_MBPS;
     net->down = delta_ibytes / 1000000.0;
   }
 
-  if (exponent_obytes < 3) {
+  if (delta_obytes < 1000) {
     net->up_unit = UNIT_BPS;
     net->up = delta_obytes;
-  } else if (exponent_obytes < 6) {
+  } else if (delta_obytes < 1000000) {
     net->up_unit = UNIT_KBPS;
     net->up = delta_obytes / 1000.0;
-  } else if (exponent_obytes < 9) {
+  } else {
     net->up_unit = UNIT_MBPS;
     net->up = delta_obytes / 1000000.0;
   }
