@@ -171,6 +171,11 @@ int access(const char *path, int mode) {
   return real_access(redirect_path(path), mode);
 }
 
+static int open_needs_mode(int flags) {
+  // O_TMPFILE includes O_DIRECTORY, which alone does not take a mode.
+  return (flags & O_CREAT) || (flags & O_TMPFILE) == O_TMPFILE;
+}
+
 int open(const char *path, int flags, ...) {
   static int (*real_open)(const char *, int, ...) = NULL;
 
@@ -179,7 +184,7 @@ int open(const char *path, int flags, ...) {
   }
 
   mode_t mode = 0;
-  if (flags & (O_CREAT | O_TMPFILE)) {
+  if (open_needs_mode(flags)) {
     va_list args;
     va_start(args, flags);
     mode = va_arg(args, mode_t);
@@ -197,7 +202,7 @@ int open64(const char *path, int flags, ...) {
   }
 
   mode_t mode = 0;
-  if (flags & (O_CREAT | O_TMPFILE)) {
+  if (open_needs_mode(flags)) {
     va_list args;
     va_start(args, flags);
     mode = va_arg(args, mode_t);
@@ -215,7 +220,7 @@ int openat(int dirfd, const char *path, int flags, ...) {
   }
 
   mode_t mode = 0;
-  if (flags & (O_CREAT | O_TMPFILE)) {
+  if (open_needs_mode(flags)) {
     va_list args;
     va_start(args, flags);
     mode = va_arg(args, mode_t);
@@ -233,7 +238,7 @@ int openat64(int dirfd, const char *path, int flags, ...) {
   }
 
   mode_t mode = 0;
-  if (flags & (O_CREAT | O_TMPFILE)) {
+  if (open_needs_mode(flags)) {
     va_list args;
     va_start(args, flags);
     mode = va_arg(args, mode_t);
