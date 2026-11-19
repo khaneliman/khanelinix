@@ -17,7 +17,8 @@ in
   config = mkIf cfg.enable {
     services = {
       logind.settings.Login = {
-        KillUserProcesses = true;
+        # Detached SSH sessions, including tmux, must survive logout.
+        KillUserProcesses = lib.mkDefault false;
       };
     };
   };
