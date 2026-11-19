@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import json
 import re
 import subprocess
 import sys
@@ -38,7 +39,7 @@ def run(
 def get_repo_root() -> Path:
     print("Resolving repository root...", flush=True)
     result = run(["git", "rev-parse", "--show-toplevel"])
-    return Path(result.stdout.strip())
+    return Path(result.stdout.removesuffix("\n"))
 
 
 def get_head_rev() -> str:
@@ -51,11 +52,16 @@ def get_extension_names(text: str) -> list[str]:
     return [match.group("name") for match in ENTRY_RE.finditer(text)]
 
 
+def nixpkgs_bindings(repo_root: Path) -> str:
+    flake_ref = json.dumps("git+" + repo_root.as_uri())
+    return f"""  flake = builtins.getFlake {flake_ref};
+  pkgs = import flake.inputs.nixpkgs {{ system = builtins.currentSystem; }};"""
+
+
 def get_sparse_hash(repo_root: Path, name: str, rev: str) -> str:
     expr = f"""
 let
-  flake = builtins.getFlake (toString {repo_root});
-  pkgs = import flake.inputs.nixpkgs {{ system = builtins.currentSystem; }};
+{nixpkgs_bindings(repo_root)}
 in
 pkgs.fetchgit {{
   url = "https://github.com/raycast/extensions";
@@ -76,8 +82,7 @@ pkgs.fetchgit {{
 def get_npm_deps_hash(repo_root: Path, name: str, rev: str, source_hash: str) -> str:
     expr = f"""
 let
-  flake = builtins.getFlake (toString {repo_root});
-  pkgs = import flake.inputs.nixpkgs-unstable {{ system = builtins.currentSystem; }};
+{nixpkgs_bindings(repo_root)}
   src = pkgs.fetchgit {{
     url = "https://github.com/raycast/extensions";
     rev = "{rev}";
