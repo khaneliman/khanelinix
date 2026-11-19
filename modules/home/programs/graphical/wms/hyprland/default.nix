@@ -103,8 +103,8 @@ in
           slurp
         ];
 
-        pointerCursor.hyprcursor = {
-          enable = true;
+        pointerCursor = mkIf (config.khanelinix.theme.gtk.cursor.name != null) {
+          hyprcursor.enable = true;
         };
 
         sessionVariables = lib.mkIf (!(osConfig.programs.uwsm.enable or false)) (

@@ -9,6 +9,7 @@ let
   inherit (lib) mkDefault mkIf;
 
   cfg = config.khanelinix.programs.graphical.screenlockers.swaylock;
+  colors = config.khanelinix.theme.active;
   wallpaperPath = name: lib.khanelinix.theme.wallpaperPath { inherit config pkgs name; };
 in
 {
@@ -45,38 +46,39 @@ in
         indicator-thickness = 20;
         indicator-caps-lock = true;
 
-        key-hl-color = mkDefault "#8aadf4";
-        bs-hl-color = mkDefault "#ed8796";
-        caps-lock-key-hl-color = mkDefault "#f5a97f";
-        caps-lock-bs-hl-color = mkDefault "#ed8796";
-
-        separator-color = mkDefault "#181926";
-
-        inside-color = mkDefault "#24273a";
-        inside-clear-color = mkDefault "#24273a";
-        inside-caps-lock-color = mkDefault "#24273a";
-        inside-ver-color = mkDefault "#24273a";
-        inside-wrong-color = mkDefault "#24273a";
-
-        ring-color = mkDefault "#1e2030";
-        ring-clear-color = mkDefault "#8aadf4";
-        ring-caps-lock-color = mkDefault "231f20D9";
-        ring-ver-color = mkDefault "#1e2030";
-        ring-wrong-color = mkDefault "#ed8796";
-
-        line-color = mkDefault "#8aadf4";
-        line-clear-color = mkDefault "#8aadf4";
-        line-caps-lock-color = mkDefault "#f5a97f";
-        line-ver-color = mkDefault "#181926";
-        line-wrong-color = mkDefault "#ed8796";
-
-        text-color = mkDefault "#8aadf4";
-        text-clear-color = mkDefault "#24273a";
-        text-caps-lock-color = mkDefault "#f5a97f";
-        text-ver-color = mkDefault "#24273a";
-        text-wrong-color = mkDefault "#24273a";
-
         debug = true;
+      }
+      // lib.optionalAttrs (config.khanelinix.theme ? active) {
+        key-hl-color = mkDefault colors.accent;
+        bs-hl-color = mkDefault colors.danger;
+        caps-lock-key-hl-color = mkDefault colors.warning;
+        caps-lock-bs-hl-color = mkDefault colors.danger;
+
+        separator-color = mkDefault colors.shadow;
+
+        inside-color = mkDefault colors.background;
+        inside-clear-color = mkDefault colors.background;
+        inside-caps-lock-color = mkDefault colors.background;
+        inside-ver-color = mkDefault colors.background;
+        inside-wrong-color = mkDefault colors.background;
+
+        ring-color = mkDefault colors.border;
+        ring-clear-color = mkDefault colors.accent;
+        ring-caps-lock-color = mkDefault colors.warning;
+        ring-ver-color = mkDefault colors.border;
+        ring-wrong-color = mkDefault colors.danger;
+
+        line-color = mkDefault colors.accent;
+        line-clear-color = mkDefault colors.accent;
+        line-caps-lock-color = mkDefault colors.warning;
+        line-ver-color = mkDefault colors.shadow;
+        line-wrong-color = mkDefault colors.danger;
+
+        text-color = mkDefault colors.foreground;
+        text-clear-color = mkDefault colors.accent;
+        text-caps-lock-color = mkDefault colors.warning;
+        text-ver-color = mkDefault colors.foreground;
+        text-wrong-color = mkDefault colors.danger;
       };
     };
   };

@@ -58,9 +58,9 @@ in
           };
         };
 
-        cursor = {
-          theme = config.khanelinix.theme.gtk.cursor.name;
-          inherit (config.khanelinix.theme.gtk.cursor) size;
+        cursor = mkIf config.home.pointerCursor.enable {
+          theme = config.home.pointerCursor.name;
+          inherit (config.home.pointerCursor) size;
         };
 
         environment = {

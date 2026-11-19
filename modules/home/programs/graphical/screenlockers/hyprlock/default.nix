@@ -8,7 +8,8 @@
 let
   inherit (lib) mkIf;
 
-  catppuccin = import (lib.getFile "modules/home/theme/catppuccin/colors.nix");
+  colors = config.khanelinix.theme.active;
+  rgb = color: "rgb(${lib.removePrefix "#" color})";
 
   cfg = config.khanelinix.programs.graphical.screenlockers.hyprlock;
   layout = config.khanelinix.system.display.layout or null;
@@ -64,7 +65,7 @@ in
           background:
           {
             brightness = "0.817200";
-            color = lib.mkDefault "rgba(25, 20, 20, 1.0)";
+            color = rgb colors.background;
             blur_passes = 3;
             blur_size = 8;
             contrast = "0.891700";
@@ -84,13 +85,16 @@ in
             dots_size = "0.25";
             dots_spacing = "0.4";
             dots_center = true;
-            outer_color = lib.mkDefault catppuccin.colors.crust.rgb;
-            inner_color = lib.mkDefault catppuccin.colors.surface2.rgb;
-            font_color = lib.mkDefault catppuccin.colors.text.rgb;
+            outer_color = rgb colors.accent;
+            inner_color = rgb colors.surface;
+            font_color = rgb colors.foreground;
+            check_color = rgb colors.warning;
+            fail_color = rgb colors.danger;
+            capslock_color = rgb colors.warning;
             font_size = 14;
             font_family = "Maple Mono Bold";
             fade_on_empty = false;
-            placeholder_text = "<i><span foreground=\"##fbf1c7\">Enter Password</span></i>";
+            placeholder_text = "<i>Enter Password</i>";
             hide_input = false;
             position = "0, 200";
             halign = "center";
@@ -104,7 +108,7 @@ in
             size = 120;
             position = "0, 45";
             path = "${config.khanelinix.user.home}/.face";
-            border_color = lib.mkDefault catppuccin.colors.text.rgb;
+            border_color = rgb colors.foreground;
             border_size = 5;
             halign = "center";
             valign = "center";
@@ -119,10 +123,11 @@ in
         label = [
           {
             monitor = "";
-            color = catppuccin.colors.text.rgb;
+            color = rgb colors.foreground;
             text = "cmd[update:1000] echo \"$(date +\"%k:%M\")\"";
             font_size = 115;
             font_family = "Maple Mono Bold";
+            shadow_color = rgb colors.shadow;
             shadow_passes = 3;
             position = "0, -150";
             halign = "center";
@@ -131,7 +136,7 @@ in
           {
             monitor = "";
             text = "<span font_weight=\"ultrabold\">󰌾 </span>";
-            color = lib.mkDefault catppuccin.colors.text.rgb;
+            color = rgb colors.foreground;
             font_size = 50;
             font_family = lib.mkDefault config.khanelinix.system.fonts.default;
             valign = "center";
@@ -140,13 +145,13 @@ in
             shadow_passes = 1;
             rotate = "0.000000";
             shadow_boost = "1.200000";
-            shadow_color = lib.mkDefault "rgba(0, 0, 0, 1.0)";
+            shadow_color = rgb colors.shadow;
             shadow_size = 3;
           }
           {
             monitor = "";
             text = "<span font_weight=\"ultrabold\"> </span>";
-            color = lib.mkDefault catppuccin.colors.text.rgb;
+            color = rgb colors.foreground;
             font_size = 25;
             font_family = lib.mkDefault config.khanelinix.system.fonts.default;
             valign = "bottom";
@@ -155,15 +160,16 @@ in
             shadow_passes = 1;
             rotate = "0.000000";
             shadow_boost = "1.200000";
-            shadow_color = "rgba(0, 0, 0, 1.0)";
+            shadow_color = rgb colors.shadow;
             shadow_size = 3;
           }
           {
             monitor = "";
-            color = lib.mkDefault catppuccin.colors.text.rgb;
+            color = rgb colors.foreground;
             text = "cmd[update:1000] echo \"- $(date +\"%A, %B %d\") -\"";
             font_size = 18;
             font_family = "Maple Mono";
+            shadow_color = rgb colors.shadow;
             shadow_passes = 3;
             position = "0, -350";
             halign = "center";
@@ -171,7 +177,7 @@ in
           }
           {
             monitor = "";
-            color = lib.mkDefault catppuccin.colors.text.rgb;
+            color = rgb colors.foreground;
             text = "$USER";
             font_size = 15;
             font_family = "Maple Mono Bold";
@@ -185,7 +191,7 @@ in
           {
             monitor = "";
             size = "300, 50";
-            color = lib.mkDefault "rgba(102, 92, 84, .33)";
+            color = rgb colors.surface;
             rounding = 10;
             border_size = 0;
             border_color = lib.mkDefault "rgba(255, 255, 255, 0)";
