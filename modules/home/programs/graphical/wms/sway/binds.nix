@@ -40,6 +40,8 @@ in
           # TODO: package upstream
           # window-inspector = "swayprop"; # TODO: package upstream
           screen-recorder = "record_screen";
+          brightnessctl = getExe pkgs.brightnessctl;
+          jq = getExe pkgs.jq;
           voxtype-toggle = "voxtype record toggle";
           voxtype-cancel = "voxtype record cancel";
           voxtype-stop = "voxtype record stop";
@@ -47,8 +49,14 @@ in
           listOrFallback = list: fallback: if list == [ ] then fallback else builtins.elemAt list 0;
 
           # screenshot commands using grim/slurp for sway
+          activeGeometry = pkgs.writeShellScript "sway-active-geometry" ''
+            swaymsg -t get_tree | ${jq} -er '
+              .. | objects | select(.focused == true) | .rect | "\(.x),\(.y) \(.width)x\(.height)"
+            '
+          '';
+          captureActive = ''geometry="$(${activeGeometry})" && grim -g "$geometry"'';
           sway_area_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grim -g "$(slurp)" "$file" && notify-send "Screenshot" "Area saved to $file"'';
-          sway_active_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" "$file" && notify-send "Screenshot" "Window saved to $file"'';
+          sway_active_file = ''file="${screenshot-path}/$(${getDateTime}).png" && ${captureActive} "$file" && notify-send "Screenshot" "Window saved to $file"'';
           sway_screen_file = ''file="${screenshot-path}/$(${getDateTime}).png" && grim "$file" && notify-send "Screenshot" "Screen saved to $file"'';
 
           annotationTool =
@@ -57,11 +65,11 @@ in
             else
               "swappy -f -";
           sway_area_annotate = ''grim -g "$(slurp)" -t ppm - | ${annotationTool}'';
-          sway_active_annotate = ''grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" -t ppm - | ${annotationTool}'';
+          sway_active_annotate = "${captureActive} -t ppm - | ${annotationTool}";
           sway_screen_annotate = "grim -t ppm - | ${annotationTool}";
 
           sway_area_clipboard = ''grim -g "$(slurp)" - | wl-copy && notify-send "Screenshot" "Area copied to clipboard"'';
-          sway_active_clipboard = ''grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" - | wl-copy && notify-send "Screenshot" "Window copied to clipboard"'';
+          sway_active_clipboard = ''${captureActive} - | wl-copy && notify-send "Screenshot" "Window copied to clipboard"'';
           sway_screen_clipboard = ''grim - | wl-copy && notify-send "Screenshot" "Screen copied to clipboard"'';
 
           # utility commands
@@ -73,7 +81,7 @@ in
           # backslashes are doubled to reach the shell as \000.
           cliphist = "cliphist list | tr -d '\\\\000-\\\\010\\\\013-\\\\037\\\\177' | ${listOrFallback enabledDmenuLaunchers "rofi -dmenu"} | cliphist decode | wl-copy";
           smile = "smile";
-          window-inspector = "notify-send 'Window Info' \"$(swaymsg -t get_tree | jq -r '.. | select(.focused? == true)')\" -t 5000";
+          window-inspector = "notify-send 'Window Info' \"$(swaymsg -t get_tree | ${jq} -r '.. | objects | select(.focused == true)')\" -t 5000";
 
           inherit (config.khanelinix.programs.graphical) launchers;
           enabledLaunchers = lib.flatten [
@@ -212,8 +220,8 @@ in
               XF86AudioRaiseVolume = "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%+";
               XF86AudioLowerVolume = "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 2.5%-";
               XF86AudioMute = "exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
-              XF86MonBrightnessUp = "exec light -A 5";
-              XF86MonBrightnessDown = "exec light -U 5";
+              XF86MonBrightnessUp = "exec ${brightnessctl} --class=backlight set 5%+";
+              XF86MonBrightnessDown = "exec ${brightnessctl} --class=backlight set 5%-";
               XF86AudioMedia = "exec playerctl play-pause";
               XF86AudioPlay = "exec playerctl play-pause";
               XF86AudioStop = "exec playerctl stop";
@@ -221,7 +229,7 @@ in
               XF86AudioNext = "exec playerctl next";
 
               # Power management and utility
-              "${swayCfg.modifier}+u" = ''swaymsg "output * power on"'';
+              "${swayCfg.modifier}+u" = "output * power on";
 
               # Bar toggle (similar to Hyprland)
               "Control+Shift+b" = "exec pkill -SIGUSR1 waybar || waybar &";
@@ -243,26 +251,23 @@ in
               builtins.listToAttrs (
                 builtins.concatLists (
                   builtins.genList (
-                    x:
+                    index:
                     let
-                      ws =
-                        let
-                          c = (x + 1) / 10;
-                        in
-                        toString (x + 1 - (c * 10));
+                      workspace = toString (index + 1);
+                      key = toString (lib.mod (index + 1) 10);
                     in
                     [
                       {
-                        name = "Control+Alt+${ws}";
-                        value = "workspace number ${ws}";
+                        name = "Control+Alt+${key}";
+                        value = "workspace number ${workspace}";
                       }
                       {
-                        name = "Control+Alt+Shift+${ws}";
-                        value = "move container to workspace ${ws}";
+                        name = "Control+Alt+Shift+${key}";
+                        value = "move container to workspace number ${workspace}";
                       }
                       {
-                        name = "Mod4+Shift+${ws}";
-                        value = "move container to workspace ${ws}";
+                        name = "Mod4+Shift+${key}";
+                        value = "move container to workspace number ${workspace}";
                       }
                     ]
                   ) 10
