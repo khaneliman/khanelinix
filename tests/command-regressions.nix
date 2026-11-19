@@ -60,7 +60,7 @@ let
     mkShell = args: args;
   };
   compilerHelper = builtins.head (builtins.filter (p: lib.getName p == "mk") cShell.packages);
-  data = import ./terminal-data-regressions.nix { inherit nixpkgs root dataHome; };
+  data = import ./terminal-data-regressions.nix { inherit nixpkgs homeManager root dataHome; };
   snowfallLib = lib // {
     khanelisnow = import (root + "/templates/snowfall/lib/module") { inherit lib; };
   };
