@@ -30,11 +30,16 @@ python3Packages.buildPythonApplication rec {
     ruff check ${src}
   '';
 
-  propagatedBuildInputs = [
-    gh
-    git
-    nix
-    nixpkgs-review
+  makeWrapperArgs = [
+    "--prefix"
+    "PATH"
+    ":"
+    (lib.makeBinPath [
+      gh
+      git
+      nix
+      nixpkgs-review
+    ])
   ];
 
   meta = {
