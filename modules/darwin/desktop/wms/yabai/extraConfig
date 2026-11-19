@@ -22,10 +22,10 @@ yabai -m config --space media layout stack window_opacity off
 
 # RULES
 UNMANAGED=(
-  Activity Monitor
+  "Activity Monitor"
   Alfred
-  App Store
-  Archive Utility
+  "App Store"
+  "Archive Utility"
   Authy
   Bitwarden
   Calculator
@@ -34,22 +34,22 @@ UNMANAGED=(
   # Finder
   LibreOffice
   LuLu
-  Microsoft Remote Desktop
-  Photo Booth
+  "Microsoft Remote Desktop"
+  "Photo Booth"
   Python
   ScanSnap
-  Screen Sharing
+  "Screen Sharing"
   Screens
-  Software Update
+  "Software Update"
   Stats
   Steam
-  System Information
-  System Preferences
-  System Settings
+  "System Information"
+  "System Preferences"
+  "System Settings"
   VLC
   Vimac
-  iStat Menus
-  iStat Menus Status
+  "iStat Menus"
+  "iStat Menus Status"
   zoom.us
 )
 
@@ -65,7 +65,7 @@ yabai -m rule --add label="Select file to save to" app="^Inkscape$" title="Selec
 
 # Force Manage for some apps
 MANAGED=(
-  Microsoft Teams
+  "Microsoft Teams"
   WezTerm
   wezterm-gui
 )
@@ -75,7 +75,7 @@ for ((i = 1; i <= "${#MANAGED[@]}"; i++)); do
 done
 
 COMMS=(
-  Microsoft Teams
+  "Microsoft Teams"
   "Microsoft Teams (work or school)"
   Mail
   Messages
@@ -130,9 +130,9 @@ for ((i = 1; i <= "${#PRODUCTIVITY[@]}"; i++)); do
 done
 
 MAIN=(
-  Firefox Developer Edition
+  "Firefox Developer Edition"
   Firefox
-  Google Chrome
+  "Google Chrome"
   Safari
 )
 
@@ -141,9 +141,9 @@ for ((i = 1; i <= "${#MAIN[@]}"; i++)); do
 done
 
 CODE=(
-  Qt Creator
-  Visual Studio Code
-  Visual Studio
+  "Qt Creator"
+  "Visual Studio Code"
+  "Visual Studio"
   XCode
 )
 
