@@ -1,3 +1,4 @@
+extraPagerVariables:
 {
   config,
   lib,
@@ -6,6 +7,13 @@
 }:
 let
   cfg = config.khanelinix.system.env;
+  less = lib.concatStringsSep " " [
+    "--RAW-CONTROL-CHARS" # Only allow colors.
+    "--wheel-lines=5"
+    "--LONG-PROMPT"
+    "--no-vbell"
+    " --wordwrap" # Wrap lines at spaces.
+  ];
 in
 {
   options.khanelinix.system.env = lib.mkOption {
@@ -50,29 +58,11 @@ in
         "/usr/bin"
       ];
 
-      variables =
-        let
-          pagerArgs = [
-            "--RAW-CONTROL-CHARS" # Only allow colors.
-            "--wheel-lines=5"
-            "--LONG-PROMPT"
-            "--no-vbell"
-            " --wordwrap" # Wrap lines at spaces.
-          ];
-        in
-        {
-          SYSTEMD_PAGERSECURE = "true";
-          PAGER = "less -FR";
-          LESS = lib.concatStringsSep " " pagerArgs;
-          SYSTEMD_LESS = lib.concatStringsSep " " (
-            pagerArgs
-            ++ [
-              "--quit-if-one-screen"
-              "--chop-long-lines"
-              "--no-init" # Keep content after quit.
-            ]
-          );
-        };
+      variables = {
+        PAGER = "less -FR";
+        LESS = less;
+      }
+      // extraPagerVariables less;
     };
   };
 }
