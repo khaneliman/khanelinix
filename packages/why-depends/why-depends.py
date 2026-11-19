@@ -287,7 +287,7 @@ def run_why_depends_derivation(flake_output, search_term):
         print("💡 Try using the exact package name or search manually with:")
         print(f"   nix search nixpkgs {search_term}")
         print(
-            "   Then use: nix why-depends --derivation {flake_output} nixpkgs#<exact-package-name>"
+            f"   Then use: nix why-depends --derivation {flake_output} nixpkgs#<exact-package-name>"
         )
 
     return bool(found_packages)
@@ -304,7 +304,9 @@ def parse_args():
             "  why-depends .#nixosConfigurations.khanelinix.config.system.build.toplevel chromium-unwrapped"
         ),
     )
-    parser.add_argument("target", help="Host name or flake output path.")
+    parser.add_argument(
+        "target", help="Host name or local flake output starting with .#."
+    )
     parser.add_argument(
         "partial_pname", help="Partial package/dependency name to search."
     )
@@ -317,19 +319,13 @@ def parse_args():
 
 
 def show_host_not_found_error(host_name, reason):
-    if reason == "not_in_nixos":
+    if reason in ("not_in_nixos", "not_in_darwin"):
         print(
             f"❌ Host '{host_name}' not found in either nixosConfigurations or darwinConfigurations."
         )
-        return
-    if reason == "not_in_darwin":
-        print(
-            f"❌ Host '{host_name}' not found in either nixosConfigurations or darwinConfigurations."
-        )
-        return
-
-    print(f"❌ Failed to resolve host '{host_name}': {reason}")
-    print("💡 Make sure the host name matches a configuration in your flake.")
+    else:
+        print(f"❌ Failed to resolve host '{host_name}': {reason}")
+        print("💡 Make sure the host name matches a configuration in your flake.")
     print("   You can check available configurations with: nix flake show")
 
 
@@ -381,9 +377,6 @@ def main():
                     print(f"✅ Found Darwin configuration: {flake_output}")
                 else:
                     show_host_not_found_error(first_arg, reason)
-                    print(
-                        "💡 You can check available configurations with: nix flake show"
-                    )
                     sys.exit(1)
         else:
             print("🔍 Trying NixOS configuration...")
@@ -414,9 +407,6 @@ def main():
                 else:
                     if reason == "not_in_darwin":
                         show_host_not_found_error(first_arg, reason)
-                        print(
-                            "💡 You can check available configurations with: nix flake show"
-                        )
                         sys.exit(1)
                     if reason == "build_failed":
                         print("❌ Darwin configuration exists but failed to build")
@@ -430,7 +420,7 @@ def main():
                         "💡 Make sure the host name matches a configuration in your flake."
                     )
                     print(
-                        "   You can check available configurations with: nix flake build"
+                        "   You can check available configurations with: nix flake show"
                     )
                     sys.exit(1)
 
