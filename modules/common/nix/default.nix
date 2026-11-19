@@ -10,6 +10,8 @@ let
   inherit (lib.khanelinix) mkBoolOpt mkOpt;
 
   cfg = config.khanelinix.nix;
+  platformNixpkgs =
+    if pkgs.stdenv.hostPlatform.isDarwin then inputs.nixpkgs-unstable else inputs.nixpkgs;
   localCaches = lib.optionalAttrs (config.khanelinix.environments.home-network.enable or false) (
     lib.filterAttrs (name: _: name != config.networking.hostName) cfg.localCaches
   );
@@ -61,7 +63,7 @@ in
       etc = {
         # set channels (backwards compatibility)
         "nix/flake-channels/system".source = self;
-        "nix/flake-channels/nixpkgs".source = inputs.nixpkgs;
+        "nix/flake-channels/nixpkgs".source = platformNixpkgs;
         "nix/flake-channels/home-manager".source = inputs.home-manager;
       }
       # preserve current flake in /etc
@@ -127,10 +129,8 @@ in
         distributedBuilds = lib.mkDefault (config.nix.buildMachines != [ ]);
         gc.automatic = lib.mkDefault (pkgs.stdenv.hostPlatform.isDarwin || !nhCleanEnabled);
 
-        # This will additionally add your inputs to the system's legacy channels
-        # Making legacy nix commands consistent as well
-        # NOTE: We link inputs here
-        nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+        # Keep legacy <nixpkgs> lookups on the same pin as the registry.
+        nixPath = [ "nixpkgs=${platformNixpkgs}" ];
         # Flake inputs replace channels; activation removes leftover state.
         channel.enable = false;
         optimise.automatic = true;
@@ -144,8 +144,7 @@ in
             x:
             x
             // {
-              nixpkgs.flake =
-                if pkgs.stdenv.hostPlatform.isLinux then inputs.nixpkgs else inputs.nixpkgs-unstable;
+              nixpkgs.flake = platformNixpkgs;
             }
           )
           (x: if pkgs.stdenv.hostPlatform.isDarwin then lib.removeAttrs x [ "nixpkgs-unstable" ] else x)
