@@ -1,7 +1,11 @@
 {
-  gatewayEnabled ? false,
+  gatewayAvailable ? false,
+  gatewayRolesEnabled ? false,
   lib,
-  modelRouting ? import ./model-routing.nix { inherit gatewayEnabled lib; },
+  modelRouting ? import ./model-routing.nix {
+    inherit lib;
+    gatewayEnabled = gatewayRolesEnabled;
+  },
   ...
 }:
 let
@@ -198,29 +202,15 @@ let
     };
   };
 
-  gatewayAgents = lib.mapAttrs (_name: mkGatewayAgent) modelRouting.gatewayAgentSpecs;
+  gatewayAgents = lib.optionalAttrs gatewayAvailable (
+    lib.mapAttrs (_name: mkGatewayAgent) modelRouting.gatewayAgentSpecs
+  );
 
   agents = semanticAgents // gatewayAgents;
 
   agentsForProvider =
     provider:
-    lib.filterAttrs (
-      _name: agent:
-      let
-        # Gateway-capable harnesses need semantic roles for automatic routing
-        # and model-named agents for explicit provider selection. Copilot has
-        # no gateway model-agent projection.
-        expectedProjections =
-          if provider == "githubCopilotCli" || !gatewayEnabled then
-            [ "native" ]
-          else
-            [
-              "native"
-              "gateway"
-            ];
-      in
-      lib.elem agent.projection expectedProjections && lib.elem provider (agent.providers or [ provider ])
-    ) agents;
+    lib.filterAttrs (_name: agent: lib.elem provider (agent.providers or [ provider ])) agents;
 
   renderClaudeFrontmatter =
     agent:

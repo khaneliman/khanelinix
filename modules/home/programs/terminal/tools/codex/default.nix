@@ -53,6 +53,7 @@ let
   ) config.programs.mcp.servers;
   aiTools = import (lib.getFile "modules/common/ai-tools") {
     inherit lib pkgs;
+    gatewayAvailable = gatewayEnabled;
     pluginSource = inputs.claude-plugins-official;
   };
   tomlFormat = pkgs.formats.toml { };

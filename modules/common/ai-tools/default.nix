@@ -1,5 +1,7 @@
 {
-  gatewayEnabled ? false,
+  gatewayAvailable ? false,
+  # Installing explicit model routes does not opt semantic roles into the gateway.
+  gatewayRolesEnabled ? false,
   lib,
   pkgs ? null,
   pluginSource ? null,
@@ -7,9 +9,12 @@
 }:
 
 let
-  modelRouting = import ./model-routing.nix { inherit gatewayEnabled lib; };
+  modelRouting = import ./model-routing.nix {
+    inherit lib;
+    gatewayEnabled = gatewayRolesEnabled;
+  };
   aiAgents = import ./agents.nix {
-    inherit gatewayEnabled lib modelRouting;
+    inherit gatewayAvailable lib modelRouting;
   };
   codexManagedRequirements = import ./codex-managed-requirements.nix;
   permissions = import ./permissions.nix;

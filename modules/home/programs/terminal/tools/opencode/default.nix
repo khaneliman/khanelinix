@@ -19,6 +19,7 @@ let
 
   aiTools = import (lib.getFile "modules/common/ai-tools") {
     inherit lib pkgs;
+    gatewayAvailable = config.khanelinix.services.cliproxyapi.enable or false;
   };
   deliberateModel = "openai/gpt-6-luna";
 in

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import itertools
 import json
 import shutil
 import subprocess
@@ -321,9 +322,9 @@ class ModelRoutingTests(unittest.TestCase):
 
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_shared_worker_core_reaches_every_provider_projection(self) -> None:
-        for gateway_enabled in (False, True):
+        for gateway_available in (False, True):
             projection = json.loads(
-                self._nix_eval(self._provider_projection_expression(gateway_enabled))
+                self._nix_eval(self._provider_projection_expression(gateway_available))
             )
             instructions = {
                 "claude": projection["claude"],
@@ -338,7 +339,7 @@ class ModelRoutingTests(unittest.TestCase):
             for provider, agents in instructions.items():
                 for name, content in agents.items():
                     with self.subTest(
-                        gateway_enabled=gateway_enabled,
+                        gateway_available=gateway_available,
                         provider=provider,
                         agent=name,
                     ):
@@ -370,9 +371,15 @@ class ModelRoutingTests(unittest.TestCase):
         roles = self.registry["semantic_roles"]
         models = self.registry["models"]
 
-        for gateway_enabled in (False, True):
+        for gateway_available, gateway_roles in itertools.product(
+            (False, True), repeat=2
+        ):
             projection = json.loads(
-                self._nix_eval(self._provider_projection_expression(gateway_enabled))
+                self._nix_eval(
+                    self._provider_projection_expression(
+                        gateway_available, gateway_roles
+                    )
+                )
             )
             self.assertEqual(
                 set(projection), {"claude", "codex", "copilot", "opencode"}
@@ -380,15 +387,22 @@ class ModelRoutingTests(unittest.TestCase):
 
             for provider, agents in projection.items():
                 gateway_agents = (
-                    models if gateway_enabled and provider != "copilot" else {}
+                    models if gateway_available and provider != "copilot" else {}
                 )
                 expected_names = roles.keys() | gateway_agents.keys()
-                with self.subTest(gateway_enabled=gateway_enabled, provider=provider):
+                with self.subTest(
+                    gateway_available=gateway_available,
+                    gateway_roles=gateway_roles,
+                    provider=provider,
+                ):
                     self.assertEqual(set(agents), expected_names)
 
                 for name in sorted(expected_names & agents.keys()):
                     with self.subTest(
-                        gateway_enabled=gateway_enabled, provider=provider, agent=name
+                        gateway_available=gateway_available,
+                        gateway_roles=gateway_roles,
+                        provider=provider,
+                        agent=name,
                     ):
                         agent = agents[name]
                         gateway_model = gateway_agents.get(name)
@@ -400,7 +414,7 @@ class ModelRoutingTests(unittest.TestCase):
                             role = roles[name]
                             expected_model = role["native"][provider]
                             expected_effort = role["reasoning_effort"].get(provider)
-                            if gateway_enabled and provider in role["gateway"]:
+                            if gateway_roles and provider in role["gateway"]:
                                 using_gateway = True
                                 expected_model = models[role["gateway"][provider]][
                                     "gateway_alias"
@@ -437,6 +451,21 @@ class ModelRoutingTests(unittest.TestCase):
                             ],
                             [f"model: {json.dumps(expected_model)}"],
                         )
+
+    @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
+    def test_provider_callers_enable_catalog_without_changing_roles(self) -> None:
+        for gateway_available in (False, True):
+            with self.subTest(gateway_available=gateway_available):
+                expected = json.loads(
+                    self._nix_eval(
+                        self._provider_projection_expression(gateway_available)
+                    )
+                )
+                del expected["copilot"]
+                actual = json.loads(
+                    self._nix_eval(self._provider_callers_expression(gateway_available))
+                )
+                self.assertEqual(actual, expected)
 
     @unittest.skipUnless(shutil.which("nix"), "nix is not installed")
     def test_frontmatter_string_scalars_use_safe_deterministic_quotes(self) -> None:
@@ -590,8 +619,9 @@ class ModelRoutingTests(unittest.TestCase):
         )
 
     @staticmethod
-    def _provider_projection_expression(gateway_enabled: bool) -> str:
-        enabled = "true" if gateway_enabled else "false"
+    def _provider_projection_expression(
+        gateway_available: bool, gateway_roles: bool = False
+    ) -> str:
         repo = json.dumps(str(REPO_ROOT))
         return f"""
           let
@@ -599,7 +629,8 @@ class ModelRoutingTests(unittest.TestCase):
             flake = builtins.getFlake ("git+file://" + toString repo);
             aiTools = import (repo + "/modules/common/ai-tools") {{
               inherit (flake.inputs.nixpkgs) lib;
-              gatewayEnabled = {enabled};
+              gatewayAvailable = {json.dumps(gateway_available)};
+              gatewayRolesEnabled = {json.dumps(gateway_roles)};
             }};
           in
           {{
@@ -607,6 +638,42 @@ class ModelRoutingTests(unittest.TestCase):
             claude = aiTools.claudeCode.agents;
             copilot = aiTools.githubCopilotCli.agents;
             opencode = aiTools.opencode.renderAgents;
+          }}
+        """
+
+    @staticmethod
+    def _provider_callers_expression(gateway_available: bool) -> str:
+        repo = json.dumps(str(REPO_ROOT))
+        return f"""
+          let
+            repo = builtins.toPath {repo};
+            flake = builtins.getFlake ("git+file://" + toString repo);
+            lib = flake.inputs.nixpkgs.lib // {{ getFile = path: repo + "/${{path}}"; }};
+            args = {{
+              inherit lib;
+              # Observe the agent settings before serialization into store files.
+              pkgs.formats.toml = _: {{ generate = _name: settings: settings; }};
+              inputs.claude-plugins-official = null;
+              config.khanelinix = {{
+                services.cliproxyapi.enable = {json.dumps(gateway_available)};
+                programs.terminal.tools = {{
+                  claude-code.enable = true;
+                  codex.enable = true;
+                  opencode.enable = true;
+                }};
+              }};
+            }};
+            programs = name:
+              (import (repo + "/modules/home/programs/terminal/tools/${{name}}") args)
+                .config.content.programs.${{name}};
+            codexRoles = builtins.removeAttrs (programs "codex").settings.agents [
+              "max_concurrent_threads_per_session"
+            ];
+          in
+          {{
+            codex = lib.mapAttrs (_name: role: role.config_file) codexRoles;
+            claude = (programs "claude-code").agents;
+            opencode = (programs "opencode").agents;
           }}
         """
 
