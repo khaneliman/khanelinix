@@ -6,11 +6,15 @@ on:
     branches: [main]
     paths:
       - "flake/dev/**"
+      - "overlays/**"
+      - "packages/**"
       - "flake.nix"
       - "flake.lock"
   pull_request:
     paths:
       - "flake/dev/**"
+      - "overlays/**"
+      - "packages/**"
       - "flake.nix"
       - "flake.lock"
   workflow_dispatch:
