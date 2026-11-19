@@ -33,12 +33,16 @@ MAX_LABEL_CHARS = 80
 
 # T3 Code tools reach a harness through MCP, and each harness spells MCP tool
 # names its own way.
-T3_DELEGATE = re.compile(r"t3[-_]code\W*_*delegate_task$")
-T3_STATUS = re.compile(r"t3[-_]code\W*_*task_(status|cancel)$")
+T3_NAMESPACE = r"t3[-_]code(?:[-_]direct)?\W*_*"
+T3_DELEGATE = re.compile(T3_NAMESPACE + r"delegate_task$")
+T3_STATUS = re.compile(T3_NAMESPACE + r"task_(status|cancel)$")
+T3_THREAD_WAIT = re.compile(T3_NAMESPACE + r"t3_thread_wait$")
+T3_TERMINAL = {"completed", "failed", "cancelled", "canceled", "interrupted"}
 # T3 wakes either with a bare notice or with the result inline after an
 # optional title and a status such as [completed] or [failed].
 T3_WAKE = re.compile(
-    r"Delegated task (\S+)(?: \(.*?\))? (?:\[\w+\]|reached a terminal state)"
+    r"Delegated task (\S+)(?: \((?:(?!\nDelegated task )[\s\S])*?\))? "
+    r"(?:\[(?:completed|failed|cancelled|canceled|interrupted)\]|reached a terminal state)"
 )
 
 CLAUDE_NOTIFICATION = re.compile(
@@ -65,8 +69,9 @@ AGY_SPAWN = "invoke_subagent"
 AGY_SPAWNED = "Created the following subagent"
 AGY_CHILD_ID = re.compile(r'"conversationId"\s*:\s*"([^"]+)"')
 AGY_REPORT = re.compile(
-    r"\[Message\][^\n]*?\bsender=(\S+)|Subagent (\S+) has gone idle"
+    r"^\[Message\][^\n]*?\bsender=(\S+)|^Subagent (\S+) has gone idle", re.MULTILINE
 )
+AGY_KILLED = re.compile(r"^Successfully killed \d+ subagent\(s\)", re.MULTILINE)
 
 
 # Hooks see collab tools bare or with a namespace glued on, such as
@@ -101,12 +106,12 @@ class Observation:
     # False when the harness already continued this stop, or ended the turn for
     # a reason a reminder must not override, such as a user cancel.
     may_continue: bool = True
+    # Only harnesses with advisory Stop output can remind after all lanes finish.
+    idle_advice: bool = False
     # Lanes of `native_kind` the harness itself reports as in flight. When
     # present it is authoritative: a missing lane has finished.
     running: dict[str, str] | None = None
     native_kind: str = ""
-    # The harness reports background work still running without naming it.
-    busy: bool = False
 
 
 @dataclass
@@ -203,23 +208,54 @@ def field_value(value: object, name: str) -> str | None:
 
 
 def t3_tool(
-    obs: Observation, tool: str, arguments: dict[str, Any], response: object
+    obs: Observation,
+    tool: str,
+    arguments: dict[str, Any],
+    response: object,
+    state: dict[str, Any],
 ) -> bool:
     """Record T3 delegated-task launches and terminal reads for any harness."""
     if T3_DELEGATE.search(tool):
         task_id = field_value(response, "taskId")
-        if arguments.get("mode") != "wait" and task_id:
+        work_state = field_value(response, "workState")
+        status = field_value(response, "status")
+        if not task_id:
+            return True
+        if work_state == "result_available" or (
+            work_state is None and status in T3_TERMINAL
+        ):
+            obs.finished.add(task_id)
+        elif work_state == "working" or arguments.get("mode") != "wait":
             label = short(arguments.get("title") or arguments.get("task"))
             # task_status and task_cancel need the T3 ID, so it stays visible.
-            obs.launched[task_id] = lane("t3", f"{label} (task {task_id})")
+            obs.launched[task_id] = {
+                **lane("t3", f"{label} (task {task_id})"),
+                "child_thread": field_value(response, "childThreadId"),
+            }
             obs.refilled = True
         return True
-    match = T3_STATUS.search(tool)
-    if match is None:
+    if T3_THREAD_WAIT.search(tool):
+        # A wait for only the current run is not proof that delegated work settled.
+        thread = arguments.get("threadId")
+        if (
+            isinstance(thread, str)
+            and arguments.get("untilDelegatedWorkSettled") is True
+            and field_value(response, "status") in T3_TERMINAL
+        ):
+            obs.finished.update(
+                task_id
+                for task_id, record in state["lanes"].items()
+                if isinstance(record, dict)
+                and record.get("kind") == "t3"
+                and record.get("child_thread") == thread
+            )
+        return True
+    if not T3_STATUS.search(tool):
         return False
     task_id = arguments.get("taskId")
-    terminal = match.group(1) == "cancel" or (
-        field_value(response, "workState") == "result_available"
+    work_state = field_value(response, "workState")
+    terminal = work_state == "result_available" or (
+        work_state is None and field_value(response, "status") in T3_TERMINAL
     )
     if terminal and isinstance(task_id, str):
         obs.finished.add(task_id)
@@ -236,7 +272,7 @@ def claude_starts(event: str, payload: dict[str, Any]) -> bool:
 
 
 def claude(
-    event: str, payload: dict[str, Any], _state: dict[str, Any]
+    event: str, payload: dict[str, Any], state: dict[str, Any]
 ) -> Observation | None:
     if payload.get("agent_id") is not None:
         return None
@@ -262,7 +298,7 @@ def claude(
                         ),
                     )
                     obs.refilled = True
-        elif not t3_tool(obs, tool, arguments, response):
+        elif not t3_tool(obs, tool, arguments, response, state):
             obs.steps = 1
         return obs
     if event == "user-prompt":
@@ -282,6 +318,7 @@ def claude(
         return obs
     if event == "stop":
         obs.stop = True
+        obs.idle_advice = True
         obs.may_continue = payload.get("stop_hook_active") is not True
         tasks = payload.get("background_tasks")
         if isinstance(tasks, list):
@@ -344,6 +381,7 @@ def agy_transcript(
     identity = [path, info.st_dev, info.st_ino]
     offset = state.get("transcript_offset")
     pending = state.get("spawn_labels")
+    kill_all = state.get("kill_all_pending") is True
     # A replaced or truncated transcript starts over from its beginning.
     if (
         state.get("transcript") != identity
@@ -351,6 +389,7 @@ def agy_transcript(
         or offset > info.st_size
     ):
         offset, pending = 0, []
+        kill_all = False
     pending = pending if isinstance(pending, list) else []
     try:
         with open(path, "rb") as handle:
@@ -365,10 +404,36 @@ def agy_transcript(
                 except ValueError:
                     continue
                 if isinstance(step, dict):
+                    if step.get("type") == "PLANNER_RESPONSE":
+                        calls = step.get("tool_calls")
+                        kill_all = isinstance(calls, list) and any(
+                            isinstance(call, dict)
+                            and call.get("name") == "manage_subagents"
+                            and isinstance(call.get("args"), dict)
+                            and call["args"].get("Action") == "kill_all"
+                            for call in calls
+                        )
+                    elif kill_all and step.get("source") == "MODEL":
+                        content = step.get("content")
+                        if isinstance(content, str) and AGY_KILLED.search(content):
+                            obs.finished.update(
+                                child
+                                for lanes in (state["lanes"], obs.launched)
+                                for child, record in lanes.items()
+                                if isinstance(record, dict)
+                                and record.get("kind") == "agy"
+                            )
+                            obs.refilled = False
+                            kill_all = False
                     pending = agy_step(step, pending, obs)
     except OSError:
         return
-    state.update(transcript=identity, transcript_offset=offset, spawn_labels=pending)
+    state.update(
+        transcript=identity,
+        transcript_offset=offset,
+        spawn_labels=pending,
+        kill_all_pending=kill_all,
+    )
 
 
 def agy_step(step: dict[str, Any], pending: list[str], obs: Observation) -> list[str]:
@@ -427,21 +492,15 @@ def agy(
         return obs
     if event == "stop":
         obs.stop = True
-        # Cancels, errors, and limits must end the turn as the harness decided.
-        obs.may_continue = payload.get("terminationReason") == "NO_TOOL_CALL"
         if payload.get("fullyIdle") is True:
             obs.running = {}
-        else:
-            obs.busy = True
         return obs
     return None
 
 
 def agy_render(event: str, text: str | None) -> dict[str, Any] | None:
     if event == "stop":
-        if text is None:
-            return {"decision": "stop"}
-        return {"decision": "continue", "reason": text}
+        return {"decision": "stop"}
     if event == "pre-invocation":
         return {"injectSteps": [{"ephemeralMessage": text}] if text else []}
     return {}
@@ -457,7 +516,7 @@ def codex_starts(event: str, payload: dict[str, Any]) -> bool:
 
 
 def codex(
-    event: str, payload: dict[str, Any], _state: dict[str, Any]
+    event: str, payload: dict[str, Any], state: dict[str, Any]
 ) -> Observation | None:
     obs = Observation()
     if event == "subagent-stop":
@@ -507,7 +566,7 @@ def codex(
             target = arguments.get("target")
             if isinstance(target, str):
                 obs.finished.add(target)
-        elif not t3_tool(obs, tool, arguments, response):
+        elif not t3_tool(obs, tool, arguments, response, state):
             obs.steps = 1
         return obs
     if event == "user-prompt":
@@ -600,8 +659,8 @@ def apply(state: dict[str, Any], obs: Observation) -> str | None:
         )
         return (
             f"[worker-lanes] Finished: {lane_list(finished)}. Still in flight: "
-            + f"{lane_list(labels(lanes))}. Refill the freed {slots} from the ready "
-            + "queue as soon as the active workflow allows (for an isolated "
+            + f"{lane_list(labels(lanes))}. Refill the freed {slots} only with new "
+            + "ready slices as soon as the active workflow allows (for an isolated "
             + f"writer, after its worktree closes), then integrate {results} "
             + "while the other workers run."
         )
@@ -620,7 +679,7 @@ def apply(state: dict[str, Any], obs: Observation) -> str | None:
     return (
         f"[worker-lanes] {len(lanes)} of {state['peak']} worker lanes are in "
         + f"flight and nothing has been dispatched for {state['quiet']} steps. "
-        + "If independent slices are ready, dispatch them instead of doing "
+        + "If new independent slices are ready, dispatch them instead of doing "
         + "them serially here; otherwise continue."
     )
 
@@ -642,13 +701,19 @@ def stop_reminder(state: dict[str, Any], obs: Observation) -> str | None:
     running = labels(lanes) + [
         label for task_id, label in (obs.running or {}).items() if task_id not in lanes
     ]
-    if not active(state) or int(state.get("unrefilled", 0)) <= 0 or running or obs.busy:
+    if (
+        not obs.idle_advice
+        or not active(state)
+        or int(state.get("unrefilled", 0)) <= 0
+        or running
+    ):
         return None
     state["unrefilled"] = 0
     state.pop("unannounced", None)
     return (
-        "[worker-lanes] No worker lane is in flight. If ready slices remain, "
-        + "dispatch them now rather than waiting. If the run is complete, "
+        "[worker-lanes] No worker lane is in flight. Collect any existing results "
+        + "without restarting finished workers. Dispatch only new ready slices. "
+        + "If the run is complete, "
         + "confirm that in one line instead of repeating your report."
     )
 

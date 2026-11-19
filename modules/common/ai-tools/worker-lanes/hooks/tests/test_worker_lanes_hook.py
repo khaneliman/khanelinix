@@ -109,7 +109,7 @@ class WorkerLanesHookTests(unittest.TestCase):
         self.assertIn("Finished: Port parser module.", reminder)
         self.assertIn("Still in flight: Port lexer module.", reminder)
         self.assertNotIn("a2", reminder)
-        self.assertIn("Refill the freed slot from", reminder)
+        self.assertIn("Refill the freed slot only with new ready slices", reminder)
         self.assertIn("integrate this result while", reminder)
 
     def test_finish_reminder_pluralizes_batched_finishes(self) -> None:
@@ -119,7 +119,7 @@ class WorkerLanesHookTests(unittest.TestCase):
         batch["prompt"] += "\n" + notification("a2")["prompt"]
         reminder = context(self.handle("user-prompt", batch))
         self.assertIn("Finished: Port parser module; Port lexer module.", reminder)
-        self.assertIn("Refill the freed slots from", reminder)
+        self.assertIn("Refill the freed slots only with new ready slices", reminder)
         self.assertIn("integrate these results while", reminder)
 
     def test_interim_and_unknown_notifications_do_not_finish_lanes(self) -> None:
@@ -257,7 +257,7 @@ class WorkerLanesHookTests(unittest.TestCase):
                 "user-prompt",
                 {
                     "session_id": "run",
-                    "prompt": "Delegated task node:task-1 (Blind review (round 1)) "
+                    "prompt": "Delegated task node:task-1 (Blind review\n(round 1)) "
                     + "[completed]: ## Verdict\nApprove (no findings).",
                 },
             )
@@ -407,7 +407,9 @@ class AntigravityTests(unittest.TestCase):
         )
         self.assertFalse((self.runtime / "worker-lanes").exists())
 
-    def test_reports_trigger_refill_then_idle_stop_continues_once(self) -> None:
+    def test_reports_trigger_refill_but_idle_stop_does_not_restart_workers(
+        self,
+    ) -> None:
         self.spawn_two()
         self.write(
             agy_step(
@@ -433,14 +435,11 @@ class AntigravityTests(unittest.TestCase):
             "stop", terminationReason="USER_CANCELED", fullyIdle=True
         )
         self.assertEqual(cancelled, {"decision": "stop"})
-        output = self.handle("stop", terminationReason="NO_TOOL_CALL", fullyIdle=True)
-        assert output is not None
-        self.assertEqual(output["decision"], "continue")
-        self.assertIn("No worker lane is in flight", output["reason"])
         self.assertEqual(
             self.handle("stop", terminationReason="NO_TOOL_CALL", fullyIdle=True),
             {"decision": "stop"},
         )
+        self.assertEqual(self.state()["lanes"], {})
 
     def test_partial_lines_wait_and_kills_finish_lanes(self) -> None:
         self.spawn_two()
@@ -464,6 +463,31 @@ class AntigravityTests(unittest.TestCase):
             "Finished: Parser port.",
             self.injected(self.handle("pre-invocation", invocationNum=3)),
         )
+
+    def test_kill_all_retires_lanes_only_after_confirmation(self) -> None:
+        self.spawn_two()
+        self.write(
+            agy_step(
+                "PLANNER_RESPONSE",
+                tool_calls=[
+                    {"name": "manage_subagents", "args": {"Action": "kill_all"}}
+                ],
+            ),
+        )
+        self.assertEqual(
+            self.handle("pre-invocation", invocationNum=2), {"injectSteps": []}
+        )
+        self.assertEqual(sorted(self.state()["lanes"]), ["c1", "c2"])
+        self.write(
+            agy_step(
+                "GENERIC",
+                "Completed At: 2026-07-11T19:01:48-05:00\n"
+                "Successfully killed 2 subagent(s) and their descendants.",
+            )
+        )
+        output = self.injected(self.handle("pre-invocation", invocationNum=3))
+        self.assertIn("Still in flight: none.", output)
+        self.assertEqual(self.state()["lanes"], {})
 
     def test_one_read_with_launches_and_reports_keeps_their_order(self) -> None:
         self.write(
@@ -550,7 +574,7 @@ class AntigravityTests(unittest.TestCase):
         self.handle("pre-invocation", invocationNum=1)
         self.assertEqual(sorted(self.state()["lanes"]), ["c1", "c2", "c3"])
 
-    def test_busy_harness_suppresses_the_backstop(self) -> None:
+    def test_busy_harness_does_not_restart_reported_workers(self) -> None:
         self.spawn_two()
         self.write(
             agy_step("SYSTEM_MESSAGE", "Subagent c1 has gone idle.", source="SYSTEM"),
@@ -678,10 +702,7 @@ class CodexTests(unittest.TestCase):
             later["hookSpecificOutput"]["additionalContext"],
         )
 
-        backstop = self.handle("stop", {"stop_hook_active": False})
-        assert backstop is not None
-        self.assertEqual(backstop["decision"], "block")
-        self.assertIn("No worker lane is in flight", backstop["reason"])
+        self.assertIsNone(self.handle("stop", {"stop_hook_active": False}))
 
     def test_child_calls_and_notifications(self) -> None:
         self.spawn_two()
@@ -763,6 +784,51 @@ class CodexTests(unittest.TestCase):
         wake = "Delegated task node:task-9 (Claude review) [completed]: Approve."
         self.handle("user-prompt", {"prompt": wake})
         self.assertNotIn("node:task-9", self.lanes())
+
+    def test_direct_t3_wait_mode_can_return_a_running_child(self) -> None:
+        spawn = {
+            "tool_name": "mcp__t3_code_direct__delegate_task",
+            "tool_input": {"task": "Review", "mode": "wait"},
+            "tool_response": {
+                "structuredContent": {
+                    "taskId": "child-task",
+                    "childThreadId": "child-thread",
+                    "status": "running",
+                    "workState": "working",
+                    "waitTimedOut": True,
+                }
+            },
+        }
+        self.handle("post-tool", spawn)
+        self.assertEqual(list(self.lanes()), ["child-task"])
+
+        wait = {
+            "tool_name": "mcp__t3_code_direct__t3_thread_wait",
+            "tool_input": {
+                "threadId": "child-thread",
+                "untilDelegatedWorkSettled": False,
+            },
+            "tool_response": {
+                "structuredContent": {
+                    "threadId": "child-thread",
+                    "status": "completed",
+                    "timedOut": False,
+                }
+            },
+        }
+        self.handle("post-tool", wait)
+        self.assertEqual(list(self.lanes()), ["child-task"])
+        cancel = {
+            "tool_name": "mcp__t3_code__task_cancel",
+            "tool_input": {"taskId": "child-task"},
+            "tool_response": {"taskId": "child-task", "status": "cancel_requested"},
+        }
+        self.handle("post-tool", cancel)
+        self.assertEqual(list(self.lanes()), ["child-task"])
+        wait["tool_input"]["untilDelegatedWorkSettled"] = True
+        self.handle("post-tool", wait)
+        self.assertEqual(self.lanes(), {})
+        self.assertIsNone(self.handle("stop", {}))
 
 
 if __name__ == "__main__":
