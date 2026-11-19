@@ -41,7 +41,6 @@ in
       storage = {
         enable = true;
         ssdEnable = true;
-        zfs = enabled;
       };
     };
 
