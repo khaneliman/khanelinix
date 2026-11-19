@@ -332,31 +332,19 @@ writeShellApplication {
     }
 
     float_signal() {
-      QUERY=$(yabai -m query --windows --window "$1" | jq -re '."is-topmost",."is-floating"')
-      declare -a PROPERTIES
-      PROPERTIES=("$QUERY")
-
-      if ! $${PROPERTIES[0]} && $${PROPERTIES[1]}; then
+      if yabai -m query --windows --window "$1" | jq -e '
+        (."is-topmost" | type) == "boolean" and
+        (."is-floating" | type) == "boolean" and
+        (."is-topmost" != ."is-floating")
+      ' >/dev/null; then
         yabai -m window "$1" --toggle topmost
-        echo 1 "$${PROPERTIES[0]}" "$${PROPERTIES[1]}"
-      fi
-
-      if $${PROPERTIES[0]} && ! $${PROPERTIES[1]}; then
-        yabai -m window "$1" --toggle topmost
-        echo 2 "$${PROPERTIES[0]}" "$${PROPERTIES[1]}"
       fi
     }
 
     set_layer() {
-      QUERY=$(yabai -m query --windows --window "$1" | jq -re '."is-topmost",."is-floating"')
-      declare -a PROPERTIES
-      PROPERTIES=("$QUERY")
-
-      if ! $${PROPERTIES[1]}; then
-        yabai -m window "$YABAI_WINDOW_ID" --layer below
-        return
+      if yabai -m query --windows --window "$1" | jq -e '."is-floating" == false' >/dev/null; then
+        yabai -m window "$1" --layer below
       fi
-      # yabai -m window $YABAI_WINDOW_ID --layer normal
     }
 
     auto_stack() {
