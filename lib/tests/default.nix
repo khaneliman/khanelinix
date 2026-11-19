@@ -41,6 +41,76 @@ let
     }).config;
 in
 {
+  testHmUserConfig = {
+    expr =
+      let
+        homes = {
+          "".home.username = "";
+          alice.home.username = "alice";
+        };
+        lookup =
+          name:
+          module.hmUserConfig {
+            khanelinix.user = { inherit name; };
+            home-manager.users = homes;
+          };
+      in
+      {
+        unnamed = lookup null;
+        missingUser = lookup "bob";
+        missingHomeManager = module.hmUserConfig { khanelinix.user.name = "alice"; };
+        missingUserOption = module.hmUserConfig { home-manager.users = homes; };
+        named = lookup "alice";
+      };
+    expected = {
+      unnamed = { };
+      missingUser = { };
+      missingHomeManager = { };
+      missingUserOption = { };
+      named.home.username = "alice";
+    };
+  };
+
+  testShellIntegrations = {
+    expr =
+      let
+        integrationDefaults =
+          module.shellIntegrations
+            {
+              programs = {
+                bash.enable = true;
+                fish.enable = false;
+                nushell.enable = true;
+                zsh.enable = true;
+              };
+              home.shell = {
+                enableBashIntegration = true;
+                enableNushellIntegration = false;
+                enableZshIntegration = true;
+              };
+            }
+            [
+              "bash"
+              "fish"
+              "nushell"
+              "zsh"
+            ];
+      in
+      (lib.evalModules {
+        modules = [
+          { options = lib.mapAttrs (_: _: lib.mkEnableOption "test integration") integrationDefaults; }
+          { config = integrationDefaults; }
+          { enableZshIntegration = false; }
+        ];
+      }).config;
+    expected = {
+      enableBashIntegration = true;
+      enableFishIntegration = false;
+      enableNushellIntegration = false;
+      enableZshIntegration = false;
+    };
+  };
+
   testPatchedFlakeRetainsInputs = {
     expr =
       let

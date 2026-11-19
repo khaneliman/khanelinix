@@ -260,6 +260,33 @@ rec {
   nested-force-attrs = lib.mapAttrs (_key: force-attrs);
 
   /**
+    Return the primary user's embedded Home Manager config, or an empty set.
+  */
+  hmUserConfig =
+    config:
+    let
+      userName = config.khanelinix.user.name or null;
+    in
+    if userName == null then { } else config.home-manager.users.${userName} or { };
+
+  /**
+    Generate integration defaults for the given Home Manager shells.
+  */
+  shellIntegrations =
+    config: shells:
+    lib.listToAttrs (
+      map (
+        shell:
+        let
+          option = "enable${capitalize shell}Integration";
+        in
+        lib.nameValuePair option (
+          mkDefault (config.programs.${shell}.enable && config.home.shell.${option})
+        )
+      ) shells
+    );
+
+  /**
     Resolve an XDG user directory with a fallback to a folder in $HOME.
 
     # Inputs
