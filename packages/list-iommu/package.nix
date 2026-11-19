@@ -14,16 +14,15 @@ writeShellApplication {
 
   passthru.updateScript = null;
 
-  checkPhase = "";
-
   runtimeInputs = [ pciutils ];
 
   text = ''
     shopt -s nullglob
 
     for d in /sys/kernel/iommu_groups/*/devices/*; do
-      n=''${d#*/iommu_groups/*}; n=''${n%%/*}
-      printf 'IOMMU Group %s' "$n"
+      group=''${d#/sys/kernel/iommu_groups/}
+      group=''${group%%/*}
+      printf 'IOMMU Group %s: ' "$group"
       lspci -nns "''${d##*/}"
     done
   '';
