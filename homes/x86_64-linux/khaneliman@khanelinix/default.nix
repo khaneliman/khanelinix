@@ -162,9 +162,13 @@ in
             enableDebug = false;
             permissions.enforce = true;
 
-            startupCommands = [
-              "hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} ${toString config.khanelinix.theme.gtk.cursor.size}"
-            ];
+            startupCommands =
+              let
+                inherit (config.khanelinix.theme.gtk) cursor;
+              in
+              lib.optional (
+                cursor.name != null
+              ) "hyprctl setcursor ${lib.escapeShellArg cursor.name} ${toString cursor.size}";
           };
 
           niri = {
