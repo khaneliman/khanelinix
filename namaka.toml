@@ -2,4 +2,11 @@
 cmd = ["nix", "flake", "check", "--print-build-logs"]
 
 [eval]
-cmd = ["nix", "eval", ".#checks.x86_64-linux.namaka-snapshots.name"]
+cmd = [
+  "nix",
+  "eval",
+  "--impure",
+  ".#checks",
+  "--apply",
+  "checks: checks.${builtins.currentSystem}.namaka-snapshots.name",
+]
