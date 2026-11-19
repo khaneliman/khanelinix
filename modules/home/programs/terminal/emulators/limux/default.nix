@@ -54,11 +54,27 @@ in
       settings.focus.hover_terminal_focus = lib.mkDefault true;
 
       shortcuts = {
-        focus_down = lib.mkDefault "<Ctrl><Alt>j";
-        focus_left = lib.mkDefault "<Ctrl><Alt>h";
-        focus_right = lib.mkDefault "<Ctrl><Alt>l";
-        focus_up = lib.mkDefault "<Ctrl><Alt>k";
+        # Leave Ctrl+Alt workspace and VoxType chords to the compositor.
+        activate_workspace_1 = lib.mkDefault "<Ctrl><Shift>1";
+        activate_workspace_2 = lib.mkDefault "<Ctrl><Shift>2";
+        activate_workspace_3 = lib.mkDefault "<Ctrl><Shift>3";
+        activate_workspace_4 = lib.mkDefault "<Ctrl><Shift>4";
+        activate_workspace_5 = lib.mkDefault "<Ctrl><Shift>5";
+        activate_workspace_6 = lib.mkDefault "<Ctrl><Shift>6";
+        activate_workspace_7 = lib.mkDefault "<Ctrl><Shift>7";
+        activate_workspace_8 = lib.mkDefault "<Ctrl><Shift>8";
+        activate_last_workspace = lib.mkDefault "<Ctrl><Shift>9";
+        cycle_tab_prev = lib.mkDefault "<Alt><Shift>comma";
+        cycle_tab_next = lib.mkDefault "<Alt><Shift>period";
+        focus_down = lib.mkDefault "<Alt><Shift>j";
+        focus_left = lib.mkDefault "<Alt><Shift>h";
+        focus_right = lib.mkDefault "<Alt><Shift>l";
+        focus_up = lib.mkDefault "<Alt><Shift>k";
+        split_right = lib.mkDefault "<Ctrl><Alt>v";
+        split_down = lib.mkDefault "<Ctrl><Alt><Shift>v";
+        surface_find = lib.mkDefault "<Ctrl><Shift>f";
         terminal_clear_scrollback = lib.mkDefault null;
+        terminal_reset_font_size = lib.mkDefault "<Ctrl><Shift>0";
         toggle_sidebar = lib.mkDefault "<Ctrl><Alt>b";
       };
     };
