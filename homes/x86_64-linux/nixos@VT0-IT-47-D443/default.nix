@@ -9,6 +9,19 @@
 let
   inherit (lib) mkForce;
   inherit (lib.khanelinix) enabled;
+
+  openAiKeyExport =
+    let
+      secretPath = lib.escapeShellArg config.sops.secrets.OPENAI_SECURA_KEY.path;
+    in
+    ''
+      if [ -z "''${OPENAI_API_KEY:-}" ] && [ -f ${secretPath} ] && [ -r ${secretPath} ]; then
+        if openAiSecuraKey="$(${lib.getExe' pkgs.coreutils "cat"} -- ${secretPath})" && [ -n "$openAiSecuraKey" ]; then
+          export OPENAI_API_KEY="$openAiSecuraKey"
+        fi
+        unset openAiSecuraKey
+      fi
+    '';
 in
 {
   imports = [ ../../identity.nix ];
@@ -149,6 +162,10 @@ in
   };
 
   programs = {
+    bash.bashrcExtra = lib.mkIf (
+      config.khanelinix.services.sops.enable && config.programs.bash.enable
+    ) openAiKeyExport;
+
     codex.settings = {
       features.apps = mkForce false;
       projects."/mnt/c/Users/au09163/source".trust_level = "trusted";
@@ -203,7 +220,10 @@ in
     );
   };
 
-  home.packages = [ pkgs.nodejs ];
+  home = {
+    packages = [ pkgs.nodejs ];
+    sessionVariablesExtra = lib.mkIf config.khanelinix.services.sops.enable openAiKeyExport;
+  };
 
   home.stateVersion = "26.05";
 }

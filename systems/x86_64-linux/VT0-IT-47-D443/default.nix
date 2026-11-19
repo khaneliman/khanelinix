@@ -49,12 +49,6 @@ in
     "intranet.secura.net"
   ];
 
-  environment.shellInit = ''
-    if [ -n "$OPENAI_SECURA_KEY" ]; then
-      export OPENAI_API_KEY="$OPENAI_SECURA_KEY"
-    fi
-  '';
-
   # wsl.wslConf = {
   # network.generateResolvConf = false;
   # };
