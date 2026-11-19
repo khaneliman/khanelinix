@@ -70,6 +70,49 @@ accepted by the next sync. Stock empty-disk and UUID checks remain enabled;
 there is no custom partial-deletion threshold. Appdata, VM and system
 directories are excluded. SnapRAID is not a substitute for independent backups.
 
+## Backup and restore
+
+`khanelinix.services.restic` is available but not enabled on this host. Once an
+independent destination and credentials are provisioned, set
+`khanelinix.services.restic.enable = true` and define jobs under
+`khanelinix.services.restic.backups` using the NixOS `services.restic.backups`
+options. Set `repository` or `repositoryFile`, and reference runtime SOPS files
+for `passwordFile` and, if needed, the backend's `environmentFile`. Choose the
+schedule and retention for the destination. Use `timerConfig = null` for a
+manual rehearsal. For jobs that depend on configured mounts for sources,
+staging, or a local repository, set
+`systemd.services."restic-backups-<job>".unitConfig.RequiresMountsFor` so the job
+cannot silently read from or write to the underlying directories.
+
+Inventory both appdata paths and back up the underlying data once, plus the VM
+state and other irreplaceable SSD data. Do not point a scheduled job at raw live
+SQLite databases or running guest disks:
+
+- For SQLite, stop the writers before copying, or use the application's
+  supported export or SQLite's `.backup` to stage a consistent copy. Do not copy
+  a live database and its WAL as separate files; they can change between reads.
+  If state spans multiple databases or other files, use an application-level
+  export or stop all writers to capture them together.
+- For HAOS and FreeIPA, shut down the guests before copying their disk chains
+  and NVRAM, or use a supported guest-quiesced backup that exports a stable
+  point-in-time copy. A raw copy of an active disk is not a verified guest
+  backup.
+
+Back up the completed exports or offline copies, not the corresponding live
+paths. If a job uses `backupPrepareCommand` for staging, have it fail the job if
+the current export fails, rather than letting restic read a stale copy. Keep
+staging stable until restic finishes.
+
+Use `runCheck = true` to check the repository after a backup, or set it in a
+separately scheduled job with no backup inputs or pruning options. Use
+`checkOpts = [ "--read-data" ]` when the check should read all stored data;
+schedule it for the time and bandwidth that requires. A repository check does
+not prove recoverability. Before cutover, use the upstream `restic-<job>`
+wrapper to list snapshots, run `check --read-data`, and run
+`restore <snapshot-id> --verify --target <scratch-directory>`. Check restored
+file metadata, open the restored databases, and boot restored guests in an
+isolated rehearsal environment. Never restore over the source state as a test.
+
 ## State and credentials
 
 Preserve file ownership, permissions, extended attributes and symlinks when
