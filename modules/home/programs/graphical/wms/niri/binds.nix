@@ -368,14 +368,16 @@ in
             "toggle"
           ];
           "XF86MonBrightnessUp".action.spawn = [
-            "light"
-            "-A"
-            "5"
+            (lib.getExe pkgs.brightnessctl)
+            "--class=backlight"
+            "set"
+            "5%+"
           ];
           "XF86MonBrightnessDown".action.spawn = [
-            "light"
-            "-U"
-            "5"
+            (lib.getExe pkgs.brightnessctl)
+            "--class=backlight"
+            "set"
+            "5%-"
           ];
           "XF86AudioPlay".action.spawn = [
             "playerctl"

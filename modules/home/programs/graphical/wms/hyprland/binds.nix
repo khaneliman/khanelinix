@@ -767,14 +767,14 @@ in
               (mkExecBindWith {
                 mods = "";
                 key = "XF86MonBrightnessUp";
-                args = "light -A 5";
+                args = "${lib.getExe pkgs.brightnessctl} --class=backlight set 5%+";
                 flags.repeating = true;
                 description = "Raise brightness";
               })
               (mkExecBindWith {
                 mods = "";
                 key = "XF86MonBrightnessDown";
-                args = "light -U 5";
+                args = "${lib.getExe pkgs.brightnessctl} --class=backlight set 5%-";
                 flags.repeating = true;
                 description = "Lower brightness";
               })
