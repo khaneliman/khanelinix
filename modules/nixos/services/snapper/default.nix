@@ -26,7 +26,7 @@ in
     services.snapper = {
       inherit (cfg) configs;
 
-      snapshotRootOnBoot = true;
+      snapshotRootOnBoot = lib.mkDefault (cfg.configs ? root);
     };
   };
 }
