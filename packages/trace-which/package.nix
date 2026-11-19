@@ -13,8 +13,6 @@ writeShellApplication {
 
   passthru.updateScript = null;
 
-  checkPhase = "";
-
   text = ''
     a=$(command -v "$1") && exec ${lib.getExe trace-symlink} "$a"
   '';
