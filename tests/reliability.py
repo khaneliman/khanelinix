@@ -699,6 +699,155 @@ for platform in ["nixos", "darwin"]:
         validate=lambda value: value["stylix"],
     )
 
+observability_disabled = """c:
+  let
+    names = [ "node" "systemd" "smartctl" ];
+    maintenance = [ "snapraid-sync" "snapraid-scrub" "fast-nix-gc" "fstrim" ];
+  in {
+    exporters = builtins.filter (name: c.services.prometheus.exporters.${name}.enable) names;
+    exporterUnits = builtins.filter (name: c.systemd.services ? "prometheus-${name}-exporter") names;
+    exporterPorts = builtins.filter (port: builtins.elem port ([]
+      ++ c.networking.firewall.allowedTCPPorts
+      ++ (c.networking.firewall.interfaces.${c.services.tailscale.interfaceName}.allowedTCPPorts or [])))
+      [ 9100 9558 9633 ];
+    grafana = c.services.grafana.enable;
+    provision = c.services.grafana.provision.enable;
+    notifier = c.systemd.services ? "notify-failure@";
+    hooks = builtins.filter (name: builtins.elem "notify-failure@%n.service"
+      (c.systemd.services.${name}.onFailure or [])) maintenance;
+  }"""
+for name, host in [
+    ("lab", "f.nixosConfigurations.khanelilab"),
+    ("consumer", f"({consumers}).nixos"),
+]:
+    evaluate(
+        "observability-default-" + name,
+        f"({observability_disabled}) ({host}).config",
+        validate=lambda value: (
+            value
+            == {
+                "exporters": [],
+                "exporterUnits": [],
+                "exporterPorts": [],
+                "grafana": False,
+                "provision": False,
+                "notifier": False,
+                "hooks": [],
+            }
+        ),
+    )
+evaluate(
+    "observability-opt-in-lab",
+    """let
+      names = [ "node" "systemd" "smartctl" ];
+      address = "100.64.0.10";
+      url = "https://prometheus.example.invalid";
+      credentialFile = "/run/secrets/observability-test-url";
+      c = (f.nixosConfigurations.khanelilab.extendModules { modules = [ {
+        khanelinix.suites.observability = {
+          enable = lib.mkForce true;
+          exporters = { collectors = names; listenAddress = address; };
+          grafana.prometheusUrl = url;
+        };
+        khanelinix.services.notify-failure.webhookUrlFile = credentialFile;
+        services.restic.backups.observability-test = {
+          repositoryFile = "/run/secrets/restic-test-repository";
+          passwordFile = "/run/secrets/restic-test-password";
+          runCheck = true;
+          timerConfig = null;
+        };
+      } ]; }).config;
+      grafana = c.services.grafana;
+      provider = builtins.head grafana.provision.dashboards.settings.providers;
+      notifier = c.systemd.units."notify-failure@.service".text;
+      targets = [ "snapraid-sync" "snapraid-scrub" "fast-nix-gc" "fstrim" "restic-backups-observability-test" ];
+      exporter = name:
+        let
+          cfg = c.services.prometheus.exporters.${name};
+          unit = c.systemd.units."prometheus-${name}-exporter.service".text;
+        in {
+          inherit (cfg) port listenAddress openFirewall enable;
+          bind = lib.hasInfix "${address}:${toString cfg.port}" unit;
+          ordered = lib.hasInfix "tailscaled.service" c.systemd.units."prometheus-${name}-exporter.service".text
+            && builtins.elem "tailscaled.service" c.systemd.services."prometheus-${name}-exporter".after;
+          retry = lib.hasInfix "RestartSec=5s" unit;
+        };
+    in {
+      exporters = lib.genAttrs names exporter;
+      inherit (c.networking.firewall) allowedTCPPorts;
+      interfacePorts = c.networking.firewall.interfaces.${c.services.tailscale.interfaceName}.allowedTCPPorts;
+      inherit (grafana) dataDir;
+      inherit (builtins.head grafana.provision.datasources.settings.datasources) uid type url;
+      dashboard = toString provider.options.path;
+      credential = lib.hasInfix "LoadCredential=webhook-url:${credentialFile}" notifier;
+      notifierTemplate = lib.hasInfix " %i" notifier && !(lib.hasInfix "WantedBy=" notifier);
+      hooks = lib.genAttrs targets (name: lib.hasInfix "OnFailure=notify-failure@%n.service"
+        c.systemd.units."${name}.service".text);
+      resticTimer = c.systemd.timers ? restic-backups-observability-test;
+      inherit (c.system.build.toplevel) drvPath;
+    }""",
+    validate=lambda value: (
+        all(
+            value["exporters"][name]
+            == {
+                "enable": True,
+                "listenAddress": "100.64.0.10",
+                "openFirewall": False,
+                "port": port,
+                "bind": True,
+                "ordered": True,
+                "retry": True,
+            }
+            for name, port in [("node", 9100), ("systemd", 9558), ("smartctl", 9633)]
+        )
+        and {9100, 9558, 9633} <= set(value["interfacePorts"])
+        and not {9100, 9558, 9633} & set(value["allowedTCPPorts"])
+        and value["dataDir"] == "/mnt/pool/appdata/grafana"
+        and value["uid"] == "fleet-prometheus"
+        and value["type"] == "prometheus"
+        and value["url"] == "https://prometheus.example.invalid"
+        and value["dashboard"].endswith("-fleet.json")
+        and value["credential"]
+        and value["notifierTemplate"]
+        and all(value["hooks"].values())
+        and not value["resticTimer"]
+    ),
+)
+evaluate(
+    "observability-opt-in-exporter-only",
+    f"let base = ({consumers}).nixos; "
+    + """c = (base.extendModules { modules = [ {
+      services.tailscale = { enable = true; interfaceName = "fleet0"; };
+      services.prometheus.exporters.node.port = 19100;
+      khanelinix.suites.observability.exporters = {
+        collectors = [ "node" ];
+        listenAddress = "100.64.0.11";
+      };
+    } ]; }).config;
+    in c.services.prometheus.exporters.node.enable
+      && lib.hasInfix "100.64.0.11:19100" c.systemd.units."prometheus-node-exporter.service".text
+      && c.networking.firewall.interfaces.fleet0.allowedTCPPorts == [ 19100 ]
+      && !(builtins.elem 19100 c.networking.firewall.allowedTCPPorts)
+      && !c.services.prometheus.exporters.systemd.enable
+      && !c.services.prometheus.exporters.smartctl.enable
+      && !c.services.grafana.enable
+      && !(c.systemd.services ? "notify-failure@")""",
+    validate=lambda value: value is True,
+)
+evaluate(
+    "observability-reject-wildcard",
+    f"let base = ({consumers}).nixos; "
+    + """c = (base.extendModules { modules = [ {
+      khanelinix.suites.observability.exporters = {
+        collectors = [ "node" ];
+        listenAddress = "0.0.0.0";
+      };
+    } ]; }).config;
+    in c.services.prometheus.exporters.node.listenAddress""",
+    expected_failure=True,
+    error_message="khanelinix.suites.observability.exporters.listenAddress",
+)
+
 (args.evidence / "results.json").write_text(json.dumps(records, indent=2) + "\n")
 if not records:
     parser.error("no verification cases matched the requested selectors")
