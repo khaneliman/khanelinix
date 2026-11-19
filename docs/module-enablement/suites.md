@@ -119,6 +119,18 @@ Suites bundle related modules by platform and purpose.
 
 </details>
 
+### Home Lab Suites
+
+The NixOS `home-lab` archetype enables these suites by default.
+
+| Suite           | Focus                                                              |
+| --------------- | ------------------------------------------------------------------ |
+| `media-server`  | Media services and containers, including Jellyfin, Plex and Immich |
+| `nas`           | Samba shares, NFS exports and FUSE support                         |
+| `observability` | Grafana, Scrutiny and Uptime Kuma                                  |
+| `security`      | DNS filtering, ingress and password management                     |
+| `self-hosted`   | Application and database containers                                |
+
 ## Darwin Suites
 
 <details>
@@ -188,6 +200,7 @@ Suites bundle related modules by platform and purpose.
 | **Games**      | `moonlight`, `steam` (Homebrew)                                     |
 | **Music**      | GarageBand (Mac App Store)                                          |
 | **Networking** | `tailscale` service                                                 |
+| **Photo**      | No default Homebrew casks                                           |
 | **Social**     | `slack@beta` (Homebrew)                                             |
 | **Video**      | `ffmpeg` (system), `plex` (Homebrew), Infuse/iMovie (Mac App Store) |
 | **VM**         | `vte` (system), `utm` (Homebrew)                                    |
