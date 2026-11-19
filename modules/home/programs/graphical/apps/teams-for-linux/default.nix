@@ -25,7 +25,10 @@ in
 
   config = mkIf cfg.enable (
     let
-      catppuccin = import (lib.getFile "modules/home/theme/catppuccin/colors.nix");
+      catppuccin = config.khanelinix.theme.catppuccin;
+      catppuccinColors =
+        (lib.importJSON "${config.catppuccin.sources.palette}/palette.json").${catppuccin.flavor}.colors;
+      active = config.khanelinix.theme.active;
       nord = import (lib.getFile "modules/home/theme/nord/colors.nix");
       tokyonight = import (lib.getFile "modules/home/theme/tokyonight/colors.nix");
       pkgsUnstable = getPkgsUnstable pkgs.stdenv.hostPlatform.system { inherit (pkgs) config; };
@@ -50,17 +53,17 @@ in
 
       themePalettes = {
         catppuccin = {
-          bg = catppuccin.colors.base.hex;
-          surface = catppuccin.colors.surface0.hex;
-          surfaceAlt = catppuccin.colors.mantle.hex;
-          fg = catppuccin.colors.text.hex;
-          muted = catppuccin.colors.subtext0.hex;
-          accent = catppuccin.colors.blue.hex;
-          accentSoft = catppuccin.colors.sapphire.hex;
-          border = catppuccin.colors.overlay0.hex;
-          selected = catppuccin.colors.surface1.hex;
-          selectedHover = catppuccin.colors.surface2.hex;
-          selectedFg = catppuccin.colors.text.hex;
+          bg = catppuccinColors.base.hex;
+          surface = catppuccinColors.surface0.hex;
+          surfaceAlt = catppuccinColors.mantle.hex;
+          fg = catppuccinColors.text.hex;
+          muted = catppuccinColors.subtext0.hex;
+          inherit (active) accent;
+          accentSoft = catppuccinColors.sapphire.hex;
+          border = catppuccinColors.overlay0.hex;
+          selected = catppuccinColors.surface1.hex;
+          selectedHover = catppuccinColors.surface2.hex;
+          selectedFg = catppuccinColors.text.hex;
         };
         nord = {
           bg = nord.palette.nord0.hex;

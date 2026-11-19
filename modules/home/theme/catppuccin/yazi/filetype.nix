@@ -1,47 +1,45 @@
-let
-  catppuccin = import ../colors.nix;
-in
+{ colors }:
 {
   filetype = {
     rules = [
       {
         mime = "**/image/*";
-        fg = catppuccin.colors.teal.hex;
+        fg = colors.teal.hex;
       }
       {
         mime = "**/video/*";
-        fg = catppuccin.colors.yellow.hex;
+        fg = colors.yellow.hex;
       }
       {
         mime = "**/audio/*";
-        fg = catppuccin.colors.yellow.hex;
+        fg = colors.yellow.hex;
       }
       {
         mime = "**/application/{tar,bzip*,7z-compressed,xz,rar,gzip}";
-        fg = catppuccin.colors.pink.hex;
+        fg = colors.pink.hex;
       }
       {
         mime = "vfs/{absent,stale}";
-        fg = catppuccin.colors.overlay0.hex;
+        fg = colors.overlay0.hex;
       }
       # Orphan symbolic links
       {
         url = "*";
         is = "orphan";
-        fg = catppuccin.colors.red.hex;
+        fg = colors.red.hex;
       }
       {
         url = "*";
         is = "link";
-        fg = catppuccin.colors.green.hex;
+        fg = colors.green.hex;
       }
       {
         url = "*/";
-        fg = catppuccin.colors.blue.hex;
+        fg = colors.blue.hex;
       }
       {
         url = "*";
-        fg = catppuccin.colors.text.hex;
+        fg = colors.text.hex;
       }
     ];
   };

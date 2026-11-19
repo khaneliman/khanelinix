@@ -21,10 +21,7 @@ let
 
   cfg = config.khanelinix.theme.catppuccin;
 
-  palette = import ./colors.nix;
-  inherit (palette) colors;
-  catppuccinColors =
-    (lib.importJSON "${config.catppuccin.sources.palette}/palette.json").${cfg.flavor}.colors;
+  colors = (lib.importJSON "${config.catppuccin.sources.palette}/palette.json").${cfg.flavor}.colors;
   isLatte = cfg.flavor == "latte";
   # Frappe and Latte accents miss 4.5:1 on their own base, mantle, crust, and
   # surface0. These keep each color's OKLCH hue and chroma with lightness
@@ -62,7 +59,7 @@ let
       };
     }
     .${cfg.flavor} or { };
-  readableColors = lib.mapAttrs (_: color: color.hex) catppuccinColors // readableAccents;
+  readableColors = lib.mapAttrs (_: color: color.hex) colors // readableAccents;
   # Surfaces sit one step darker than Catppuccin's surface0/surface1 so muted
   # and status text clear 4.5:1; Latte inverts the ramp for a light canvas.
   t3codeTheme = import ../t3code.nix {
@@ -125,30 +122,50 @@ let
   };
 
   inherit (pkgs.stdenv.hostPlatform) isLinux;
-  thunderbirdAddon = pkgs.stdenvNoCC.mkDerivation {
-    pname = "thunderbird-addon-catppuccin-macchiatio-unofficial";
-    version = "1.1";
-
-    src = pkgs.fetchurl {
-      url = "https://addons.thunderbird.net/thunderbird/downloads/file/1040515/catppuccin_macchiatio_unofficial-1.1-tb.xpi";
-      sha256 = "sha256-F/TjydQ39QZw+g2KYN0EGpf0SDgZF+m9hxcJHOHqmsQ=";
-    };
-
-    dontUnpack = true;
-
-    installPhase = ''
-      runHook preInstall
-
-      install -D "$src" "$out/share/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}/macchitiounofficial@addons.thunderbird.net.xpi"
-
-      runHook postInstall
-    '';
+  flavorName = lib.toSentenceCase cfg.flavor;
+  opencodeThemeName = "catppuccin-${cfg.flavor}-${cfg.accent}";
+  opencodeThemes = pkgs.fetchFromGitHub {
+    owner = "catppuccin";
+    repo = "opencode";
+    rev = "d5f409632e6294762925fae869ad0c96dc17cd8e";
+    hash = "sha256-7kd9M8Sr+e8WpC5gDGJStpO3RNsIx+Br5niKd7Oa5xc=";
   };
+  discordThemeName = "catppuccin-${cfg.flavor}.theme.css";
+  discordThemes = pkgs.fetchFromGitHub {
+    owner = "catppuccin";
+    repo = "discord";
+    rev = "b5c7e717b6565df60aae515390ed52d60f3ac370";
+    hash = "sha256-wy3VEDeSwfsKBfxCr0wzHLqkApLZ0M1IQhMzaNpulx8=";
+  };
+  discordTheme =
+    if cfg.flavor == "macchiato" then
+      ./catppuccin-macchiato.theme.css
+    else
+      "${discordThemes}/dist/${discordThemeName}";
+  armcordTheme =
+    if cfg.flavor == "macchiato" then
+      ./Catppuccin-Macchiato-BD
+    else
+      let
+        manifest = pkgs.writeText "catppuccin-armcord-manifest.json" (
+          builtins.toJSON (
+            lib.importJSON ./Catppuccin-Macchiato-BD/manifest.json
+            // {
+              name = "Catppuccin ${flavorName}";
+              updateSrc = "https://catppuccin.github.io/discord/dist/${discordThemeName}";
+            }
+          )
+        );
+      in
+      pkgs.runCommand "catppuccin-${cfg.flavor}-armcord-theme" { } ''
+        mkdir -p "$out"
+        cp ${manifest} "$out/manifest.json"
+        cp ${discordTheme} "$out/src.css"
+      '';
 in
 {
   imports = [
     ./gtk.nix
-    ./oh-my-posh.nix
     ./qt.nix
     ./sway.nix
   ];
@@ -268,52 +285,53 @@ in
               graphical = {
                 apps.thunderbird.theme = {
                   enable = true;
-                  isDark = true;
+                  isDark = !isLatte;
                   colors = {
-                    bg = palette.colors.base.hex;
-                    surface = palette.colors.surface0.hex;
-                    surfaceAlt = palette.colors.mantle.hex;
-                    fg = palette.colors.text.hex;
-                    accent = palette.colors.${cfg.accent}.hex;
-                    accentSoft = palette.colors.${cfg.accent}.hex;
-                    accentFg = palette.colors.base.hex;
-                    border = palette.colors.overlay0.hex;
+                    bg = colors.base.hex;
+                    surface = colors.surface0.hex;
+                    surfaceAlt = colors.mantle.hex;
+                    fg = colors.text.hex;
+                    accent = readableColors.${cfg.accent};
+                    accentSoft = readableColors.${cfg.accent};
+                    accentFg = config.khanelinix.theme.active.accentForeground;
+                    border = colors.overlay0.hex;
                   };
                 };
                 browsers = {
                   firefox.extensions.extraPackages =
                     mkIf config.khanelinix.programs.graphical.browsers.firefox.enable
-                      [ pkgs.firefox-addons.catppuccin-mocha-mauve ];
+                      [ pkgs.firefox-addons.firefox-color ];
                 };
               };
             };
           };
 
           programs = {
-            codex.settings.desktop = {
-              appearanceTheme = "dark";
-              appearanceDarkCodeThemeId = "catppuccin";
-              appearanceDarkChromeTheme = {
-                surface = palette.colors.base.hex;
-                ink = palette.colors.text.hex;
-                accent = palette.colors.${cfg.accent}.hex;
-                contrast = 45;
-                fonts = { };
-                opaqueWindows = false;
-                semanticColors = {
-                  diffAdded = palette.colors.green.hex;
-                  diffRemoved = palette.colors.red.hex;
-                  skill = palette.colors.${cfg.accent}.hex;
+            thunderbird.profiles.${config.khanelinix.user.name}.settings."extensions.autoDisableScopes" =
+              mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable 0;
+
+            codex.settings.desktop =
+              let
+                appearance = if isLatte then "Light" else "Dark";
+                inherit (config.khanelinix.theme) active;
+              in
+              {
+                appearanceTheme = lib.toLower appearance;
+                "appearance${appearance}CodeThemeId" = "catppuccin-${cfg.flavor}";
+                "appearance${appearance}ChromeTheme" = {
+                  surface = active.background;
+                  ink = active.foreground;
+                  inherit (active) accent;
+                  contrast = 45;
+                  fonts = { };
+                  opaqueWindows = false;
+                  semanticColors = {
+                    diffAdded = active.success;
+                    diffRemoved = active.danger;
+                    skill = active.accent;
+                  };
                 };
               };
-            };
-
-            thunderbird.profiles.${config.khanelinix.user.name} =
-              mkIf config.khanelinix.programs.graphical.apps.thunderbird.enable
-                {
-                  extensions = [ thunderbirdAddon ];
-                  settings."extensions.autoDisableScopes" = 0;
-                };
           };
         }
         (lib.optionalAttrs (inputs ? catppuccin && inputs.catppuccin ? homeModules) {
@@ -330,8 +348,10 @@ in
             btop = enabled;
             cava = enabled;
             delta = enabled;
-            # Generated theme imports build during eval; local Firefox theme extension stays enabled below.
-            firefox = disabled;
+            firefox.profiles.${config.khanelinix.user.name} = {
+              enable = config.khanelinix.programs.graphical.browsers.firefox.enable;
+              force = true;
+            };
             fish = enabled;
             # Static local settings avoid upstream generated palette imports during eval.
             fzf = disabled;
@@ -388,17 +408,15 @@ in
                     hash = "sha256-ym5hwEBtLlFe+DqMrXR3E4L2wghew2mf9IY/1aynvAI=";
                   };
 
-                  warpStyle = "${warpPkg.outPath}/themes/catppuccin_macchiato.yml";
+                  warpStyle = "${warpPkg.outPath}/themes/catppuccin_${cfg.flavor}.yml";
                 in
                 mkIf config.khanelinix.programs.terminal.emulators.warp.enable {
-                  ".warp/themes/catppuccin_macchiato.yaml".source = warpStyle;
-                  ".local/share/warp-terminal/themes/catppuccin_macchiato.yaml".source = warpStyle;
+                  ".warp/themes/catppuccin_${cfg.flavor}.yaml".source = warpStyle;
+                  ".local/share/warp-terminal/themes/catppuccin_${cfg.flavor}.yaml".source = warpStyle;
                 }
               )
               (mkIf pkgs.stdenv.hostPlatform.isDarwin {
-                # TODO: use packaged version
-                "Library/Application Support/BetterDiscord/themes/catppuccin-macchiato.theme.css".source =
-                  ./catppuccin-macchiato.theme.css;
+                "Library/Application Support/BetterDiscord/themes/${discordThemeName}".source = discordTheme;
               })
             ];
 
@@ -417,71 +435,71 @@ in
             # Codex bundles the catppuccin syntax themes upstream.
             codex.settings.tui.theme = "catppuccin-${cfg.flavor}";
 
+            oh-my-posh.settings.palette = import ./oh-my-posh.nix { inherit colors; };
+
             fzf.colors = mkIf config.khanelinix.programs.terminal.tools.fzf.enable fzfColors;
 
             gh-dash.settings = mkIf config.khanelinix.programs.terminal.tools.gh.enable ghDashTheme;
 
             ghostty.settings = mkIf pkgs.stdenv.hostPlatform.isDarwin {
               macos-icon = "custom-style";
-              macos-icon-ghost-color = palette.colors.${cfg.accent}.hex;
-              macos-icon-screen-color = "${palette.colors.surface0.hex},${palette.colors.base.hex}";
+              macos-icon-ghost-color = colors.${cfg.accent}.hex;
+              macos-icon-screen-color = "${colors.surface0.hex},${colors.base.hex}";
             };
 
             satty.settings = mkIf config.khanelinix.programs.graphical.addons.satty.enable {
               color-palette = {
                 palette = [
-                  palette.colors.red.hex
-                  palette.colors.peach.hex
-                  palette.colors.yellow.hex
-                  palette.colors.green.hex
-                  palette.colors.teal.hex
-                  palette.colors.blue.hex
-                  palette.colors.mauve.hex
-                  palette.colors.pink.hex
+                  colors.red.hex
+                  colors.peach.hex
+                  colors.yellow.hex
+                  colors.green.hex
+                  colors.teal.hex
+                  colors.blue.hex
+                  colors.mauve.hex
+                  colors.pink.hex
                 ];
 
                 custom = [
-                  palette.colors.red.hex
-                  palette.colors.maroon.hex
-                  palette.colors.peach.hex
-                  palette.colors.yellow.hex
-                  palette.colors.green.hex
-                  palette.colors.teal.hex
-                  palette.colors.sky.hex
-                  palette.colors.sapphire.hex
-                  palette.colors.blue.hex
-                  palette.colors.lavender.hex
-                  palette.colors.mauve.hex
-                  palette.colors.pink.hex
-                  palette.colors.flamingo.hex
-                  palette.colors.rosewater.hex
+                  colors.red.hex
+                  colors.maroon.hex
+                  colors.peach.hex
+                  colors.yellow.hex
+                  colors.green.hex
+                  colors.teal.hex
+                  colors.sky.hex
+                  colors.sapphire.hex
+                  colors.blue.hex
+                  colors.lavender.hex
+                  colors.mauve.hex
+                  colors.pink.hex
+                  colors.flamingo.hex
+                  colors.rosewater.hex
                 ];
               };
             };
 
-            ncspot.settings = {
-              theme = {
-                background = "#24273A";
-                primary = "#CAD3F5";
-                secondary = "#1E2030";
-                title = "#8AADF4";
-                playing = "#8AADF4";
-                playing_selected = "#B7BDF8";
-                playing_bg = "#181926";
-                highlight = "#C6A0F6";
-                highlight_bg = "#494D64";
-                error = "#CAD3F5";
-                error_bg = "#ED8796";
-                statusbar = "#181926";
-                statusbar_progress = "#CAD3F5";
-                statusbar_bg = "#8AADF4";
-                cmdline = "#CAD3F5";
-                cmdline_bg = "#181926";
-                search_match = "#f5bde6";
-              };
+            ncspot.settings.theme = {
+              background = colors.base.hex;
+              primary = colors.text.hex;
+              secondary = colors.mantle.hex;
+              title = readableColors.${cfg.accent};
+              playing = readableColors.${cfg.accent};
+              playing_selected = readableColors.lavender;
+              playing_bg = colors.crust.hex;
+              highlight = readableColors.mauve;
+              highlight_bg = colors.surface1.hex;
+              error = config.khanelinix.theme.active.accentForeground;
+              error_bg = readableColors.red;
+              statusbar = config.khanelinix.theme.active.accentForeground;
+              statusbar_progress = colors.text.hex;
+              statusbar_bg = readableColors.${cfg.accent};
+              cmdline = colors.text.hex;
+              cmdline_bg = colors.crust.hex;
+              search_match = readableColors.pink;
             };
 
-            opencode.tui.theme = lib.mkForce "catppuccin";
+            opencode.tui.theme = lib.mkForce opencodeThemeName;
             tmux.plugins = [
               {
                 plugin = pkgs.tmuxPlugins.catppuccin;
@@ -497,104 +515,40 @@ in
               settings.enabledThemes = [
                 "catppuccin.css"
               ];
-              # TODO: use packaged version
-              themes.catppuccin = ./Catppuccin-Macchiato-BD/src.css;
+              themes.catppuccin =
+                if cfg.flavor == "macchiato" then ./Catppuccin-Macchiato-BD/src.css else discordTheme;
             };
 
-            wezterm.extraConfig = /* Lua */ ''
-              function scheme_for_appearance(appearance)
-                if appearance:find "Dark" then
-                  return "Catppuccin Macchiato"
-                else
-                  return "Catppuccin Frappe"
-                end
+            wezterm.extraConfig = lib.mkBefore /* Lua */ ''
+              function scheme_for_appearance()
+                return "Catppuccin ${flavorName}"
               end
             '';
 
             yazi = {
-              flavors = {
-                dark = "${yazi-flavors}/catppuccin-macchiato.yazi";
-                light = "${yazi-flavors}/catppuccin-latte.yazi";
-              };
+              flavors.${cfg.flavor} = "${yazi-flavors}/catppuccin-${cfg.flavor}.yazi";
               theme = lib.mkForce (
                 {
                   flavor = {
-                    dark = "dark";
-                    light = "light";
+                    dark = cfg.flavor;
+                    light = cfg.flavor;
                   };
                 }
-                // (import ./yazi/filetype.nix)
-                // (import ./yazi/manager.nix)
-                // (import ./yazi/theme.nix)
+                // (import ./yazi/filetype.nix { inherit colors; })
+                // (import ./yazi/manager.nix { inherit colors; })
+                // (import ./yazi/theme.nix { inherit colors; })
               );
             };
           };
 
           xdg.configFile = mkMerge [
-            (mkIf (pkgs.stdenv.hostPlatform.isLinux && config.khanelinix.programs.graphical.apps.discord.enable)
-              {
-                # TODO: use packaged version
-                "ArmCord/themes/Catppuccin-Macchiato-BD".source = ./Catppuccin-Macchiato-BD;
-                "BetterDiscord/themes/catppuccin-macchiato.theme.css".source = ./catppuccin-macchiato.theme.css;
-              }
-            )
-
-            (mkIf config.khanelinix.programs.graphical.bars.sketchybar.enable {
-              "sketchybar/helpers/colors.lua".text = ''
-                #!/usr/bin/env lua
-
-                local colors = {
-                  base = 0xff24273a,
-                  mantle = 0xff1e2030,
-                  crust = 0xff181926,
-                  text = 0xffcad3f5,
-                  subtext0 = 0xffb8c0e0,
-                  subtext1 = 0xffa5adcb,
-                  surface0 = 0xff363a4f,
-                  surface1 = 0xff494d64,
-                  surface2 = 0xff5b6078,
-                  overlay0 = 0xff6e738d,
-                  overlay1 = 0xff8087a2,
-                  overlay2 = 0xff939ab7,
-                  blue = 0xff8aadf4,
-                  lavender = 0xffb7bdf8,
-                  sapphire = 0xff7dc4e4,
-                  sky = 0xff91d7e3,
-                  teal = 0xff8bd5ca,
-                  green = 0xffa6da95,
-                  yellow = 0xffeed49f,
-                  peach = 0xfff5a97f,
-                  maroon = 0xffee99a0,
-                  red = 0xffed8796,
-                  mauve = 0xffc6a0f6,
-                  pink = 0xfff5bde6,
-                  flamingo = 0xfff0c6c6,
-                  rosewater = 0xfff4dbd6,
-                }
-
-                colors.random_cat_color = {
-                  colors.blue,
-                  colors.lavender,
-                  colors.sapphire,
-                  colors.sky,
-                  colors.teal,
-                  colors.green,
-                  colors.yellow,
-                  colors.peach,
-                  colors.maroon,
-                  colors.red,
-                  colors.mauve,
-                  colors.pink,
-                  colors.flamingo,
-                  colors.rosewater,
-                }
-
-                colors.getRandomCatColor = function()
-                  return colors.random_cat_color[math.random(1, #colors.random_cat_color)]
-                end
-
-                return colors
-              '';
+            (mkIf (isLinux && config.khanelinix.programs.graphical.apps.discord.enable) {
+              "ArmCord/themes/Catppuccin-${flavorName}-BD".source = armcordTheme;
+              "BetterDiscord/themes/${discordThemeName}".source = discordTheme;
+            })
+            (mkIf config.khanelinix.programs.terminal.tools.opencode.enable {
+              "opencode/themes/${opencodeThemeName}.json".source =
+                "${opencodeThemes}/themes/${cfg.flavor}/${opencodeThemeName}.json";
             })
           ];
         }

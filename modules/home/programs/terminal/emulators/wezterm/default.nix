@@ -8,6 +8,7 @@ let
 
   cfg = config.khanelinix.programs.terminal.emulators.wezterm;
   fontCfg = config.khanelinix.fonts;
+  theme = config.khanelinix.theme;
   catppuccin = import (lib.getFile "modules/home/theme/catppuccin/colors.nix");
 in
 {
@@ -32,11 +33,24 @@ in
             monaspaceNeon = fontCfg.monaspace.families.neonVar;
             monaspaceRadon = fontCfg.monaspace.families.radonVar;
             monaspaceXenon = fontCfg.monaspace.families.xenonVar;
+            tabColors =
+              if theme.catppuccin.enable then
+                theme.active
+              else
+                {
+                  surface = catppuccin.colors.mantle.hex;
+                  background = catppuccin.colors.base.hex;
+                  foreground = catppuccin.colors.text.hex;
+                  accent = catppuccin.colors.blue.hex;
+                  secondary = catppuccin.colors.mauve.hex;
+                  accentForeground = catppuccin.colors.crust.hex;
+                };
           in
           /* lua */ ''
             local act = wezterm.action
+            local appearance = wezterm.gui and wezterm.gui.get_appearance() or "Dark"
             local custom = scheme_for_appearance
-              and wezterm.color.get_builtin_schemes()[scheme_for_appearance(wezterm.gui.get_appearance())]
+              and wezterm.color.get_builtin_schemes()[scheme_for_appearance(appearance)]
             local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
             local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
 
@@ -58,16 +72,16 @@ in
             wezterm.on(
               'format-tab-title',
               function(tab, tabs, panes, config, hover, max_width)
-                local edge_background = '${catppuccin.colors.mantle.hex}'
-                local background = '${catppuccin.colors.base.hex}'
-                local foreground = '${catppuccin.colors.text.hex}'
+                local edge_background = '${tabColors.surface}'
+                local background = '${tabColors.background}'
+                local foreground = '${tabColors.foreground}'
 
                 if tab.is_active then
-                  background = '${catppuccin.colors.blue.hex}'
-                  foreground = '${catppuccin.colors.crust.hex}'
+                  background = '${tabColors.accent}'
+                  foreground = '${tabColors.accentForeground}'
                 elseif hover then
-                  background = '${catppuccin.colors.mauve.hex}'
-                  foreground = '${catppuccin.colors.crust.hex}'
+                  background = '${tabColors.secondary}'
+                  foreground = '${tabColors.accentForeground}'
                 end
 
                 local edge_foreground = background

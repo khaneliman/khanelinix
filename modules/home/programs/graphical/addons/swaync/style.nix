@@ -1,6 +1,11 @@
 { config, lib }:
 let
-  catppuccin = import (lib.getFile "modules/home/theme/catppuccin/colors.nix");
+  catppuccin = config.khanelinix.theme.catppuccin;
+  catppuccinColors =
+    if catppuccin.enable then
+      (lib.importJSON "${config.catppuccin.sources.palette}/palette.json").${catppuccin.flavor}.colors
+    else
+      (import (lib.getFile "modules/home/theme/catppuccin/colors.nix")).colors;
   tokyonight = import (lib.getFile "modules/home/theme/tokyonight/colors.nix");
   nord = import (lib.getFile "modules/home/theme/nord/colors.nix");
 
@@ -73,34 +78,7 @@ let
         rosewater = nord.palette.nord6.hex;
       }
     else
-      {
-        base = catppuccin.colors.base.hex;
-        mantle = catppuccin.colors.mantle.hex;
-        crust = catppuccin.colors.crust.hex;
-        text = catppuccin.colors.text.hex;
-        subtext0 = catppuccin.colors.subtext0.hex;
-        subtext1 = catppuccin.colors.subtext1.hex;
-        surface0 = catppuccin.colors.surface0.hex;
-        surface1 = catppuccin.colors.surface1.hex;
-        surface2 = catppuccin.colors.surface2.hex;
-        overlay0 = catppuccin.colors.overlay0.hex;
-        overlay1 = catppuccin.colors.overlay1.hex;
-        overlay2 = catppuccin.colors.overlay2.hex;
-        blue = catppuccin.colors.blue.hex;
-        lavender = catppuccin.colors.lavender.hex;
-        sapphire = catppuccin.colors.sapphire.hex;
-        sky = catppuccin.colors.sky.hex;
-        teal = catppuccin.colors.teal.hex;
-        green = catppuccin.colors.green.hex;
-        yellow = catppuccin.colors.yellow.hex;
-        peach = catppuccin.colors.peach.hex;
-        maroon = catppuccin.colors.maroon.hex;
-        red = catppuccin.colors.red.hex;
-        mauve = catppuccin.colors.mauve.hex;
-        pink = catppuccin.colors.pink.hex;
-        flamingo = catppuccin.colors.flamingo.hex;
-        rosewater = catppuccin.colors.rosewater.hex;
-      };
+      lib.mapAttrs (_: color: color.hex) catppuccinColors;
 in
 {
   style = lib.mkDefault /* css */ ''

@@ -1,37 +1,35 @@
-let
-  catppuccin = import ../colors.nix;
-in
+{ colors }:
 {
   mgr = {
     cwd = {
-      fg = catppuccin.colors.text.hex;
+      fg = colors.text.hex;
     };
     border_symbol = "│";
     border_style = {
-      fg = catppuccin.colors.blue.hex;
+      fg = colors.blue.hex;
     };
     count_copied = {
-      fg = catppuccin.colors.base.hex;
-      bg = catppuccin.colors.yellow.hex;
+      fg = colors.base.hex;
+      bg = colors.yellow.hex;
     };
     count_cut = {
-      fg = catppuccin.colors.base.hex;
-      bg = catppuccin.colors.pink.hex;
+      fg = colors.base.hex;
+      bg = colors.pink.hex;
     };
     count_selected = {
-      fg = catppuccin.colors.base.hex;
-      bg = catppuccin.colors.green.hex;
+      fg = colors.base.hex;
+      bg = colors.green.hex;
     };
   };
 
   tabs = {
     active = {
-      fg = catppuccin.colors.base.hex;
-      bg = catppuccin.colors.blue.hex;
+      fg = colors.base.hex;
+      bg = colors.blue.hex;
     };
     inactive = {
-      fg = catppuccin.colors.text.hex;
-      bg = catppuccin.colors.surface1.hex;
+      fg = colors.text.hex;
+      bg = colors.surface1.hex;
     };
   };
 }

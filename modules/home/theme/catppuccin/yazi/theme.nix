@@ -1,40 +1,38 @@
-let
-  catppuccin = import ../colors.nix;
-in
+{ colors }:
 {
   mode = {
     normal_main = {
-      fg = catppuccin.colors.base.hex;
-      bg = catppuccin.colors.blue.hex;
+      fg = colors.base.hex;
+      bg = colors.blue.hex;
       bold = true;
     };
     normal_alt = {
-      fg = catppuccin.colors.blue.hex;
-      bg = catppuccin.colors.surface0.hex;
+      fg = colors.blue.hex;
+      bg = colors.surface0.hex;
     };
     select_main = {
-      fg = catppuccin.colors.base.hex;
-      bg = catppuccin.colors.green.hex;
+      fg = colors.base.hex;
+      bg = colors.green.hex;
       bold = true;
     };
     select_alt = {
-      fg = catppuccin.colors.green.hex;
-      bg = catppuccin.colors.surface0.hex;
+      fg = colors.green.hex;
+      bg = colors.surface0.hex;
     };
     unset_main = {
-      fg = catppuccin.colors.base.hex;
-      bg = catppuccin.colors.maroon.hex;
+      fg = colors.base.hex;
+      bg = colors.maroon.hex;
       bold = true;
     };
     unset_alt = {
-      fg = catppuccin.colors.maroon.hex;
-      bg = catppuccin.colors.surface0.hex;
+      fg = colors.maroon.hex;
+      bg = colors.surface0.hex;
     };
   };
 
   input = {
     border = {
-      fg = catppuccin.colors.blue.hex;
+      fg = colors.blue.hex;
     };
     title = { };
     value = { };
@@ -45,17 +43,17 @@ in
 
   pick = {
     border = {
-      fg = catppuccin.colors.blue.hex;
+      fg = colors.blue.hex;
     };
     active = {
-      fg = catppuccin.colors.pink.hex;
+      fg = colors.pink.hex;
     };
     inactive = { };
   };
 
   tasks = {
     border = {
-      fg = catppuccin.colors.blue.hex;
+      fg = colors.blue.hex;
     };
     title = { };
     hovered = {
@@ -65,10 +63,10 @@ in
 
   confirm = {
     border = {
-      fg = catppuccin.colors.blue.hex;
+      fg = colors.blue.hex;
     };
     title = {
-      fg = catppuccin.colors.blue.hex;
+      fg = colors.blue.hex;
     };
     body = { };
     list = { };
@@ -80,35 +78,35 @@ in
 
   which = {
     border = {
-      fg = catppuccin.colors.blue.hex;
+      fg = colors.blue.hex;
     };
     mask = {
-      bg = "#363a4f";
+      bg = colors.surface0.hex;
     };
     cand = {
-      fg = catppuccin.colors.teal.hex;
+      fg = colors.teal.hex;
     };
     rest = {
-      fg = catppuccin.colors.overlay2.hex;
+      fg = colors.overlay2.hex;
     };
     desc = {
-      fg = catppuccin.colors.pink.hex;
+      fg = colors.pink.hex;
     };
     separator = "  ";
     separator_style = {
-      fg = catppuccin.colors.surface2.hex;
+      fg = colors.surface2.hex;
     };
   };
 
   help = {
     border = {
-      fg = catppuccin.colors.blue.hex;
+      fg = colors.blue.hex;
     };
     chord = {
-      fg = catppuccin.colors.pink.hex;
+      fg = colors.pink.hex;
     };
     action = {
-      fg = catppuccin.colors.teal.hex;
+      fg = colors.teal.hex;
     };
     hovered = {
       reversed = true;

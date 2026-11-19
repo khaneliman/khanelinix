@@ -54,8 +54,9 @@ let
     evaluate
       [
         (root + "/modules/home/programs/terminal/emulators/wezterm")
-        # Only font-family inputs are fixture-owned; HM owns its option types and Lua.
+        # Use the fallback palette without importing the theme stack.
         ({ lib, ... }: {
+          options.khanelinix.theme.catppuccin.enable = lib.mkEnableOption "Catppuccin in this fixture";
           options.khanelinix.fonts = lib.mkOption {
             type = lib.types.attrs;
             default.monaspace.families = {
