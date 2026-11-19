@@ -152,7 +152,8 @@ let
 
   antigravityOkfMemoryPlugin =
     let
-      hook = event: antigravityHook "${lib.getExe pkgs.python3} ${okfMemory.hook} antigravity ${event}";
+      hook =
+        event: antigravityHook "${lib.getExe pkgs.python3} -P ${okfMemory.hook} antigravity ${event}";
     in
     mkAntigravityPlugin "okf-memory" {
       PreInvocation = [ (hook "pre-invocation") ];
@@ -177,7 +178,7 @@ let
 
   antigravityTechnicalWritingPlugin = mkAntigravityPlugin "technical-writing" {
     Stop = [
-      (antigravityHook "${lib.getExe pkgs.python3} ${technicalWriting.guard} hook antigravity")
+      (antigravityHook "${lib.getExe pkgs.python3} -P ${technicalWriting.guard} hook antigravity")
     ];
   };
 
