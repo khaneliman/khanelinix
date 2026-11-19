@@ -15,8 +15,16 @@ let
 
   cfg = config.khanelinix.programs.terminal.tools.ssh;
 
-  user = config.users.users.${config.khanelinix.user.name};
-  userId = toString user.uid;
+  gpgAgent = config.services.gpg-agent;
+  localExtraSocket =
+    if !(gpgAgent.enable && gpgAgent.enableExtraSocket) then
+      null
+    else if pkgs.stdenv.hostPlatform.isDarwin then
+      config.launchd.agents.gpg-agent.config.Sockets.Extra.SockPathName
+    else
+      lib.replaceStrings [ "%t" ] [ "/run/user/%i" ]
+        config.systemd.user.sockets.gpg-agent-extra.Socket.ListenStream;
+  gpgForwards = import (lib.getFile "modules/common/programs/terminal/tools/ssh/gpg-forwards.nix") localExtraSocket;
 
   otherHosts = lib.filterAttrs (name: _: name != hostname) cfg.hosts;
   inherit (cfg) magicDnsSuffix;
@@ -41,9 +49,6 @@ in
         let
           otherHostsConfig = lib.mapAttrs (
             _name: remote:
-            let
-              remoteUserId = toString (remote.uid or (if remote.system == "darwin" then 501 else 1000));
-            in
             {
               HostName = remote.hostname;
               User = remote.username;
@@ -52,10 +57,7 @@ in
               # route to host" without retrying IPv4.
               AddressFamily = "inet";
               ForwardAgent = true;
-              RemoteForward = lib.optionals (config.services.gpg-agent.enable && (remote.gpgAgent or false)) [
-                "/run/user/${remoteUserId}/gnupg/S.gpg-agent /run/user/${userId}/gnupg/S.gpg-agent.extra"
-                "/run/user/${remoteUserId}/gnupg/S.gpg-agent.ssh /run/user/${userId}/gnupg/S.gpg-agent.ssh"
-              ];
+              RemoteForward = gpgForwards remote;
             }
             // lib.optionalAttrs (remote.system == "nixos") {
               Port = cfg.port;

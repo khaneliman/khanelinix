@@ -195,13 +195,17 @@ let
         }) overrides;
       }).config;
   ssh =
-    tailscale:
+    {
+      tailscale ? false,
+      darwin ? false,
+      extraSocket ? true,
+    }:
     let
       evaluated =
         (lib.evalModules {
           specialArgs = {
             inherit lib;
-            pkgs = { };
+            pkgs.stdenv.hostPlatform.isDarwin = darwin;
           };
           modules = [
             (root + "/modules/common/programs/terminal/tools/ssh")
@@ -213,6 +217,7 @@ let
                 khanelinix.user.name = lib.mkOption { type = lib.types.str; };
                 khanelinix.services.tailscale.enable = boolOption;
                 programs.gnupg.agent.enable = boolOption;
+                programs.gnupg.agent.enableExtraSocket = boolOption;
                 environment.etc = lib.mkOption {
                   type = lib.types.attrsOf (
                     lib.types.submodule {
@@ -223,7 +228,10 @@ let
               };
               config = {
                 _module.check = false;
-                users.users.test.uid = 1000;
+                users.users.test = {
+                  uid = 1001;
+                  home = "/Users/local test";
+                };
                 networking = {
                   hostName = "local";
                   enableIPv6 = true;
@@ -232,7 +240,10 @@ let
                   systemd-ssh-proxy.enable = false;
                   setXAuthLocation = false;
                 };
-                programs.gnupg.agent.enable = true;
+                programs.gnupg.agent = {
+                  enable = true;
+                  enableExtraSocket = extraSocket;
+                };
                 khanelinix = {
                   user.name = "test";
                   services.tailscale.enable = tailscale;
@@ -250,12 +261,14 @@ let
                         username = "linux-user";
                         system = "nixos";
                         gpgAgent = true;
+                        uid = 1002;
                         publicKey = "ssh-ed25519 fixture";
                       };
                       mac = {
                         hostname = "mac.local";
                         username = "mac-user";
                         system = "darwin";
+                        gpgAgent = true;
                       };
                     };
                     extraConfig = ''
@@ -417,8 +430,10 @@ in
     assert !(suite (builtins.head capabilities) true [ ] true);
     true;
   ssh = {
-    enabled = ssh true;
-    disabled = ssh false;
+    enabled = ssh { tailscale = true; };
+    disabled = ssh { };
+    darwin = ssh { darwin = true; };
+    noExtraSocket = ssh { extraSocket = false; };
   };
   lightdm = {
     default = lightdm false false;

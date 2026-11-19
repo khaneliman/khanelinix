@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
@@ -10,7 +11,18 @@ let
   cfg = config.khanelinix.programs.terminal.tools.ssh;
 
   user = config.users.users.${config.khanelinix.user.name};
-  user-id = toString user.uid;
+
+  gpgAgent = config.programs.gnupg.agent;
+  localExtraSocket =
+    if !gpgAgent.enable then
+      null
+    else if pkgs.stdenv.hostPlatform.isDarwin then
+      "${user.home}/.gnupg/S.gpg-agent.extra"
+    else if gpgAgent.enableExtraSocket then
+      "/run/user/${toString user.uid}/gnupg/S.gpg-agent.extra"
+    else
+      null;
+  gpgForwards = import ./gpg-forwards.nix localExtraSocket;
 
   inherit (cfg) hosts;
 
@@ -28,12 +40,6 @@ let
     let
       remote = other-hosts.${name};
       remote-user-name = remote.username;
-      # Use system-specific default UIDs: macOS starts at 501, Linux at 1000
-      remote-user-id = if remote.system == "darwin" then "501" else "1000";
-
-      forward-gpg =
-        lib.optionalString (config.programs.gnupg.agent.enable && (remote.gpgAgent or false))
-          "  RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent /run/user/${user-id}/gnupg/S.gpg-agent.extra\n  RemoteForward /run/user/${remote-user-id}/gnupg/S.gpg-agent.ssh /run/user/${user-id}/gnupg/S.gpg-agent.ssh";
       port-expr = lib.optionalString (remote.system == "nixos") "  Port ${toString cfg.port}";
 
       mkHostBlock =
@@ -48,8 +54,8 @@ let
             "  ForwardAgent yes"
             "  ConnectTimeout 10"
             port-expr
-            forward-gpg
           ]
+          ++ map (forward: "  RemoteForward ${forward}") (gpgForwards remote)
         );
     in
     lib.concatStringsSep "\n" (

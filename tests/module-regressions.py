@@ -89,11 +89,28 @@ for mode, rendered in result["ssh"].items():
             expected["addressfamily"] = "inet"
         for name, value in expected.items():
             assert effective[name] == value, (mode, host, name, effective[name], value)
-    assert "RemoteForward /run/user/1000/gnupg/S.gpg-agent " in config.read_text()
+        remote_socket = {
+            "linux.local": "/run/user/1002/gnupg/S.gpg-agent",
+            "linux.fleet.example": "/run/user/1002/gnupg/S.gpg-agent",
+            "mac.local": "/Users/mac-user/.gnupg/S.gpg-agent",
+            "mac.fleet.example": "/Users/mac-user/.gnupg/S.gpg-agent",
+        }.get(hostname)
+        local_dir = (
+            "/Users/local test/.gnupg" if mode == "darwin" else "/run/user/1001/gnupg"
+        )
+        expected_forwards = (
+            [f"remoteforward {remote_socket} {local_dir}/S.gpg-agent.extra"]
+            if remote_socket and mode != "noExtraSocket"
+            else []
+        )
+        forwards = [
+            line for line in output.splitlines() if line.startswith("remoteforward ")
+        ]
+        assert forwards == expected_forwards, (mode, host, forwards, expected_forwards)
     assert (
         rendered["knownHosts"]["github-ed25519"]["publicKey"]
         == "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl"
     )
 print(
-    "PASS: 64 credential combinations, 10 suite baselines and overrides, WSL gate, 13 SSH resolutions, 4 LightDM theme selections, Dolphin enablement, restic backup and check jobs"
+    "PASS: 64 credential combinations, 10 suite baselines and overrides, WSL gate, SSH resolutions and GPG sockets, 4 LightDM theme selections, Dolphin enablement, restic backup and check jobs"
 )
