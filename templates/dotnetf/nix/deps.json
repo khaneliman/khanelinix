@@ -1,0 +1,62 @@
+[
+	{
+		"pname": "FsUnit",
+		"version": "5.0.0",
+		"hash": "sha256-9FKJWNZ8tLkebiC6VMvf9iw4Oj5QGUV97ajOmDgro2Q="
+	},
+	{
+		"pname": "Microsoft.CodeCoverage",
+		"version": "18.0.1",
+		"hash": "sha256-G6y5iyHZ3R2shlLCW/uTusio/UqcnWT79X+UAbxvDQY="
+	},
+	{
+		"pname": "Microsoft.NET.Test.Sdk",
+		"version": "18.0.1",
+		"hash": "sha256-0c3/rp9di0w7E5UmfRh6Prrm3Aeyi8NOj5bm2i6jAh0="
+	},
+	{
+		"pname": "Microsoft.NETCore.Platforms",
+		"version": "1.1.0",
+		"hash": "sha256-FeM40ktcObQJk4nMYShB61H/E8B7tIKfl9ObJ0IOcCM="
+	},
+	{
+		"pname": "Microsoft.TestPlatform.ObjectModel",
+		"version": "18.0.1",
+		"hash": "sha256-oJbS7SZ46RzyOQ+gCysW7qJRy7V8RlQVa5d8uajb91M="
+	},
+	{
+		"pname": "Microsoft.TestPlatform.TestHost",
+		"version": "18.0.1",
+		"hash": "sha256-OXYf5vg4piDr10ve0bZ2ZSb+nb3yOiHayJV3cu5sMV4="
+	},
+	{
+		"pname": "NETStandard.Library",
+		"version": "2.0.0",
+		"hash": "sha256-Pp7fRylai8JrE1O+9TGfIEJrAOmnWTJRLWE+qJBahK0="
+	},
+	{
+		"pname": "NETStandard.Library",
+		"version": "2.0.3",
+		"hash": "sha256-Prh2RPebz/s8AzHb2sPHg3Jl8s31inv9k+Qxd293ybo="
+	},
+	{
+		"pname": "Newtonsoft.Json",
+		"version": "13.0.3",
+		"hash": "sha256-hy/BieY4qxBWVVsDqqOPaLy1QobiIapkbrESm6v2PHc="
+	},
+	{
+		"pname": "NUnit",
+		"version": "3.13.3",
+		"hash": "sha256-Zn+sJIF7ieNqu/t2RwJx6WPFb1jl9UuNHidb/Px0v3E="
+	},
+	{
+		"pname": "NUnit.Analyzers",
+		"version": "3.3.0",
+		"hash": "sha256-wO9A6GplGYLsvmBUFZ9/WYvGb14Owsy9KgS5YAYulwM="
+	},
+	{
+		"pname": "NUnit3TestAdapter",
+		"version": "4.2.1",
+		"hash": "sha256-g73i3yqr0KnC0etKcAw9CmB6ZFAFvpxZn88s1glsND4="
+	}
+]

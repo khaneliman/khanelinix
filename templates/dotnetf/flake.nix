@@ -6,99 +6,63 @@
   };
   outputs =
     { nixpkgs, flake-utils, ... }:
-    flake-utils.lib.eachDefaultSystem (
-      system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-        projectFile = "./HelloWorld/HelloWorld.fsproj";
-        testProjectFile = "./HelloWorld.Test/HelloWorld.Test.fsproj";
-        pname = "dotnet-helloworld";
-        dotnet-sdk = pkgs.dotnet-sdk_7;
-        dotnet-runtime = pkgs.dotnetCorePackages.runtime_7_0;
-        version = "0.0.1";
-        dotnetSixTool =
-          toolName: toolVersion: sha256:
-          pkgs.stdenvNoCC.mkDerivation rec {
-            name = toolName;
-            version = toolVersion;
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            src = pkgs.fetchNuGet {
-              pname = name;
-              inherit version sha256;
-              installPhase = "mkdir -p $out/bin && cp -r tools/net6.0/any/* $out/bin";
+    flake-utils.lib.eachSystem
+      [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+      ]
+      (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+          projectFile = "./HelloWorld/HelloWorld.fsproj";
+          testProjectFile = "./HelloWorld.Test/HelloWorld.Test.fsproj";
+          dotnet-sdk = pkgs.dotnet-sdk_10;
+        in
+        {
+          packages = rec {
+            fantomas = pkgs.buildDotnetGlobalTool {
+              pname = "fantomas";
+              version = "8.1.3";
+              inherit dotnet-sdk;
+              dotnet-runtime = dotnet-sdk;
+              nugetHash = "sha256-qEbMjuW7wxJib1aenmWhRFvmYeeeKK8KgYmXK83trD8=";
             };
-            installPhase = ''
-              runHook preInstall
-              mkdir -p "$out/lib"
-              cp -r ./bin/* "$out/lib"
-              makeWrapper "${dotnet-runtime}/bin/dotnet" "$out/bin/${name}" --add-flags "$out/lib/${name}.dll"
-              runHook postInstall
+            fetchDeps = pkgs.writeShellScriptBin "fetch-dotnet-helloworld-deps" ''
+              set -e
+              depsFile="''${1:-$(${pkgs.coreutils}/bin/mktemp -t HelloWorld-deps-XXXXXXXX.json)}"
+              exec ${default.fetch-deps} "$depsFile"
             '';
+            default = pkgs.buildDotnetModule {
+              pname = "HelloWorld";
+              inherit
+                dotnet-sdk
+                projectFile
+                testProjectFile
+                ;
+              version = "0.0.1";
+              src = ./.;
+              nugetDeps = ./nix/deps.json;
+              doCheck = true;
+              # VSTest uses loopback, but the Darwin sandbox rejects IPv4-mapped IPv6.
+              __darwinAllowLocalNetworking = true;
+              dotnetTestFlags = pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+                "--environment"
+                "DOTNET_SYSTEM_NET_DISABLEIPV6=1"
+              ];
+            };
           };
-      in
-      {
-        packages = {
-          fantomas = dotnetSixTool "fantomas" "5.1.5" "sha256-qzIs6JiZV9uHUS0asrgWLAbaKJsNtr5h01fJxmOR2Mc=";
-          fetchDeps =
-            let
-              runtimeIds = map (
-                system: pkgs.dotnetCorePackages.systemToDotnetRid system
-              ) dotnet-sdk.meta.platforms;
-              fetchDepsScript =
-                builtins.replaceStrings
-                  [
-                    "@binPath@"
-                    "@pname@"
-                    "@projectFiles@"
-                    "@testProjectFiles@"
-                    "@storeSrc@"
-                    "@rids@"
-                    "@packages@"
-                  ]
-                  [
-                    (pkgs.lib.makeBinPath [
-                      pkgs.coreutils
-                      dotnet-sdk
-                      (pkgs.nuget-to-nix.override { inherit dotnet-sdk; })
-                    ])
-                    pname
-                    (toString (pkgs.lib.toList projectFile))
-                    (toString (pkgs.lib.toList testProjectFile))
-                    (toString (
-                      pkgs.srcOnly {
-                        src = ./.;
-                        inherit pname version;
-                      }
-                    ))
-                    (pkgs.lib.concatStringsSep "\" \"" runtimeIds)
-                    dotnet-sdk.packages
-                  ]
-                  (builtins.readFile ./nix/fetchDeps.sh);
-            in
-            pkgs.writeShellScriptBin "fetch-${pname}-deps" fetchDepsScript;
-          default = pkgs.buildDotnetModule {
-            pname = "HelloWorld";
-            inherit
-              version
-              dotnet-sdk
-              dotnet-runtime
-              projectFile
-              ;
-            src = ./.;
-            nugetDeps = ./nix/deps.nix;
-            doCheck = true;
+          devShells = {
+            default = pkgs.mkShell {
+              packages = [
+                dotnet-sdk
+                pkgs.git
+                pkgs.alejandra
+                pkgs.markdown-link-check
+              ];
+            };
           };
-        };
-        devShells = {
-          default = pkgs.mkShell {
-            buildInputs = [
-              pkgs.dotnet-sdk_7
-              pkgs.git
-              pkgs.alejandra
-              pkgs.nodePackages.markdown-link-check
-            ];
-          };
-        };
-      }
-    );
+        }
+      );
 }
