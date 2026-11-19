@@ -43,7 +43,7 @@ in
       opencode-coding = "opencode --model openai/gpt-6-luna";
       opencode-deep = "opencode --model ${deliberateModel}";
       opencode-nano = "opencode --model openai/gpt-6-luna";
-      opencode-research = "opencode --agent build --model ${deliberateModel}";
+      opencode-research = "opencode --agent plan --model ${deliberateModel}";
     }
     // lib.optionalAttrs config.services.exo.enable {
       opencode-exo = ''f(){ model="$1"; shift; opencode --model "exo/$model" "$@"; }; f'';
