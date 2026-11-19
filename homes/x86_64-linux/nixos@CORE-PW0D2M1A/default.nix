@@ -2,7 +2,6 @@
   config,
   lib,
 
-  osConfig ? { },
   ...
 }:
 let
@@ -90,7 +89,7 @@ in
     theme.catppuccin = enabled;
   };
 
-  sops.secrets = lib.mkIf (osConfig.khanelinix.security.sops.enable or false) {
+  sops.secrets = lib.mkIf config.khanelinix.services.sops.enable {
     kubernetes = {
       path = "${config.home.homeDirectory}/.kube/config";
     };
