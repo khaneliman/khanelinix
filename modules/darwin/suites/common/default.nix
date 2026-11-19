@@ -30,13 +30,11 @@ in
       systemPackages =
         with pkgs;
         [
-          duti
           gawk
           gnugrep
           gnupg
           gnused
           gnutls
-          terminal-notifier
           trash-cli
           wtfutil
         ]
@@ -58,9 +56,7 @@ in
       security.hardening = mkDefault enabled;
 
       programs.terminal.tools = {
-        atuin = mkDefault enabled;
         darwin-doctor = mkDefault enabled;
-        nh = mkDefault enabled;
         ssh = mkDefault enabled;
       };
 
@@ -74,9 +70,6 @@ in
       };
 
       system = {
-        fonts = mkDefault enabled;
-        input = mkDefault enabled;
-        interface = mkDefault enabled;
         logging = mkDefault enabled;
         networking = mkDefault enabled;
         power = mkDefault enabled;
@@ -90,10 +83,11 @@ in
           softwareupdate --install-rosetta --agree-to-license
         fi
       '')
-      /* Bash */ ''
+      ''
         echo >&2 "Disabling Spotlight indexing for the Nix store..."
         sudo touch /nix/store/.metadata_never_index
-
+      ''
+      (lib.mkIf config.khanelinix.suites.desktop.enable /* Bash */ ''
         echo >&2 "Cleaning up dead LaunchServices Nix store entries..."
         /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -dump | \
           { /usr/bin/grep -o "/nix/store/.*\.app" || test "$?" -eq 1; } | sort | uniq | while read -r app; do
@@ -102,7 +96,7 @@ in
             /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -u "$app"
           fi
         done
-      ''
+      '')
     ];
   };
 }

@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) mkIf mkDefault;
-  inherit (lib.khanelinix) enabled disabled;
+  inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.suites.desktop;
 in
@@ -21,10 +21,12 @@ in
       alt-tab-macos
       bartender
       blueutil
+      duti
       mole-cleaner
       monitorcontrol
       stats
       switchaudio-osx
+      terminal-notifier
     ];
 
     khanelinix = {
@@ -39,13 +41,11 @@ in
         };
       };
 
-      # Enable log rotation for desktop services
-      services = {
-        jankyborders = mkDefault enabled;
-        skhd = mkDefault disabled;
+      system = {
+        fonts = mkDefault enabled;
+        input = mkDefault enabled;
+        interface = mkDefault enabled;
       };
-
-      programs.graphical.bars.sketchybar = mkDefault enabled;
     };
 
     homebrew = {

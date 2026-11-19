@@ -127,6 +127,24 @@ evaluate(
     validate=lambda value: value is True,
 )
 evaluate(
+    "role-darwin-desktop",
+    """let
+      builder = f.darwinConfigurations.khanelimac-m1.config;
+      workstation = f.darwinConfigurations.khanelimac.config;
+      desktop = c: with c.khanelinix; [
+        suites.desktop.enable system.fonts.enable system.input.enable system.interface.enable
+        (lib.hasInfix "lsregister" c.system.activationScripts.postActivation.text)
+      ];
+    in
+      !(lib.any lib.id (desktop builder))
+      && lib.all lib.id (desktop workstation)
+      && builder.khanelinix.suites.common.enable
+      && builder.khanelinix.services.openssh.enable
+      && builder.khanelinix.system.power.enable
+      && !builder.khanelinix.tools.homebrew.enable""",
+    validate=lambda value: value is True,
+)
+evaluate(
     "fleet-khanelimac-m1-builders",
     """let
       c = f.darwinConfigurations.khanelimac-m1.config;
