@@ -123,10 +123,7 @@ in
     };
 
     suites = {
-      business = {
-        # NOTE: Enabled through desktop role
-        enable = lib.mkForce false;
-      };
+      business.enable = false;
 
       development = {
         enable = true;
