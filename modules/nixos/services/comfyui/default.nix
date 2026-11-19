@@ -161,21 +161,28 @@ in
         ps.gguf
         ps.protobuf
       ];
-      extraArgs = [
-        # TODO(ROCm): Retest SDPA when gfx1100 Qwen output is fixed.
-        # Tracking: https://github.com/Comfy-Org/ComfyUI/issues/14335
-        # PyTorch SDPA corrupts Qwen output on gfx1100.
-        "--use-split-cross-attention"
-        # TODO(ROCm): Retest Triton when Wan output matches eager kernels on gfx1100.
-        # Triton produced corrupt Wan output on gfx1100.
-        "--disable-triton-backend"
-        # Keep local installs free of paid API nodes and frontend network requests.
-        "--disable-api-nodes"
-      ]
-      ++ lib.optional (!cfg.cacheNodeOutputs) "--cache-none"
-      ++ lib.optional (cfg.models != { }) "--extra-model-paths-config=${extraModelPaths}"
-      ++ lib.optional (cfg.reserveVramGb != null) "--reserve-vram=${toString cfg.reserveVramGb}"
-      ++ lib.optional (cfg.outputDir != null) "--output-directory=${cfg.outputDir}";
+      extraArgs =
+        let
+          amdCfg = config.khanelinix.hardware.gpu.amd;
+          isGfx1100 = amdCfg.enable && amdCfg.enableRocmSupport && amdCfg.rocmGfxTarget == "gfx1100";
+        in
+        lib.optionals isGfx1100 [
+          # TODO(ROCm): Retest SDPA when gfx1100 Qwen output is fixed.
+          # Tracking: https://github.com/Comfy-Org/ComfyUI/issues/14335
+          # PyTorch SDPA corrupts Qwen output on gfx1100.
+          "--use-split-cross-attention"
+          # TODO(ROCm): Retest Triton when Wan output matches eager kernels on gfx1100.
+          # Triton produced corrupt Wan output on gfx1100.
+          "--disable-triton-backend"
+        ]
+        ++ [
+          # Keep local installs free of paid API nodes and frontend network requests.
+          "--disable-api-nodes"
+        ]
+        ++ lib.optional (!cfg.cacheNodeOutputs) "--cache-none"
+        ++ lib.optional (cfg.models != { }) "--extra-model-paths-config=${extraModelPaths}"
+        ++ lib.optional (cfg.reserveVramGb != null) "--reserve-vram=${toString cfg.reserveVramGb}"
+        ++ lib.optional (cfg.outputDir != null) "--output-directory=${cfg.outputDir}";
     };
 
     systemd = {

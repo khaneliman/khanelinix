@@ -48,7 +48,9 @@ in
 
       inherit (cfg) openFirewall;
 
-      rocmOverrideGfx = lib.mkIf (amdCfg.enable && amdCfg.enableRocmSupport) "11.0.0";
+      rocmOverrideGfx = lib.mkIf (
+        amdCfg.enable && amdCfg.enableRocmSupport && amdCfg.rocmGfxVersion != null
+      ) amdCfg.rocmGfxVersion;
 
       environmentVariables = {
         # A desktop compositor needs video memory too, and a 24 GiB card holds
@@ -70,8 +72,8 @@ in
       // lib.optionalAttrs cfg.enableDebug {
         OLLAMA_DEBUG = "1";
       }
-      // lib.optionalAttrs (amdCfg.enable && amdCfg.enableRocmSupport) {
-        HCC_AMDGPU_TARGET = "gfx1100";
+      // lib.optionalAttrs (amdCfg.enable && amdCfg.enableRocmSupport && amdCfg.rocmGfxTarget != null) {
+        HCC_AMDGPU_TARGET = amdCfg.rocmGfxTarget;
         AMD_LOG_LEVEL = lib.mkIf cfg.enableDebug "3";
       };
     };
