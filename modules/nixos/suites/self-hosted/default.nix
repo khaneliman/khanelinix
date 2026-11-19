@@ -199,7 +199,7 @@ in
         user = "99:100";
         # Port:
         # - 5000/tcp: wakapi web/API
-        ports = [ "5000:3000" ];
+        ports = [ "5000:5000" ];
         volumes = [ "${appdataDir}/wakapi/data:/data" ];
         environment = {
           WAKAPI_DB_TYPE = "sqlite3";
@@ -207,7 +207,7 @@ in
           WAKAPI_LISTEN_IPV4 = "0.0.0.0";
           PORT = "5000";
           ENVIRONMENT = "prod";
-          WAKAPI_ALLOW_SIGNUP = "true";
+          WAKAPI_ALLOW_SIGNUP = "false";
           WAKAPI_DISABLE_FRONTPAGE = "false";
           WAKAPI_EXPOSE_METRICS = "false";
           WAKAPI_MAIL_ENABLED = "false";
