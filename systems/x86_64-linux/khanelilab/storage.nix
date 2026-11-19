@@ -94,7 +94,6 @@ in
         "x-systemd.requires-mounts-for=/mnt/disk4"
         "x-systemd.requires-mounts-for=/mnt/cache"
         "x-systemd.requires-mounts-for=/mnt/pool"
-        "x-systemd.requires-mounts-for=/mnt/parity"
       ];
     };
   };
