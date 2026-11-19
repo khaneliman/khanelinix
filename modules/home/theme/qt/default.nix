@@ -21,6 +21,7 @@ let
   cfg = config.khanelinix.theme.qt;
   fontCfg = config.khanelinix.fonts;
   inherit (pkgs.stdenv.hostPlatform) isLinux;
+  hasKvantumTheme = cfg.theme.name != null && cfg.theme.package != null;
 
   qtQuickControlsConfig = "${config.xdg.configHome}/qtquickcontrols2.conf";
   qtQuickControlsFormat = pkgs.formats.ini { };
@@ -36,7 +37,7 @@ let
     "Universal"
   ] (_: qtQuickControlsPalette);
   qtctSettings = lib.mapAttrs (
-    _: section: lib.filterAttrs (_: value: value != null) section
+    _: section: lib.mapAttrs (_: mkDefault) (lib.filterAttrs (_: value: value != null) section)
   ) cfg.settings;
 in
 {
@@ -44,16 +45,8 @@ in
     enable = lib.mkEnableOption "Qt theming";
 
     theme = {
-      name = mkOpt str "catppuccin-macchiato-blue" "The name of the kvantum theme to apply.";
-      package = mkOpt package (
-        if isLinux then
-          pkgs.catppuccin-kvantum.override {
-            accent = "blue";
-            variant = "macchiato";
-          }
-        else
-          pkgs.emptyDirectory
-      ) "The package to use for the theme.";
+      name = mkOpt (nullOr str) null "The name of the Kvantum theme to apply.";
+      package = mkOpt (nullOr package) null "The package to use for the theme.";
     };
 
     qml.palette = mkOpt (attrsOf str) { } "Qt Quick Controls palette";
@@ -62,11 +55,11 @@ in
       Appearance = {
         color_scheme_path = mkOpt types.str "" "Color scheme path";
         custom_palette = mkBoolOpt false "Whether to use custom palette";
-        icon_theme = mkOpt types.str (
-          if isLinux then config.khanelinix.theme.gtk.icon.name else ""
+        icon_theme = mkOpt (types.nullOr types.str) (
+          if isLinux then config.khanelinix.theme.gtk.icon.name else null
         ) "Icon theme";
         standard_dialogs = mkOpt types.str "gtk3" "Dialog type";
-        style = mkOpt types.str "kvantum" "Style";
+        style = mkOpt types.str (if hasKvantumTheme then "kvantum" else "fusion") "Style";
       };
 
       Fonts = {
@@ -103,10 +96,8 @@ in
       packages = with pkgs; [
         kdePackages.breeze-icons
         kdePackages.qqc2-desktop-style
-        libsForQt5.qtstyleplugin-kvantum
         qt6.qtsvg
         qt6.qtwayland
-        qt6Packages.qtstyleplugin-kvantum
       ];
 
       sessionVariables = {
@@ -131,7 +122,7 @@ in
     qt = {
       enable = true;
 
-      kvantum = {
+      kvantum = mkIf hasKvantumTheme {
         enable = true;
         themes = [ cfg.theme.package ];
         settings = {
@@ -143,7 +134,7 @@ in
         name = mkDefault "qtct";
       };
 
-      style.name = "kvantum";
+      style.name = mkDefault cfg.settings.Appearance.style;
 
       qt5ctSettings = qtctSettings;
       qt6ctSettings = qtctSettings;
