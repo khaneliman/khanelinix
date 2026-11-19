@@ -20,6 +20,8 @@
     in
     {
       pre-commit = lib.mkIf (inputs.git-hooks-nix ? flakeModule) {
+        # Skill tests invoke Nix and executable fixtures through /usr/bin/env.
+        # CI runs them in the dev shell rather than a build sandbox.
         check.enable = false;
 
         settings.hooks = {
@@ -121,7 +123,7 @@
           pre-commit-hook-ensure-sops.enable = true;
           # treefmt runs `statix fix`, which silently skips lints that have no
           # auto-fix (for example `repeated_keys`). Only `statix check` reports
-          # them, matching the CI lint job.
+          # them during the pre-commit check.
           statix = {
             enable = true;
             package = pkgs.statix;

@@ -30,6 +30,9 @@ jobs:
       - name: Run flake checks
         if: matrix.system == 'x86_64-linux'
         run: nix flake check --system ${{ matrix.system }} --print-build-logs
+      - name: Run repository hooks
+        if: matrix.system == 'x86_64-linux'
+        run: nix develop --command pre-commit run --all-files
       - name: Evaluate Darwin outputs
         if: matrix.system == 'aarch64-darwin'
         # --no-build makes the store read-only, breaking partition loading and
