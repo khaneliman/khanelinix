@@ -44,14 +44,10 @@ in
   };
 
   config = mkIf cfg.enable {
-    networking.firewall = {
-      allowedTCPPorts = [ 5357 ];
-      allowedUDPPorts = [ 3702 ];
-    };
-
     services.samba-wsdd = {
-      enable = true;
+      enable = lib.mkDefault (config.services.samba.enable && config.services.samba.smbd.enable);
       discovery = true;
+      openFirewall = true;
       inherit (cfg) workgroup;
     };
 

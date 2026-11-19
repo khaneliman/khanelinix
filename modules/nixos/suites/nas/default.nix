@@ -29,12 +29,13 @@ let
   };
 
   nfsAllowedClient = "100.64.0.0/10";
-  nfsPorts = [
+  nfs = config.services.nfs.server;
+  nfsPorts = lib.filter (port: port != null) [
     111
     2049
-    20048
-    32765
-    32767
+    nfs.mountdPort
+    nfs.statdPort
+    nfs.lockdPort
   ];
   nfsExport =
     path:
@@ -204,38 +205,36 @@ in
       };
     };
 
-    services = {
-      nfs.server = {
-        enable = true;
-        lockdPort = 32767;
-        mountdPort = 20048;
-        statdPort = 32765;
-        exports = lib.concatStringsSep "\n" (
-          map nfsExport [
-            "${userRoot}/appdata"
-            "${userRoot}/backup"
-            "${userRoot}/data"
-            "${userRoot}/familyphotos"
-            "${userRoot}/gamingvideos"
-            "${userRoot}/homevideos"
-            "${userRoot}/isos"
-            "${userRoot}/pictures"
-            "${userRoot}/tv"
-            "${userRoot}/tvrecordings"
-            "${cloudRoot}/dropbox"
-            "${cloudRoot}/googledrive"
-            "${cloudRoot}/googlephotos"
-            "${cloudRoot}/onedrive"
-          ]
-        );
-      };
-
-      rpcbind.enable = true;
+    services.nfs.server = {
+      enable = true;
+      lockdPort = 32767;
+      mountdPort = 20048;
+      statdPort = 32765;
+      exports = lib.concatStringsSep "\n" (
+        map nfsExport [
+          "${userRoot}/appdata"
+          "${userRoot}/backup"
+          "${userRoot}/data"
+          "${userRoot}/familyphotos"
+          "${userRoot}/gamingvideos"
+          "${userRoot}/homevideos"
+          "${userRoot}/isos"
+          "${userRoot}/pictures"
+          "${userRoot}/tv"
+          "${userRoot}/tvrecordings"
+          "${cloudRoot}/dropbox"
+          "${cloudRoot}/googledrive"
+          "${cloudRoot}/googlephotos"
+          "${cloudRoot}/onedrive"
+        ]
+      );
     };
 
-    networking.firewall.interfaces.${config.services.tailscale.interfaceName} = {
-      allowedTCPPorts = nfsPorts;
-      allowedUDPPorts = nfsPorts;
+    networking.firewall.interfaces = lib.mkIf (nfs.enable && config.services.tailscale.enable) {
+      ${config.services.tailscale.interfaceName} = {
+        allowedTCPPorts = nfsPorts;
+        allowedUDPPorts = nfsPorts;
+      };
     };
 
     # TODO: replace these Unraid-compatible /mnt roots with more idiomatic

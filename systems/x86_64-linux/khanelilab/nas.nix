@@ -6,6 +6,9 @@
 }:
 let
   user = config.khanelinix.user.name;
+  samba = config.services.samba;
+  smbdEnabled = samba.enable && samba.smbd.enable;
+  nmbdEnabled = samba.enable && samba.nmbd.enable;
   localShares = [
     "appdata"
     "data"
@@ -78,7 +81,7 @@ in
     ]
   );
   systemd.services = {
-    samba-identity = {
+    samba-identity = lib.mkIf (smbdEnabled || nmbdEnabled) {
       before = [
         "samba-smbd.service"
         "samba-nmbd.service"
@@ -100,19 +103,21 @@ in
         net -s /etc/samba/smb.conf setlocalsid S-1-5-21-3080858225-3095825074-865487820
       '';
     };
-    samba-smbd = {
+    samba-smbd = lib.mkIf smbdEnabled {
       requires = [ "samba-identity.service" ];
       after = [ "samba-identity.service" ];
       unitConfig.RequiresMountsFor = [ "/mnt/user" ];
     };
-    samba-nmbd = {
+    samba-nmbd = lib.mkIf nmbdEnabled {
       requires = [ "samba-identity.service" ];
       after = [ "samba-identity.service" ];
     };
-    nfs-mountd = {
+    nfs-mountd = lib.mkIf config.services.nfs.server.enable {
       after = [ "systemd-tmpfiles-setup.service" ];
       unitConfig.RequiresMountsFor = [ "/mnt/user" ];
     };
-    nfs-server.unitConfig.RequiresMountsFor = [ "/mnt/user" ];
+    nfs-server = lib.mkIf config.services.nfs.server.enable {
+      unitConfig.RequiresMountsFor = [ "/mnt/user" ];
+    };
   };
 }

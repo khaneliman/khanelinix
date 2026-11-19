@@ -26,11 +26,15 @@ let
   mountedTmpfiles = {
     cache = [ ];
     pool = mediaUnits ++ [ "rclone-state-directory.service" ];
-    user = mediaUnits ++ [
-      "nfs-mountd.service"
-      "nfs-server.service"
-      "samba-smbd.service"
-    ];
+    user =
+      mediaUnits
+      ++ lib.optionals config.services.nfs.server.enable [
+        "nfs-mountd.service"
+        "nfs-server.service"
+      ]
+      ++ lib.optional (
+        config.services.samba.enable && config.services.samba.smbd.enable
+      ) "samba-smbd.service";
   };
   tmpfiles = lib.getExe' config.systemd.package "systemd-tmpfiles";
   excludeMountedPaths = lib.concatMapStringsSep " " (name: "--exclude-prefix=/mnt/${name}") (
