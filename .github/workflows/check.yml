@@ -27,6 +27,43 @@ jobs:
         with:
           name: khanelinix
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - name: Validate flake templates
+        if: matrix.system == 'x86_64-linux'
+        timeout-minutes: 10
+        shell: bash
+        run: |
+          repo=$PWD
+          scratch=$(mktemp -d "$RUNNER_TEMP/flake-templates.XXXXXX")
+          trap 'rm -rf "$scratch"' EXIT
+          templates=$(nix eval --raw .#templates --apply \
+            'templates: builtins.concatStringsSep "\n" (builtins.attrNames templates)')
+          # The maintained templates share this nixpkgs input. Reuse the
+          # repository's pin instead of resolving a moving branch per project.
+          nixpkgs=$(nix eval --impure --raw --expr \
+            '(builtins.getFlake ("git+file://" + toString ./.)).inputs.nixpkgs-master.outPath')
+          while IFS= read -r template; do
+            echo "Validating template: $template"
+            mkdir "$scratch/$template"
+            (
+              cd "$scratch/$template"
+              nix flake init --template "$repo#$template"
+              if [[ "$template" == flake-compat ]]; then
+                nix-instantiate --parse default.nix >/dev/null
+                nix-instantiate --parse shell.nix >/dev/null
+              else
+                nix-instantiate --parse flake.nix >/dev/null
+              fi
+              case "$template" in
+                angular|go|node|rust)
+                  for output in packages devShells; do
+                    nix eval --no-write-lock-file --override-input nixpkgs "path:$nixpkgs" \
+                      --option allow-import-from-derivation false --raw \
+                      ".#$output.${{ matrix.system }}.default.drvPath" >/dev/null
+                  done
+                  ;;
+              esac
+            )
+          done <<< "$templates"
       - name: Run flake checks
         if: matrix.system == 'x86_64-linux'
         run: nix flake check --system ${{ matrix.system }} --print-build-logs
