@@ -411,9 +411,10 @@ def mutation_targets_okf(
     )
     mutation = re.compile(
         rf"(?:\bsed\s+-i\b|\b(?:tee|touch|mkdir|rm)\b)[^;\n]*{target_pattern}"
-        rf"|>{1, 2}\s*[\"']?{target_pattern}"
+        rf"|>>?\s*[\"']?{target_pattern}"
     )
-    return mutation.search(serialized) is not None
+    command = first_string(arguments, "command", "cmd", "CommandLine") if isinstance(arguments, dict) else arguments
+    return isinstance(command, str) and mutation.search(command) is not None
 
 
 def parsed_arguments(value: Any) -> Any:

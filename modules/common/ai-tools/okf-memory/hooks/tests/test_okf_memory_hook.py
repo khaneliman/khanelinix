@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import runpy
 import os
 import subprocess
 import tempfile
@@ -380,6 +381,13 @@ class OkfMemoryHookTests(unittest.TestCase):
             )
             stop = self.run_hook(root, "claude", "stop", payload)
             self.assertEqual(stop["decision"], "block")
+
+    def test_shell_redirects_to_memory(self) -> None:
+        targets = runpy.run_path(str(HOOK))["mutation_targets_okf"]
+        paths = (Path("/user/memory"), Path("/project/.okf"))
+        for redirect in (">", ">>"):
+            command = f'echo value {redirect} "/user/memory/note.md"'
+            self.assertTrue(targets("bash", {"command": command}, paths))
 
     def test_read_only_okf_mention_is_not_receipt(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
