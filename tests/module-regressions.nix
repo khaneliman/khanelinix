@@ -277,17 +277,25 @@ let
       knownHosts = evaluated.programs.ssh.knownHosts;
     };
   dolphin =
-    enabled:
+    legacy: enabled:
     let
       evaluated = import (nixpkgs + "/nixos/lib/eval-config.nix") {
         system = builtins.currentSystem;
         modules = [
-          (root + "/modules/nixos/programs/graphical/file-managers/dolphin")
+          (root + "/modules/nixos/programs/graphical/apps/dolphin")
           {
-            khanelinix.programs.graphical.file-managers.dolphin.enable = enabled;
             system.stateVersion = "26.11";
           }
-        ];
+        ]
+        ++ (
+          if legacy then
+            [
+              (root + "/modules/nixos/programs/graphical/file-managers/dolphin")
+              { khanelinix.programs.graphical.file-managers.dolphin.enable = enabled; }
+            ]
+          else
+            [ { khanelinix.programs.graphical.apps.dolphin.enable = enabled; } ]
+        );
       };
       inherit (evaluated) config;
       package = evaluated.pkgs.dolphin-emu;
@@ -418,10 +426,20 @@ in
     icon = lightdm false true;
     custom = lightdm true true;
   };
-  dolphin = {
-    enabled = dolphin true;
-    disabled = dolphin false;
-  };
+  dolphin =
+    let
+      check =
+        enabled:
+        let
+          result = dolphin false enabled;
+        in
+        assert result == dolphin true enabled;
+        result;
+    in
+    {
+      enabled = check true;
+      disabled = check false;
+    };
   restic =
     let
       disabled = restic false;
