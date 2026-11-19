@@ -265,8 +265,11 @@ in
                 muted = readableColors.subtext0;
                 secondary = readableColors.teal;
                 shadow = readableColors.crust;
+                subtle = readableColors.overlay2;
                 success = readableColors.green;
                 surface = if isLatte then readableColors.crust else readableColors.mantle;
+                surfaceRaised = readableColors.surface0;
+                tertiary = readableColors.mauve;
                 warning = readableColors.yellow;
               };
               wallpaper = {

@@ -110,8 +110,11 @@ let
     muted = fallback.subtext0.hex;
     secondary = fallback.teal.hex;
     shadow = fallback.crust.hex;
+    subtle = fallback.overlay2.hex;
     success = fallback.green.hex;
     surface = fallback.surface0.hex;
+    surfaceRaised = fallback.surface0.hex;
+    tertiary = fallback.mauve.hex;
     warning = fallback.yellow.hex;
   };
   graphical = config.khanelinix.programs.graphical;
@@ -148,12 +151,16 @@ in
           border = stylixPalette.base03;
           danger = stylixPalette.base08;
           foreground = stylixPalette.base05;
-          # Base16 does not guarantee that base04 is readable as text.
+          # Base16 does not guarantee that base04 is readable as text, so it
+          # only backs subtle, which draws de-emphasized icons.
           muted = stylixPalette.base05;
           secondary = stylixPalette.base0C;
           shadow = stylixPalette.base01;
+          subtle = stylixPalette.base04;
           success = stylixPalette.base0B;
           surface = stylixPalette.base01;
+          surfaceRaised = stylixPalette.base02;
+          tertiary = stylixPalette.base0E;
           warning = stylixPalette.base0A;
         }
       else

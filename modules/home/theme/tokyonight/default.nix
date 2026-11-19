@@ -123,8 +123,14 @@ in
               muted = colors.fg_dark;
               secondary = colors.cyan;
               shadow = colors.bg_dark1;
+              # dark5 clears 3:1 as an icon color on night and storm; moon
+              # (2.96:1) and day (2.78:1) fall short, so solve one if a host
+              # adopts them.
+              subtle = colors.dark5;
               success = colors.green;
               surface = colors.bg_dark;
+              surfaceRaised = colors.bg_highlight;
+              tertiary = colors.magenta;
               warning = colors.yellow;
             };
             wallpaper = {

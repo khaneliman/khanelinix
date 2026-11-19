@@ -108,8 +108,12 @@ in
               muted = palette.palette.nord4.hex;
               secondary = palette.palette.nord7.hex;
               shadow = palette.palette.nord0.hex;
+              # Nord has no readable foreground dimmer than nord4.
+              subtle = palette.palette.nord4.hex;
               success = palette.palette.nord14.hex;
               surface = palette.palette.nord1.hex;
+              surfaceRaised = palette.palette.nord2.hex;
+              tertiary = palette.readable.purple;
               warning = palette.palette.nord13.hex;
             };
             wallpaper = {
