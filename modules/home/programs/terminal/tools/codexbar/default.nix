@@ -1,5 +1,6 @@
 {
   config,
+  osConfig ? { },
   lib,
   pkgs,
   ...
@@ -33,7 +34,9 @@ let
     {
       id = "ollama";
       enabled =
-        (config.khanelinix.services.ollama.enable or false) || (config.services.ollama.enable or false);
+        (config.khanelinix.services.ollama.enable or false)
+        || (config.services.ollama.enable or false)
+        || (osConfig.services.ollama.enable or false);
     }
   ];
 
