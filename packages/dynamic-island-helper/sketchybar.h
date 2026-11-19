@@ -4,8 +4,10 @@
 #include <mach/mach.h>
 #include <mach/message.h>
 #include <pthread.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 typedef char *env;
@@ -205,12 +207,16 @@ static inline bool mach_server_begin(struct mach_server *mach_server,
 #pragma clang diagnostic pop
 
 static inline char *sketchybar(char *message) {
-  uint32_t message_length = strlen(message) + 1;
-  char formatted_message[message_length + 1];
+  size_t message_length = strlen(message);
+  if (message_length > UINT32_MAX - 2)
+    return (char *)"";
+  char *formatted_message = malloc(message_length + 2);
+  if (!formatted_message)
+    return (char *)"";
 
   char quote = '\0';
-  uint32_t caret = 0;
-  for (int i = 0; i < message_length; ++i) {
+  size_t caret = 0;
+  for (size_t i = 0; i < message_length; ++i) {
     if (message[i] == '"' || message[i] == '\'') {
       if (quote == message[i])
         quote = '\0';
@@ -224,15 +230,13 @@ static inline char *sketchybar(char *message) {
     caret++;
   }
 
-  if (caret > 0 && formatted_message[caret] == '\0' &&
-      formatted_message[caret - 1] == '\0') {
-    caret--;
-  }
-
-  formatted_message[caret] = '\0';
+  formatted_message[caret++] = '\0';
+  if (caret < 2 || formatted_message[caret - 2] != '\0')
+    formatted_message[caret++] = '\0';
   if (!g_mach_port)
     g_mach_port = mach_get_bs_port();
-  char *response = mach_send_message(g_mach_port, formatted_message, caret + 1);
+  char *response = mach_send_message(g_mach_port, formatted_message, caret);
+  free(formatted_message);
 
   if (response)
     return response;
