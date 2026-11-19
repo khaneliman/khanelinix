@@ -7,6 +7,7 @@
 let
   inherit (lib) mkIf;
 
+  colors = config.khanelinix.theme.active;
   cfg = config.khanelinix.programs.graphical.launchers.walker;
 in
 {
@@ -172,7 +173,8 @@ in
           }
 
           #match:selected {
-            background: rgba(203, 166, 247, 0.7);
+            background: ${colors.accent};
+            color: ${colors.accentForeground};
           }
 
           #match {
@@ -186,8 +188,9 @@ in
           }
 
           box#main {
-            background: rgba(30, 30, 46, 1);
-            border: 2px solid #494d64;
+            background: ${colors.background};
+            color: ${colors.foreground};
+            border: 2px solid ${colors.border};
             border-radius: 16px;
             padding: 8px;
           }

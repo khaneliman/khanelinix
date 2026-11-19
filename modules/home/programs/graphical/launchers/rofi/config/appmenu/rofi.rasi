@@ -11,17 +11,17 @@ configuration {
 	fullscreen: true;
 }
 
-@theme "catppuccin"
+@theme "khanelinix-palette"
 
 window {
-  background-color: @base;
-	text-color: @text;
+  background-color: @background;
+	text-color: @foreground;
 	location: northwest;
 	anchor: northwest;
 	fullscreen: true;
 	border: 3px;
 	border-radius:6px;
-  border-color:@blue;
+  border-color:@accent;
 }
 
 
@@ -30,27 +30,27 @@ button {
 	str: " ";
 	font: "MonaspaceNeon NF 11";
 	expand: false;
-	text-color: @text;
-	background-color: @base;
+	text-color: @foreground;
+	background-color: @background;
 	vertical-align: 0.7;
 	horizontal-align: 0.5;
 }
 
 entry {
 	font: "MonaspaceNeon NF 11";
-	background-color: @base;
-	text-color: @text;
+	background-color: @background;
+	text-color: @foreground;
 	expand: true;
 	vertical-align: 0.5;
 	horizontal-align: 0.5;
 	placeholder: "Type to search";
-	placeholder-color: @text;
+	placeholder-color: @foreground;
 	blink: true;
 }
 
 case-indicator {
-	background-color: @base;
-	text-color: @text;
+	background-color: @background;
+	text-color: @foreground;
 	vertical-align: 0.5;
 	horizontal-align: 0.5;
 }
@@ -59,16 +59,16 @@ entry-wrapper {
 	orientation: horizontal;
 	vertical-align: 0.5;
 	spacing: 4px;
-	background-color: @base;
+	background-color: @background;
 	children: [ button, entry, case-indicator ];
 	border: 3px;
-	border-color: @blue;
+	border-color: @accent;
 	border-radius: 6px;
 }
 
 inputbar {
-	background-color: @mantle;
-	text-color: @text;
+	background-color: @surface;
+	text-color: @foreground;
 	expand: false;
 	border-radius: 6px;
 	margin: 0px 480px 0px 480px;
@@ -78,7 +78,7 @@ inputbar {
 }
 
 listview {
-	background-color: @mantle;
+	background-color: @surface;
 	columns: 6;
 	spacing: 5px;
 	cycle: false;
@@ -87,15 +87,15 @@ listview {
 }
 
 mainbox {
-	background-color: @mantle;
+	background-color: @surface;
 	children: [ inputbar, listview ];
 	spacing: 25px;
 	padding: 70px 15% 0 15%;
 }
 
 element {
-	background-color: @mantle;
-	text-color: @text;
+	background-color: @surface;
+	text-color: @foreground;
 	orientation: vertical;
 	border-radius: 12px;
 	padding: 25px 0 25px 0;
@@ -104,14 +104,14 @@ element {
 element-icon {
 	horizontal-align: 0.5;
 	vertical-align: 0.5;
-	background-color: @mantle;
+	background-color: @surface;
 	size: 72px;
 	border: 0;
 }
 
 element-text {
-	background-color: @mantle;
-	text-color: @text;
+	background-color: @surface;
+	text-color: @foreground;
 	expand: true;
 	horizontal-align: 0.5;
 	vertical-align: 0.5;
@@ -120,30 +120,30 @@ element-text {
 
 element normal.urgent,
 element alternate.urgent {
-	background-color: @fg-col2;
-	text-color: @fg-col;
+	background-color: @surface;
+	text-color: @danger;
 	border-radius: 9px;
 }
 
 element normal.active,
 element alternate.active {
-	background-color: @base;
-	text-color: @fg-col;
+	background-color: @background;
+	text-color: @foreground;
 }
 
 element selected {
-	/* background-color: @base; */
-	text-color: @peach;
-	border-color: @blue;
+	background-color: @surface;
+	text-color: @accent;
+	border-color: @accent;
 	border: 3px;
 }
 
 element selected.urgent {
-	background-color: @red;
-	text-color: @text;
+	background-color: @surface;
+	text-color: @danger;
 }
 
 element selected.active {
-	background-color: @base;
-	color: @text;
+	background-color: @background;
+	text-color: @foreground;
 }

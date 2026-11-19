@@ -8,6 +8,12 @@
 let
   inherit (lib) mkIf;
 
+  colors = config.khanelinix.theme.active;
+  palette = ''
+    * {
+      ${lib.concatStringsSep "\n  " (lib.mapAttrsToList (name: color: "${name}: ${color};") colors)}
+    }
+  '';
   cfg = config.khanelinix.programs.graphical.launchers.rofi;
 in
 {
@@ -23,25 +29,11 @@ in
       # Rofi documentation
       # See: https://github.com/davatorium/rofi/blob/next/doc/rofi.1.markdown
       enable = true;
-      # NOTE: rofi-wayland doesn't support plugins with HM module. But... non wayland sucks... sooo
-      package = pkgs.rofi-wayland;
-
       settings = {
         font = "MonaspaceNeon NF 14";
         location = 0;
       };
-      theme =
-        if config.khanelinix.theme.catppuccin.enable then
-          "catppuccin"
-        else if config.khanelinix.theme.tokyonight.enable then
-          "tokyonight"
-        else
-          "catppuccin";
-
-      pass = {
-        enable = true;
-        package = pkgs.rofi-pass-wayland;
-      };
+      theme = lib.mkDefault "khanelinix";
 
       plugins = with pkgs; [
         rofi-calc
@@ -50,10 +42,18 @@ in
       ];
     };
 
-    xdg.configFile = {
-      "rofi" = {
-        source = lib.cleanSourceWith { src = lib.cleanSource ./config/.; };
+    xdg.dataFile = {
+      "rofi/themes/khanelinix.rasi".text = palette + builtins.readFile ./config/config.rasi;
+      "rofi/themes/khanelinix-palette.rasi".text = palette;
+    };
 
+    xdg.configFile = {
+      "rofi/appmenu" = {
+        source = ./config/appmenu;
+        recursive = true;
+      };
+      "rofi/spotlight" = {
+        source = ./config/spotlight;
         recursive = true;
       };
     };

@@ -12,7 +12,7 @@ configuration {
 	window-thumbnail: true;
 }
 
-@theme "catppuccin"
+@theme "khanelinix-palette"
 
 element-text, element-icon , mode-switcher {
     background-color: inherit;
@@ -24,25 +24,25 @@ window {
     width: 33%;
     border: 3px;
     border-radius:6px;
-    background-color: @bg-col;
-    border-color:@peach;
+    background-color: @background;
+    border-color:@accent;
 }
 
 mainbox {
-    background-color: @bg-col;
+    background-color: @background;
 }
 
 inputbar {
     children: [prompt,entry];
-    background-color: @bg-col;
+    background-color: @background;
     border-radius: 6px;
     padding: 2px;
 }
 
 prompt {
-    background-color: @peach;
+    background-color: @accent;
     padding: 6px;
-    text-color: @bg-col;
+    text-color: @accentForeground;
     border-radius: 6px;
     margin: 20px 0px 0px 20px;
 }
@@ -55,11 +55,11 @@ textbox-prompt-colon {
 entry {
     padding: 6px;
     margin: 20px 10px 0px 10px;
-    text-color: @fg-col;
-    background-color: @bg-col;
+    text-color: @foreground;
+    background-color: @background;
     border: 2px;
     border-radius: 3px;
-    border-color: @peach;
+    border-color: @accent;
     placeholder:"Search";
 
 }
@@ -69,13 +69,13 @@ listview {
     padding: 6px 0px 0px;
     margin: 10px 0px 0px 20px;
     columns: 2;
-    background-color: @bg-col;
+    background-color: @background;
 }
 
 element {
     padding: 5px;
-    background-color: @bg-col;
-    text-color: @fg-col  ;
+    background-color: @background;
+    text-color: @foreground  ;
 }
 
 element-icon {
@@ -83,8 +83,8 @@ element-icon {
 }
 
 element selected {
-    background-color:  @selected-col ;
-    text-color: @fg-col2  ;
+    background-color:  @accent ;
+    text-color: @accentForeground  ;
 }
 
 mode-switcher {
@@ -93,13 +93,13 @@ mode-switcher {
 
 button {
     padding: 10px;
-    background-color: @bg-col-light;
-    text-color: @grey;
+    background-color: @surface;
+    text-color: @muted;
     vertical-align: 0.5;
     horizontal-align: 0.5;
 }
 
 button selected {
-  background-color: @bg-col;
-  text-color: @peach;
+  background-color: @background;
+  text-color: @accent;
 }

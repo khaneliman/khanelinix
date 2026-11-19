@@ -6,52 +6,51 @@ window {
 #outer-box {
   padding: 10px;
   border-radius: 8px;
-  background: #2e3440;
+  background: @theme_background;
 }
 
 #scroll {
-  /* The Nordic gtk theme adds an outline to show scroll areas... */
   outline-color: transparent;
 }
 
 #input {
-  color: #e5e9f0;
-  caret-color: #e5e9f0;
-  background: #3b4252;
-  border-top-color: #3b4252;
-  border-left-color: #3b4252;
-  border-right-color: #3b4252;
-  border-bottom-color: #3b4252;
+  color: @theme_foreground;
+  caret-color: @theme_foreground;
+  background: @theme_surface;
+  border-top-color: @theme_surface;
+  border-left-color: @theme_surface;
+  border-right-color: @theme_surface;
+  border-bottom-color: @theme_surface;
   box-shadow: 0 0 0 1px transparent inset;
-  outline-color: transparent !important;
+  outline-color: transparent;
 }
 
 #input:focus {
-  background: #3b4252;
-  border-color: #3b4252 !important;
+  background: @theme_surface;
+  border-color: @theme_surface;
   box-shadow: 0 0 0 1px transparent inset;
-  border-top-color: #3b4252 !important;
-  border-left-color: #3b4252 !important;
-  border-right-color: #3b4252 !important;
-  border-bottom-color: #3b4252 !important;
-  box-shadow: none !important;
-  outline-color: transparent !important;
+  border-top-color: @theme_surface;
+  border-left-color: @theme_surface;
+  border-right-color: @theme_surface;
+  border-bottom-color: @theme_surface;
+  box-shadow: none;
+  outline-color: transparent;
 }
 
 #input image.left {
-  color: #d8dee9;
+  color: @theme_muted;
 }
 
 #input:focus image.left {
-  color: #e5e9f0;
+  color: @theme_foreground;
 }
 
 #input image.right {
-  color: #d8dee9;
+  color: @theme_muted;
 }
 
 #input:focus image.right {
-  color: #e5e9f0;
+  color: @theme_foreground;
 }
 
 label {
@@ -64,15 +63,15 @@ label {
 }
 
 #entry {
-  color: #d8dee9;
+  color: @theme_muted;
   padding: 8px 8px;
   border-radius: 4px;
   background: transparent;
 }
 
 #entry:selected {
-  color: #2e3440;
-  background: #8fbcbb;
+  color: @theme_accentForeground;
+  background: @theme_accent;
   font-weight: bold;
 }
 
@@ -81,12 +80,11 @@ expander arrow {
 }
 
 #entry #selected #text {
-  color: #2e3440;
+  color: @theme_accentForeground;
 }
 
 expander list {
   margin-top: 8px;
-  /* background: #8fbcbb; */
   background: transparent;
   padding-left: 16px;
 }
@@ -96,32 +94,26 @@ expander list #entry {
   background: transparent;
 }
 
-expander list #entry:hover,
-expander list #entry:active {
-  /* color: #8fbcbb;
-         background: #e5e9f0; */
-}
-
 expander list #entry #selected {
-  background: #8fbcbb;
+  background: @theme_accent;
 }
 
 expander list #entry #selected label {
-  color: #2e3440;
+  color: @theme_accentForeground;
   font-weight: bold;
 }
 
 expander list #entry:hover,
 expander list #entry:active {
-  background: #8fbcbb;
+  background: @theme_accent;
 }
 
 expander list #entry:hover label,
 expander list #entry:active label {
-  color: #2e3440;
+  color: @theme_accentForeground;
   font-weight: bold;
 }
 
 expander list label {
-  color: #d8dee9;
+  color: @theme_muted;
 }
