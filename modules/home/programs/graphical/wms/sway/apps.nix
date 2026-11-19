@@ -2,6 +2,7 @@
   config,
   lib,
   osConfig ? { },
+  pkgs,
   ...
 }:
 let
@@ -11,6 +12,14 @@ let
   cfg = config.khanelinix.programs.graphical.wms.sway;
   socialIncludes = suiteProfileIncludes config config.khanelinix.suites.social;
   businessIncludes = suiteProfileIncludes config config.khanelinix.suites.business;
+
+  startWayvnc = pkgs.writeShellScript "sway-start-wayvnc" ''
+    address=$(${getExe (osConfig.services.tailscale.package or pkgs.tailscale)} ip --4) || exit 1
+    if [ -z "$address" ]; then
+      exit 1
+    fi
+    exec ${getExe pkgs.wayvnc} "$address"
+  '';
 in
 {
   config = mkIf cfg.enable {
@@ -50,7 +59,7 @@ in
             ]
           )
           ++ [
-            { command = mkStartCommand { slice = "b"; } "$(wayvnc $(tailscale ip --4))"; }
+            { command = mkStartCommand { slice = "b"; } "${startWayvnc}"; }
             { command = "notify-send --icon ${config.home.homeDirectory}/.face -u normal \"Hello $(whoami)\""; }
           ];
       };
