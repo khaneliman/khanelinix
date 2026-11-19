@@ -132,6 +132,21 @@ _: {
           program = lib.getExe (pkgs.callPackage ../packages/closure-analyzer/package.nix { });
         };
 
+        ai-tools-eval = {
+          type = "app";
+          meta.description = "Validate, prepare, and score workflow routing evaluations";
+          program = lib.getExe (
+            pkgs.writeShellApplication {
+              name = "ai-tools-eval";
+              runtimeInputs = [ pkgs.python3 ];
+              text = ''
+                export WORKFLOW_EVAL_DEFAULT_CORPUS=${../modules/common/ai-tools/eval/workflow-routing-baseline.json}
+                exec python3 ${../modules/common/ai-tools/skills/ai-tools-architect/scripts/workflow_eval.py} "$@"
+              '';
+            }
+          );
+        };
+
         fast-build-checks =
           mkFastBuildApp "checks" ".#checks"
             "Evaluate and build checks with nix-fast-build";

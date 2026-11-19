@@ -2,10 +2,14 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import io
 import json
+import os
 import tempfile
 import unittest
+from contextlib import redirect_stderr
 from pathlib import Path
+from unittest.mock import patch
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "workflow_eval.py"
 SPEC = importlib.util.spec_from_file_location("workflow_eval", SCRIPT)
@@ -84,6 +88,33 @@ def result_record(
 
 
 class WorkflowEvaluationTests(unittest.TestCase):
+    def test_validate_and_prepare_accept_default_or_explicit_corpus(self) -> None:
+        with patch.dict(os.environ, {"WORKFLOW_EVAL_DEFAULT_CORPUS": "baseline.json"}):
+            parser = workflow_eval.build_parser()
+        for command, options in (
+            ("validate", []),
+            ("prepare", ["--output", "run", "--seed", "seed"]),
+        ):
+            with self.subTest(command=command):
+                self.assertEqual(
+                    parser.parse_args([command, *options]).corpus, Path("baseline.json")
+                )
+                self.assertEqual(
+                    parser.parse_args([command, "custom.json", *options]).corpus,
+                    Path("custom.json"),
+                )
+
+    def test_standalone_cli_requires_a_corpus_without_a_default(self) -> None:
+        with patch.dict(os.environ):
+            os.environ.pop("WORKFLOW_EVAL_DEFAULT_CORPUS", None)
+            with (
+                redirect_stderr(io.StringIO()) as stderr,
+                self.assertRaises(SystemExit) as error,
+            ):
+                workflow_eval.main(["validate"])
+        self.assertEqual(error.exception.code, 2)
+        self.assertIn("the following arguments are required: corpus", stderr.getvalue())
+
     def test_prepare_blinds_routes_and_is_deterministic(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

@@ -811,10 +811,20 @@ def build_parser() -> argparse.ArgumentParser:
     commands = parser.add_subparsers(dest="command", required=True)
 
     validate_parser = commands.add_parser("validate", help="validate a corpus")
-    validate_parser.add_argument("corpus", type=Path)
-
     prepare_parser = commands.add_parser("prepare", help="prepare blinded artifacts")
-    prepare_parser.add_argument("corpus", type=Path)
+    default_corpus = os.environ.get("WORKFLOW_EVAL_DEFAULT_CORPUS")
+    for corpus_parser in (validate_parser, prepare_parser):
+        if default_corpus:
+            corpus_parser.add_argument(
+                "corpus",
+                type=Path,
+                nargs="?",
+                default=Path(default_corpus),
+                help="corpus path (defaults to the bundled workflow routing baseline)",
+            )
+        else:
+            corpus_parser.add_argument("corpus", type=Path)
+
     prepare_parser.add_argument("--output", type=Path, required=True)
     prepare_parser.add_argument("--seed", required=True)
     prepare_parser.add_argument("--force", action="store_true")
