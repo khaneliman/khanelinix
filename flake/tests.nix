@@ -5,7 +5,15 @@
   ...
 }:
 let
-  tests = import ../lib/tests { inherit self lib; };
+  tests = import ../lib/tests { inherit self lib; } // {
+    testInputGraph = {
+      expr = import ../tests/flake-graph.nix;
+      expected = {
+        devRootNulls = true;
+        updateGroupMembership = true;
+      };
+    };
+  };
 in
 {
   flake.tests = tests // {
