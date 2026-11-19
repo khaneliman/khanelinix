@@ -14,6 +14,141 @@ let
   businessIncludes = suiteProfileIncludes config config.khanelinix.suites.business;
   socialIncludes = suiteProfileIncludes config config.khanelinix.suites.social;
 
+  inherit (config.khanelinix.programs.graphical) addons wms;
+  inherit (config.khanelinix.programs.terminal) emulators tools;
+
+  runSeparately = lib.optionalString tools.run-as-service.enable "run-as-service ";
+  recordScreen = lib.getExe pkgs.khanelinix.record-screen;
+  jq = lib.getExe pkgs.jq;
+
+  mkScript = name: title: body: {
+    name = "vicinae/scripts/workspace/${name}.sh";
+    value = {
+      executable = true;
+      text = ''
+        #!${lib.getExe pkgs.bash}
+        # @vicinae.schemaVersion 1
+        # @vicinae.title ${title}
+        # @vicinae.mode silent
+        # @vicinae.packageName Workspace
+
+        set -euo pipefail
+        ${body}
+      '';
+    };
+  };
+
+  screenshot = niriAction: hyprshotArgs: swayCapture: ''
+    ${lib.optionalString wms.niri.enable ''
+      if [[ -n ''${NIRI_SOCKET:-} ]]; then
+        exec niri msg action ${niriAction}
+      fi
+    ''}
+    ${lib.optionalString wms.hyprland.enable ''
+      if [[ -n ''${HYPRLAND_INSTANCE_SIGNATURE:-} ]]; then
+        exec hyprshot --clipboard-only ${hyprshotArgs}
+      fi
+    ''}
+    ${lib.optionalString wms.sway.enable ''
+      if [[ -n ''${SWAYSOCK:-} ]]; then
+        ${swayCapture}
+        exit
+      fi
+    ''}
+    echo "No supported Wayland compositor is running" >&2
+    exit 1
+  '';
+
+  captureScripts = [
+    (mkScript "screenshot-area" "Screenshot Area" (
+      screenshot "screenshot --show-pointer false" "-m region --freeze" ''
+        geometry=$(slurp)
+        grim -g "$geometry" - | wl-copy
+      ''
+    ))
+    (mkScript "screenshot-window" "Screenshot Window" (
+      screenshot "screenshot-window --write-to-disk false" "-m window -m active" ''
+        geometry=$(swaymsg -t get_tree | ${jq} -er '
+          .. | objects | select(.focused == true) | .rect | "\(.x),\(.y) \(.width)x\(.height)"
+        ')
+        grim -g "$geometry" - | wl-copy
+      ''
+    ))
+    (mkScript "screenshot-screen" "Screenshot Screen" (
+      screenshot "screenshot-screen --write-to-disk false" "-m output -m active" "grim - | wl-copy"
+    ))
+    (mkScript "record-area" "Record Area" "exec ${runSeparately}${recordScreen} area")
+    (mkScript "record-screen" "Record Screen" ''
+      ${lib.optionalString wms.niri.enable ''
+        if [[ -n ''${NIRI_SOCKET:-} ]]; then
+          monitor=$(niri msg --json focused-output | ${jq} -er '
+            select(.current_mode != null) | [.name, (.modes[.current_mode] | .width, .height)] | @tsv
+          ')
+        fi
+      ''}
+      ${lib.optionalString wms.sway.enable ''
+        if [[ -n ''${SWAYSOCK:-} ]]; then
+          monitor=$(swaymsg -t get_outputs | ${jq} -er '
+            .[] | select(.focused and .current_mode != null) | [.name, (.current_mode | .width, .height)] | @tsv
+          ')
+        fi
+      ''}
+      if [[ -n ''${monitor:-} ]]; then
+        IFS=$'\t' read -r output width height <<< "$monitor"
+        exec ${runSeparately}${recordScreen} screen "$output" "$width" "$height"
+      fi
+      exec ${runSeparately}${recordScreen} screen
+    '')
+    (mkScript "record-stop" "Stop Recording" "exec ${runSeparately}${recordScreen} stop")
+  ];
+
+  limuxLayouts = emulators.limux.enable && emulators.limux.layouts.enable;
+  ensureLimux = ''
+    ensure_limux() {
+      limux list-workspaces >/dev/null 2>&1 && return
+      # The layout helpers need the GUI's control socket, even on a cold launch.
+      ${
+        if tools.run-as-service.enable then "run-as-service limux" else "limux </dev/null >/dev/null 2>&1 &"
+      }
+      for _ in {1..50}; do
+        limux list-workspaces >/dev/null 2>&1 && return
+        sleep 0.1
+      done
+      echo "Limux did not open its control socket" >&2
+      return 1
+    }
+    ensure_limux
+  '';
+  sessionScripts =
+    lib.optional limuxLayouts (
+      mkScript "system-workspace" "Open System Workspace" ''
+        ${ensureLimux}
+        limux-workspace --layout system
+        exec limux activate
+      ''
+    )
+    ++
+      lib.optional (limuxLayouts && emulators.kitty.enable && tools.fzf.enable && tools.zoxide.enable)
+        (
+          mkScript "project-workspace" "Open Project Workspace" ''
+            ${ensureLimux}
+            exec ${runSeparately}kitty -- ${lib.getExe pkgs.bash} -c 'limux-pick && exec limux activate'
+          ''
+        )
+    ++
+      lib.optional (emulators.kitty.enable && tools.sesh.enable && tools.tmux.enable && tools.fzf.enable)
+        (
+          mkScript "tmux-session" "Open Tmux Session" ''
+            exec ${runSeparately}kitty -- ${lib.getExe pkgs.bash} -o pipefail -c '
+              session=$(sesh list | fzf) || exit
+              exec sesh connect -- "$session"
+            '
+          ''
+        )
+    ++ lib.optional addons.wlogout.enable (
+      mkScript "session-power-menu" "Session Power Menu" "exec wlogout"
+    );
+
   # isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
 
   mkRaycastExtension =
@@ -30,9 +165,17 @@ in
 {
   options.khanelinix.programs.graphical.launchers.vicinae = {
     enable = lib.mkEnableOption "vicinae in the desktop environment";
+    workspacePalette.enable = lib.mkEnableOption "Vicinae capture and session commands";
   };
 
   config = lib.mkIf cfg.enable {
+    xdg.dataFile = lib.mkIf (cfg.workspacePalette.enable && pkgs.stdenv.hostPlatform.isLinux) (
+      builtins.listToAttrs (
+        lib.optionals (wms.hyprland.enable || wms.niri.enable || wms.sway.enable) captureScripts
+        ++ sessionScripts
+      )
+    );
+
     programs.vicinae = {
       enable = true;
       package = pkgs.vicinae;
