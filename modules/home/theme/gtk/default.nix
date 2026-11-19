@@ -17,6 +17,15 @@ let
   inherit (lib.khanelinix) mkOpt boolToNum nested-default-attrs;
 
   cfg = config.khanelinix.theme.gtk;
+  theme = config.khanelinix.theme;
+  lightTheme =
+    (theme.catppuccin.enable && theme.catppuccin.flavor == "latte")
+    || (theme.nord.enable && theme.nord.variant == "polar")
+    || (theme.tokyonight.enable && theme.tokyonight.variant == "day")
+    || (
+      !(theme.catppuccin.enable || theme.nord.enable || theme.tokyonight.enable)
+      && (config.stylix.polarity or "dark") == "light"
+    );
   inherit (pkgs.stdenv.hostPlatform) isLinux;
 in
 {
@@ -149,7 +158,7 @@ in
               };
 
               "org/gnome/desktop/interface" = {
-                color-scheme = "prefer-dark";
+                color-scheme = if lightTheme then "prefer-light" else "prefer-dark";
                 font-name = "${config.khanelinix.system.fonts.default} ${toString config.khanelinix.system.fonts.size}";
               }
               // lib.optionalAttrs (cfg.cursor.name != null) {

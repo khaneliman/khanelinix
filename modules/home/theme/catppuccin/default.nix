@@ -62,7 +62,7 @@ let
       };
     }
     .${cfg.flavor} or { };
-  t3codeColors = lib.mapAttrs (_: color: color.hex) catppuccinColors // readableAccents;
+  readableColors = lib.mapAttrs (_: color: color.hex) catppuccinColors // readableAccents;
   # Surfaces sit one step darker than Catppuccin's surface0/surface1 so muted
   # and status text clear 4.5:1; Latte inverts the ramp for a light canvas.
   t3codeTheme = import ../t3code.nix {
@@ -70,22 +70,22 @@ let
     appearance = if isLatte then "light" else "dark";
     id = "khanelinix-catppuccin-${cfg.flavor}";
     name = "Catppuccin ${lib.khanelinix.capitalize cfg.flavor}";
-    accent = t3codeColors.${cfg.accent};
-    accentForeground = if isLatte then "#ffffff" else t3codeColors.base;
-    border = t3codeColors.surface2;
-    canvas = t3codeColors.base;
-    chrome = t3codeColors.mantle;
-    error = t3codeColors.red;
-    highlight = t3codeColors.surface2;
-    secondary = t3codeColors.teal;
-    statusForeground = if isLatte then "#ffffff" else t3codeColors.crust;
-    success = t3codeColors.green;
-    surface = t3codeColors.mantle;
-    surfaceOverlay = if isLatte then t3codeColors.base else t3codeColors.mantle;
-    surfaceRaised = if isLatte then t3codeColors.crust else t3codeColors.surface0;
-    inherit (t3codeColors) text;
-    textMuted = t3codeColors.subtext1;
-    warning = t3codeColors.yellow;
+    accent = readableColors.${cfg.accent};
+    accentForeground = if isLatte then "#ffffff" else readableColors.base;
+    border = readableColors.surface2;
+    canvas = readableColors.base;
+    chrome = readableColors.mantle;
+    error = readableColors.red;
+    highlight = readableColors.surface2;
+    secondary = readableColors.teal;
+    statusForeground = if isLatte then "#ffffff" else readableColors.crust;
+    success = readableColors.green;
+    surface = readableColors.mantle;
+    surfaceOverlay = if isLatte then readableColors.base else readableColors.mantle;
+    surfaceRaised = if isLatte then readableColors.crust else readableColors.surface0;
+    inherit (readableColors) text;
+    textMuted = readableColors.subtext1;
+    warning = readableColors.yellow;
   };
   fzfColors = {
     "bg+" = colors.surface0.hex;
@@ -237,6 +237,21 @@ in
 
           khanelinix = {
             theme = {
+              stylix.theme = mkDefault "catppuccin-${cfg.flavor}";
+              active = {
+                accent = readableColors.${cfg.accent};
+                accentForeground = if isLatte then "#ffffff" else readableColors.base;
+                background = readableColors.base;
+                border = readableColors.surface1;
+                danger = readableColors.red;
+                foreground = readableColors.text;
+                muted = readableColors.subtext0;
+                secondary = readableColors.teal;
+                shadow = readableColors.crust;
+                success = readableColors.green;
+                surface = if isLatte then readableColors.crust else readableColors.mantle;
+                warning = readableColors.yellow;
+              };
               wallpaper = {
                 theme = mkDefault "catppuccin";
                 primary = mkDefault "flatppuccin_macchiato.png";
@@ -305,8 +320,7 @@ in
           catppuccin = {
             # enable + autoEnable are pinned unconditionally above; here we only
             # cherry-pick the ports that should receive catppuccin styling.
-            accent = "blue";
-            flavor = "macchiato";
+            inherit (cfg) accent flavor;
 
             # keep-sorted start block=yes
             alacritty = enabled;
@@ -347,7 +361,6 @@ in
             # NOTE: uses remote url import
             # I already have a local file
             # vesktop = enabled;
-            vicinae.enable = isLinux;
             zathura = enabled;
             zellij = enabled;
             zsh-syntax-highlighting = enabled;
@@ -359,12 +372,7 @@ in
               enable = true;
               inherit (cfg) accent;
             };
-            kvantum = {
-              enable = true;
-              inherit (cfg) accent;
-            };
             sway = enabled;
-            waybar = enabled;
           };
         })
 
@@ -412,16 +420,6 @@ in
             fzf.colors = mkIf config.khanelinix.programs.terminal.tools.fzf.enable fzfColors;
 
             gh-dash.settings = mkIf config.khanelinix.programs.terminal.tools.gh.enable ghDashTheme;
-
-            # GTK keeps the last @define-color, so these replace the flavor
-            # colors catppuccin/nix imports ahead of the Waybar stylesheet.
-            waybar.style = mkIf (readableAccents != { }) (
-              lib.mkAfter (
-                lib.concatStrings (
-                  lib.mapAttrsToList (name: color: "@define-color ${name} ${color};\n") readableAccents
-                )
-              )
-            );
 
             ghostty.settings = mkIf pkgs.stdenv.hostPlatform.isDarwin {
               macos-icon = "custom-style";
@@ -484,12 +482,6 @@ in
             };
 
             opencode.tui.theme = lib.mkForce "catppuccin";
-            vicinae.settings.theme = lib.mkForce {
-              name = "catppuccin-macchiato";
-              light.name = "catppuccin-latte";
-              dark.name = "catppuccin-macchiato";
-            };
-
             tmux.plugins = [
               {
                 plugin = pkgs.tmuxPlugins.catppuccin;

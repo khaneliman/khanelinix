@@ -98,6 +98,20 @@ in
 
         khanelinix = {
           theme = {
+            active = {
+              accent = palette.palette.nord8.hex;
+              accentForeground = palette.palette.nord0.hex;
+              background = palette.palette.nord0.hex;
+              border = palette.palette.nord3.hex;
+              danger = palette.readable.red;
+              foreground = palette.palette.nord6.hex;
+              muted = palette.palette.nord4.hex;
+              secondary = palette.palette.nord7.hex;
+              shadow = palette.palette.nord0.hex;
+              success = palette.palette.nord14.hex;
+              surface = palette.palette.nord1.hex;
+              warning = palette.palette.nord13.hex;
+            };
             wallpaper = {
               theme = mkDefault "nord";
               primary = mkDefault "arctic-landscape.png";

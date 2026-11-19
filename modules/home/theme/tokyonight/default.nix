@@ -113,6 +113,20 @@ in
 
         khanelinix = {
           theme = {
+            active = {
+              accent = colors.blue;
+              accentForeground = if isDay then "#ffffff" else colors.bg_dark1;
+              background = colors.bg;
+              border = colors.blue7;
+              danger = colors.red;
+              foreground = colors.fg;
+              muted = colors.fg_dark;
+              secondary = colors.cyan;
+              shadow = colors.bg_dark1;
+              success = colors.green;
+              surface = colors.bg_dark;
+              warning = colors.yellow;
+            };
             wallpaper = {
               theme = mkDefault "tokyonight";
               primary = mkDefault "pacman_upscayl_realesrgan-x4plus_x2.png";

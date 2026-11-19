@@ -255,12 +255,6 @@ in
         setw -g window-status-bell-style "fg=${colors.bg},bg=${colors.orange},bold"
       '';
 
-      vicinae.settings.theme = lib.mkForce {
-        name = "tokyo-night";
-        light.name = "tokyo-night-storm";
-        dark.name = "tokyo-night-storm";
-      };
-
       # An existing instance stops the server's legacy `providers` migration,
       # so create it with a config object for the t3code provider sync to fill.
       t3code.userSettings.providerInstances.antigravity =
@@ -380,68 +374,6 @@ in
       (mkIf config.khanelinix.programs.terminal.tools.opencode.enable {
         "opencode/themes/tokyonight.json".source =
           "${tokyonight}/extras/opencode/tokyonight_${variant}.json";
-      })
-
-      (mkIf config.khanelinix.programs.graphical.bars.sketchybar.enable {
-        "sketchybar/helpers/colors.lua".text =
-          let
-            toLuaColor = hex: "0xff" + builtins.substring 1 6 hex;
-          in
-          ''
-            #!/usr/bin/env lua
-
-            local colors = {
-              base = ${toLuaColor colors.bg},
-              mantle = ${toLuaColor colors.bg_dark},
-              crust = ${toLuaColor colors.bg_dark1},
-              text = ${toLuaColor colors.fg},
-              subtext0 = ${toLuaColor colors.fg_dark},
-              subtext1 = ${toLuaColor colors.dark5},
-              surface0 = ${toLuaColor colors.bg_highlight},
-              surface1 = ${toLuaColor colors.terminal_black},
-              surface2 = ${toLuaColor colors.dark3},
-              overlay0 = ${toLuaColor colors.comment},
-              overlay1 = ${toLuaColor colors.dark5},
-              overlay2 = ${toLuaColor colors.blue7},
-              blue = ${toLuaColor colors.blue},
-              lavender = ${toLuaColor colors.blue1},
-              sapphire = ${toLuaColor colors.blue2},
-              sky = ${toLuaColor colors.cyan},
-              teal = ${toLuaColor colors.teal},
-              green = ${toLuaColor colors.green},
-              yellow = ${toLuaColor colors.yellow},
-              peach = ${toLuaColor colors.orange},
-              maroon = ${toLuaColor colors.red1},
-              red = ${toLuaColor colors.red},
-              mauve = ${toLuaColor colors.purple},
-              pink = ${toLuaColor colors.magenta},
-              flamingo = ${toLuaColor colors.magenta2},
-              rosewater = ${toLuaColor colors.fg_dark},
-            }
-
-            colors.random_cat_color = {
-              colors.blue,
-              colors.lavender,
-              colors.sapphire,
-              colors.sky,
-              colors.teal,
-              colors.green,
-              colors.yellow,
-              colors.peach,
-              colors.maroon,
-              colors.red,
-              colors.mauve,
-              colors.pink,
-              colors.flamingo,
-              colors.rosewater,
-            }
-
-            colors.getRandomCatColor = function()
-              return colors.random_cat_color[math.random(1, #colors.random_cat_color)]
-            end
-
-            return colors
-          '';
       })
 
       (mkIf config.khanelinix.programs.graphical.apps.discord.enable {
