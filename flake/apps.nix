@@ -360,14 +360,8 @@ _: {
                         exit 0
                       fi
 
-                      # nix-darwin does not support remote deployment via --target-host.
-                      # In nix-darwin's darwin-rebuild.sh (pkgs/nix-tools/darwin-rebuild.sh), 'switch'
-                      # invokes 'nix build' on the target host rather than accepting a pre-built store path.
-                      # Upstream nix-darwin (modules/system/default.nix) documents activating pre-built
-                      # systems via '$systemConfig/sw/bin/darwin-rebuild activate' or running '$systemConfig/activate'
-                      # as root. In darwin-rebuild.sh, 'activate' simply calls '$systemConfig/activate'
-                      # after verifying root privileges. We directly execute the documented '<result>/activate'
-                      # script as root on the target host.
+                      # Mirror darwin-rebuild switch for the copied system: register
+                      # the generation first so rollback can find it.
                       out_path="$(nix build "$flake#darwinConfigurations.''${target_name}.system" --no-link --print-out-paths "$@")"
                       nix copy --to "ssh-ng://$target" "$out_path"
 
@@ -375,8 +369,15 @@ _: {
                       if [ -t 0 ]; then
                         ssh_opts+=("-t")
                       fi
+                      # $1 is the copied system path on the remote shell.
+                      # shellcheck disable=SC2016
+                      remote_switch='
+                        NIX_REMOTE=daemon "$1/sw/bin/nix-env" --profile /nix/var/nix/profiles/system --set "$1" &&
+                          exec "$1/activate"
+                      '
                       # shellcheck disable=SC2029,SC2086
-                      ssh "''${ssh_opts[@]}" ''${NIX_SSHOPTS:-} "$target" sudo "$out_path/activate"
+                      ssh "''${ssh_opts[@]}" ''${NIX_SSHOPTS:-} "$target" \
+                        "sudo /bin/sh -c '$remote_switch' sh '$out_path'"
                       ;;
 
                     *)

@@ -60,6 +60,14 @@ let
     mkShell = args: args;
   };
   compilerHelper = builtins.head (builtins.filter (p: lib.getName p == "mk") cShell.packages);
+  deploy = (import (root + "/flake/apps.nix") { }).perSystem {
+    lib = lib // {
+      getExe = app: app.text;
+    };
+    pkgs = pkgs // {
+      writeShellApplication = app: app;
+    };
+  };
   data = import ./terminal-data-regressions.nix { inherit nixpkgs homeManager root dataHome; };
   snowfallLib = lib // {
     khanelisnow = import (root + "/templates/snowfall/lib/module") { inherit lib; };
@@ -114,6 +122,7 @@ in
   sessionDrv = builtins.head (builtins.attrNames (builtins.getContext data.rendered.sessionEnd));
   rendered = {
     inherit environment;
+    deploy = deploy.apps.deploy.program;
     sessionEnd = data.rendered.sessionEnd;
     zellijAliases = zellij.config.content.home.shellAliases;
     zellijFishFunctions = compat.translateFishFunctions zellij.config.content.home.shellAliases;

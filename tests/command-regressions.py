@@ -118,6 +118,64 @@ def passed(name):
     print("PASS:", name, flush=True)
 
 
+darwin_system = work / "darwin-system"
+(darwin_system / "sw/bin").mkdir(parents=True)
+for relative, body in {
+    "sw/bin/nix-env": """
+        printf '%s\\n' "$NIX_REMOTE" "$@" >> "$DEPLOY_LOG"
+        exit "$PROFILE_STATUS"
+    """,
+    "activate": 'printf "activate\\n" >> "$DEPLOY_LOG"',
+}.items():
+    executable = darwin_system / relative
+    executable.write_text("#!/bin/sh\n" + body + "\n")
+    executable.chmod(0o755)
+deploy_setup = """
+hostname() { echo command-regression-client; }
+nix() {
+    case "$1" in
+        build) echo "$DARWIN_SYSTEM" ;;
+        copy) echo copy >> "$DEPLOY_LOG" ;;
+        *) return 99 ;;
+    esac
+}
+sudo() { "$@"; }
+export -f sudo
+ssh() {
+    if [ "$1" = -o ]; then return 0; fi
+    [ "$1" = khanelimac ] && "$BASH" -c "$2"
+}
+"""
+deploy_log = work / "deploy.log"
+for profile_status in (0, 42):
+    deploy_log.write_text("")
+    result = subprocess.run(
+        [r["bash"], "-euc", deploy_setup + r["deploy"], "deploy", "khanelimac"],
+        env=env
+        | {
+            "DARWIN_SYSTEM": str(darwin_system),
+            "DEPLOY_LOG": str(deploy_log),
+            "NIX_SSHOPTS": "",
+            "PROFILE_STATUS": str(profile_status),
+        },
+        stdin=subprocess.DEVNULL,
+        timeout=10,
+        check=False,
+    )
+    assert result.returncode == profile_status, result.returncode
+    assert deploy_log.read_text().splitlines() == [
+        "copy",
+        "daemon",
+        "--profile",
+        "/nix/var/nix/profiles/system",
+        "--set",
+        str(darwin_system),
+    ] + (["activate"] if profile_status == 0 else [])
+passed(
+    "Darwin switch registers the copied system and skips activation on profile failure"
+)
+
+
 # Git status runs only inside the isolated fixture, never a user repository.
 project = work / "parent space" / "project space"
 project.mkdir(parents=True)
