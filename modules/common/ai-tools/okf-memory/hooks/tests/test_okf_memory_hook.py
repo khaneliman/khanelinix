@@ -649,6 +649,29 @@ class OkfMemoryHookTests(unittest.TestCase):
                 "continue",
             )
 
+    def test_antigravity_pairs_shell_and_edit_results_with_calls(self) -> None:
+        analyze = runpy.run_path(str(HOOK))["analyze_records"]
+        paths = (Path("/user/memory"), Path("/project/.okf"))
+        for name, args, result in (
+            (
+                "edit_file",
+                {"Path": ".okf/note"},
+                {"type": "GENERIC", "content": "Made 1 replacement in .okf/note"},
+            ),
+            (
+                "run_command",
+                {"CommandLine": "echo x >> .okf/note"},
+                {"type": "RUN_COMMAND", "exit_code": 0},
+            ),
+        ):
+            call = {"step_index": 1, "tool_calls": [{"name": name, "args": args}]}
+            done = dict(result, status="DONE", step_index=2)
+            self.assertEqual(analyze("antigravity", [call, done], paths), (1, True))
+            for mismatch in ({"status": "ERROR"}, {"step_index": 3}):
+                self.assertEqual(
+                    analyze("antigravity", [call, done | mismatch], paths), (1, False)
+                )
+
     def test_antigravity_write_receipt_satisfies_checkpoint(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

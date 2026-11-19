@@ -33,6 +33,7 @@ DIRECT_MUTATIONS = {
     "apply_patch",
     "code_action",
     "edit",
+    "edit_file",
     "multi_edit",
     "multi_replace_file_content",
     "replace",
@@ -413,7 +414,11 @@ def mutation_targets_okf(
         rf"(?:\bsed\s+-i\b|\b(?:tee|touch|mkdir|rm)\b)[^;\n]*{target_pattern}"
         rf"|>>?\s*[\"']?{target_pattern}"
     )
-    command = first_string(arguments, "command", "cmd", "CommandLine") if isinstance(arguments, dict) else arguments
+    command = (
+        first_string(arguments, "command", "cmd", "CommandLine")
+        if isinstance(arguments, dict)
+        else arguments
+    )
     return isinstance(command, str) and mutation.search(command) is not None
 
 
@@ -445,7 +450,7 @@ def analyze_records(
     targeted_calls: set[str] = set()
     successful_calls: set[str] = set()
     patch_receipt = False
-    antigravity_targeted = False
+    expected_results: dict[int, str] = {}
     antigravity_receipt = False
 
     for record_index, record in enumerate(records):
@@ -510,17 +515,28 @@ def analyze_records(
                     if mutation_targets_okf(
                         first_string(item, "name"), arguments, memory_paths
                     ):
-                        antigravity_targeted = True
-            if (
-                record.get("type") == "CODE_ACTION"
-                and result_succeeded(record)
-                and targets_okf(record, memory_paths)
+                        step = record.get("step_index")
+                        if isinstance(step, int):
+                            name = normalize_name(first_string(item, "name"))
+                            expected_results[step + call_index + 1] = name
+            tool = expected_results.pop(record.get("step_index"), None)
+            kind = record.get("type")
+            if tool in SHELL_TOOLS and kind == "RUN_COMMAND":
+                if record.get("status") == "DONE" and record.get("exit_code") == 0:
+                    antigravity_receipt = True
+            elif tool and (
+                kind == "CODE_ACTION" or (tool == "edit_file" and kind == "GENERIC")
             ):
-                antigravity_receipt = True
+                if (
+                    record.get("status", "DONE") == "DONE"
+                    and result_succeeded(record)
+                    and targets_okf(record.get("content"), memory_paths)
+                ):
+                    antigravity_receipt = True
 
     receipt = bool(targeted_calls & successful_calls) or patch_receipt
     if provider == "antigravity":
-        receipt = antigravity_targeted and antigravity_receipt
+        receipt = antigravity_receipt
     return len(calls), receipt
 
 
