@@ -73,6 +73,11 @@ actual built ISO, not only a VM configuration with similar packages. Verify
 `/sys/firmware/efi`, the live-media root/store mounts, command availability, and
 non-destructive tool operations. Physical USB boot is a separate evidence level.
 
+Run `python3 tests/boot-images.py --help` for the ISO boot verifier. Pass the
+built ISO, the QEMU executable, the directory containing `OVMF_CODE.fd` and
+`OVMF_VARS.fd`, and an evidence directory. Add `--rescue` for the rescue checks
+or `--tcg` when KVM is unavailable.
+
 The ISO path generates a GRUB EFI loader. This milestone does not sign it or
 enroll keys. UEFI boot alone does not demonstrate Secure Boot enforcement. These
 images require Secure Boot disabled; signed-image support is not provided.
@@ -146,7 +151,6 @@ mkdir -p "$regressionScratch"
 | Terminal hooks and lazygit quoting                         | `python3 tests/terminal-data-regressions.py "$nixpkgs" "$regressionScratch/terminal-data" "$homeManager"`                                                       |
 | Native Atuin, Yazi, Helix and WezTerm behavior             | `python3 tests/native-tool-regressions.py "$nixpkgs" "$homeManager" "$regressionScratch/native-tools"`                                                          |
 | Angular language-server wrappers                           | `python3 tests/angular-wrappers.py "$nixpkgs" "$regressionScratch/angular"`                                                                                     |
-| Portable btop future scheduling                            | `python3 tests/btop-future-regressions.py "$nixpkgs" "$regressionScratch/btop"`                                                                                 |
 | Snowfall template DNS options and merges                   | `python3 tests/snowfall-dns-regressions.py "$nixpkgs"`                                                                                                          |
 | Graphical command rendering and locker/menu flows          | `python3 tests/graphical-commands.py --nixpkgs "$nixpkgs" --home-manager "$homeManager" --niri "$niriSource" --scratch "$regressionScratch/graphical-commands"` |
 | Graphical callbacks and launcher workflows                 | `python3 tests/graphical-workflows.py --scratch "$regressionScratch/workflows" --lua lua`                                                                       |
@@ -164,11 +168,11 @@ PyGObject-enabled Python and compiled schemas from the locked `gnome-shell` and
 `gsettings-desktop-schemas` packages. Set `shellSchemas` and `desktopSchemas` to
 their directories containing `gschemas.compiled`, not the package roots. The
 native-tool checks build their own pinned runtime dependencies. The module check
-also needs OpenSSH's `ssh`; the btop check needs `patch`; graphical command
-checks need `jq`. Terminal-data and graphical workflows invoke Bash. Graphical
-workflows also need `file`, `find`, `tac`, `sed`, `awk`, `getconf` and `xargs`,
+also needs OpenSSH's `ssh`; graphical command checks need `jq`. Terminal-data
+and graphical workflows invoke Bash. Graphical workflows also need `file`,
+`find`, `tac`, `sed`, `awk`, `getconf` and `xargs`,
 alongside coreutils above. Read each runner's docstring for optional arguments.
-Companion Nix, Lua, C++ and recorder files are fixtures used by these runners,
+Companion Nix, Lua and recorder files are fixtures used by these runners,
 not additional entry points.
 
 Graphical command checks evaluate the locker path but do not build it. Realize
@@ -193,7 +197,6 @@ repository=$PWD
 These checks evaluate focused module compositions or run tools against
 disposable data. Some build wrappers or native dependencies. They do not
 activate homes, start real desktop sessions, sync accounts, or demonstrate
-Darwin runtime behavior. The btop check proves portable scheduling only, not
-macOS sensor behavior; Snowfall DNS checks do not complete the whole scaffold.
+Darwin runtime behavior. Snowfall DNS checks do not complete the whole scaffold.
 Alternative-source options support testing an uncommitted copy and verifying
 that a regression check rejects broken code. They do not select newer inputs.
