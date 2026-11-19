@@ -1,32 +1,31 @@
-{
-  config,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 let
-  inherit (lib) mkIf types;
+  inherit (lib) types;
   inherit (lib.khanelinix) mkOpt;
-
-  cfg = config.khanelinix.home.fonts;
-
 in
 {
   imports = [
     (lib.getFile "modules/common/fonts/default.nix")
-  ];
+  ]
+  ++
+    map
+      (
+        option:
+        lib.mkAliasOptionModule
+          [ "khanelinix" "home" "fonts" option ]
+          [ "khanelinix" "system" "fonts" option ]
+      )
+      [
+        "enable"
+        "default"
+        "size"
+      ];
 
-  options.khanelinix.home.fonts = with types; {
+  options.khanelinix.system.fonts = {
     enable = lib.mkEnableOption "home-manager font settings";
-
-    default = mkOpt str config.khanelinix.fonts.monaspace.families.neon "Default UI font family name";
-    size = mkOpt int 13 "Default font size";
-
-    # Canonical Monaspace font names live under `khanelinix.fonts.monaspace`.
-    # Consumers should read from that namespace directly.
-
-  };
-
-  config = mkIf cfg.enable {
-    # Intentionally empty; consumer modules reference the options.
+    default =
+      mkOpt types.str config.khanelinix.fonts.monaspace.families.neon
+        "Default UI font family name";
+    size = mkOpt types.int 13 "Default font size";
   };
 }

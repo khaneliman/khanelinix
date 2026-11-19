@@ -45,7 +45,7 @@ in
           };
 
           font = {
-            family = lib.mkDefault config.khanelinix.home.fonts.default;
+            family = lib.mkDefault config.khanelinix.system.fonts.default;
             style = "Bold";
           };
         };

@@ -150,7 +150,7 @@ in
 
               "org/gnome/desktop/interface" = {
                 color-scheme = "prefer-dark";
-                font-name = "${config.khanelinix.home.fonts.default} ${toString config.khanelinix.home.fonts.size}";
+                font-name = "${config.khanelinix.system.fonts.default} ${toString config.khanelinix.system.fonts.size}";
               }
               // lib.optionalAttrs (cfg.cursor.name != null) {
                 cursor-size = cfg.cursor.size;
@@ -169,8 +169,8 @@ in
             enable = true;
 
             font = {
-              name = mkDefault config.khanelinix.home.fonts.default;
-              size = mkDefault config.khanelinix.home.fonts.size;
+              name = mkDefault config.khanelinix.system.fonts.default;
+              size = mkDefault config.khanelinix.system.fonts.size;
             };
 
             gtk2 = {
