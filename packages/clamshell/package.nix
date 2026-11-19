@@ -10,8 +10,6 @@ writeShellApplication {
 
   passthru.updateScript = null;
 
-  checkPhase = "";
-
   text = ''
     set -eu
 
@@ -47,19 +45,23 @@ writeShellApplication {
       /bin/rmdir "$lockDir" 2>/dev/null || true
     }
 
-    caffeinateArgsForMode() {
+    startCaffeinate() {
+      local -a args
+
       case "$1" in
         awake)
-          printf '%s\n' "-d -i -m"
+          args=(-d -i -m)
           ;;
         clamshell)
-          printf '%s\n' "-i -m -s"
+          args=(-i -m -s)
           ;;
         *)
           echo "unknown mode: $1" >&2
           exit 1
           ;;
       esac
+
+      "$caffeinateBin" "''${args[@]}" >/dev/null 2>&1 &
     }
 
     requirePmsetAccess() {
@@ -156,8 +158,7 @@ writeShellApplication {
         enablePmsetSleepOverride
       fi
 
-      caffeinateArgs="$(caffeinateArgsForMode "$mode")"
-      "$caffeinateBin" $caffeinateArgs >/dev/null 2>&1 &
+      startCaffeinate "$mode"
       pid="$!"
       printf '%s\n' "$pid" > "$(modePidFile "$mode")"
 
@@ -186,8 +187,7 @@ writeShellApplication {
         echo "Keep-awake enabled. Press Ctrl+C to restore normal sleep."
       fi
 
-      caffeinateArgs="$(caffeinateArgsForMode "$mode")"
-      "$caffeinateBin" $caffeinateArgs >/dev/null 2>&1 &
+      startCaffeinate "$mode"
       pid="$!"
       printf '%s\n' "$pid" > "$(modePidFile "$mode")"
 
