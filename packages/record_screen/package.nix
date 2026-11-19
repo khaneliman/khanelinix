@@ -60,7 +60,7 @@ writeShellApplication {
     }
 
     cleanup() {
-    	debug_log "Running cleanup (caller: ''${FUNCNAME[1]})"
+        debug_log "Running cleanup"
     	local -a tmp_files=(
     		"$TMP_FILE_UNOPTIMIZED"
     		"$TMP_PALETTE_FILE"
