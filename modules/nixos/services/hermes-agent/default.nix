@@ -83,7 +83,7 @@ in
             }
             {
               provider = "gemini";
-              model = "gemini-3.5-flash";
+              model = "gemini-3.6-flash";
             }
             {
               provider = "gemini";
@@ -136,7 +136,7 @@ in
           auxiliary = {
             vision = {
               provider = "gemini";
-              model = "gemini-3.5-flash";
+              model = "gemini-3.6-flash";
               timeout = 120;
             };
             compression = {
