@@ -2,7 +2,7 @@
   description = "An over-engineered Hello World in C";
 
   # Nixpkgs / NixOS version to use.
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
   outputs =
     { self, nixpkgs }:

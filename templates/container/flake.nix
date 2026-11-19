@@ -1,5 +1,5 @@
 {
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
   outputs =
     { self, nixpkgs }:
@@ -10,6 +10,7 @@
         modules = [
           (_: {
             boot.isContainer = true;
+            system.stateVersion = "26.05";
 
             # Let 'nixos-version --json' know about the Git revision
             # of this flake.
