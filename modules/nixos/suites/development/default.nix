@@ -9,7 +9,8 @@ let
 
   cfg = config.khanelinix.suites.development;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
-  homeCfg = config.home-manager.users.${config.khanelinix.user.name} or { };
+  userName = config.khanelinix.user.name;
+  homeCfg = if userName != null then config.home-manager.users.${userName} or { } else { };
   exoEnabled = homeCfg.services.exo.enable or false;
   exoLibp2pPort = 52416;
   tomlFormat = pkgs.formats.toml { };
@@ -19,6 +20,7 @@ in
     enable = lib.mkEnableOption "common development configuration";
     aiEnable = lib.mkEnableOption "ai development configuration";
     dockerEnable = lib.mkEnableOption "docker development configuration";
+    openDevPorts = lib.mkEnableOption "opening common local development TCP ports";
     sqlEnable = lib.mkEnableOption "sql development configuration";
   };
 
@@ -31,17 +33,18 @@ in
             to = 65535;
           }
         ];
-        allowedTCPPorts = [
-          12345
-          3000
-          3001
-          8080
-          8081
-        ]
-        ++ lib.optionals exoEnabled [
-          52415
-          exoLibp2pPort
-        ];
+        allowedTCPPorts =
+          lib.optionals cfg.openDevPorts [
+            12345
+            3000
+            3001
+            8080
+            8081
+          ]
+          ++ lib.optionals exoEnabled [
+            52415
+            exoLibp2pPort
+          ];
         allowedUDPPorts = lib.optionals exoEnabled [ 52415 ];
       };
     };

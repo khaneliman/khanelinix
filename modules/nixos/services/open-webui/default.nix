@@ -10,7 +10,8 @@ let
 in
 {
   options.khanelinix.services.open-webui = {
-    enable = lib.mkEnableOption "ollama ui";
+    enable = lib.mkEnableOption "Open WebUI";
+    openFirewall = lib.mkEnableOption "opening the firewall for Open WebUI";
   };
 
   config = lib.mkIf cfg.enable {
@@ -18,7 +19,7 @@ in
       # Open WebUI documentation
       # See: https://docs.openwebui.com/
       enable = true;
-      openFirewall = true;
+      inherit (cfg) openFirewall;
     };
   };
 }

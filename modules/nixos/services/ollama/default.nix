@@ -15,6 +15,7 @@ in
   options.khanelinix.services.ollama = {
     enable = lib.mkEnableOption "ollama";
     enableDebug = lib.mkEnableOption "debug";
+    openFirewall = lib.mkEnableOption "opening the firewall for ollama";
   };
 
   config = lib.mkIf cfg.enable {
@@ -45,7 +46,7 @@ in
         "qwen3-embedding:0.6b"
       ];
 
-      openFirewall = true;
+      inherit (cfg) openFirewall;
 
       rocmOverrideGfx = lib.mkIf (amdCfg.enable && amdCfg.enableRocmSupport) "11.0.0";
 
