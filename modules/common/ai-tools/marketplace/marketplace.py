@@ -1,11 +1,16 @@
-"""Validate checked-in Codex and Claude skill marketplaces."""
+"""Validate and update checked-in Codex and Claude skill marketplaces."""
 
 from __future__ import annotations
 
 import argparse
 import json
 import re
+import stat
 import sys
+import tempfile
+from collections.abc import Callable, Iterator
+from contextlib import ExitStack
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -13,32 +18,78 @@ import skill_metadata
 
 NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SEMVER_RE = re.compile(
-    r"^(0|[1-9]\d*)\."
-    r"(0|[1-9]\d*)\."
-    r"(0|[1-9]\d*)"
-    r"(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?"
+    r"^(0|[1-9][0-9]*)\."
+    r"(0|[1-9][0-9]*)\."
+    r"(0|[1-9][0-9]*)"
+    r"(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?"
     r"(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$"
 )
-SKILLS_PATH = Path("modules/common/ai-tools/skills")
-PLUGINS_TREE_PATH = Path("modules/common/ai-tools/marketplace/plugins")
+AI_TOOLS_PATH = Path("modules/common/ai-tools")
+CATALOG_PATH = AI_TOOLS_PATH / "marketplace/catalog.json"
+SKILLS_PATH = AI_TOOLS_PATH / "skills"
+PLUGINS_TREE_PATH = AI_TOOLS_PATH / "marketplace/plugins"
 CODEX_MARKETPLACE_PATH = Path(".agents/plugins/marketplace.json")
 CLAUDE_MARKETPLACE_PATH = Path(".claude-plugin/marketplace.json")
+CODEX_PLUGIN_PATH = Path(".codex-plugin/plugin.json")
+CLAUDE_PLUGIN_PATH = Path(".claude-plugin/plugin.json")
+JSON_STRING = r'"(?:[^"\\]|\\.)*"'
+JSON_STRING_PAIR = re.compile(
+    rf"(?P<key>{JSON_STRING})\s*:\s*(?P<value>{JSON_STRING})|{JSON_STRING}"
+)
 
 
 class MarketplaceError(ValueError):
     """Report a deterministic marketplace validation failure."""
 
 
-def load_json_object(path: Path) -> dict[str, Any]:
+def unique_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate key: {key}")
+        result[key] = value
+    return result
+
+
+def decode_json_object(contents: bytes, path: Path) -> dict[str, Any]:
     try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except OSError as error:
-        raise MarketplaceError(f"unable to read JSON file: {path}") from error
-    except json.JSONDecodeError as error:
+        payload = json.loads(
+            contents.decode("utf-8"), object_pairs_hook=unique_json_object
+        )
+    except ValueError as error:
         raise MarketplaceError(f"invalid JSON file: {path}: {error}") from error
     if not isinstance(payload, dict):
         raise MarketplaceError(f"JSON root must be an object: {path}")
     return payload
+
+
+def read_json_bytes(path: Path) -> bytes:
+    try:
+        return path.read_bytes()
+    except OSError as error:
+        raise MarketplaceError(f"unable to read JSON file: {path}") from error
+
+
+def load_json_object(path: Path) -> dict[str, Any]:
+    return decode_json_object(read_json_bytes(path), path)
+
+
+def semver_key(
+    version: Any, owner: str
+) -> tuple[int, int, int, bool, list[tuple[bool, int | str]]]:
+    match = SEMVER_RE.fullmatch(version) if isinstance(version, str) else None
+    if match is None:
+        raise MarketplaceError(f"invalid version for {owner}: {version}")
+    major, minor, patch, prerelease = match.groups()
+    identifiers = []
+    for identifier in prerelease.split(".") if prerelease else ():
+        if identifier.isdigit():
+            if len(identifier) > 1 and identifier.startswith("0"):
+                raise MarketplaceError(f"invalid version for {owner}: {version}")
+            identifiers.append((False, int(identifier)))
+        else:
+            identifiers.append((True, identifier))
+    return (int(major), int(minor), int(patch), prerelease is None, identifiers)
 
 
 def require_string(payload: dict[str, Any], key: str, owner: str) -> str:
@@ -49,7 +100,10 @@ def require_string(payload: dict[str, Any], key: str, owner: str) -> str:
 
 
 def load_catalog(path: Path) -> dict[str, Any]:
-    catalog = load_json_object(path)
+    return validate_catalog(load_json_object(path))
+
+
+def validate_catalog(catalog: dict[str, Any]) -> dict[str, Any]:
     if catalog.get("schemaVersion") != 1:
         raise MarketplaceError("catalog.schemaVersion must equal 1")
 
@@ -85,9 +139,7 @@ def load_catalog(path: Path) -> dict[str, Any]:
         if name in seen:
             raise MarketplaceError(f"duplicate plugin name: {name}")
         seen.add(name)
-        version = require_string(plugin, "version", owner_label)
-        if SEMVER_RE.fullmatch(version) is None:
-            raise MarketplaceError(f"invalid plugin version for {name}: {version}")
+        semver_key(plugin.get("version"), name)
         require_string(plugin, "displayName", owner_label)
         require_string(plugin, "description", owner_label)
         require_string(plugin, "category", owner_label)
@@ -148,6 +200,10 @@ def load_catalog(path: Path) -> dict[str, Any]:
         if not isinstance(members, list) or not members:
             raise MarketplaceError(
                 f"catalog.bundles.{bundle_name}.plugins must be a non-empty array"
+            )
+        if not all(isinstance(member, str) for member in members):
+            raise MarketplaceError(
+                f"catalog.bundles.{bundle_name}.plugins must contain skill names"
             )
         if members != sorted(set(members)):
             raise MarketplaceError(
@@ -333,9 +389,10 @@ def validate_claude_entry(
         raise MarketplaceError(f"Claude marketplace description mismatch: {name}")
 
 
-def validate_claude_plugin(skill_dir: Path, plugin: dict[str, Any], owner: Any) -> None:
+def validate_claude_plugin(
+    manifest: dict[str, Any], plugin: dict[str, Any], owner: Any
+) -> None:
     name = plugin["name"]
-    manifest = load_json_object(skill_dir / ".claude-plugin" / "plugin.json")
     expected = {
         "name": name,
         "displayName": plugin["displayName"],
@@ -348,9 +405,10 @@ def validate_claude_plugin(skill_dir: Path, plugin: dict[str, Any], owner: Any) 
         raise MarketplaceError(f"Claude plugin manifest mismatch: {name}")
 
 
-def validate_codex_plugin(skill_dir: Path, plugin: dict[str, Any], owner: Any) -> None:
+def validate_codex_plugin(
+    manifest: dict[str, Any], plugin: dict[str, Any], owner: Any
+) -> None:
     name = plugin["name"]
-    manifest = load_json_object(skill_dir / ".codex-plugin" / "plugin.json")
     expected = {
         "name": name,
         "version": plugin["version"],
@@ -440,22 +498,25 @@ def validate_invocation_documentation(
         )
 
 
-def validate_repository(root: Path, catalog_path: Path | None = None) -> dict[str, Any]:
+def validate_repository(
+    root: Path,
+    catalog_path: Path | None = None,
+    *,
+    read_json: Callable[[Path], dict[str, Any]] = load_json_object,
+) -> dict[str, Any]:
     root = root.resolve()
     if not root.is_dir():
         raise MarketplaceError(f"repository root does not exist: {root}")
-    catalog_path = catalog_path or (
-        root / "modules/common/ai-tools/marketplace/catalog.json"
-    )
-    catalog = load_catalog(catalog_path)
+    catalog_path = catalog_path or root / CATALOG_PATH
+    catalog = validate_catalog(read_json(catalog_path))
     skills_dir = root / SKILLS_PATH
     discovered = discover_skills(skills_dir)
     validate_catalog_coverage(catalog, discovered)
 
     marketplace = catalog["marketplace"]
     owner = marketplace["owner"]
-    codex_marketplace = load_json_object(root / CODEX_MARKETPLACE_PATH)
-    claude_marketplace = load_json_object(root / CLAUDE_MARKETPLACE_PATH)
+    codex_marketplace = read_json(root / CODEX_MARKETPLACE_PATH)
+    claude_marketplace = read_json(root / CLAUDE_MARKETPLACE_PATH)
     for provider, payload in (
         ("Codex", codex_marketplace),
         ("Claude", claude_marketplace),
@@ -501,8 +562,12 @@ def validate_repository(root: Path, catalog_path: Path | None = None) -> dict[st
         claude_entry = require_entry(claude_entries[index], "Claude", index)
         validate_codex_entry(codex_entry, plugin, plugin_path)
         validate_claude_entry(claude_entry, plugin, plugin_path, owner)
-        validate_codex_plugin(discovered[name], plugin, owner)
-        validate_claude_plugin(discovered[name], plugin, owner)
+        validate_codex_plugin(
+            read_json(discovered[name] / CODEX_PLUGIN_PATH), plugin, owner
+        )
+        validate_claude_plugin(
+            read_json(discovered[name] / CLAUDE_PLUGIN_PATH), plugin, owner
+        )
         validate_user_only_control(discovered[name], skill)
         if not skill["description"]:
             raise MarketplaceError(f"skill description is empty: {name}")
@@ -528,6 +593,172 @@ def validate_repository(root: Path, catalog_path: Path | None = None) -> dict[st
         "excluded": catalog["excluded"],
         "bundles": {name: bundle["plugins"] for name, bundle in bundles.items()},
     }
+
+
+def next_version(current: str, requested: str, name: str) -> str:
+    current_key = semver_key(current, name)
+    major, minor, patch = current_key[:3]
+    if requested == "major":
+        return f"{major + 1}.0.0"
+    if requested == "minor":
+        return f"{major}.{minor + 1}.0"
+    if requested == "patch":
+        return f"{major}.{minor}.{patch + 1}"
+    if semver_key(requested, name) <= current_key:
+        raise MarketplaceError(f"version for {name} must be newer than {current}")
+    return requested
+
+
+def iter_versions(value: Any) -> Iterator[str]:
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if key == "version" and isinstance(child, str):
+                yield child
+            else:
+                yield from iter_versions(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from iter_versions(child)
+
+
+def render_versions(
+    path: Path, original: bytes, before: dict[str, Any], after: dict[str, Any]
+) -> bytes:
+    # Match JSON string tokens so version-like text inside other values stays untouched.
+    contents = original.decode("utf-8")
+    values = (
+        match
+        for match in JSON_STRING_PAIR.finditer(contents)
+        if match["key"] is not None and json.loads(match["key"]) == "version"
+    )
+    pieces = []
+    start = 0
+    for match, old, new in zip(
+        values, iter_versions(before), iter_versions(after), strict=True
+    ):
+        if old != new:
+            pieces.extend((contents[start : match.start("value")], json.dumps(new)))
+            start = match.end("value")
+    pieces.append(contents[start:])
+    rendered = "".join(pieces).encode("utf-8")
+    if decode_json_object(rendered, path) != after:
+        raise MarketplaceError(f"unable to preserve JSON layout while updating: {path}")
+    return rendered
+
+
+@dataclass
+class VersionPlan:
+    versions: dict[str, str]
+    snapshots: dict[Path, bytes]
+    changes: dict[Path, bytes]
+
+
+def plan_versions(root: Path, names: list[str], bump: str | None) -> VersionPlan:
+    root = root.resolve()
+    snapshots: dict[Path, bytes] = {}
+    projected: dict[Path, dict[str, Any]] = {}
+
+    def read(path: Path) -> dict[str, Any]:
+        if path not in snapshots:
+            if not path.is_file():
+                raise MarketplaceError(f"unable to read regular JSON file: {path}")
+            snapshots[path] = read_json_bytes(path)
+            projected[path] = decode_json_object(snapshots[path], path)
+        return projected[path]
+
+    catalog = validate_catalog(read(root / CATALOG_PATH))
+    plugins = {plugin["name"]: plugin for plugin in catalog["plugins"]}
+    unknown = sorted(set(names) - plugins.keys())
+    if unknown:
+        raise MarketplaceError("not a published skill: " + ", ".join(unknown))
+    targets = names or list(plugins)
+    versions = {name: plugins[name]["version"] for name in targets}
+    if bump is not None:
+        (name,) = names
+        versions[name] = next_version(versions[name], bump, name)
+        plugins[name]["version"] = versions[name]
+
+    claude_index = read(root / CLAUDE_MARKETPLACE_PATH)
+    for index, value in enumerate(require_plugin_entries(claude_index, "Claude")):
+        entry = require_entry(value, "Claude", index)
+        name = require_string(entry, "name", f"Claude marketplace plugin {index}")
+        if name in versions:
+            semver_key(entry.get("version"), name)
+            entry["version"] = versions[name]
+    for name, version in versions.items():
+        for manifest_path in (CODEX_PLUGIN_PATH, CLAUDE_PLUGIN_PATH):
+            manifest = read(root / SKILLS_PATH / name / manifest_path)
+            semver_key(manifest.get("version"), name)
+            manifest["version"] = version
+
+    validate_repository(root, read_json=read)
+    changes = {}
+    for path, contents in snapshots.items():
+        original = decode_json_object(contents, path)
+        if original != projected[path]:
+            if path.resolve() != path:
+                raise MarketplaceError(f"version owner must not be symlinked: {path}")
+            changes[path] = render_versions(path, contents, original, projected[path])
+    return VersionPlan(versions, snapshots, changes)
+
+
+def write_versions(plan: VersionPlan) -> None:
+    if not plan.changes:
+        return
+    with ExitStack() as cleanup:
+        staged = {}
+        replaced = []
+        try:
+            for path, after in plan.changes.items():
+                if path.resolve() != path:
+                    raise MarketplaceError(
+                        f"version owner must not be symlinked: {path}"
+                    )
+                mode = stat.S_IMODE(path.stat().st_mode)
+                copies = []
+                for contents in (plan.snapshots[path], after):
+                    with tempfile.NamedTemporaryFile(
+                        dir=path.parent, delete=False
+                    ) as file:
+                        copy = Path(file.name)
+                        cleanup.callback(copy.unlink, missing_ok=True)
+                        file.write(contents)
+                    copy.chmod(mode)
+                    copies.append(copy)
+                staged[path] = copies
+            for path, original in plan.snapshots.items():
+                if path.read_bytes() != original:
+                    raise MarketplaceError(
+                        f"marketplace input changed during planning: {path}"
+                    )
+            for path, (_, updated) in staged.items():
+                if path.resolve() != path or path.read_bytes() != plan.snapshots[path]:
+                    raise MarketplaceError(
+                        f"version owner changed during planning: {path}"
+                    )
+                updated.replace(path)
+                replaced.append(path)
+        except (MarketplaceError, OSError) as error:
+            not_restored = []
+            for path in reversed(replaced):
+                try:
+                    if (
+                        path.resolve() != path
+                        or path.read_bytes() != plan.changes[path]
+                    ):
+                        not_restored.append(str(path))
+                        continue
+                    staged[path][0].replace(path)
+                except OSError:
+                    not_restored.append(str(path))
+            detail = (
+                f"; could not restore: {', '.join(not_restored)}"
+                if not_restored
+                else ""
+            )
+            raise MarketplaceError(
+                f"unable to write version updates: {error}{detail}"
+            ) from error
 
 
 def discover_installed_skills(installed_root: Path) -> set[str]:
@@ -580,7 +811,7 @@ def default_root() -> Path:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Validate checked-in Codex and Claude skill marketplaces."
+        description="Validate and update checked-in Codex and Claude skill marketplaces."
     )
     parser.add_argument("--root", type=Path, default=default_root())
     parser.add_argument("--catalog", type=Path)
@@ -592,15 +823,57 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         help="active skill roots, as direct child directories containing SKILL.md",
     )
-    return parser.parse_args()
+    commands = parser.add_subparsers(dest="command")
+    bump = commands.add_parser("bump", help="raise one published skill version")
+    bump.add_argument("skill", metavar="SKILL")
+    bump.add_argument(
+        "version",
+        nargs="?",
+        default="patch",
+        metavar="VERSION",
+        help="patch (default), minor, major, or a newer SemVer",
+    )
+    sync = commands.add_parser("sync", help="copy catalog versions to native manifests")
+    sync.add_argument(
+        "skills", nargs="*", metavar="SKILL", help="default: all published"
+    )
+    for command in (bump, sync):
+        command.add_argument("--root", type=Path, default=argparse.SUPPRESS)
+        command.add_argument(
+            "--dry-run", action="store_true", help="validate and report without writing"
+        )
+    args = parser.parse_args()
+    if args.command and (args.catalog or args.selected or args.installed_root):
+        parser.error(
+            "--catalog, --selected, and --installed-root are validation options"
+        )
+    return args
 
 
 def main() -> None:
     args = parse_args()
-    if args.selected or args.installed_root:
-        catalog_path = args.catalog or (
-            args.root / "modules/common/ai-tools/marketplace/catalog.json"
+    if args.command:
+        root = args.root.resolve()
+        names = [args.skill] if args.command == "bump" else args.skills
+        bump = args.version if args.command == "bump" else None
+        plan = plan_versions(root, names, bump)
+        if not args.dry_run:
+            write_versions(plan)
+        print(
+            json.dumps(
+                {
+                    "dryRun": args.dry_run,
+                    "versions": plan.versions,
+                    "files": [
+                        path.relative_to(root).as_posix() for path in plan.changes
+                    ],
+                },
+                indent=2,
+            )
         )
+        return
+    if args.selected or args.installed_root:
+        catalog_path = args.catalog or args.root / CATALOG_PATH
         catalog = load_catalog(catalog_path)
         installed = (
             discover_installed_skills(args.installed_root)

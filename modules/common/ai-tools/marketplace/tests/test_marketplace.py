@@ -7,6 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from typing import Any
+from unittest.mock import patch
 
 MARKETPLACE_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(MARKETPLACE_DIR))
@@ -17,7 +18,7 @@ import marketplace
 class MarketplaceTest(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary_directory = tempfile.TemporaryDirectory()
-        self.root = Path(self.temporary_directory.name)
+        self.root = Path(self.temporary_directory.name).resolve()
         self.skills_dir = self.root / marketplace.SKILLS_PATH
         self.catalog_path = (
             self.root / "modules/common/ai-tools/marketplace/catalog.json"
@@ -187,6 +188,181 @@ class MarketplaceTest(unittest.TestCase):
 
     def load_json(self, path: Path) -> dict[str, Any]:
         return json.loads(path.read_text(encoding="utf-8"))
+
+    def run_marketplace(self, *args: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            [
+                sys.executable,
+                str(MARKETPLACE_DIR / "marketplace.py"),
+                "--root",
+                str(self.root),
+                *args,
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+
+    def snapshot_json_files(self) -> dict[Path, bytes]:
+        return {path: path.read_bytes() for path in self.root.rglob("*.json")}
+
+    def test_bump_previews_then_updates_only_four_version_owners(self) -> None:
+        for name in ("alpha-skill", "beta-skill"):
+            self.write_skill(name)
+        self.write_repository(["alpha-skill", "beta-skill"])
+        before = self.snapshot_json_files()
+        owners = {
+            self.catalog_path,
+            self.root / marketplace.CLAUDE_MARKETPLACE_PATH,
+            self.skills_dir / "alpha-skill" / marketplace.CODEX_PLUGIN_PATH,
+            self.skills_dir / "alpha-skill" / marketplace.CLAUDE_PLUGIN_PATH,
+        }
+
+        preview = self.run_marketplace("bump", "alpha-skill", "--dry-run")
+        self.assertEqual(preview.returncode, 0, preview.stderr)
+        report = json.loads(preview.stdout)
+        self.assertTrue(report["dryRun"])
+        self.assertEqual(report["versions"], {"alpha-skill": "0.1.1"})
+        self.assertEqual({self.root / path for path in report["files"]}, owners)
+        self.assertEqual(self.snapshot_json_files(), before)
+
+        bump = self.run_marketplace("bump", "alpha-skill")
+        self.assertEqual(bump.returncode, 0, bump.stderr)
+        for path, contents in before.items():
+            expected = (
+                contents.replace(b'"version": "0.1.0"', b'"version": "0.1.1"', 1)
+                if path in owners
+                else contents
+            )
+            self.assertEqual(path.read_bytes(), expected, str(path))
+        marketplace.validate_repository(self.root)
+
+    def test_sync_repairs_version_drift_and_is_idempotent(self) -> None:
+        for name in ("alpha-skill", "beta-skill"):
+            self.write_skill(name)
+        self.write_repository(["alpha-skill", "beta-skill"])
+        catalog = self.load_json(self.catalog_path)
+        catalog["plugins"][0]["version"] = "1.2.3"
+        catalog["plugins"][1]["version"] = "2.0.0-rc.1+build"
+        self.write_json(self.catalog_path, catalog)
+        claude_index = self.root / marketplace.CLAUDE_MARKETPLACE_PATH
+        claude = self.load_json(claude_index)
+        claude["metadata"] = {"version": "9.0.0", "note": '"version": "0.1.0"'}
+        self.write_json(claude_index, claude)
+        before = self.snapshot_json_files()
+
+        preview = self.run_marketplace("sync", "--dry-run")
+        self.assertEqual(preview.returncode, 0, preview.stderr)
+        self.assertEqual(len(json.loads(preview.stdout)["files"]), 5)
+        self.assertEqual(self.snapshot_json_files(), before)
+
+        sync = self.run_marketplace("sync")
+        self.assertEqual(sync.returncode, 0, sync.stderr)
+        self.assertEqual(self.catalog_path.read_bytes(), before[self.catalog_path])
+        self.assertEqual(self.load_json(claude_index)["metadata"], claude["metadata"])
+        marketplace.validate_repository(self.root)
+
+        after = self.snapshot_json_files()
+        sync = self.run_marketplace("sync", "alpha-skill")
+        self.assertEqual(sync.returncode, 0, sync.stderr)
+        self.assertEqual(json.loads(sync.stdout)["files"], [])
+        self.assertEqual(self.snapshot_json_files(), after)
+
+    def test_bump_semver(self) -> None:
+        for current, requested, expected in (
+            ("1.2.3", "major", "2.0.0"),
+            ("1.2.3", "minor", "1.3.0"),
+            ("1.2.3", "patch", "1.2.4"),
+            ("1.2.3-rc.9", "1.2.3-rc.10", "1.2.3-rc.10"),
+            ("1.2.3-rc.10", "1.2.3+build", "1.2.3+build"),
+        ):
+            with self.subTest(requested=requested):
+                self.assertEqual(
+                    marketplace.next_version(current, requested, "alpha-skill"),
+                    expected,
+                )
+
+    def test_invalid_version_requests_do_not_write(self) -> None:
+        self.write_skill("alpha-skill")
+        self.write_skill("private-skill")
+        self.write_repository(["alpha-skill"], {"private-skill": "Not published."})
+        before = self.snapshot_json_files()
+        for args, error in (
+            (("sync", "private-skill"), "not a published skill"),
+            (("bump", "unknown"), "not a published skill"),
+            (("bump", "alpha-skill", "0.1"), "invalid version"),
+            (("bump", "alpha-skill", "0.2.0-rc.01"), "invalid version"),
+            (("bump", "alpha-skill", "0.0.9"), "must be newer"),
+            (("bump", "alpha-skill", "0.1.0+build"), "must be newer"),
+        ):
+            with self.subTest(args=args):
+                result = self.run_marketplace(*args)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(error, result.stderr)
+                self.assertEqual(self.snapshot_json_files(), before)
+
+    def test_preflight_rejects_bad_native_metadata_without_partial_update(self) -> None:
+        for name in ("alpha-skill", "beta-skill"):
+            self.write_skill(name)
+        self.write_repository(["alpha-skill", "beta-skill"])
+        path = self.skills_dir / "beta-skill" / marketplace.CLAUDE_PLUGIN_PATH
+        manifest = self.load_json(path)
+        manifest["skills"] = "./wrong"
+        self.write_json(path, manifest)
+        before = self.snapshot_json_files()
+        for flags in ((), ("--dry-run",)):
+            result = self.run_marketplace("bump", "alpha-skill", *flags)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("Claude plugin manifest mismatch: beta-skill", result.stderr)
+            self.assertEqual(self.snapshot_json_files(), before)
+
+    def test_sync_rejects_ambiguous_json_without_partial_update(self) -> None:
+        self.write_skill("alpha-skill")
+        self.write_repository(["alpha-skill"])
+        path = self.skills_dir / "alpha-skill" / marketplace.CLAUDE_PLUGIN_PATH
+        path.write_bytes(path.read_bytes().replace(b"{", b'{"version": "1.0.0", ', 1))
+        before = self.snapshot_json_files()
+
+        result = self.run_marketplace("sync")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("duplicate key: version", result.stderr)
+        self.assertEqual(self.snapshot_json_files(), before)
+
+    def test_write_failure_restores_previous_version_updates(self) -> None:
+        self.write_skill("alpha-skill")
+        self.write_repository(["alpha-skill"])
+        before = self.snapshot_json_files()
+        plan = marketplace.plan_versions(self.root, ["alpha-skill"], "patch")
+        replace = Path.replace
+
+        def fail_second_write(path: Path, target: Path) -> Path:
+            if target == self.root / marketplace.CLAUDE_MARKETPLACE_PATH:
+                raise OSError("simulated replacement failure")
+            return replace(path, target)
+
+        with (
+            patch.object(Path, "replace", fail_second_write),
+            self.assertRaisesRegex(marketplace.MarketplaceError, "replacement failure"),
+        ):
+            marketplace.write_versions(plan)
+        self.assertEqual(self.snapshot_json_files(), before)
+
+    def test_sync_does_not_apply_a_stale_catalog_plan(self) -> None:
+        self.write_skill("alpha-skill")
+        self.write_repository(["alpha-skill"])
+        catalog = self.load_json(self.catalog_path)
+        catalog["plugins"][0]["version"] = "1.0.0"
+        self.write_json(self.catalog_path, catalog)
+        plan = marketplace.plan_versions(self.root, [], None)
+        catalog["plugins"][0]["version"] = "2.0.0"
+        self.write_json(self.catalog_path, catalog)
+        before = self.snapshot_json_files()
+
+        with self.assertRaisesRegex(
+            marketplace.MarketplaceError, "changed during planning"
+        ):
+            marketplace.write_versions(plan)
+        self.assertEqual(self.snapshot_json_files(), before)
 
     def test_validates_checked_in_marketplaces(self) -> None:
         self.write_skill("alpha-skill")

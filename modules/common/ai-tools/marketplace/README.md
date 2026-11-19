@@ -346,9 +346,9 @@ the plugin root without a second content tree. Codex 0.153.2 rejects the bare
 `./` path, so do not shorten its configured value. Isolated install/discovery
 checks verified the root layout on Codex 0.153.2 and Claude Code 2.1.261.
 
-The clients create their own installation caches. The repository does not copy
-skill payloads or require a sync step. Local Home Manager installations exclude
-plugin manifests so standalone skills keep their existing identity.
+The clients create their own installation caches. The repository keeps no second
+copy of the skill payloads. Local Home Manager installations exclude plugin
+manifests so standalone skills keep their existing identity.
 
 `catalog.json` records publication membership, versions, categories, bundles,
 and exclusions. Publish or exclude every canonical skill. Keep catalog and
@@ -357,9 +357,32 @@ checks them without generating files.
 
 ## Version published skills
 
-Raise the plugin's semver in `catalog.json`, both plugin manifests, and the
-Claude marketplace entry when published content or packaging changes. The Codex
-marketplace entry carries no version field.
+When published content or packaging changes, run `bump` from the repository
+root. It raises the version in `catalog.json`, both native plugin manifests, and
+the Claude marketplace entry. The Codex marketplace entry has no version field.
+
+```sh
+python3 modules/common/ai-tools/marketplace/marketplace.py bump git-toolkit --dry-run
+python3 modules/common/ai-tools/marketplace/marketplace.py bump git-toolkit
+```
+
+The default is a patch bump. Pass `minor`, `major`, or an explicit newer SemVer
+after the skill name to choose a different version. An explicit version must
+have higher SemVer precedence; changing only build metadata does not count.
+
+If a version has already been set in the catalog, use `sync` to copy it to the
+native manifests and Claude index. With no skill names, it syncs all published
+versions. It does not create manifests or change other metadata.
+
+```sh
+python3 modules/common/ai-tools/marketplace/marketplace.py sync --dry-run
+python3 modules/common/ai-tools/marketplace/marketplace.py sync git-toolkit
+```
+
+Both commands validate the proposed repository state before writing. `--dry-run`
+reports the target versions and repository-relative files that would change
+without writing them. If unrelated metadata or an unselected version is out of
+sync, validation fails before any changes are written.
 
 `npx skills update` fetches head content directly. Marketplace consumers use
 plugin versions to detect updates. Bundle membership and other catalog metadata
