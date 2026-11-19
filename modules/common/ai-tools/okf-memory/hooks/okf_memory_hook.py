@@ -528,15 +528,18 @@ def analyze_records(
             if tool in SHELL_TOOLS and kind == "RUN_COMMAND":
                 if record.get("status") == "DONE" and record.get("exit_code") == 0:
                     antigravity_receipt = True
-            elif tool and (
-                kind == "CODE_ACTION" or (tool == "edit_file" and kind == "GENERIC")
-            ):
-                if (
+            elif (
+                tool
+                and (
+                    kind == "CODE_ACTION" or (tool == "edit_file" and kind == "GENERIC")
+                )
+                and (
                     record.get("status", "DONE") == "DONE"
                     and result_succeeded(record)
                     and targets_okf(record.get("content"), memory_paths)
-                ):
-                    antigravity_receipt = True
+                )
+            ):
+                antigravity_receipt = True
 
     receipt = bool(targeted_calls & successful_calls) or patch_receipt
     if provider == "antigravity":
