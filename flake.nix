@@ -66,6 +66,7 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
+        home-manager.follows = "home-manager";
         uv2nix.inputs.pyproject-nix.follows = "hermes-agent/pyproject-nix";
       };
     };
@@ -117,7 +118,11 @@
     };
     fast-nix-gc = {
       url = "github:Mic92/fast-nix-gc";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        nix-darwin.follows = "nix-darwin";
+        treefmt-nix.follows = "llm-agents/treefmt-nix";
+      };
     };
     plasma-manager = {
       url = "github:nix-community/plasma-manager";
