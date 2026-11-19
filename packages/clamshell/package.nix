@@ -13,7 +13,18 @@ writeShellApplication {
   text = ''
     set -eu
 
-    lockDir="''${TMPDIR:-/tmp}/clamshell.lock"
+    # Shells and launch agents can have different TMPDIR values.
+    if ! runtimeDir="$(/usr/bin/getconf DARWIN_USER_TEMP_DIR)" ||
+      [[ "$runtimeDir" != /* || ! -d "$runtimeDir" || ! -O "$runtimeDir" ]]; then
+      echo "cannot find the current user's Darwin temporary directory" >&2
+      exit 1
+    fi
+    lockDir="''${runtimeDir%/}/clamshell.lock"
+    if [[ -L "$lockDir" || ( -e "$lockDir" && ( ! -d "$lockDir" || ! -O "$lockDir" ) ) ]]; then
+      echo "unsafe clamshell state directory: $lockDir" >&2
+      exit 1
+    fi
+    umask 077
     caffeinateBin="/usr/bin/caffeinate"
 
     modePidFile() {
