@@ -199,8 +199,14 @@ in
           source ${getExe yabai-helper}
 
           # Set external_bar here in case we launch after sketchybar
-          BAR_HEIGHT=$(${getExe sketchybar} -m --query bar | jq -r '.height')
-          yabai -m config external_bar all:"$BAR_HEIGHT":0
+          if bar_info=$(${getExe sketchybar} -m --query bar) &&
+            bar_height=$(printf '%s\n' "$bar_info" | jq -ers '
+              select(length == 1) | .[0].height | numbers | select(. == floor)
+              | floor | tostring | select(test("^[1-9][0-9]*$"))
+            ')
+          then
+            yabai -m config external_bar all:"$bar_height":0
+          fi
 
           ${builtins.readFile ./extraConfig}
 
