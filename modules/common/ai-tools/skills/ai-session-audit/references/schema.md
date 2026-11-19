@@ -1,11 +1,17 @@
 # T3 Audit Schema
 
-The command reads lines with a `CANON:` payload from T3 provider logs. It
-deduplicates events by `eventId`, uses an internal content fingerprint when an
-ID is absent, and tolerates a truncated rotated-log tail unless `--strict` is
-set. Strict mode rejects missing IDs. Exported events are sorted by timestamp,
-event ID, and event type. Timestamps are normalized to UTC before ordering and
-duration calculations.
+The command reads `CANON:` events and supported `NTIVE:` records from T3
+provider logs. It deduplicates by event ID, or by a content fingerprint for
+native Codex notifications. It tolerates a truncated rotated-log tail and
+fingerprints canonical events without IDs unless `--strict` is set. Exported
+events are sorted by timestamp, event ID, and event type. Timestamps are
+normalized to UTC before ordering and duration calculations.
+
+Native Codex logs provide item, turn, and token events. Native Antigravity logs
+expose ACP request status but do not expose tool calls, token usage, or
+confirmed turn boundaries. The report counts unsupported native records
+separately, including native Claude frames. Do not combine two exports of the
+same interval in different formats: native and canonical event IDs do not match.
 
 ## Source discovery
 
@@ -52,15 +58,18 @@ as `inProgress` to `in_progress` and a trailing `[1m]` model artifact.
   counts use the first start event for that tuple.
 - **Tool call:** A completed canonical item with an observable tool name.
   Standard provider tools retain their names. MCP calls use the coarse
-  `mcp_tool` category so server and operation names cannot disclose content.
+  `mcp_tool` category, except for the fixed `delegate_task` label for known T3
+  servers. No MCP server names are exported.
 - **Skill observation:** A completed Claude `Skill` call, or a completed Codex
   command containing a path that ends in `skills/<name>/SKILL.md`. The latter is
   labeled `skill-path-reference`. It does not prove that the command read or
   followed the skill.
-- **Delegation call:** Claude `Agent` or Codex `spawnAgent`.
+- **Delegation call:** Claude `Agent`, Codex `spawnAgent`, or an observed T3
+  `delegate_task` call. A call does not prove a worker started.
 - **Processed tokens:** Sum of provider-reported per-update input and output
-  fields. Codex `last*` fields take precedence. Cached and reasoning tokens are
-  subsets, not additions to the total.
+  fields. Codex native `last` fields or canonical `last*` fields take
+  precedence. Cached and reasoning tokens are subsets, not additions to the
+  total.
 - **Latest context tokens:** Sum of the latest `usedTokens` observation for each
   included thread.
 

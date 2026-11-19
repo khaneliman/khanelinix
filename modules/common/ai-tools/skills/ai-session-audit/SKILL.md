@@ -11,8 +11,8 @@ Extract deterministic facts before semantic judgment. Choose one lane:
   replies, to find what users keep correcting and whether rule changes stuck.
   Use it for a history review, a tune-up of skills or shared context, or a
   fresh-start review after a model change.
-- **Scrubbed metrics** read T3 canonical provider events and never emit prompt
-  or tool content. Use them for tool, worker, token, and model-route counts.
+- **Scrubbed metrics** read T3 provider events and never emit prompt or tool
+  content. Use them for tool, worker, token, and model-route counts.
 
 ## History retrospective
 

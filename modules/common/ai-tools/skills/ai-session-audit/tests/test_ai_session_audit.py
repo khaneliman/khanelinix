@@ -44,6 +44,10 @@ def canonical(value: dict[str, object]) -> str:
     return f"[2026-08-27T12:00:00.000Z] CANON: {json.dumps(value)}\n"
 
 
+def native(value: dict[str, object]) -> str:
+    return f"[2026-08-27T12:00:00.000Z] NTIVE: {json.dumps(value)}\n"
+
+
 def fixture(directory: Path) -> Path:
     source = directory / "provider"
     source.mkdir()
@@ -639,6 +643,101 @@ class SessionAuditTests(unittest.TestCase):
             source = fixture(Path(temporary))
             with self.assertRaises(audit.AuditError):
                 self.scan(source, strict=True)
+
+    def test_native_provider_records_are_deduplicated_and_scrubbed(self) -> None:
+        codex = native(
+            {
+                "provider": "codex",
+                "protocol": "codex.app-server",
+                "kind": "protocol",
+                "event": {
+                    "direction": "incoming",
+                    "stage": "decoded",
+                    "payload": {
+                        "method": "item/completed",
+                        "emittedAtMs": 1,
+                        "params": {
+                            "threadId": "private-thread",
+                            "turnId": "private-turn",
+                            "item": {
+                                "type": "mcpToolCall",
+                                "id": "private-tool-call",
+                                "status": "completed",
+                                "server": "t3-code-direct",
+                                "tool": "delegate_task",
+                                "arguments": {"task": "private-prompt"},
+                                "result": {
+                                    "structuredContent": {"summary": "private-result"}
+                                },
+                            },
+                        },
+                    },
+                },
+            }
+        )
+        antigravity = native(
+            {
+                "observedAt": "2026-08-27T12:00:00Z",
+                "event": {
+                    "id": "private-request",
+                    "kind": "request",
+                    "provider": "antigravity",
+                    "createdAt": "2026-08-27T12:00:00Z",
+                    "threadId": "private-thread",
+                    "payload": {
+                        "method": "session/prompt",
+                        "status": "succeeded",
+                        "result": {"fieldCount": 2, "valueType": "object"},
+                    },
+                },
+            }
+        )
+        unsupported = native(
+            {"provider": "claudeAgent", "event": {"direction": "incoming"}}
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary)
+            (source / "events.thread.log").write_text(codex + antigravity + unsupported)
+            (source / "events._global.log").write_text(codex)
+            _, stats, events = self.scan(source, strict=True)
+            _, _, filtered = self.scan(source, providers={"antigravity"})
+        self.assertEqual(stats.native_lines, 4)
+        self.assertEqual(stats.unsupported_native_lines, 1)
+        self.assertEqual(stats.duplicate_events, 1)
+        self.assertEqual(len(events), 2)
+        self.assertEqual(events[0]["tool_name"], "delegate_task")
+        self.assertEqual(filtered[0]["event_type"], "provider.request.completed")
+        self.assertEqual(filtered[0]["status"], "completed")
+        self.assertIsNone(filtered[0]["turn_id"])
+        self.assertNotIn("private-", json.dumps(events))
+
+    def test_native_codex_usage_counts_deltas_not_cumulative_totals(self) -> None:
+        value = {
+            "protocol": "codex.app-server",
+            "event": {
+                "direction": "incoming",
+                "stage": "decoded",
+                "payload": {
+                    "method": "thread/tokenUsage/updated",
+                    "params": {
+                        "threadId": "thread",
+                        "turnId": "turn",
+                        "tokenUsage": {
+                            "last": {"inputTokens": 20, "outputTokens": 3},
+                            "total": {"inputTokens": 70, "totalTokens": 80},
+                            "modelContextWindow": 1000,
+                        },
+                    },
+                },
+            },
+        }
+        adapted = audit.native_event(value, "2026-08-27T12:00:00Z")
+        assert adapted is not None
+        normalized = audit.normalize(adapted)
+        self.assertEqual(normalized["input_tokens"], 20)
+        self.assertEqual(normalized["output_tokens"], 3)
+        self.assertEqual(normalized["total_processed_tokens"], 80)
+        self.assertIsNone(normalized["context_tokens"])
 
     def test_strict_help_mentions_missing_event_ids(self) -> None:
         help_text = (

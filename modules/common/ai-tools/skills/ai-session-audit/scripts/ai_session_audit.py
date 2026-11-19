@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit scrubbed metrics from T3 canonical AI provider events."""
+"""Audit scrubbed metrics from T3 provider events."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from typing import Any
 
 SCHEMA_VERSION = 1
 DEFAULT_SOURCE = Path.home() / ".t3" / "userdata" / "logs" / "provider"
-CANON_LINE = re.compile(r"^\[[^\]\r\n]+\] CANON: (.*)$")
+PROVIDER_LINE = re.compile(r"^\[([^\]\r\n]+)\] (CANON|NTIVE): (.*)$")
 SKILL_PATH = re.compile(
     r"(?:^|[/\\])skills[/\\](?:\.system[/\\])?"
     r"([A-Za-z0-9][A-Za-z0-9._:-]*)[/\\]SKILL\.md"
@@ -55,6 +55,8 @@ KNOWN_TOOLS = {
     "wait",
     "web_search",
 }
+DELEGATION_TOOLS = {"Agent", "delegate_task", "spawnAgent"}
+T3_MCP_SERVERS = {"t3-code", "t3-code-direct"}
 BUILTIN_MODELS = {
     "default",
     "fable",
@@ -76,7 +78,7 @@ BUILTIN_ROLES = {
     "worker",
 }
 KNOWN_EFFORTS = {"low", "medium", "high", "xhigh", "max"}
-ALLOWED_PROVIDERS = {"claudeAgent", "codex"}
+ALLOWED_PROVIDERS = {"antigravity", "claudeAgent", "codex"}
 ALLOWED_EVENT_TYPES = {
     "account.rate-limits.updated",
     "config.warning",
@@ -84,6 +86,8 @@ ALLOWED_EVENT_TYPES = {
     "hook.started",
     "item.completed",
     "item.started",
+    "provider.request.completed",
+    "provider.request.started",
     "runtime.warning",
     "session.configured",
     "session.exited",
@@ -131,6 +135,26 @@ ALLOWED_STATUSES = {
     "timed_out",
 }
 STATUS_ALIASES = {"inProgress": "in_progress"}
+CODEX_NATIVE_ITEMS = {
+    "agentMessage": "assistant_message",
+    "collabAgentToolCall": "collab_agent_tool_call",
+    "commandExecution": "command_execution",
+    "contextCompaction": "context_compaction",
+    "dynamicToolCall": "dynamic_tool_call",
+    "fileChange": "file_change",
+    "imageView": "image_view",
+    "mcpToolCall": "mcp_tool_call",
+    "reasoning": "reasoning",
+    "userMessage": "user_message",
+    "webSearch": "web_search",
+}
+CODEX_NATIVE_EVENTS = {
+    "item/completed": "item.completed",
+    "item/started": "item.started",
+    "thread/tokenUsage/updated": "thread.token-usage.updated",
+    "turn/completed": "turn.completed",
+    "turn/started": "turn.started",
+}
 
 
 class AuditError(ValueError):
@@ -142,6 +166,8 @@ class ScanStats:
     files: int = 0
     lines: int = 0
     canonical_lines: int = 0
+    native_lines: int = 0
+    unsupported_native_lines: int = 0
     malformed_events: int = 0
     duplicate_events: int = 0
     missing_event_ids: int = 0
@@ -350,6 +376,86 @@ def source_files(sources: Sequence[str] | None) -> list[Path]:
     return sorted(files)
 
 
+def fingerprint(value: dict[str, Any]) -> str:
+    return hashlib.sha256(
+        json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+
+
+def native_event(record: dict[str, Any], timestamp: str) -> dict[str, Any] | None:
+    envelope = mapping(record.get("event"))
+    if envelope.get("provider") == "antigravity" and envelope.get("kind") == "request":
+        request = mapping(envelope.get("payload"))
+        status = text(request.get("status"))
+        statuses = {
+            "started": "in_progress",
+            "succeeded": "completed",
+            "failed": "failed",
+        }
+        if status not in statuses:
+            return None
+        return {
+            "eventId": envelope.get("id"),
+            "createdAt": envelope.get("createdAt"),
+            "provider": "antigravity",
+            "threadId": envelope.get("threadId"),
+            "type": (
+                "provider.request.started"
+                if status == "started"
+                else "provider.request.completed"
+            ),
+            "payload": {"status": statuses[status]},
+        }
+    if (
+        record.get("protocol") != "codex.app-server"
+        or envelope.get("direction") != "incoming"
+        or envelope.get("stage") != "decoded"
+    ):
+        return None
+    message = mapping(envelope.get("payload"))
+    event_type = CODEX_NATIVE_EVENTS.get(text(message.get("method")) or "")
+    params = mapping(message.get("params"))
+    if event_type is None or not text(params.get("threadId")):
+        return None
+    turn = mapping(params.get("turn"))
+    payload: dict[str, Any] = {"status": turn.get("status")}
+    if event_type.startswith("item."):
+        item = mapping(params.get("item"))
+        if not item:  # T3 omits the item body for truncated records.
+            return None
+        payload = {
+            "itemType": CODEX_NATIVE_ITEMS.get(text(item.get("type")) or ""),
+            "status": item.get("status"),
+            "data": {"item": item},
+        }
+    elif event_type == "thread.token-usage.updated":
+        usage = mapping(params.get("tokenUsage"))
+        total = mapping(usage.get("total"))
+        last = mapping(usage.get("last"))
+        payload["usage"] = {
+            "totalProcessedTokens": total.get("totalTokens"),
+            **{
+                field: last.get(field)
+                for field in (
+                    "inputTokens",
+                    "cachedInputTokens",
+                    "outputTokens",
+                    "reasoningOutputTokens",
+                )
+            },
+        }
+    return {
+        # The same notification can appear in both the global and thread logs.
+        "eventId": f"native:{fingerprint(message)}",
+        "createdAt": timestamp,
+        "provider": "codex",
+        "threadId": params["threadId"],
+        "turnId": params.get("turnId") or turn.get("id"),
+        "type": event_type,
+        "payload": payload,
+    }
+
+
 def canonical_events(
     files: Sequence[Path],
     stats: ScanStats,
@@ -366,27 +472,36 @@ def canonical_events(
         with path.open("r", encoding="utf-8", errors="replace") as handle:
             for line_number, line in enumerate(handle, start=1):
                 stats.lines += 1
-                match = CANON_LINE.match(line)
+                match = PROVIDER_LINE.match(line)
                 if match is None:
                     continue
-                stats.canonical_lines += 1
-                payload = match.group(1)
+                timestamp, format_name, payload = match.groups()
+                if format_name == "NTIVE":
+                    stats.native_lines += 1
+                else:
+                    stats.canonical_lines += 1
                 try:
                     event = json.loads(payload)
                 except json.JSONDecodeError as error:
                     stats.malformed_events += 1
                     if strict:
                         raise AuditError(
-                            f"invalid canonical JSON in {path}:{line_number}: {error.msg}"
+                            f"invalid {format_name} JSON in {path}:{line_number}: {error.msg}"
                         ) from error
                     continue
                 if not isinstance(event, dict):
                     stats.malformed_events += 1
                     if strict:
                         raise AuditError(
-                            f"canonical event in {path}:{line_number} is not an object"
+                            f"{format_name} event in {path}:{line_number} is not an object"
                         )
                     continue
+                if format_name == "NTIVE":
+                    adapted = native_event(event, timestamp)
+                    if adapted is None:
+                        stats.unsupported_native_lines += 1
+                        continue
+                    event = adapted
                 event_id = text(event.get("eventId")) or text(event.get("id"))
                 if event_id is None:
                     stats.missing_event_ids += 1
@@ -394,12 +509,7 @@ def canonical_events(
                         raise AuditError(
                             f"canonical event in {path}:{line_number} has no event ID"
                         )
-                    fingerprint = hashlib.sha256(
-                        json.dumps(event, sort_keys=True, separators=(",", ":")).encode(
-                            "utf-8"
-                        )
-                    ).hexdigest()
-                    event_id = f"missing:{fingerprint}"
+                    event_id = f"missing:{fingerprint(event)}"
                 if event_id in seen:
                     stats.duplicate_events += 1
                     continue
@@ -520,7 +630,12 @@ def tool_details(
         elif item_type == "file_change":
             tool_name = "file_change"
         elif item_type == "mcp_tool_call":
-            tool_name = "mcp_tool"
+            tool_name = (
+                "delegate_task"
+                if text(item.get("server")) in T3_MCP_SERVERS
+                and item.get("tool") == "delegate_task"
+                else "mcp_tool"
+            )
         elif item_type in {"image_view", "web_search"}:
             tool_name = item_type
 
@@ -818,7 +933,7 @@ def summarize(
         if (
             model is not None
             and event_type == "item.completed"
-            and event["tool_name"] in {"Agent", "spawnAgent"}
+            and event["tool_name"] in DELEGATION_TOOLS
         ):
             delegation_models_by_provider[(provider, model)] += 1
 
@@ -827,7 +942,7 @@ def summarize(
             tools[tool] += 1
             tools_by_provider[(provider, tool)] += 1
             thread["tool_calls"] += 1
-            if tool in {"Agent", "spawnAgent"}:
+            if tool in DELEGATION_TOOLS:
                 thread["delegation_calls"] += 1
         if event_type == "item.completed":
             for skill in event["skill_names"]:
@@ -937,6 +1052,8 @@ def summarize(
             "files": stats.files,
             "lines": stats.lines,
             "canonical_lines": stats.canonical_lines,
+            "native_lines": stats.native_lines,
+            "unsupported_native_lines": stats.unsupported_native_lines,
             "malformed_events": stats.malformed_events,
             "duplicate_events": stats.duplicate_events,
             "missing_event_ids": stats.missing_event_ids,
@@ -951,7 +1068,7 @@ def summarize(
             "worker_tasks_completed": len(tasks_completed),
             "tool_calls": tool_calls,
             "skill_observations": sum(skills.values()),
-            "delegation_calls": tools["Agent"] + tools["spawnAgent"],
+            "delegation_calls": sum(tools[tool] for tool in DELEGATION_TOOLS),
         },
         "rates": {
             "completed_turn_rate": finite_ratio(len(completed_turns), len(turns)),
@@ -1204,7 +1321,9 @@ def render_markdown(report: dict[str, Any]) -> str:
         (
             f"Scanned {number(scan['files'])} files and {number(scan['lines'])} "
             f"lines. Included {number(scan['included_events'])} deduplicated "
-            f"canonical events. Skipped {number(scan['malformed_events'])} "
+            f"events. Of {number(scan['native_lines'])} native lines, "
+            f"{number(scan['unsupported_native_lines'])} were not mapped. "
+            f"Skipped {number(scan['malformed_events'])} "
             f"malformed and {number(scan['duplicate_events'])} duplicate events. "
             f"Observed {number(scan['missing_event_ids'])} events without IDs and "
             f"scrubbed {number(sum(row['count'] for row in report['scrubbed_fields']))} "
@@ -1249,11 +1368,11 @@ def add_filters(parser: argparse.ArgumentParser) -> None:
         default=[],
         help="provider name; repeatable",
     )
-    parser.add_argument("--thread", help="one T3 thread ID")
+    parser.add_argument("--thread", help="one thread ID as stored in the source log")
     parser.add_argument(
         "--strict",
         action="store_true",
-        help="fail on malformed canonical JSON or missing event IDs",
+        help="fail on malformed provider JSON or missing event IDs",
     )
     parser.add_argument("--output", help="write to this exact path instead of stdout")
     parser.add_argument(
@@ -1266,7 +1385,7 @@ def add_filters(parser: argparse.ArgumentParser) -> None:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Audit scrubbed metrics from T3 canonical AI provider events."
+        description="Audit scrubbed metrics from T3 provider events."
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
     summary = subparsers.add_parser("summary", help="aggregate a bounded report")
