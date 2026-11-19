@@ -465,6 +465,55 @@ in
     expr = module.uwsmApp { } "";
     expected = "run-as-service";
   };
+  testInputPackageSetConfig = {
+    expr =
+      let
+        packageSets = self.lib.system.common.mkInputPackageSets {
+          flake = self;
+          system = "x86_64-linux";
+        };
+      in
+      lib.mapAttrs (_: getPkgs: {
+        default = (getPkgs "x86_64-linux" { }).config.allowUnfree;
+        sameSystem = (getPkgs "x86_64-linux" { config.allowUnfree = false; }).config.allowUnfree;
+        otherSystem = (getPkgs "aarch64-linux" { config.allowUnfree = false; }).config.allowUnfree;
+      }) packageSets;
+    expected =
+      let
+        config = {
+          default = true;
+          sameSystem = false;
+          otherSystem = false;
+        };
+      in
+      {
+        getPkgsMaster = config;
+        getPkgsUnstable = config;
+      };
+  };
+
+  testDarwinHomeManagerUsername = {
+    expr =
+      let
+        homeModule = self.lib.system.common.mkHomeManagerConfig {
+          inherit (self) inputs;
+          extendedLib = lib;
+          system = "aarch64-darwin";
+          hostname = "fixture";
+          matchingHomes.fixture = {
+            username = "alice";
+            path = { };
+          };
+          inputPackageSets = { };
+          sharedHomeModules = [ ];
+          isNixOS = false;
+        };
+        user = (homeModule { config = { }; }).home-manager.users.alice;
+      in
+      user._module.args.username or null;
+    expected = "alice";
+  };
+
   testQualifiedSystemDiscovery = {
     expr = builtins.attrNames (file.parseSystemConfigurations ./fixtures/systems);
     expected = [

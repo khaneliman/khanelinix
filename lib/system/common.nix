@@ -245,7 +245,7 @@ let
           };
         in
         inputSystem: inputNixpkgsConfig:
-        if inputSystem == system then
+        if inputSystem == system && !(inputNixpkgsConfig ? config) then
           cached
         else
           import source {
@@ -515,21 +515,14 @@ in
             name = homeConfig.username;
             value = {
               imports = [ homeConfig.path ];
+              _module.args.username = homeConfig.username;
               home = {
                 inherit (homeConfig) username;
                 homeDirectory = inputs.nixpkgs.lib.mkDefault (
                   if isNixOS then "/home/${homeConfig.username}" else "/Users/${homeConfig.username}"
                 );
               };
-            }
-            // (
-              if isNixOS then
-                {
-                  _module.args.username = homeConfig.username;
-                }
-              else
-                { }
-            );
+            };
           }) matchingHomes;
         };
       }
