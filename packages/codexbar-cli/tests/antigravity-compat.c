@@ -1,11 +1,41 @@
+#define _GNU_SOURCE
+
 #include <assert.h>
 #include <curl/curl.h>
 #include <openssl/pem.h>
+#include <openssl/ssl.h>
 #include <openssl/x509.h>
+#include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 char **antigravity_argv(const char *path, char *const argv[]);
+
+static void *check_zoneinfo(void *context) {
+  int result = pthread_barrier_wait(context);
+  assert(result == 0 || result == PTHREAD_BARRIER_SERIAL_THREAD);
+  struct stat info;
+  assert(stat("/usr/share/zoneinfo", &info) == 0 && S_ISDIR(info.st_mode));
+  FILE *file = fopen("/usr/share/zoneinfo/UTC", "r");
+  assert(file != NULL);
+  assert(fclose(file) == 0);
+  return NULL;
+}
+
+static void check_concurrent_redirect(void) {
+  pthread_t workers[8];
+  pthread_barrier_t barrier;
+  assert(pthread_barrier_init(&barrier, NULL,
+                              sizeof(workers) / sizeof(workers[0])) == 0);
+  for (size_t i = 0; i < sizeof(workers) / sizeof(workers[0]); i++) {
+    assert(pthread_create(&workers[i], NULL, check_zoneinfo, &barrier) == 0);
+  }
+  for (size_t i = 0; i < sizeof(workers) / sizeof(workers[0]); i++) {
+    assert(pthread_join(workers[i], NULL) == 0);
+  }
+  assert(pthread_barrier_destroy(&barrier) == 0);
+}
 
 static size_t receive_body(char *data, size_t size, size_t count,
                            void *context) {
@@ -65,6 +95,15 @@ static void check_certificate(const char *path, int expected) {
 
 int main(int argc, char **argv) {
   assert(argc == 5);
+  check_concurrent_redirect();
+  assert(X509_verify_cert(NULL) == -1);
+  assert(SSL_get_verify_result(NULL) != X509_V_OK);
+  assert(curl_easy_setopt(NULL, CURLOPT_FOLLOWLOCATION, 1L) ==
+         CURLE_BAD_FUNCTION_ARGUMENT);
+  assert(curl_easy_duphandle(NULL) == NULL);
+  curl_easy_reset(NULL);
+  curl_easy_cleanup(NULL);
+
   char *original[] = {argv[1], "--model", "example", NULL};
   char **args = antigravity_argv(argv[1], original);
   assert(args != NULL && args != original);
@@ -97,6 +136,10 @@ int main(int argc, char **argv) {
       handle, "localhost", argv[4],
       "/exa.language_server_pb.LanguageServerService/PreservedHeaders", 0);
   check_request(handle, "127.0.0.1", argv[4], "/other", 0);
+  check_request(handle, "127.0.0.1", argv[4],
+                "/exa.language_server_pb.LanguageServerServiceExtra/other", 0);
+  check_request(handle, "127.0.0.1", argv[4],
+                "/exa.language_server_pb.LanguageServerService/../other", 0);
   check_request(handle, "localhost", argv[4], service, 0);
   check_request(handle, "127.0.0.1", argv[4], redirect, 302);
   // Caller redirect policy resumes after leaving the protected service.

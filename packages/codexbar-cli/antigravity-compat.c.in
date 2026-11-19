@@ -54,7 +54,21 @@ static int is_antigravity_url(const char *url) {
   const char *port = url + sizeof(prefix) - 1;
   const char *end = port + strspn(port, "0123456789");
   const char service[] = "/exa.language_server_pb.LanguageServerService/";
-  return end != port && strncmp(end, service, sizeof(service) - 1) == 0;
+  if (end == port || strncmp(end, service, sizeof(service) - 1) != 0) {
+    return 0;
+  }
+
+  // libcurl removes dot segments before sending the request.
+  for (const char *segment = end + sizeof(service) - 1;;) {
+    size_t length = strcspn(segment, "/?#");
+    if (length == 2 && memcmp(segment, "..", 2) == 0) {
+      return 0;
+    }
+    if (segment[length] != '/') {
+      return 1;
+    }
+    segment += length + 1;
+  }
 }
 
 // libcurl borrows header lists. Keep our own copy so reuse, redirects, and
@@ -164,6 +178,9 @@ static void free_request(struct request_headers *entry) {
 
 void curl_easy_cleanup(CURL *handle) {
   pthread_once(&curl_symbols_once, load_curl_symbols);
+  if (real_cleanup == NULL || handle == NULL) {
+    return;
+  }
   pthread_mutex_lock(&requests_lock);
   struct request_headers *entry = take_request(handle);
   pthread_mutex_unlock(&requests_lock);
@@ -175,6 +192,9 @@ void curl_easy_cleanup(CURL *handle) {
 
 void curl_easy_reset(CURL *handle) {
   pthread_once(&curl_symbols_once, load_curl_symbols);
+  if (real_reset == NULL || handle == NULL) {
+    return;
+  }
   pthread_mutex_lock(&requests_lock);
   struct request_headers *entry = take_request(handle);
   pthread_mutex_unlock(&requests_lock);
@@ -184,6 +204,10 @@ void curl_easy_reset(CURL *handle) {
 
 CURL *curl_easy_duphandle(CURL *handle) {
   pthread_once(&curl_symbols_once, load_curl_symbols);
+  if (handle == NULL || real_duplicate == NULL || real_setopt == NULL ||
+      real_cleanup == NULL) {
+    return NULL;
+  }
   CURL *copy = real_duplicate(handle);
   if (copy == NULL) {
     return NULL;
@@ -218,6 +242,12 @@ CURL *curl_easy_duphandle(CURL *handle) {
 
 CURLcode curl_easy_setopt(CURL *handle, CURLoption option, ...) {
   pthread_once(&curl_symbols_once, load_curl_symbols);
+  if (real_setopt == NULL) {
+    return CURLE_FAILED_INIT;
+  }
+  if (handle == NULL) {
+    return CURLE_BAD_FUNCTION_ARGUMENT;
+  }
   if (option == CURLOPT_URL || option == CURLOPT_HTTPHEADER ||
       option == CURLOPT_FOLLOWLOCATION) {
     pthread_mutex_lock(&requests_lock);

@@ -124,7 +124,7 @@ stdenv.mkDerivation {
       substitute ${./antigravity-compat.c.in} antigravity-compat.c \
         --replace-fail @agy@ ${lib.getExe antigravity-cli}
 
-      $CC -Wall -Wextra -Werror -shared -fPIC path-redirect.c antigravity-compat.c \
+      $CC -Wall -Wextra -Werror -pthread -shared -fPIC path-redirect.c antigravity-compat.c \
         -o $out/lib/codexbar-path-redirect.so -ldl -lssl -lcrypto -lcurl
 
       makeWrapper $out/bin/.codexbar-wrapped $out/bin/codexbar \
@@ -148,7 +148,7 @@ stdenv.mkDerivation {
   installCheckPhase = lib.optionalString stdenv.hostPlatform.isLinux ''
     runHook preInstallCheck
 
-    $CC -Wall -Wextra -Werror ${./tests/antigravity-compat.c} -o antigravity-compat-test \
+    $CC -Wall -Wextra -Werror -pthread ${./tests/antigravity-compat.c} -o antigravity-compat-test \
       -L$out/lib -Wl,-rpath,$out/lib -l:codexbar-path-redirect.so -lcurl -lssl -lcrypto
     python3 ${./tests/antigravity-cert.py} ${./antigravity-cert.py} \
       ${lib.getExe antigravity-cli} ${lib.getExe openssl} ./antigravity-compat-test

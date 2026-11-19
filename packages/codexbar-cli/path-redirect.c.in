@@ -6,6 +6,7 @@
 #include <openssl/evp.h>
 #include <openssl/ssl.h>
 #include <openssl/x509.h>
+#include <pthread.h>
 #include <spawn.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -17,6 +18,43 @@
 #include "antigravity-cert.h"
 
 char **antigravity_argv(const char *path, char *const argv[]);
+
+static pthread_once_t symbols_once = PTHREAD_ONCE_INIT;
+static __typeof__(X509_verify_cert) *real_X509_verify_cert;
+static __typeof__(SSL_get_verify_result) *real_SSL_get_verify_result;
+static __typeof__(execve) *real_execve;
+static __typeof__(posix_spawn) *real_posix_spawn;
+static __typeof__(posix_spawnp) *real_posix_spawnp;
+static __typeof__(access) *real_access;
+static __typeof__(open) *real_open;
+static __typeof__(open64) *real_open64;
+static __typeof__(openat) *real_openat;
+static __typeof__(openat64) *real_openat64;
+static __typeof__(fopen) *real_fopen;
+static __typeof__(fopen64) *real_fopen64;
+static __typeof__(fstatat) *real_fstatat;
+static __typeof__(stat) *real_stat;
+static __typeof__(lstat) *real_lstat;
+
+static void load_symbols(void) {
+  int saved_errno = errno;
+  real_X509_verify_cert = dlsym(RTLD_NEXT, "X509_verify_cert");
+  real_SSL_get_verify_result = dlsym(RTLD_NEXT, "SSL_get_verify_result");
+  real_execve = dlsym(RTLD_NEXT, "execve");
+  real_posix_spawn = dlsym(RTLD_NEXT, "posix_spawn");
+  real_posix_spawnp = dlsym(RTLD_NEXT, "posix_spawnp");
+  real_access = dlsym(RTLD_NEXT, "access");
+  real_open = dlsym(RTLD_NEXT, "open");
+  real_open64 = dlsym(RTLD_NEXT, "open64");
+  real_openat = dlsym(RTLD_NEXT, "openat");
+  real_openat64 = dlsym(RTLD_NEXT, "openat64");
+  real_fopen = dlsym(RTLD_NEXT, "fopen");
+  real_fopen64 = dlsym(RTLD_NEXT, "fopen64");
+  real_fstatat = dlsym(RTLD_NEXT, "fstatat");
+  real_stat = dlsym(RTLD_NEXT, "stat");
+  real_lstat = dlsym(RTLD_NEXT, "lstat");
+  errno = saved_errno;
+}
 
 #define ZONEINFO_PREFIX "/usr/share/zoneinfo"
 
@@ -40,10 +78,12 @@ static const char *redirect_path(const char *path) {
 
   // Foundation's CFTimeZone hardcodes /usr/share/zoneinfo and traps
   // (SIGILL) when the lookup fails, so point it at Nix tzdata.
-  if (strncmp(path, ZONEINFO_PREFIX, sizeof(ZONEINFO_PREFIX) - 1) == 0) {
+  const size_t prefix_length = sizeof(ZONEINFO_PREFIX) - 1;
+  if (strncmp(path, ZONEINFO_PREFIX, prefix_length) == 0 &&
+      (path[prefix_length] == '/' || path[prefix_length] == '\0')) {
     static __thread char buf[4096];
     int written = snprintf(buf, sizeof(buf), "@tzdata@%s",
-                           path + sizeof(ZONEINFO_PREFIX) - 1);
+                           path + prefix_length);
     if (written > 0 && (size_t)written < sizeof(buf)) {
       return buf;
     }
@@ -74,10 +114,12 @@ static int certificate_matches_antigravity(X509 *cert) {
 }
 
 int X509_verify_cert(X509_STORE_CTX *ctx) {
-  static int (*real_X509_verify_cert)(X509_STORE_CTX *) = NULL;
-
-  if (real_X509_verify_cert == NULL) {
-    real_X509_verify_cert = dlsym(RTLD_NEXT, "X509_verify_cert");
+  pthread_once(&symbols_once, load_symbols);
+  if (real_X509_verify_cert == NULL || ctx == NULL) {
+    if (ctx != NULL) {
+      X509_STORE_CTX_set_error(ctx, X509_V_ERR_UNSPECIFIED);
+    }
+    return -1;
   }
 
   int result = real_X509_verify_cert(ctx);
@@ -93,10 +135,9 @@ int X509_verify_cert(X509_STORE_CTX *ctx) {
 }
 
 long SSL_get_verify_result(const SSL *ssl) {
-  static long (*real_SSL_get_verify_result)(const SSL *) = NULL;
-
-  if (real_SSL_get_verify_result == NULL) {
-    real_SSL_get_verify_result = dlsym(RTLD_NEXT, "SSL_get_verify_result");
+  pthread_once(&symbols_once, load_symbols);
+  if (real_SSL_get_verify_result == NULL || ssl == NULL) {
+    return X509_V_ERR_UNSPECIFIED;
   }
 
   long result = real_SSL_get_verify_result(ssl);
@@ -112,10 +153,10 @@ long SSL_get_verify_result(const SSL *ssl) {
 }
 
 int execve(const char *path, char *const argv[], char *const envp[]) {
-  static int (*real_execve)(const char *, char *const[], char *const[]) = NULL;
-
+  pthread_once(&symbols_once, load_symbols);
   if (real_execve == NULL) {
-    real_execve = dlsym(RTLD_NEXT, "execve");
+    errno = ENOSYS;
+    return -1;
   }
 
   return real_execve(redirect_path(path), argv, envp);
@@ -125,12 +166,9 @@ int posix_spawn(pid_t *pid, const char *path,
                 const posix_spawn_file_actions_t *file_actions,
                 const posix_spawnattr_t *attrp, char *const argv[],
                 char *const envp[]) {
-  static int (*real_posix_spawn)(
-      pid_t *, const char *, const posix_spawn_file_actions_t *,
-      const posix_spawnattr_t *, char *const[], char *const[]) = NULL;
-
+  pthread_once(&symbols_once, load_symbols);
   if (real_posix_spawn == NULL) {
-    real_posix_spawn = dlsym(RTLD_NEXT, "posix_spawn");
+    return ENOSYS;
   }
 
   char **args = antigravity_argv(path, argv);
@@ -149,12 +187,9 @@ int posix_spawnp(pid_t *pid, const char *file,
                  const posix_spawn_file_actions_t *file_actions,
                  const posix_spawnattr_t *attrp, char *const argv[],
                  char *const envp[]) {
-  static int (*real_posix_spawnp)(
-      pid_t *, const char *, const posix_spawn_file_actions_t *,
-      const posix_spawnattr_t *, char *const[], char *const[]) = NULL;
-
+  pthread_once(&symbols_once, load_symbols);
   if (real_posix_spawnp == NULL) {
-    real_posix_spawnp = dlsym(RTLD_NEXT, "posix_spawnp");
+    return ENOSYS;
   }
 
   return real_posix_spawnp(pid, redirect_path(file), file_actions, attrp, argv,
@@ -162,10 +197,10 @@ int posix_spawnp(pid_t *pid, const char *file,
 }
 
 int access(const char *path, int mode) {
-  static int (*real_access)(const char *, int) = NULL;
-
+  pthread_once(&symbols_once, load_symbols);
   if (real_access == NULL) {
-    real_access = dlsym(RTLD_NEXT, "access");
+    errno = ENOSYS;
+    return -1;
   }
 
   return real_access(redirect_path(path), mode);
@@ -177,10 +212,10 @@ static int open_needs_mode(int flags) {
 }
 
 int open(const char *path, int flags, ...) {
-  static int (*real_open)(const char *, int, ...) = NULL;
-
+  pthread_once(&symbols_once, load_symbols);
   if (real_open == NULL) {
-    real_open = dlsym(RTLD_NEXT, "open");
+    errno = ENOSYS;
+    return -1;
   }
 
   mode_t mode = 0;
@@ -195,10 +230,10 @@ int open(const char *path, int flags, ...) {
 }
 
 int open64(const char *path, int flags, ...) {
-  static int (*real_open64)(const char *, int, ...) = NULL;
-
+  pthread_once(&symbols_once, load_symbols);
   if (real_open64 == NULL) {
-    real_open64 = dlsym(RTLD_NEXT, "open64");
+    errno = ENOSYS;
+    return -1;
   }
 
   mode_t mode = 0;
@@ -213,10 +248,10 @@ int open64(const char *path, int flags, ...) {
 }
 
 int openat(int dirfd, const char *path, int flags, ...) {
-  static int (*real_openat)(int, const char *, int, ...) = NULL;
-
+  pthread_once(&symbols_once, load_symbols);
   if (real_openat == NULL) {
-    real_openat = dlsym(RTLD_NEXT, "openat");
+    errno = ENOSYS;
+    return -1;
   }
 
   mode_t mode = 0;
@@ -231,10 +266,10 @@ int openat(int dirfd, const char *path, int flags, ...) {
 }
 
 int openat64(int dirfd, const char *path, int flags, ...) {
-  static int (*real_openat64)(int, const char *, int, ...) = NULL;
-
+  pthread_once(&symbols_once, load_symbols);
   if (real_openat64 == NULL) {
-    real_openat64 = dlsym(RTLD_NEXT, "openat64");
+    errno = ENOSYS;
+    return -1;
   }
 
   mode_t mode = 0;
@@ -249,50 +284,50 @@ int openat64(int dirfd, const char *path, int flags, ...) {
 }
 
 FILE *fopen(const char *path, const char *mode) {
-  static FILE *(*real_fopen)(const char *, const char *) = NULL;
-
+  pthread_once(&symbols_once, load_symbols);
   if (real_fopen == NULL) {
-    real_fopen = dlsym(RTLD_NEXT, "fopen");
+    errno = ENOSYS;
+    return NULL;
   }
 
   return real_fopen(redirect_path(path), mode);
 }
 
 FILE *fopen64(const char *path, const char *mode) {
-  static FILE *(*real_fopen64)(const char *, const char *) = NULL;
-
+  pthread_once(&symbols_once, load_symbols);
   if (real_fopen64 == NULL) {
-    real_fopen64 = dlsym(RTLD_NEXT, "fopen64");
+    errno = ENOSYS;
+    return NULL;
   }
 
   return real_fopen64(redirect_path(path), mode);
 }
 
 int fstatat(int dirfd, const char *path, struct stat *statbuf, int flags) {
-  static int (*real_fstatat)(int, const char *, struct stat *, int) = NULL;
-
+  pthread_once(&symbols_once, load_symbols);
   if (real_fstatat == NULL) {
-    real_fstatat = dlsym(RTLD_NEXT, "fstatat");
+    errno = ENOSYS;
+    return -1;
   }
 
   return real_fstatat(dirfd, redirect_path(path), statbuf, flags);
 }
 
 int stat(const char *path, struct stat *statbuf) {
-  static int (*real_stat)(const char *, struct stat *) = NULL;
-
+  pthread_once(&symbols_once, load_symbols);
   if (real_stat == NULL) {
-    real_stat = dlsym(RTLD_NEXT, "stat");
+    errno = ENOSYS;
+    return -1;
   }
 
   return real_stat(redirect_path(path), statbuf);
 }
 
 int lstat(const char *path, struct stat *statbuf) {
-  static int (*real_lstat)(const char *, struct stat *) = NULL;
-
+  pthread_once(&symbols_once, load_symbols);
   if (real_lstat == NULL) {
-    real_lstat = dlsym(RTLD_NEXT, "lstat");
+    errno = ENOSYS;
+    return -1;
   }
 
   return real_lstat(redirect_path(path), statbuf);
