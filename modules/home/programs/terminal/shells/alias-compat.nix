@@ -3,36 +3,45 @@ let
   bashExe = lib.getExe pkgs.bash;
 
   inherit (lib) trim;
-  positionalIndexes = [
-    "1"
-    "2"
-    "3"
-    "4"
-    "5"
-    "6"
-    "7"
-    "8"
-    "9"
-  ];
+
+  aliasParts =
+    value:
+    let
+      # Operators only count outside quotes; expansions also count inside double quotes.
+      tokens = builtins.split ''(\\.)|(\$?'[^']*')|"((\\.|[^"\\])*)"'' value;
+      doubleQuoted = lib.concatMap (
+        token:
+        lib.optionals (builtins.isList token && builtins.elemAt token 2 != null) (
+          builtins.filter builtins.isString (builtins.split ''\\.'' (builtins.elemAt token 2))
+        )
+      ) tokens;
+      bare = builtins.filter builtins.isString tokens;
+    in
+    {
+      inherit bare;
+      expandable = bare ++ doubleQuoted;
+      ansiCQuote = lib.any (
+        token:
+        builtins.isList token
+        && builtins.elemAt token 1 != null
+        && lib.hasPrefix "$'" (builtins.elemAt token 1)
+      ) tokens;
+    };
 
   hasPositionalParams =
     value:
-    let
-      trimmed = trim value;
-    in
-    lib.any (token: lib.hasInfix token trimmed) [
-      "$@"
-      "$*"
-      "$1"
-      "$2"
-      "$3"
-      "$4"
-      "$5"
-      "$6"
-      "$7"
-      "$8"
-      "$9"
-    ];
+    lib.any (
+      part: builtins.match ''.*\$([@*1-9]|[{]([@*]|[1-9][0-9]*)[}]).*'' part != null
+    ) (aliasParts value).expandable;
+
+  hasBareSyntax =
+    pattern: value: lib.any (part: builtins.match pattern part != null) (aliasParts value).bare;
+
+  hasChainedCommand = hasBareSyntax ".*(&&|[|][|]).*";
+  hasCommandSequence = value: lib.hasInfix "\n" value || hasBareSyntax ".*(;|&&|[|][|]).*" value;
+
+  hasBackticks = value: lib.any (lib.hasInfix "`") (aliasParts value).expandable;
+  hasSubstitution = value: lib.any (lib.hasInfix "$(") (aliasParts value).expandable;
 
   hasWrappedFunction =
     value:
@@ -60,22 +69,31 @@ let
     in
     trim withoutSuffix;
 
-  hasLeadingEnvAssignment = value: builtins.match "^[A-Z_][A-Z0-9_]*=.*" (trim value) != null;
+  hasLeadingEnvAssignment = value: builtins.match "^[A-Za-z_][A-Za-z0-9_]*=.*" (trim value) != null;
 
   hasSingleQuote = value: lib.hasInfix "'" (trim value);
+  hasBracedExpansion = value: lib.any (lib.hasInfix "\${") (aliasParts value).expandable;
+  hasAnsiCQuote = value: (aliasParts value).ansiCQuote;
+
+  needsPosixWrapper =
+    value:
+    lib.hasInfix "\n" value
+    || hasSubstitution value
+    || hasChainedCommand value
+    || hasLeadingEnvAssignment value
+    || hasWrappedFunction value
+    || hasPositionalParams value;
 
   isComplexAlias =
     value:
     let
       trimmed = trim value;
     in
-    lib.hasInfix "\n" trimmed
-    || lib.hasInfix "$(" trimmed
-    || lib.hasInfix "&&" trimmed
-    || lib.hasInfix "||" trimmed
-    || hasLeadingEnvAssignment trimmed
-    || hasWrappedFunction trimmed
-    || hasPositionalParams trimmed;
+    needsPosixWrapper trimmed
+    || hasBackticks trimmed
+    || hasAnsiCQuote trimmed
+    || hasBracedExpansion trimmed
+    || hasBareSyntax ".*[;&|<>].*" trimmed;
 
   isFishFunctionAlias = value: isComplexAlias value || hasSingleQuote value;
 
@@ -92,7 +110,7 @@ let
         }
         f "$@"
       ''
-    else if lib.hasInfix "\n" trimmed || lib.hasInfix "&&" trimmed || lib.hasInfix "||" trimmed then
+    else if hasCommandSequence trimmed || lib.hasSuffix "&" trimmed then
       trimmed
     else
       "${trimmed} \"$@\"";
@@ -101,44 +119,16 @@ let
 
   translatedAliasValue = value: if isComplexAlias value then wrappedAliasValue value else value;
 
-  replaceFishArgs =
-    value:
-    let
-      quotedArgs = [
-        "\"$@\""
-        "\"$*\""
-      ];
-      quotedArgv = [
-        "$argv"
-        "$argv"
-      ];
-      quotedPositionals = map (index: "\"$" + index + "\"") positionalIndexes;
-      fishPositionals = map (index: "$argv[${index}]") positionalIndexes;
-      bareArgs = [
-        "$@"
-        "$*"
-      ];
-      bareArgv = [
-        "$argv"
-        "$argv"
-      ];
-      barePositionals = map (index: "$" + index) positionalIndexes;
-    in
-    lib.replaceStrings (quotedArgs ++ quotedPositionals ++ bareArgs ++ barePositionals) (
-      quotedArgv ++ fishPositionals ++ bareArgv ++ fishPositionals
-    ) value;
+  adaptSharedAliases =
+    transform: sharedAliases:
+    # Home Manager already merged shared aliases with shell-local aliases.
+    lib.mapAttrs (
+      name: value: if (sharedAliases.${name} or null) == value then transform name value else value
+    );
 
-  translateFishCommand =
-    command:
-    let
-      translatedArgs = replaceFishArgs command;
-      restoredAwkFields = lib.replaceStrings (map (index: "{print $argv[${index}]}") positionalIndexes) (
-        map
-          (index: "{print $" + index + "}")
-          positionalIndexes
-      ) translatedArgs;
-    in
-    lib.replaceStrings [ " && " " || " ] [ "\nand " "\nor " ] restoredAwkFields;
+  adaptPosixAliases = adaptSharedAliases (
+    _: value: if needsPosixWrapper (trim value) then wrappedAliasValue value else value
+  );
 
   translateFishLine =
     line:
@@ -146,8 +136,6 @@ let
       trimmed = trim line;
       assignmentMatch = builtins.match "^([A-Za-z_][A-Za-z0-9_]*)=\\$\\((.*)\\)$" trimmed;
       forLoopMatch = builtins.match "^for ([A-Za-z_][A-Za-z0-9_]*) in \\$\\((.*)\\); do$" trimmed;
-      nixConfigPrefix = "NIX_CONFIG=$'max-jobs = auto\\ncores = 0' ";
-      envMatch = builtins.match "^([A-Z_][A-Z0-9_]*)=([^[:space:]]+) (.*)$" trimmed;
     in
     if trimmed == "" then
       ""
@@ -158,42 +146,22 @@ let
         variable = builtins.elemAt assignmentMatch 0;
         command = builtins.elemAt assignmentMatch 1;
       in
-      "set ${variable} (" + translateFishCommand command + ")"
+      "set ${variable} (" + command + ")"
     else if forLoopMatch != null then
       let
         variable = builtins.elemAt forLoopMatch 0;
         command = builtins.elemAt forLoopMatch 1;
       in
-      "for ${variable} in (" + translateFishCommand command + ")"
+      "for ${variable} in (" + command + ")"
     else if trimmed == "done" then
       "end"
-    else if lib.hasPrefix nixConfigPrefix trimmed then
-      let
-        command = lib.removePrefix nixConfigPrefix trimmed;
-      in
-      ''
-        set -lx NIX_CONFIG "max-jobs = auto
-        cores = 0"
-        ${translateFishCommand command}
-      ''
-    else if envMatch != null then
-      let
-        variable = builtins.elemAt envMatch 0;
-        value = builtins.elemAt envMatch 1;
-        command = builtins.elemAt envMatch 2;
-      in
-      ''
-        set -lx ${variable} ${value}
-        ${translateFishCommand command}
-      ''
     else
-      translateFishCommand trimmed;
+      trimmed;
 
   fishBodyForAlias =
     name: value:
     let
       trimmed = trim value;
-      body = if hasWrappedFunction trimmed then unwrapFunctionBody trimmed else trimmed;
       sessionVarsPathMatch = builtins.match ".*source \"([^\"]*hm-session-vars\\.sh)\".*" trimmed;
       fishSessionVarsPath =
         if sessionVarsPathMatch != null then
@@ -213,14 +181,25 @@ let
           source ${fishSessionVarsPath}
         end
       ''
-    else if hasWrappedFunction trimmed then
+    else if
+      hasWrappedFunction trimmed
+      || hasBackticks trimmed
+      || hasPositionalParams trimmed
+      || hasAnsiCQuote trimmed
+      || hasBracedExpansion trimmed
+    then
       "${wrappedAliasValue value} $argv"
     else
-      lib.concatMapStringsSep "\n" translateFishLine (lib.splitString "\n" body);
+      lib.concatMapStringsSep "\n" translateFishLine (lib.splitString "\n" trimmed)
+      + lib.optionalString (
+        !hasCommandSequence trimmed && !hasSubstitution trimmed && !(lib.hasSuffix "&" trimmed)
+      ) " $argv";
 
 in
 {
   inherit
+    adaptPosixAliases
+    adaptSharedAliases
     fishBodyForAlias
     isComplexAlias
     isFishFunctionAlias
@@ -228,9 +207,13 @@ in
     ;
 
   translateAliasMap = lib.mapAttrs (_: translatedAliasValue);
-  translateFishAliasMap =
-    aliases:
-    lib.filterAttrs (name: value: name != "hmvar-reload" && !(isFishFunctionAlias value)) aliases;
+  translateNuComplexAlias = value: "${bashExe} -c ${builtins.toJSON (bashScriptForAlias value)} --";
+  filterFishAliases =
+    sharedAliases:
+    lib.filterAttrs (
+      name: value:
+      (sharedAliases.${name} or null) != value || (name != "hmvar-reload" && !isFishFunctionAlias value)
+    );
   translateFishFunctions =
     aliases:
     lib.mapAttrs' (

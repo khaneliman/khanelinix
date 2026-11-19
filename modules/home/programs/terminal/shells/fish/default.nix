@@ -11,6 +11,8 @@ let
   aliasCompat = import ../alias-compat.nix { inherit lib pkgs; };
 
   cfg = config.khanelinix.programs.terminal.shells.fish;
+  filterSharedAliases =
+    if cfg.enable then aliasCompat.filterFishAliases config.home.shellAliases else lib.id;
   opPlugins = lib.escapeShellArg "${config.xdg.configHome}/op/plugins.fish";
   nixpkgsReviewGuard = /* fish */ ''
     if set -q NIXPKGS_REVIEW_ROOT
@@ -29,6 +31,13 @@ in
     enable = lib.mkEnableOption "fish";
   };
 
+  # Home Manager inserts the shared aliases into one of these options. Remove
+  # the ones rendered as functions after the shell's own aliases have merged.
+  options.programs.fish = {
+    shellAliases = lib.mkOption { apply = filterSharedAliases; };
+    shellAbbrs = lib.mkOption { apply = filterSharedAliases; };
+  };
+
   config = mkIf cfg.enable {
     xdg.configFile."fish/functions" = {
       source = lib.cleanSourceWith { src = lib.cleanSource ./functions/.; };
@@ -39,11 +48,13 @@ in
       # Fish documentation
       # See: https://fishshell.com/docs/current/index.html
       enable = true;
-      # TODO: Fix upstream Home Manager fish alias quoting. `programs.fish.shellAliases`
-      # currently emits `alias ... ${lib.escapeShellArg value}`, which is POSIX
-      # quoting and breaks complex alias bodies containing embedded single quotes.
-      shellAliases = lib.mkForce (aliasCompat.translateFishAliasMap config.home.shellAliases);
-      functions = aliasCompat.translateFishFunctions config.home.shellAliases;
+      functions = aliasCompat.translateFishFunctions (
+        lib.filterAttrs (
+          name: _:
+          !(builtins.hasAttr name config.programs.fish.shellAliases)
+          && !(builtins.hasAttr name config.programs.fish.shellAbbrs)
+        ) config.home.shellAliases
+      );
 
       loginShellInit =
         let

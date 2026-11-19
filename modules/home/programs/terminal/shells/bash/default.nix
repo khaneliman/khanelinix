@@ -14,13 +14,16 @@ in
     enable = lib.mkEnableOption "bash";
   };
 
+  options.programs.bash.shellAliases = lib.mkOption {
+    apply = if cfg.enable then aliasCompat.adaptPosixAliases config.home.shellAliases else lib.id;
+  };
+
   config = lib.mkIf cfg.enable {
     programs.bash = {
       # Bash documentation
       # See: https://www.gnu.org/software/bash/manual/
       enable = true;
       enableCompletion = true;
-      shellAliases = lib.mkForce (aliasCompat.translateAliasMap config.home.shellAliases);
 
       initExtra = lib.mkMerge [
         (lib.mkBefore ''

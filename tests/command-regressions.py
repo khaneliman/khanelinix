@@ -96,15 +96,16 @@ r = json.loads(
 )
 (work / "rendered.json").write_text(json.dumps(r, indent=2) + "\n")
 # Use only the supplied runtime tools and inert recorders for shell lookups.
-env["PATH"] = r["coreutils"]
+env["PATH"] = r["coreutils"] + ":" + r["grep"]
 bin_dir = work / "bin"
 bin_dir.mkdir()
 recorder = (
     f"#!{sys.executable}\nimport json, os, sys\n"
     "from pathlib import Path\n"
     "Path(os.environ['ARGV_FILE']).write_text(json.dumps(sys.argv[1:]))\n"
+    "if Path(sys.argv[0]).name == 'nixpkgs-review': print(os.environ.get('NIX_CONFIG', ''))\n"
 )
-for name in ["zellij", "compiler"]:
+for name in ["zellij", "compiler", "eza", "nix", "nixpkgs-review"]:
     path = bin_dir / name
     path.write_text(recorder)
     path.chmod(0o755)
@@ -358,7 +359,6 @@ passed("Fish repeated login/interactive load_ssh retains one universal default k
 assert r["nuAliases"]["probe"] == "^head -n 1"
 assert r["nuAliases"]["leading"] == "^head -n 1"
 assert r["nuAliases"]["argument"] == "printf '%s' head"
-assert r["nuAliases"]["complex"] == r["complexBridge"]
 for name, expected, invocation in [
     ("probe", "first", '"first\\nsecond" | regression'),
     ("leading", "first", '"first\\nsecond" | regression'),
@@ -379,6 +379,166 @@ for name, expected, invocation in [
 passed(
     "actual Nushell aliases execute with first-word caret, unchanged arguments and complex bridge"
 )
+
+assert {
+    name for name, complex_alias in r["complexAliases"].items() if complex_alias
+} == {
+    "assignment",
+    "backticks",
+    "complex",
+    "nativeOverride",
+    "pipeline",
+    "positional",
+    "redirect",
+    "sequence",
+}
+
+
+def invoke_alias(shell, name, *args, alias_env=env):
+    aliases = r[f"{shell}Aliases"]
+    if shell == "nu":
+        setup = f"alias {name} = {aliases[name]}\n"
+        if name in ("la", "tree"):
+            setup = "alias eza = " + aliases["eza"] + "\n" + setup
+        cmd = [r["nu"], "--no-config-file", "-c"]
+        invocation = " ".join([name, *(json.dumps(arg) for arg in args)])
+    else:
+        quoted_args = " ".join(shlex.quote(arg) for arg in args)
+        invocation = f"{name} {quoted_args}"
+        if shell == "fish":
+            cmd = [r["fish"], "--no-config", "-c"]
+            if name in r["fishFunctions"]:
+                setup = f"function {name}\n{r['fishFunctions'][name]['body']}\nend\n"
+            else:
+                setup = f"alias {name} {shlex.quote(aliases[name])}\n"
+            if name in ("la", "tree", "ls"):
+                setup = f"alias eza {shlex.quote(aliases['eza'])}\n" + setup
+        else:
+            cmd = (
+                [r["bash"], "--noprofile", "--norc", "-c"]
+                if shell == "bash"
+                else [r["zsh"], "-f", "-c"]
+            )
+            setup = "shopt -s expand_aliases\n" if shell == "bash" else ""
+            if name in ("la", "tree", "ls"):
+                setup += f"alias eza={shlex.quote(aliases['eza'])}\n"
+            setup += f"alias {name}={shlex.quote(aliases[name])}\n"
+            invocation = "eval " + shlex.quote(invocation)
+    return run([*cmd, setup + invocation], cwd=work, env=alias_env)
+
+
+eza_options = [
+    "--icons",
+    "auto",
+    "--git",
+    "--group-directories-first",
+    "--header",
+    "--hyperlink",
+    "--follow-symlinks",
+]
+for shell in ("bash", "zsh", "fish", "nu"):
+    aliases = r[f"{shell}Aliases"]
+    assert aliases["nativeOnly"] == "printf " + ("nushell" if shell == "nu" else shell)
+    assert invoke_alias(shell, "nativeOverride") == "native"
+    for name, options in {
+        "la": ["-lah", "--tree"],
+        "tree": ["--tree", "--icons=always"],
+        **({} if shell == "nu" else {"ls": []}),
+    }.items():
+        invoke_alias(shell, name, "path with spaces")
+        assert json.loads(Path(env["ARGV_FILE"]).read_text()) == [
+            *eza_options,
+            *options,
+            "path with spaces",
+        ]
+assert "ls" not in r["nuAliases"]
+assert r["fishAbbrs"]["la"] == "printf user-la"
+assert r["fishAbbrs"]["ls"] == "eza"
+assert "positional" not in r["fishAbbrs"]
+assert "positional" in r["fishAbbrFunctions"]
+assert "positional" not in r["fishAliases"]
+assert "nativeOverride" not in r["fishFunctions"]
+passed(
+    "shared alias adaptation keeps native aliases, eza options and Fish abbreviations"
+)
+
+for shell in ("bash", "zsh", "fish", "nu"):
+    assert invoke_alias(shell, "literal").splitlines() == ["$1 ; && || | > `word`"]
+    assert invoke_alias(shell, "pipeline", "two words").splitlines() == ["two words"]
+    assert invoke_alias(shell, "sequence").splitlines() == ["one", "two"]
+    assert invoke_alias(shell, "positional", "two words", "other").splitlines() == [
+        "two words",
+        "two words",
+        "other",
+    ]
+    assert invoke_alias(shell, "backticks").splitlines() == ["computed"]
+    assert invoke_alias(shell, "assignment").splitlines() == ["two words"]
+    redirected = work / f"{shell}-redirect"
+    assert not invoke_alias(
+        shell,
+        "redirect",
+        "two words",
+        alias_env=env | {"REDIRECT_FILE": str(redirected)},
+    )
+    assert redirected.read_text() == "two words\n"
+passed(
+    "complex aliases preserve literal syntax, redirects, pipelines and argv across four shells"
+)
+
+for shell in ("bash", "zsh", "fish", "nu"):
+    invoke_alias(shell, "nras", "review ref")
+    assert json.loads(Path(env["ARGV_FILE"]).read_text()) == [
+        "pr",
+        "review ref",
+        "--systems",
+        "aarch64-darwin x86_64-linux aarch64-linux",
+    ]
+    for name, package in {
+        "lua-update-all": "luarocks-packages-updater",
+        "vim-update-all": "vimPluginsUpdater",
+    }.items():
+        invoke_alias(
+            shell, name, "extra arg", alias_env=env | {"GITHUB_TOKEN": "fixture token"}
+        )
+        assert json.loads(Path(env["ARGV_FILE"]).read_text()) == [
+            "run",
+            f"nixpkgs#{package}",
+            "--",
+            "--github-token=fixture token",
+            "extra arg",
+        ]
+    assert invoke_alias(
+        shell, "npr-beast", "one arg", alias_env=env | {"NIX_CONFIG": ""}
+    ).splitlines() == ["max-jobs = auto", "cores = 0"]
+    assert json.loads(Path(env["ARGV_FILE"]).read_text()) == ["one arg"]
+passed("developer review and updater aliases preserve exact argv across four shells")
+
+op = work / "config space's" / "op"
+op.mkdir(parents=True)
+(op / "plugins.sh").write_text("printf 'wrong\\n'\n")
+cmd = [r["fish"], "--no-config", "-c", r["fishInteractiveInit"]]
+assert run(cmd, cwd=work, env=env) == ""
+(op / "plugins.fish").write_text("printf 'native\\n'\n")
+assert run(cmd, cwd=work, env=env) == "native\n"
+passed("Fish startup skips the POSIX 1Password script and sources its native file")
+
+zsh_setup = """
+date() { [[ $1 == +%Y-%m-%d ]] && printf '2001-02-03'; }
+autoload() { return 0; }
+zmodload() { return 0; }
+bashcompinit() { return 0; }
+compinit() { print -r -- "$2"; }
+"""
+assert (
+    run(
+        [r["zsh"], "-f", "-c", zsh_setup + r["zshCompletionInit"]],
+        cwd=work,
+        env=env,
+    )
+    .strip()
+    .endswith("-2001-02-03")
+)
+passed("Zsh completion uses portable date arguments for its daily cache path")
 
 for stem, extension in [("hello", "c"), ("hello world", "c"), ("hello world", "cpp")]:
     for path in work.glob("*.c*"):

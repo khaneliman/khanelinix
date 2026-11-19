@@ -37,8 +37,8 @@ in
     };
 
     home.shellAliases = {
-      la = lib.mkForce "${lib.getExe config.programs.eza.package} -lah --tree";
-      tree = lib.mkForce "${lib.getExe config.programs.eza.package} --tree --icons=always";
+      la = lib.mkDefault "eza -lah --tree";
+      tree = lib.mkDefault "eza --tree --icons=always";
     };
   };
 }

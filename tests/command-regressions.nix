@@ -9,6 +9,20 @@ let
   pkgs = import nixpkgs { system = builtins.currentSystem; };
   inherit (pkgs) lib;
   terminal = root + "/modules/home/programs/terminal";
+  aliasFixture = {
+    probe = "head -n 1";
+    leading = "  head -n 1";
+    argument = "printf '%s' head";
+    complex = "printf one && printf two";
+    literal = ''printf '%s\n' '$1 ; && || | > `word`' '';
+    pipeline = ''printf '%s\n' "one" "two words" | grep -F'';
+    redirect = ''printf '%s\n' > "$REDIRECT_FILE"'';
+    sequence = ''printf '%s\n' one; printf '%s\n' two'';
+    positional = ''printf '%s\n' "${"$"}{1}" "$@"'';
+    assignment = ''alias_env="two words" printenv alias_env'';
+    backticks = ''printf '%s\n' "`printf computed`"'';
+    nativeOverride = "printf one && printf two";
+  };
   config = {
     lib.shell = import (homeManager + "/modules/lib/shell.nix") { inherit lib; };
     khanelinix.programs.terminal = {
@@ -19,7 +33,6 @@ let
         };
         run-as-service.enable = true;
       };
-      shells.nushell.enable = true;
     };
     xdg.configHome = "/fixture/config";
     home = {
@@ -32,17 +45,86 @@ let
         EXPAND = "$HOME/expanded";
       };
       sessionVariablesExtra = "export EXTRA=present";
-      shellAliases = {
-        probe = "head -n 1";
-        leading = "  head -n 1";
-        argument = "printf '%s' head";
-        complex = "printf one && printf two";
-      };
     };
   };
   zellij = import (terminal + "/tools/zellij") { inherit config lib pkgs; };
-  nushell = import (terminal + "/shells/nushell") { inherit config lib pkgs; };
   compat = import (terminal + "/shells/alias-compat.nix") { inherit lib pkgs; };
+  development = import (root + "/modules/home/suites/development") {
+    inherit config pkgs;
+    lib = lib // {
+      khanelinix = import (root + "/lib/module") { inputs.nixpkgs.lib = lib; };
+    };
+  };
+  shells = import (homeManager + "/modules") {
+    inherit pkgs;
+    configuration = {
+      imports = [
+        (terminal + "/shells/bash")
+        (terminal + "/shells/fish")
+        (terminal + "/shells/nushell")
+        (terminal + "/shells/zsh")
+        (terminal + "/tools/eza")
+        ({ lib, ... }: {
+          options.khanelinix.programs.terminal.tools.atuin.enable = lib.mkEnableOption "Atuin";
+        })
+      ];
+      home = {
+        username = "fixture";
+        homeDirectory = dirOf dataHome;
+        stateVersion = "26.05";
+        shellAliases = aliasFixture // {
+          inherit (development.config.content.home.shellAliases)
+            lua-update-all
+            npr-beast
+            nras
+            vim-update-all
+            ;
+        };
+      };
+      xdg.configHome = "${dirOf dataHome}/config space's";
+      khanelinix.programs.terminal = {
+        shells =
+          lib.genAttrs
+            [
+              "bash"
+              "fish"
+              "nushell"
+              "zsh"
+            ]
+            (_: {
+              enable = true;
+            });
+        tools.eza.enable = true;
+      };
+      programs =
+        lib.genAttrs
+          [
+            "bash"
+            "fish"
+            "nushell"
+            "zsh"
+          ]
+          (
+            name:
+            {
+              shellAliases.nativeOnly = "printf ${name}";
+              shellAliases.nativeOverride = lib.mkForce "printf native";
+            }
+            // lib.optionalAttrs (name == "fish") {
+              generateCompletions = false;
+            }
+          );
+    };
+  };
+  abbrs =
+    (shells.extendModules {
+      modules = [
+        {
+          programs.fish.preferAbbrs = true;
+          home.shellAliases.la = "printf user-la";
+        }
+      ];
+    }).config.programs.fish;
   launcher =
     builtins.head
       (import (terminal + "/tools/run-as-service") {
@@ -68,7 +150,14 @@ let
       writeShellApplication = app: app;
     };
   };
-  data = import ./terminal-data-regressions.nix { inherit nixpkgs homeManager root dataHome; };
+  data = import ./terminal-data-regressions.nix {
+    inherit
+      nixpkgs
+      homeManager
+      root
+      dataHome
+      ;
+  };
   snowfallLib = lib // {
     khanelisnow = import (root + "/templates/snowfall/lib/module") { inherit lib; };
   };
@@ -113,8 +202,10 @@ in
     pkgs.fish
     pkgs.nushell
     pkgs.bash
+    pkgs.zsh
     pkgs.coreutils
     pkgs.gawk
+    pkgs.gnugrep
     launcher
     compilerHelper
   ];
@@ -142,12 +233,22 @@ in
       positional = ''printf '%s\n' "$1" "$(printf 'computed')" "$@"'';
       chained = ''printf 'one\n' && printf '%s\n' "$(printf 'two three')" || false'';
     };
-    nuAliases = nushell.config.content.programs.nushell.shellAliases.content;
-    complexBridge = compat.translatedAliasValue config.home.shellAliases.complex;
+    nuAliases = shells.config.programs.nushell.shellAliases;
+    bashAliases = shells.config.programs.bash.shellAliases;
+    zshAliases = shells.config.programs.zsh.shellAliases;
+    fishAliases = shells.config.programs.fish.shellAliases;
+    fishFunctions = shells.config.programs.fish.functions;
+    fishAbbrs = abbrs.shellAbbrs;
+    fishAbbrFunctions = abbrs.functions;
+    fishInteractiveInit = shells.config.programs.fish.interactiveShellInit;
+    zshCompletionInit = shells.config.programs.zsh.completionInit;
+    complexAliases = lib.mapAttrs (_: compat.isComplexAlias) aliasFixture;
     fish = lib.getExe pkgs.fish;
     nu = lib.getExe pkgs.nushell;
     bash = lib.getExe pkgs.bash;
+    zsh = lib.getExe pkgs.zsh;
     coreutils = "${pkgs.coreutils}/bin";
+    grep = "${pkgs.gnugrep}/bin";
     compilerHelper = lib.getExe compilerHelper;
     groups = {
       main = groups (root + "/templates/snowfall/modules/nixos/system/networking");

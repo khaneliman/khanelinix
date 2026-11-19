@@ -20,6 +20,10 @@ in
     enable = mkEnableOption "ZSH";
   };
 
+  options.programs.zsh.shellAliases = lib.mkOption {
+    apply = if cfg.enable then aliasCompat.adaptPosixAliases config.home.shellAliases else lib.id;
+  };
+
   config = mkIf cfg.enable {
     programs = {
       zsh = {
@@ -27,7 +31,6 @@ in
         # See: https://zsh.sourceforge.io/Doc/
         enable = true;
         package = pkgs.zsh;
-        shellAliases = lib.mkForce (aliasCompat.translateAliasMap config.home.shellAliases);
 
         autocd = true;
 
