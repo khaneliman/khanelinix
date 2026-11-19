@@ -2,13 +2,17 @@
 
 import argparse
 import contextlib
+import errno
 import importlib.util
 import io
+import json
 import os
 import re
 import shutil
+import sqlite3
 import subprocess
 import sys
+import tempfile
 import textwrap
 import unittest
 from pathlib import Path
@@ -27,6 +31,101 @@ bar = root / "modules/home/programs/graphical/bars/sketchybar"
 
 
 class Workflows(unittest.TestCase):
+    def test_accessibility_tcc_cleanup(self):
+        spec = importlib.util.spec_from_file_location(
+            "accessibility_cleanup",
+            root / "modules/darwin/system/tcc/accessibility-cleanup.py",
+        )
+        cleanup = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cleanup)
+
+        with tempfile.TemporaryDirectory(dir=scratch) as case:
+            database = Path(case) / "TCC.db"
+            stale = str(Path(case) / "removed-binary")
+            current = str(Path(case) / "current-binary")
+            Path(current).touch()
+            grants = sorted([(stale, None), (current, b"requirement")])
+            with (
+                patch.object(cleanup, "DB_PATH", str(database)),
+                patch.dict(
+                    os.environ,
+                    KHANELINIX_TCC_STABLE_CLIENTS=json.dumps([stale, current]),
+                ),
+                contextlib.redirect_stdout(io.StringIO()) as output,
+                contextlib.redirect_stderr(io.StringIO()) as warnings,
+            ):
+                cleanup.main()
+                self.assertIn("system TCC database is missing", output.getvalue())
+                self.assertFalse(database.exists())
+
+                with contextlib.closing(sqlite3.connect(database)) as connection:
+                    with connection:
+                        connection.execute(
+                            "create table access(service, client_type, client, csreq)"
+                        )
+                        connection.executemany(
+                            "insert into access values (?, 1, ?, ?)",
+                            [(cleanup.SERVICE, *grant) for grant in grants],
+                        )
+
+                    codesign = subprocess.CompletedProcess(
+                        [], 1, stderr=b"test codesign failure"
+                    )
+                    with patch.object(cleanup.subprocess, "run", return_value=codesign):
+                        with patch.object(
+                            cleanup,
+                            "open",
+                            create=True,
+                            side_effect=PermissionError(
+                                errno.EPERM, "Operation not permitted"
+                            ),
+                        ):
+                            cleanup.main()
+                        self.assertIn("Operation not permitted", warnings.getvalue())
+
+                        readonly = sqlite3.connect(
+                            database.as_uri() + "?mode=ro", uri=True
+                        )
+                        with patch.object(
+                            cleanup.sqlite3, "connect", return_value=readonly
+                        ):
+                            cleanup.main()
+                        self.assertIn(
+                            "attempt to write a readonly database", warnings.getvalue()
+                        )
+
+                        # A concurrent reader allows the deletes but blocks commit.
+                        connection.execute("begin")
+                        connection.execute("select * from access").fetchall()
+                        cleanup.main()
+                        connection.rollback()
+                        self.assertIn("database is locked", warnings.getvalue())
+                        self.assertNotIn("Pruned", output.getvalue())
+                        self.assertEqual(
+                            connection.execute(
+                                "select client, csreq from access order by client"
+                            ).fetchall(),
+                            grants,
+                        )
+
+                        cleanup.main()
+                        self.assertIn(
+                            "Pruned 1 stale Accessibility TCC", output.getvalue()
+                        )
+                        self.assertIn("test codesign failure", warnings.getvalue())
+                        self.assertEqual(
+                            connection.execute(
+                                "select client, csreq from access"
+                            ).fetchall(),
+                            [(current, b"requirement")],
+                        )
+
+                    connection.execute("drop table access")
+                    with self.assertRaisesRegex(
+                        sqlite3.OperationalError, "no such table"
+                    ):
+                        cleanup.main()
+
     def test_lua_callbacks(self):
         subprocess.run(
             [args.lua, str(root / "tests/graphical-workflows.lua"), str(root)],

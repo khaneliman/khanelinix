@@ -125,15 +125,9 @@ in
       system.activationScripts.extraActivation.text = lib.mkAfter ''
         echo >&2 "Auditing Accessibility TCC entries..."
 
-        tccDb="/Library/Application Support/com.apple.TCC/TCC.db"
-        if [ ! -f "$tccDb" ]; then
-          echo >&2 "Skipping Accessibility TCC audit: system TCC database is missing."
-        else
-          export KHANELINIX_TCC_STABLE_CLIENTS=${
-            lib.escapeShellArg (builtins.toJSON (lib.mapAttrsToList (_: binary: binary.path) stableBinaries))
-          }
-          "${lib.getExe pkgs.python3}" "${accessibilityCleanup}" >&2
-        fi
+        KHANELINIX_TCC_STABLE_CLIENTS=${
+          lib.escapeShellArg (builtins.toJSON (lib.mapAttrsToList (_: binary: binary.path) stableBinaries))
+        } "${lib.getExe pkgs.python3}" "${accessibilityCleanup}" >&2
       '';
     })
   ];
