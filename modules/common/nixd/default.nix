@@ -1,8 +1,7 @@
 # Shared builder for nixd's flake-aware exprs, consumed by the Claude Code and
 # opencode LSP modules. Curries the flake-detection helper (nixd-expr.nix) with
-# this flake (`self`) + host `system`, then exposes the three exprs nixd reads:
-# `nixpkgs` (cwd flake's nixpkgs, falling back to khanelinix), and the khanelinix
-# `nixosOptions` / `homeManagerOptions` option trees.
+# this flake (`self`) + host `system` to expose the package set and option trees
+# from the current flake, falling back to khanelinix.
 {
   self,
   system,
@@ -35,6 +34,7 @@ in
 {
   nixpkgs = withFlakes "import (if local != null && (local.inputs.nixpkgs or null) != null then local.inputs.nixpkgs else global.inputs.nixpkgs) { }";
   nixosOptions = optionsFor "nixosConfigurations" hostname;
+  darwinOptions = optionsFor "darwinConfigurations" hostname;
   homeManagerOptions = optionsFor "homeConfigurations" (
     if username == null || hostname == null then null else "${username}@${hostname}"
   );

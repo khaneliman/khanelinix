@@ -54,6 +54,7 @@ in
           formatting.command = [ (getExe pkgs.nixfmt) ];
           options = {
             nixos.expr = nixdExprs.nixosOptions;
+            darwin.expr = nixdExprs.darwinOptions;
             home-manager.expr = nixdExprs.homeManagerOptions;
           };
         };
