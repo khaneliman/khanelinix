@@ -158,6 +158,7 @@ in
       };
     };
 
+    launchd.agents.hammerspoon.enable = true;
     launchd.agents.hammerspoon.config = {
       ProgramArguments = [
         "/usr/bin/open"
