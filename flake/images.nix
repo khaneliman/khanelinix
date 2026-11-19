@@ -1,17 +1,18 @@
 {
-  inputs,
   self,
   lib,
   ...
 }:
 let
+  imageSystem = "x86_64-linux";
+  inherit (self.lib.system.common.mkPatchedInputs { system = imageSystem; }) nixpkgs;
   images = {
-    installer-minimal = inputs.nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
+    installer-minimal = nixpkgs.lib.nixosSystem {
+      system = imageSystem;
       modules = [ ../systems/x86_64-install-iso/minimal ];
     };
-    rescue = inputs.nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
+    rescue = nixpkgs.lib.nixosSystem {
+      system = imageSystem;
       modules = [ ../systems/x86_64-iso/rescue ];
     };
   };
@@ -26,7 +27,7 @@ in
     };
   };
   perSystem = { system, ... }: {
-    packages = lib.optionalAttrs (system == "x86_64-linux") {
+    packages = lib.optionalAttrs (system == imageSystem) {
       installer-minimal-iso = self.nixosConfigurations.installer-minimal.config.system.build.isoImage;
       rescue-iso = self.nixosConfigurations.rescue.config.system.build.isoImage;
     };

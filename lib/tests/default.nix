@@ -53,12 +53,74 @@ in
         };
       in
       {
+        type = patched._type;
         evaluated = patched.marker;
         retained = patched.inputs.marker;
+        source = patched.sourceInfo.outPath == patched.outPath;
       };
     expected = {
+      type = "flake";
       evaluated = "owner";
       retained = "owner";
+      source = true;
+    };
+  };
+
+  testPatchedInputsPropagateToFollowers = {
+    expr =
+      let
+        source = ./fixtures/flake;
+        system = "x86_64-linux";
+        lockedInput = {
+          outPath = source;
+          inputs = {
+            marker = "kept";
+            nixpkgs.marker = "locked";
+          };
+          followedMarker = "locked";
+        };
+        common = import ../system/common.nix {
+          inputs = {
+            nixpkgs = {
+              inherit lib;
+              outPath = source;
+              inputs.marker = "main";
+            };
+            nixpkgs-unstable = {
+              outPath = source;
+              inputs.marker = "unstable";
+              legacyPackages.${system}.applyPatches = _: source;
+            };
+            stylix = lockedInput;
+            sops-nix = lockedInput;
+          };
+        };
+        extraInputPatches = {
+          nixpkgs = [ source ];
+          nixpkgs-unstable = [ source ];
+        };
+        patched = common.mkPatchedInputs { inherit system extraInputPatches; };
+        limited = common.mkPatchedInputs {
+          inherit system extraInputPatches;
+          patchableInputs = [
+            "stylix"
+            "sops-nix"
+          ];
+        };
+      in
+      {
+        stylixFollow = patched.stylix.followedMarker;
+        sopsFollow = patched.sops-nix.followedMarker;
+        stylixOtherInput = patched.stylix.inputs.marker;
+        limitedStylixFollow = limited.stylix.followedMarker;
+        limitedSopsFollow = limited.sops-nix.followedMarker;
+      };
+    expected = {
+      stylixFollow = "main";
+      sopsFollow = "unstable";
+      stylixOtherInput = "kept";
+      limitedStylixFollow = "locked";
+      limitedSopsFollow = "locked";
     };
   };
 

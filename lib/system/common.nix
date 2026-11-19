@@ -6,7 +6,6 @@ let
     hasSuffix
     isFunction
     mapAttrs'
-    optionalAttrs
     setFunctionArgs
     ;
 
@@ -115,21 +114,31 @@ let
         src = input;
         inherit patches;
       };
-      patchedFlake = {
-        # Plain store-path string, matching real flake inputs; module-system
-        # uniqueness checks (e.g. nix.registry pins) compare definition
-        # values, and equal strings pass where derivation attrsets cannot.
-        outPath = "${patchedSrc}";
-        inputs = flakeInputs;
-        rev = input.rev or null;
-        shortRev = input.shortRev or "patched";
-      }
-      // (import "${patchedSrc}/flake.nix").outputs (
-        flakeInputs
+      sourceInfo =
+        (
+          if patches == [ ] then
+            input.sourceInfo or { }
+          else
+            removeAttrs (input.sourceInfo or { }) [ "narHash" ]
+        )
         // {
-          self = patchedFlake;
-        }
-      );
+          # Plain store-path string, matching real flake inputs; module-system
+          # uniqueness checks (e.g. nix.registry pins) compare definition
+          # values, and equal strings pass where derivation attrsets cannot.
+          outPath = "${patchedSrc}";
+        };
+      outputs = (import "${patchedSrc}/flake.nix").outputs (flakeInputs // { self = patchedFlake; });
+      patchedFlake =
+        outputs
+        // sourceInfo
+        // {
+          # flake-parts checks this marker when resolving inputs'.
+          _type = "flake";
+          inputs = flakeInputs;
+          inherit outputs sourceInfo;
+          rev = input.rev or null;
+          shortRev = input.shortRev or "patched";
+        };
     in
     if patches == [ ] && !force then input else patchedFlake;
 
@@ -152,85 +161,43 @@ let
     let
       enabled = inputName: builtins.elem inputName patchableInputs && builtins.hasAttr inputName inputs;
       bootstrapPkgs = inputs.${bootstrapInputName}.legacyPackages.${system};
+      inputHasPatches =
+        inputName:
+        enabled inputName
+        &&
+          mkInputPatchList {
+            pkgs = bootstrapPkgs;
+            inherit inputName extraInputPatches;
+          } != [ ];
       mkPatchedFlakeInput =
-        inputName: flakeInputs:
+        inputName: follows:
+        let
+          patchedFollows = filterAttrs (_: inputHasPatches) follows;
+        in
         mkPatchedFlake {
           pkgs = bootstrapPkgs;
-          inherit inputName flakeInputs;
-          input = inputs.${inputName};
-          inherit extraInputPatches;
+          inherit inputName extraInputPatches;
+          flakeInputs =
+            (inputs.${inputName}.inputs or { })
+            // builtins.mapAttrs (_: target: result.${target}) patchedFollows;
+          force = patchedFollows != { };
         };
-      unstableIsPatched =
-        mkInputPatchList {
-          pkgs = bootstrapPkgs;
-          inputName = "nixpkgs-unstable";
-          inherit extraInputPatches;
-        } != [ ];
-      patched = rec {
-        nixpkgs = mkPatchedFlakeInput "nixpkgs" { };
-        nixpkgs-unstable = mkPatchedFlakeInput "nixpkgs-unstable" { };
-        nixpkgs-master = mkPatchedFlakeInput "nixpkgs-master" { };
-        sops-nix = mkPatchedFlakeInput "sops-nix" {
-          nixpkgs = nixpkgs-unstable;
-        };
-        stylix = mkPatchedFlakeInput "stylix" (inputs.stylix.inputs // { inherit nixpkgs; });
-        home-manager = mkPatchedFlake {
-          pkgs = bootstrapPkgs;
-          inputName = "home-manager";
-          flakeInputs = {
-            nixpkgs = nixpkgs-unstable;
-          };
-          inherit extraInputPatches;
-          force = unstableIsPatched;
-        };
-        nix-darwin = mkPatchedFlake {
-          pkgs = bootstrapPkgs;
-          inputName = "nix-darwin";
-          flakeInputs = {
-            nixpkgs = nixpkgs-unstable;
-          };
-          inherit extraInputPatches;
-          force = unstableIsPatched;
-        };
-        nix-rosetta-builder = mkPatchedFlake {
-          pkgs = bootstrapPkgs;
-          inputName = "nix-rosetta-builder";
-          flakeInputs = {
-            nixpkgs = nixpkgs-unstable;
-          };
-          inherit extraInputPatches;
-          # The builder VM image is baked from this flake's own `nixpkgs`
-          # input at lock time, so nixpkgs-unstable patches only reach the
-          # image through a re-import.
-          force = unstableIsPatched;
-        };
+      # Keep these direct follows in sync with flake.nix. Preserve the other
+      # locked inputs when re-evaluating a flake.
+      follows = {
+        nixpkgs = { };
+        nixpkgs-unstable = { };
+        nixpkgs-master = { };
+        home-manager.nixpkgs = "nixpkgs-unstable";
+        sops-nix.nixpkgs = "nixpkgs-unstable";
+        stylix.nixpkgs = "nixpkgs";
+        nix-darwin.nixpkgs = "nixpkgs-unstable";
+        nix-rosetta-builder.nixpkgs = "nixpkgs-unstable";
       };
+      result =
+        inputs // builtins.mapAttrs mkPatchedFlakeInput (filterAttrs (name: _: enabled name) follows);
     in
-    inputs
-    // optionalAttrs (enabled "nixpkgs") {
-      inherit (patched) nixpkgs;
-    }
-    // optionalAttrs (enabled "nixpkgs-unstable") {
-      inherit (patched) nixpkgs-unstable;
-    }
-    // optionalAttrs (enabled "nixpkgs-master") {
-      inherit (patched) nixpkgs-master;
-    }
-    // optionalAttrs (enabled "home-manager") {
-      inherit (patched) home-manager;
-    }
-    // optionalAttrs (enabled "sops-nix") {
-      inherit (patched) sops-nix;
-    }
-    // optionalAttrs (enabled "stylix") {
-      inherit (patched) stylix;
-    }
-    // optionalAttrs (enabled "nix-darwin") {
-      inherit (patched) nix-darwin;
-    }
-    // optionalAttrs (enabled "nix-rosetta-builder") {
-      inherit (patched) nix-rosetta-builder;
-    };
+    result;
 
   mkNixpkgsConfig = flake: {
     overlays = builtins.attrValues flake.overlays;

@@ -1,7 +1,7 @@
 { inputs, self, ... }:
 let
   inherit (inputs.nixpkgs) lib;
-  common = self.lib.system.common;
+  common = import ../lib/system/common.nix { inherit inputs; };
 
   bind =
     nixpkgs:

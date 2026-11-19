@@ -19,13 +19,16 @@ in
 
   perSystem =
     { system, ... }:
+    let
+      inherit (inputs.self.lib.system) common;
+      patchedInputs = common.mkPatchedInputs { inherit system; };
+    in
     {
+      _module.args.patchedInputs = patchedInputs;
       # Flake outputs share the host nixpkgs policy so unfree local packages
       # evaluate under `nix flake check`.
       _module.args.pkgs = lib.mkDefault (
-        import inputs.nixpkgs (
-          inputs.self.lib.system.common.mkNixpkgsConfig inputs.self // { inherit system; }
-        )
+        import patchedInputs.nixpkgs (common.mkNixpkgsConfig inputs.self // { inherit system; })
       );
     };
 

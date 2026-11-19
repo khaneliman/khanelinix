@@ -2,17 +2,27 @@
 {
 
   perSystem =
-    { config, pkgs, ... }:
+    {
+      config,
+      pkgs,
+      patchedInputs,
+      ...
+    }:
     let
       inherit (inputs.self.lib.system) common;
       nixpkgsConfig = common.mkNixpkgsConfig inputs.self;
+      moduleExports =
+        (import ./module-exports.nix {
+          inherit (inputs) self;
+          inputs = patchedInputs;
+        }).flake;
       mkOptionsDoc =
         eval:
         pkgs.nixosOptionsDoc {
           options = lib.filterAttrs (name: _: name == "khanelinix") eval.options;
           warningsAreErrors = false;
         };
-      pkgsForDocs = import inputs.nixpkgs (
+      pkgsForDocs = import patchedInputs.nixpkgs (
         nixpkgsConfig
         // {
           inherit (pkgs.stdenv.hostPlatform) system;
@@ -23,13 +33,13 @@
       # NixOS Options Evaluation
       nixosOptions =
         let
-          eval = inputs.nixpkgs.lib.nixosSystem {
+          eval = patchedInputs.nixpkgs.lib.nixosSystem {
             inherit (pkgs.stdenv.hostPlatform) system;
             modules = [
               (_: {
                 documentation.nixos.options.warningsAreErrors = false;
               })
-              inputs.self.nixosModules.default
+              moduleExports.nixosModules.default
             ];
             specialArgs = inputs.self.lib.system.moduleArgs {
               system = pkgs.stdenv.hostPlatform.system;
@@ -43,14 +53,14 @@
       # Darwin Options Evaluation
       darwinOptions =
         let
-          eval = inputs.nix-darwin.lib.darwinSystem {
+          eval = patchedInputs.nix-darwin.lib.darwinSystem {
             inherit (pkgs.stdenv.hostPlatform) system;
             modules = [
               (_: {
                 documentation.doc.enable = false;
                 khanelinix.user.name = "docs";
               })
-              inputs.self.darwinModules.default
+              moduleExports.darwinModules.default
             ];
             specialArgs = inputs.self.lib.system.moduleArgs {
               system = pkgs.stdenv.hostPlatform.system;
@@ -64,7 +74,7 @@
       # Home Manager Options Evaluation
       hmOptions =
         let
-          eval = inputs.home-manager.lib.homeManagerConfiguration {
+          eval = patchedInputs.home-manager.lib.homeManagerConfiguration {
             pkgs = pkgsForDocs;
             check = false;
             modules = [
@@ -80,7 +90,7 @@
                 stylix.overlays.enable = false;
                 targets.darwin.linkApps.enable = false;
               })
-              inputs.self.homeManagerModules.default
+              moduleExports.homeManagerModules.default
             ];
             extraSpecialArgs =
               (inputs.self.lib.system.moduleArgs {

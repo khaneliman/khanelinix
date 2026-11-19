@@ -1,14 +1,16 @@
 { inputs }:
-let
-  inherit (inputs) self;
-  common = import ./common.nix { inherit inputs; };
-in
 {
   system,
   hostname ? null,
   username ? null,
   osConfig ? { },
 }:
+let
+  inherit (inputs) self;
+  bootstrapCommon = import ./common.nix { inherit inputs; };
+  patchedInputs = bootstrapCommon.mkPatchedInputs { inherit system; };
+  common = import ./common.nix { inputs = patchedInputs; };
+in
 {
   inherit
     system
@@ -18,9 +20,12 @@ in
     ;
 }
 // common.mkBoundArgs {
-  inherit inputs;
+  inputs = patchedInputs;
   extendedLib = common.mkExtendedLib self (
-    if inputs.nixpkgs.lib.hasSuffix "-darwin" system then inputs.nixpkgs-unstable else inputs.nixpkgs
+    if inputs.nixpkgs.lib.hasSuffix "-darwin" system then
+      patchedInputs.nixpkgs-unstable
+    else
+      patchedInputs.nixpkgs
   );
 }
 // common.mkInputPackageSets {

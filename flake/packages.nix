@@ -1,11 +1,7 @@
-{
-  inputs,
-  lib,
-  ...
-}:
+{ lib, ... }:
 {
   perSystem =
-    { pkgs, ... }:
+    { pkgs, patchedInputs, ... }:
     let
 
       packageFunctions = lib.filesystem.packagesFromDirectoryRecursive {
@@ -23,7 +19,7 @@
           pkgs.callPackage packageFn (
             self
             // {
-              inherit inputs;
+              inputs = patchedInputs;
             }
           )
         ) packageFunctions

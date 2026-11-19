@@ -4,9 +4,10 @@ This directory is only for flake input patches. For existing nixpkgs package
 patches, pins, overrides, or build flag changes, use `overlays/` as described in
 `CONTRIBUTING.md`.
 
-`lib/system/common.nix` patches selected flake inputs before system builders
-evaluate them. Patching is intended for short-lived upstream backports, such as
-testing a merged pull request before the pinned input updates.
+`lib/system/common.nix` patches selected flake inputs for the system and home
+builders and for platform-specific package, image, and documentation outputs.
+Patching is intended for short-lived upstream backports, such as testing a
+merged pull request before the pinned input updates.
 
 Supported inputs:
 
@@ -33,9 +34,15 @@ Patch sources:
 `stylix`; they skip `nix-darwin` and `nix-rosetta-builder` because those
 builders do not evaluate them.
 
-`nix-rosetta-builder` bakes its VM image from its own `nixpkgs` input at lock
-time, so whenever `nixpkgs-unstable` has patches it is re-imported against the
-patched tree even if it has no patches of its own.
+When `nixpkgs` has patches, Stylix is re-evaluated against the patched tree even
+if Stylix has no patches of its own. Home Manager, sops-nix, nix-darwin, and
+nix-rosetta-builder do the same for `nixpkgs-unstable`. In particular, this
+ensures the Rosetta builder bakes its VM image from patched nixpkgs.
+
+Public module exports use the locked, unpatched inputs. The consumer's platform
+is not available when imports resolve, so the exports do not pick a builder or
+apply input patches. Use `mkSystem`, `mkDarwin`, or `mkHome` with an explicit
+`system` when the configuration needs these patches.
 
 Entries with `url` are converted to `pkgs.fetchpatch2` by default:
 
