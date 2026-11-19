@@ -197,13 +197,14 @@
           pkgs.runCommand "updater-tests"
             {
               nativeBuildInputs = [
+                pkgs.curl
                 pkgs.git
                 (pkgs.python3.withPackages (ps: [ ps.rich ]))
               ];
             }
             ''
               export HOME="$TMPDIR"
-              python3 -B -m unittest discover -s ${../apps/scripts} -p 'test_update_*.py'
+              python3 -B -m unittest discover -s ${../..}/flake/apps/scripts -p 'test_*.py'
               touch "$out"
             '';
         neutral-consumers =
