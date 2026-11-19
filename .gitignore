@@ -39,6 +39,11 @@ node_modules
 # ░▀░▀░▀▀▀░▀░▀░▀▀▀░▀▀▀
 .direnv/*
 result
+result-*
+build/
+.pytest_cache/
+.ruff_cache/
+.crush/
 .ccls-cache
 .pre-commit-config.yaml
 .venv
