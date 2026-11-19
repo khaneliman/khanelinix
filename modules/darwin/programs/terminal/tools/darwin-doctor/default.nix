@@ -8,12 +8,15 @@
 let
   cfg = config.khanelinix.programs.terminal.tools.darwin-doctor;
   userName = config.khanelinix.user.name;
-  homeConfig = config.home-manager.users.${userName};
+  homeConfig = lib.khanelinix.hmUserConfig config;
+  primaryUser = config.system.primaryUser;
   development = config.khanelinix.suites.development;
+  hardening = config.khanelinix.security.hardening;
   timeMachine = config.khanelinix.services.time-machine;
-  userDefaults = homeConfig.khanelinix.system.darwin-defaults;
+  userDefaults = homeConfig.khanelinix.system.darwin-defaults or { };
+  stableBinaries = homeConfig.khanelinix.system.tcc.stableBinaries or { };
   brewfile = pkgs.writeText "Brewfile" config.homebrew.brewfile;
-  persistentAgents = lib.pipe homeConfig.launchd.agents [
+  persistentAgents = lib.pipe (homeConfig.launchd.agents or { }) [
     (lib.filterAttrs (
       _name: agent:
       let
@@ -24,11 +27,63 @@ let
     ))
     (lib.mapAttrsToList (
       _name: agent: {
+        inherit userName;
         inherit (agent) domain;
         inherit (agent.config) Label;
       }
     ))
   ];
+  nativeJobs =
+    domain: services: files:
+    lib.pipe services [
+      (lib.filterAttrs (
+        _: job:
+        let
+          label = job.serviceConfig.Label;
+        in
+        files."${label}.plist".enable && job.serviceConfig.Disabled != true
+      ))
+      (lib.mapAttrsToList (
+        _: job:
+        {
+          inherit domain;
+          inherit (job.serviceConfig) Label;
+        }
+        // lib.optionalAttrs (domain != "system") { userName = primaryUser; }
+      ))
+    ];
+  systemDefaults = config.system.defaults;
+  softwareUpdateDomain = "/Library/Preferences/com.apple.SoftwareUpdate";
+  managedPreferences =
+    domain: values:
+    lib.mapAttrsToList (key: value: { inherit domain key value; }) (
+      lib.filterAttrs (_: value: value != null) values
+    );
+  hardeningPreferences =
+    lib.optionals (hardening.enable && hardening.updates.enable) (
+      managedPreferences softwareUpdateDomain (
+        lib.getAttrs [
+          "AutomaticCheckEnabled"
+          "AutomaticDownload"
+          "ConfigDataInstall"
+          "CriticalUpdateInstall"
+          "ScheduleFrequency"
+        ] systemDefaults.CustomSystemPreferences.${softwareUpdateDomain}
+        // {
+          inherit (systemDefaults.SoftwareUpdate) AutomaticallyInstallMacOSUpdates;
+        }
+      )
+    )
+    ++ lib.optionals (hardening.enable && hardening.loginWindow.enable) (
+      managedPreferences "/Library/Preferences/com.apple.loginwindow" {
+        inherit (systemDefaults.loginwindow) DisableConsoleAccess SHOWFULLNAME;
+      }
+    )
+    ++ lib.optionals (hardening.enable && hardening.screenLock.enable) (
+      managedPreferences "com.apple.screensaver" {
+        inherit (systemDefaults.screensaver) askForPassword askForPasswordDelay;
+      }
+    );
   preferences = [
     {
       domain = "NSGlobalDomain";
@@ -67,8 +122,28 @@ let
         inherit brewfile;
         enabled = config.homebrew.enable;
       };
-      launchAgents = persistentAgents;
-      preferences = lib.optionals userDefaults.enable preferences;
+      launchAgents = lib.unique (
+        persistentAgents
+        ++ nativeJobs "gui" config.launchd.agents config.environment.launchAgents
+        ++ nativeJobs "gui" config.launchd.user.agents config.environment.userLaunchAgents
+      );
+      launchDaemons = nativeJobs "system" config.launchd.daemons config.environment.launchDaemons;
+      preferences = lib.optionals (userDefaults.enable or false) preferences ++ hardeningPreferences;
+      securityAudit = lib.optionalAttrs (
+        hardening.enable && hardening.audit.enable
+      ) hardening.audit.expected;
+      tccSigning = lib.optionalAttrs (stableBinaries != { }) {
+        certificate = "/var/db/khanelinix/tcc-signing/cert.pem";
+        openssl = lib.getExe pkgs.openssl;
+        binaries = lib.mapAttrs (_: binary: binary.path) stableBinaries;
+      };
+      rosettaBuilder = lib.optionalAttrs (config.nix-rosetta-builder.enable or false) {
+        machinesFile = "/etc/nix/machines";
+        # Use nix-darwin's rendered row, including the effective job limit.
+        machine = lib.findFirst (
+          line: builtins.match "([^[:space:]]*://)?([^[:space:]]*@)?rosetta-builder[[:space:]].*" line != null
+        ) null (lib.splitString "\n" (config.environment.etc."nix/machines".text or ""));
+      };
       timeMachine = {
         inherit (timeMachine) exclusions expectedDestination;
         enabled = timeMachine.enable;

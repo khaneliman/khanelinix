@@ -6,14 +6,20 @@ lock updates, desktop calls, systemd service, Zellij session or SSH agent.
 """
 
 import argparse
+import contextlib
+import io
 import json
 import os
+import plistlib
+import pwd
+import runpy
 import shlex
 import subprocess
 import sys
 import tempfile
 import time
 from pathlib import Path
+from unittest.mock import patch
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("nixpkgs", type=Path)
@@ -117,6 +123,144 @@ checks = []
 def passed(name):
     checks.append(name)
     print("PASS:", name, flush=True)
+
+
+doctor = root / "modules/darwin/programs/terminal/tools/darwin-doctor/doctor.py"
+doctor_spec = work / "darwin-doctor.json"
+certificate = work / "cert.pem"
+certificate.touch()
+machines = work / "machines"
+builder_row = "ssh-ng://rosetta-builder aarch64-linux,x86_64-linux - 2 4 - - -"
+machines.write_text(builder_row + "\n")
+fingerprint = ":".join(["AA"] * 20)
+signing_hash = fingerprint.replace(":", "")
+doctor_probes = {
+    ("/bin/launchctl", "print", f"gui/{os.getuid()}/org.example.agent"): (0, ""),
+    ("/bin/launchctl", "print", "system/org.example.builder"): (0, "state = waiting"),
+    ("/usr/bin/fdesetup", "isactive"): (1, "false"),
+    ("/usr/bin/csrutil", "status"): (
+        0,
+        "System Integrity Protection status: disabled.",
+    ),
+    ("/usr/bin/defaults", "export", "com.apple.screensaver", "-"): (
+        0,
+        plistlib.dumps({"askForPassword": True}).decode(),
+    ),
+    ("/usr/sbin/nvram", "-p"): (0, "boot-args\t-v -arm64e_preview_abi\n"),
+    (
+        "fixture-openssl",
+        "x509",
+        "-in",
+        str(certificate),
+        "-noout",
+        "-fingerprint",
+        "-sha1",
+        "-checkend",
+        "0",
+    ): (0, f"sha1 Fingerprint={fingerprint}\nCertificate will not expire"),
+    (
+        "/usr/bin/codesign",
+        "--verify",
+        "-R",
+        f'identifier "tool" and certificate root = H"{signing_hash}"',
+        "/fixture/tool",
+    ): (0, ""),
+}
+legacy_doctor_spec = {
+    "development": {
+        "enabled": False,
+        "developerDirectory": None,
+        "devToolsSecurity": "ignore",
+        "containerBackend": "none",
+    },
+    "homebrew": {"enabled": False},
+    "launchAgents": [],
+    "preferences": [],
+    "timeMachine": {"enabled": False},
+}
+expanded_doctor_spec = legacy_doctor_spec | {
+    "launchAgents": [
+        {
+            "domain": "gui",
+            "Label": "org.example.agent",
+            "userName": pwd.getpwuid(os.getuid()).pw_name,
+        },
+    ],
+    "launchDaemons": [{"domain": "system", "Label": "org.example.builder"}],
+    "preferences": [
+        {"domain": "com.apple.screensaver", "key": "askForPassword", "value": True}
+    ],
+    "securityAudit": {
+        "fileVault": "disabled",
+        "systemIntegrityProtection": "disabled",
+        "gatekeeper": "ignore",
+        "arm64ePreviewAbi": "present",
+    },
+    "tccSigning": {
+        "certificate": str(certificate),
+        "openssl": "fixture-openssl",
+        "binaries": {"tool": "/fixture/tool"},
+    },
+    "rosettaBuilder": {"machinesFile": str(machines), "machine": builder_row},
+}
+
+
+def run_doctor(specification, expected_exit):
+    doctor_spec.write_text(json.dumps(specification))
+    stdout = io.StringIO()
+
+    def probe(argv, **_kwargs):
+        status, output = doctor_probes[tuple(argv)]
+        return subprocess.CompletedProcess(argv, status, output.encode(), b"")
+
+    with (
+        contextlib.redirect_stdout(stdout),
+        patch.object(
+            sys, "argv", [str(doctor), "--specification", str(doctor_spec), "--json"]
+        ),
+        patch.object(subprocess, "run", side_effect=probe),
+    ):
+        exit_code = 0
+        try:
+            runpy.run_path(str(doctor), run_name="__main__")
+        except SystemExit as exit_status:
+            exit_code = exit_status.code
+    assert exit_code == expected_exit, stdout.getvalue()
+    return {entry["name"]: entry["status"] for entry in json.loads(stdout.getvalue())}
+
+
+assert set(run_doctor(legacy_doctor_spec, 0).values()) == {"skipped"}
+doctor_status = run_doctor(expanded_doctor_spec, 0)
+assert {name for name, state in doctor_status.items() if state == "pass"} == {
+    "launch-agent:org.example.agent",
+    "launch-daemon:org.example.builder",
+    "filevault",
+    "sip",
+    "arm64e-preview-abi",
+    "tcc-signing-certificate",
+    "tcc-signing-binary:tool",
+    "rosetta-builder",
+    "preference:com.apple.screensaver:askForPassword",
+}
+assert doctor_status["gatekeeper"] == "skipped"
+machines.write_text(builder_row.replace(" - 2 4 ", " - 4 4 ") + "\n")
+doctor_probes[("/usr/bin/fdesetup", "isactive")] = (1, "permission denied")
+doctor_probes[
+    (
+        "/usr/bin/codesign",
+        "--verify",
+        "-R",
+        f'identifier "tool" and certificate root = H"{signing_hash}"',
+        "/fixture/tool",
+    )
+] = (3, "code failed to satisfy specified code requirement(s)")
+doctor_status = run_doctor(expanded_doctor_spec, 1)
+assert doctor_status["filevault"] == "unavailable"
+assert doctor_status["rosetta-builder"] == "mismatch"
+assert doctor_status["tcc-signing-binary:tool"] == "mismatch"
+passed(
+    "Darwin doctor inspects launchd, hardening, TCC and builder fixtures without changing state"
+)
 
 
 darwin_system = work / "darwin-system"

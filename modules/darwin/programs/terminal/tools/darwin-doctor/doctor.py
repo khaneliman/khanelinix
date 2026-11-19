@@ -4,6 +4,8 @@ import argparse
 import json
 import os
 import plistlib
+import pwd
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -20,6 +22,7 @@ def command(
             arguments,
             check=False,
             capture_output=True,
+            env=os.environ | {"LC_ALL": "C"},
             timeout=timeout,
         )
     except subprocess.TimeoutExpired:
@@ -29,12 +32,12 @@ def command(
             stdout=b"",
             stderr=f"timed out after {timeout} seconds".encode(),
         )
-    except FileNotFoundError:
+    except OSError as error:
         return subprocess.CompletedProcess(
             arguments,
             127,
             stdout=b"",
-            stderr=f"command is missing: {arguments[0]}".encode(),
+            stderr=str(error).encode(),
         )
 
 
@@ -75,12 +78,160 @@ def check_devtools_security(specification: dict[str, Any]) -> dict[str, str]:
     return result("devtools-security", status, f"expected {expected}; found {actual}")
 
 
-def check_launch_agent(domain: str, label: str) -> dict[str, str]:
-    target = f"{domain}/{os.getuid()}/{label}"
+def check_launch_job(job: dict[str, Any]) -> dict[str, str]:
+    domain, label = job["domain"], job["Label"]
+    if domain == "system":
+        name = f"launch-daemon:{label}"
+        target = f"system/{label}"
+    else:
+        name = f"launch-agent:{label}"
+        user = job.get("userName")
+        try:
+            uid = pwd.getpwnam(user).pw_uid if user else os.getuid()
+        except KeyError:
+            return result(name, "unavailable", f"user {user} does not exist")
+        target = f"{domain}/{uid}/{label}"
     current = command(["/bin/launchctl", "print", target])
     status = "pass" if current.returncode == 0 else "unavailable"
-    message = "loaded" if current.returncode == 0 else detail(current)
-    return result(f"launch-agent:{label}", status, message)
+    message = f"loaded in {target}" if current.returncode == 0 else detail(current)
+    return result(name, status, message or f"cannot inspect {target}")
+
+
+def check_security_audit(expectations: dict[str, str]) -> list[dict[str, str]]:
+    probes = [
+        ("fileVault", "filevault", ["/usr/bin/fdesetup", "isactive"]),
+        ("systemIntegrityProtection", "sip", ["/usr/bin/csrutil", "status"]),
+        (
+            "authenticatedRoot",
+            "authenticated-root",
+            ["/usr/bin/csrutil", "authenticated-root", "status"],
+        ),
+        ("gatekeeper", "gatekeeper", ["/usr/sbin/spctl", "--status"]),
+        ("arm64ePreviewAbi", "arm64e-preview-abi", ["/usr/sbin/nvram", "-p"]),
+    ]
+    checks = []
+    for key, name, arguments in probes:
+        if key not in expectations:
+            continue
+        expected = expectations[key]
+        if expected == "ignore":
+            checks.append(result(name, "skipped", "not managed"))
+            continue
+
+        current = command(arguments)
+        output = detail(current)
+        actual = None
+        # fdesetup returns false with a failing exit status when FileVault is off.
+        if key == "fileVault" and current.returncode in (0, 1):
+            actual = {"true": "enabled", "false": "disabled"}.get(output)
+        elif current.returncode == 0 and key == "arm64ePreviewAbi":
+            boot_args = (
+                line.split()[1:]
+                for line in output.splitlines()
+                if line.split(maxsplit=1)[:1] == ["boot-args"]
+            )
+            present = any("-arm64e_preview_abi" in args for args in boot_args)
+            actual = "present" if present else "absent"
+        elif current.returncode == 0:
+            state = re.search(r"(?:status:|assessments) (enabled|disabled)\b", output)
+            if state:
+                actual = state[1]
+
+        if actual is None:
+            if key == "arm64ePreviewAbi":
+                output = current.stderr.decode(errors="replace").strip()
+            checks.append(result(name, "unavailable", output or "unknown state"))
+        else:
+            status = "pass" if actual == expected else "mismatch"
+            checks.append(result(name, status, f"expected {expected}; found {actual}"))
+    return checks
+
+
+def check_tcc_signing(specification: dict[str, Any]) -> list[dict[str, str]]:
+    name = "tcc-signing-certificate"
+    certificate = Path(specification["certificate"])
+    try:
+        with certificate.open("rb"):
+            pass
+    except PermissionError:
+        return [
+            result(name, "skipped", f"cannot read {certificate} as the current user")
+        ]
+    except FileNotFoundError:
+        return [result(name, "mismatch", f"{certificate} is missing")]
+    except OSError as error:
+        return [result(name, "unavailable", str(error))]
+
+    current = command(
+        [
+            specification["openssl"],
+            "x509",
+            "-in",
+            str(certificate),
+            "-noout",
+            "-fingerprint",
+            "-sha1",
+            "-checkend",
+            "0",
+        ]
+    )
+    output = detail(current)
+    if "Certificate will expire" in output.splitlines():
+        return [result(name, "mismatch", f"{certificate} has expired")]
+    fingerprint = re.search(
+        r"^sha1 Fingerprint=((?:[0-9a-f]{2}:){19}[0-9a-f]{2})$",
+        output,
+        re.IGNORECASE | re.MULTILINE,
+    )
+    if current.returncode != 0 or not fingerprint:
+        return [
+            result(name, "unavailable", output or "certificate fingerprint unavailable")
+        ]
+
+    checks = [result(name, "pass", "readable and not expired")]
+    certificate_hash = fingerprint[1].replace(":", "")
+    for identifier, binary in specification["binaries"].items():
+        requirement = f'identifier {json.dumps(identifier)} and certificate root = H"{certificate_hash}"'
+        verification = command(
+            ["/usr/bin/codesign", "--verify", "-R", requirement, binary]
+        )
+        status = {0: "pass", 1: "mismatch", 3: "mismatch"}.get(
+            verification.returncode, "unavailable"
+        )
+        message = (
+            f"signature matches the configured certificate: {binary}"
+            if status == "pass"
+            else detail(verification) or f"signature verification failed: {binary}"
+        )
+        checks.append(
+            result(
+                f"tcc-signing-binary:{identifier}",
+                status,
+                message,
+            )
+        )
+    return checks
+
+
+def check_rosetta_builder(specification: dict[str, Any]) -> dict[str, str]:
+    name = "rosetta-builder"
+    expected = specification["machine"]
+    if expected is None:
+        return result(
+            name, "mismatch", "no Rosetta builder declared in the Nix machine list"
+        )
+    path = Path(specification["machinesFile"])
+    try:
+        machines = path.read_text(encoding="utf-8").splitlines()
+    except FileNotFoundError:
+        return result(name, "mismatch", f"{path} is missing")
+    except (OSError, UnicodeError) as error:
+        return result(name, "unavailable", str(error))
+    if not any(line.split() == expected.split() for line in machines):
+        return result(
+            name, "mismatch", f"{path} does not contain the configured builder row"
+        )
+    return result(name, "pass", f"configured in {path}; no connection attempted")
 
 
 def check_container(specification: dict[str, Any]) -> list[dict[str, str]]:
@@ -252,8 +403,15 @@ def run_checks(specification: dict[str, Any]) -> list[dict[str, str]]:
     checks.append(check_homebrew(specification["homebrew"]))
     checks.extend(check_preferences(specification["preferences"]))
     checks.extend(check_time_machine(specification["timeMachine"]))
-    for agent in specification["launchAgents"]:
-        checks.append(check_launch_agent(agent["domain"], agent["Label"]))
+    checks.extend(check_launch_job(agent) for agent in specification["launchAgents"])
+    checks.extend(
+        check_launch_job(daemon) for daemon in specification.get("launchDaemons", [])
+    )
+    checks.extend(check_security_audit(specification.get("securityAudit", {})))
+    if signing := specification.get("tccSigning"):
+        checks.extend(check_tcc_signing(signing))
+    if builder := specification.get("rosettaBuilder"):
+        checks.append(check_rosetta_builder(builder))
     return checks
 
 
