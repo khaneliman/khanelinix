@@ -9,7 +9,7 @@ stdenv.mkDerivation (_finalAttrs: {
     description = "A helper program for direct communication with SketchyBar";
     homepage = "https://github.com/FelixKratz/SketchyBarHelper";
     license = lib.licenses.gpl3;
-    mainProgram = "sketchyhelper";
+    mainProgram = "sketchy_cpu_load";
     platforms = lib.platforms.darwin;
   };
 
