@@ -8,7 +8,6 @@
 let
   inherit (lib.khanelinix) decode enabled;
   wallpaperCfg = config.khanelinix.theme.wallpaper;
-  wallpaperPath = name: lib.khanelinix.theme.wallpaperPath { inherit config pkgs name; };
   wallpaperPaths = names: lib.khanelinix.theme.wallpaperPaths { inherit config pkgs names; };
   workGitIdentity = pkgs.writeText "git-work-identity" ''
     [user]
@@ -132,15 +131,9 @@ in
         };
 
         bars = {
-          ashell = {
-            fullSizeOutputs = [ "DP-1" ];
-            condensedOutputs = [ "DP-3" ];
-          };
           waybar = {
             enableDebug = false;
             # enableInspect = true;
-            fullSizeOutputs = [ "DP-1" ];
-            condensedOutputs = [ "DP-3" ];
             resetTimeFormat = "local";
           };
         };
@@ -167,81 +160,6 @@ in
             enableDebug = false;
             permissions.enforce = true;
 
-            settings = {
-              monitor = [
-                {
-                  output = "DP-3";
-                  mode = "3840x2160@60";
-                  position = "1280x0";
-                  scale = 1.5;
-                  # Troubleshooting Hyprland/AMDGPU DPMS wake crashes: keep
-                  # 10-bit disabled to avoid HDR/wide-color monitor paths.
-                  # bitdepth = 10;
-                }
-                {
-                  output = "DP-1";
-                  mode = "5120x1440@120";
-                  position = "0x1440";
-                  scale = 1;
-                  vrr = 2;
-                  # Troubleshooting Hyprland/AMDGPU DPMS wake crashes: keep
-                  # always-on VRR and 10-bit disabled while testing stability.
-                  # vrr = 1;
-                  # bitdepth = 10;
-                }
-              ];
-
-              workspace_rule = [
-                {
-                  workspace = "1";
-                  monitor = "DP-3";
-                  persistent = true;
-                  default = true;
-                }
-                {
-                  workspace = "2";
-                  monitor = "DP-1";
-                  persistent = true;
-                  default = true;
-                }
-                {
-                  workspace = "3";
-                  monitor = "DP-1";
-                  persistent = true;
-                }
-                {
-                  workspace = "4";
-                  monitor = "DP-1";
-                  persistent = true;
-                }
-                {
-                  workspace = "5";
-                  monitor = "DP-1";
-                  persistent = true;
-                }
-                {
-                  workspace = "6";
-                  monitor = "DP-1";
-                  persistent = true;
-                }
-                {
-                  workspace = "7";
-                  monitor = "DP-1";
-                  persistent = true;
-                }
-                {
-                  workspace = "8";
-                  monitor = "DP-1";
-                  persistent = true;
-                }
-                {
-                  workspace = "9";
-                  monitor = "DP-1";
-                  persistent = true;
-                }
-              ];
-            };
-
             startupCommands = [
               "hyprctl setcursor ${config.khanelinix.theme.gtk.cursor.name} ${toString config.khanelinix.theme.gtk.cursor.size}"
             ];
@@ -251,46 +169,6 @@ in
             enable = true;
 
             settings = {
-              outputs = {
-                "DP-3" = {
-                  name = "DP-3";
-                  mode = {
-                    width = 3840;
-                    height = 2160;
-                    refresh = 60.0;
-                  };
-                  position = {
-                    x = 1420;
-                    y = 0;
-                  };
-                  scale = 2.0;
-                };
-
-                "DP-1" = {
-                  name = "DP-1";
-                  mode = {
-                    width = 5120;
-                    height = 1440;
-                    refresh = 120.0;
-                  };
-                  position = {
-                    x = 0;
-                    y = 1080;
-                  };
-                  scale = 1.0;
-                  focus-at-startup = true;
-                };
-              };
-
-              workspaces = {
-                "1" = {
-                  open-on-output = "DP-3";
-                };
-              }
-              // lib.genAttrs (map toString (lib.range 2 9)) (_: {
-                open-on-output = "DP-1";
-              });
-
               xwayland-satellite = {
                 enable = true;
                 path = lib.getExe pkgs.xwayland-satellite;
@@ -298,59 +176,7 @@ in
             };
           };
 
-          sway = {
-            enable = true;
-
-            settings = {
-              output = {
-                "DP-3" = {
-                  resolution = "3840x2160";
-                  position = "1420,0";
-                  scale = "2";
-                };
-                "DP-1" = {
-                  resolution = "5120x1440";
-                  position = "0,1080";
-                };
-              };
-
-              workspaceOutputAssign = [
-                {
-                  workspace = "1";
-                  output = "DP-3";
-                }
-                {
-                  workspace = "2";
-                  output = "DP-1";
-                }
-                {
-                  workspace = "3";
-                  output = "DP-1";
-                }
-                {
-                  workspace = "4";
-                  output = "DP-1";
-                }
-                {
-                  workspace = "5";
-                  output = "DP-1";
-                }
-                {
-                  workspace = "6";
-                  output = "DP-1";
-                }
-                {
-                  workspace = "7";
-                  output = "DP-1";
-                }
-                {
-                  workspace = "8";
-                  output = "DP-1";
-                }
-              ];
-            };
-
-          };
+          sway = enabled;
         };
       };
 
@@ -398,20 +224,7 @@ in
     };
 
     services = {
-      hyprpaper = {
-        monitors = [
-          {
-            name = "DP-3";
-            wallpaper = wallpaperPath wallpaperCfg.primary;
-          }
-          {
-            name = "DP-1";
-            wallpaper = wallpaperPath wallpaperCfg.secondary;
-          }
-        ];
-
-        wallpapers = wallpaperPaths wallpaperCfg.list;
-      };
+      hyprpaper.wallpapers = wallpaperPaths wallpaperCfg.list;
 
       rnnoise = {
         enable = true;
@@ -437,6 +250,59 @@ in
     };
 
     system = {
+      display.layout = {
+        # Keep Hyprland's 10-bit color disabled while troubleshooting DPMS wake crashes.
+        outputs = [
+          {
+            name = "DP-3";
+            mode = {
+              width = 3840;
+              height = 2160;
+              refresh = 60;
+            };
+            position = {
+              x = 1420;
+              y = 0;
+            };
+            scale = 2;
+            hyprland = {
+              position = {
+                x = 1280;
+                y = 0;
+              };
+              scale = 1.5;
+            };
+            workspaces = [ 1 ];
+            bar = "condensed";
+            wallpaper = "primary";
+          }
+          {
+            name = "DP-1";
+            mode = {
+              width = 5120;
+              height = 1440;
+              refresh = 120;
+            };
+            position = {
+              x = 0;
+              y = 1080;
+            };
+            hyprland = {
+              position = {
+                x = 0;
+                y = 1440;
+              };
+              # Avoid always-on VRR while troubleshooting DPMS wake crashes.
+              vrr = 2;
+            };
+            niri.focusAtStartup = true;
+            workspaces = lib.range 2 9;
+            bar = "fullSize";
+            wallpaper = "secondary";
+          }
+        ];
+        swayUnassignedWorkspaces = [ 9 ];
+      };
       xdg = enabled;
     };
 
@@ -476,28 +342,6 @@ in
       path = "${config.home.homeDirectory}/.config/nix/nix.conf";
     };
   };
-
-  # Configure monitors independently and override module default
-  programs.hyprlock.settings.background = lib.mkForce (
-    let
-      mkBackground = monitor: wallpaper: {
-        inherit monitor;
-        brightness = "0.817200";
-        color = lib.mkDefault "rgba(25, 20, 20, 1.0)";
-        path = wallpaperPath wallpaper;
-        blur_passes = 3;
-        blur_size = 8;
-        contrast = "0.891700";
-        noise = "0.011700";
-        vibrancy = "0.168600";
-        vibrancy_darkness = "0.050000";
-      };
-    in
-    [
-      (mkBackground "DP-1" wallpaperCfg.secondary)
-      (mkBackground "DP-3" wallpaperCfg.primary)
-    ]
-  );
 
   programs = {
     t3code.clientSettings = lib.mkIf config.programs.t3code.enable {
