@@ -199,8 +199,12 @@ it.
    ```sh
    nix fmt
    nix develop --command pre-commit run --all-files
+   nix build --no-link .#checks.x86_64-linux.khanelilab-cutover
    nix build .#nixosConfigurations.khanelilab.config.system.build.toplevel --no-link
    ```
+
+   The VM check uses disposable storage. It does not verify a restore from your
+   backups or boot the migrated guest.
 
 2. Rehearse native services against isolated copies of their application state.
    Check database migrations, saved paths, download-client connections, library

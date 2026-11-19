@@ -148,6 +148,7 @@
                   wrapp = "wrapp";
                 };
                 extend-identifiers = {
+                  exportfs = "exportfs";
                   snd_hda_intel = "snd_hda_intel";
                   HSA_OVERRIDE_GFX_VERSION = "HSA_OVERRIDE_GFX_VERSION";
                   # ISO 639-2 code, file format, and copyright holder surname.
@@ -228,6 +229,12 @@
             ) nativeHomes
           )
         );
+      }
+      // lib.optionalAttrs (system == "x86_64-linux") {
+        khanelilab-cutover = import ./khanelilab-cutover.nix {
+          inherit pkgs;
+          host = rootFlake.nixosConfigurations.khanelilab.config;
+        };
       }
       // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin (
         lib.mapAttrs'
