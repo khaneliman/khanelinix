@@ -123,10 +123,32 @@ passed.
 
 ## Focused regression checks
 
-The following checks are manual. They are not automatically discovered by
-`nix flake check`, pre-commit, or CI. Package `checkPhase` tests and the
-`skill-tests` hook are separate automated lanes. Run the relevant manual check
-when changing its owners; a green flake check does not replace it.
+Run the focused suite from a Linux checkout:
+
+```bash
+nix run .#run-tests
+nix run .#run-tests -- --list
+nix run .#run-tests -- terminal-recovery weather-regressions
+```
+
+The default runs all focused checks below, including package runtime. It uses
+the checkout's locked inputs and tools, reports each result, and exits nonzero
+if any selected check fails. It may build or download Nix store paths, but does
+not activate configurations, boot images, or exercise live services or hardware.
+The [bounded evaluation matrix](#reproducing-the-bounded-matrix),
+[UEFI boot verification](#portable-images), and native Darwin and hardware
+checks remain separate.
+
+With Nix and Python 3 on `PATH`, the same runner is available as
+`python3 flake/apps/scripts/run_tests.py`. Both entry points accept
+`--root PATH` to select a checkout and `--scratch DIR` to change where the
+runner leaves its per-run scratch directory (default:
+`${XDG_CACHE_HOME:-$HOME/.cache}/khanelinix-regressions`).
+
+Use the commands below when you need to run or debug an individual script
+directly. These checks are not automatically discovered by `nix flake check`,
+pre-commit, or CI. Package `checkPhase` tests and the `skill-tests` hook are
+separate automated checks.
 
 Run from the repository root on Linux with Nix, Python 3, POSIX `sh`, Bash, Git
 and ordinary GNU file utilities on `PATH`. Resolve source paths from the current
@@ -170,10 +192,9 @@ their directories containing `gschemas.compiled`, not the package roots. The
 native-tool checks build their own pinned runtime dependencies. The module check
 also needs OpenSSH's `ssh`; graphical command checks need `jq`. Terminal-data
 and graphical workflows invoke Bash. Graphical workflows also need `file`,
-`find`, `tac`, `sed`, `awk`, `getconf` and `xargs`,
-alongside coreutils above. Read each runner's docstring for optional arguments.
-Companion Nix, Lua and recorder files are fixtures used by these runners,
-not additional entry points.
+`find`, `tac`, `sed`, `awk`, `getconf` and `xargs`, alongside coreutils above.
+Read each runner's docstring for optional arguments. Companion Nix, Lua and
+recorder files are fixtures used by these runners, not additional entry points.
 
 Graphical command checks evaluate the locker path but do not build it. Realize
 the locked package before running that row:

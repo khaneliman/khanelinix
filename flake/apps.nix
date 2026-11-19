@@ -139,6 +139,24 @@ _: {
           mkFastBuildApp "packages" ".#packages"
             "Evaluate and build packages with nix-fast-build";
 
+        run-tests = {
+          type = "app";
+          meta.description = "Run focused Linux regression checks";
+          program = lib.getExe (
+            pkgs.writeShellApplication {
+              name = "run-tests";
+              runtimeInputs = [
+                pkgs.git
+                pkgs.nix
+                pkgs.python3
+              ];
+              text = ''
+                exec python3 ${./apps/scripts/run_tests.py} "$@"
+              '';
+            }
+          );
+        };
+
         update-plugins =
           let
             pythonWithRich = pkgs.python3.withPackages (ps: with ps; [ rich ]);
