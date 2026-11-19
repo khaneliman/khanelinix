@@ -1,0 +1,13 @@
+// Kernel task names are limited to 15 bytes.
+tracepoint:signal:signal_generate
+/str(args.comm) == ".Hyprland-wrapp" || str(args.comm) == "Hyprland"/
+{
+  printf("sender=%s[%d] target=%s[%d] signal=%d code=%d result=%d\n",
+         comm, pid, str(args.comm), args.pid, args.sig, args.code, args.result);
+}
+
+tracepoint:sched:sched_process_exit
+/comm == ".Hyprland-wrapp" || comm == "Hyprland"/
+{
+  printf("exit=%s[%d] tid=%d wait_status=%d\n", comm, pid, tid, curtask->exit_code);
+}

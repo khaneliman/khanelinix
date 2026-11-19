@@ -19,6 +19,13 @@ in
     ./specializations.nix
   ];
 
+  systemd.services.hyprland-signal-log = {
+    description = "Record signals sent to Hyprland in the system journal";
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig.ExecStart = "${pkgs.bpftrace}/bin/bpftrace -B line ${./hyprland-signals.bt}";
+    serviceConfig.Restart = "on-failure";
+  };
+
   users = {
     manageLingering = true;
     users.${config.khanelinix.user.name} = {
