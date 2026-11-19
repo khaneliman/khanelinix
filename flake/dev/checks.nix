@@ -191,6 +191,19 @@
       # Home Manager is exercised through the systems that embed it.
       checks = {
         docs-html = self.packages.${system}.docs-html;
+        updater-tests =
+          pkgs.runCommand "updater-tests"
+            {
+              nativeBuildInputs = [
+                pkgs.git
+                (pkgs.python3.withPackages (ps: [ ps.rich ]))
+              ];
+            }
+            ''
+              export HOME="$TMPDIR"
+              python3 -B -m unittest discover -s ${../apps/scripts} -p 'test_update_*.py'
+              touch "$out"
+            '';
         neutral-consumers =
           assert systemConsumer.config.nix.buildMachines == [ ];
           assert builtins.attrNames systemConsumer.config.sops.secrets == [ ];
