@@ -13,8 +13,6 @@ writeShellApplication {
 
   passthru.updateScript = null;
 
-  checkPhase = "";
-
   runtimeInputs = [
     ffmpeg
     libnotify
