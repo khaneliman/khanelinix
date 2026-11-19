@@ -155,6 +155,23 @@ in {{ out = toString p.out; dev = toString p.dev; }}
     assert run(
         str(trace / "trace-symlink"), str(parent / target.name), env=env
     ).splitlines() == [str(parent / target.name), str(target)]
+    directory_chain = work / "directory-chain"
+    directory_chain.symlink_to("parent///")
+    assert run(
+        str(trace / "trace-symlink"), str(directory_chain), env=env
+    ).splitlines() == [str(directory_chain), f"{parent}///", str(work)]
+
+    invalid_directory = work / "invalid-directory"
+    invalid_directory.symlink_to(f"{target.name}/")
+    invalid = subprocess.run(
+        [str(trace / "trace-symlink"), str(invalid_directory)],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert invalid.returncode != 0
+    assert invalid.stderr.splitlines() == [f"trace-symlink: cannot resolve {target}/"]
     env["PATH"] = str(work) + os.pathsep + os.environ["PATH"]
     assert run(str(which / "trace-which"), "chain", env=env).splitlines() == list(
         map(str, [chain, relative, target])

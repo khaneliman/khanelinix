@@ -49,6 +49,11 @@ writeShellApplication {
         *) path="''${directory%/}/$target" ;;
       esac
       printf '%s\n' "$path"
+
+      # A trailing slash hides a directory symlink from -L.
+      while [[ "$path" == ?*/ && -d "$path" ]]; do
+        path="''${path%/}"
+      done
     done
 
     if [[ ! -e "$path" ]]; then
