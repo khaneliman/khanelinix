@@ -228,3 +228,170 @@ box {
   min-width: 10px;
   border-radius: 5px;
 }
+
+window#waybar {
+  border: 2px solid @theme_border;
+  background: @theme_background;
+  box-shadow: 1px 1px 10px 10px @theme_shadow;
+  color: @theme_foreground;
+}
+
+window#waybar.hidden {
+  opacity: 0.2;
+}
+
+tooltip {
+  background: @theme_background;
+  border: 1px solid @theme_accent;
+}
+
+tooltip label {
+  color: @theme_foreground;
+}
+
+label:focus {
+  background-color: @theme_surface;
+}
+
+#custom-separator-left {
+  color: @theme_foreground;
+}
+
+#custom-separator-right {
+  color: @theme_foreground;
+}
+
+@keyframes blink {
+  to {
+    background-color: @theme_accent;
+    color: @theme_accentForeground;
+  }
+}
+
+#control-center {
+  color: @theme_warning;
+  background-color: @theme_surface;
+  border: 2px solid @theme_border;
+}
+
+#idle_inhibitor {
+  color: @theme_warning;
+}
+
+#pulseaudio {
+  color: @theme_success;
+}
+
+#custom-github {
+  color: @theme_accent;
+}
+
+#systemd-failed-units {
+  color: @theme_secondary;
+}
+
+#pulseaudio.muted {
+  color: @theme_muted;
+}
+
+#keyboard-state {
+  color: @theme_secondary;
+}
+
+#keyboard-state > label.locked {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+#pulseaudio-slider slider {
+  background-color: @theme_success;
+}
+
+#pulseaudio-slider trough {
+  background-color: @theme_background;
+}
+
+#pulseaudio-slider highlight {
+  background-color: @theme_success;
+}
+
+#custom-wlogout,
+#custom-power {
+  color: @theme_accent;
+}
+
+#power .not-power {
+  color: @theme_danger;
+}
+
+#stats,
+#stats-drawer {
+  color: @theme_warning;
+  background-color: @theme_surface;
+  border: 2px solid @theme_border;
+}
+
+#cpu {
+  color: @theme_danger;
+}
+
+#memory {
+  color: @theme_warning;
+}
+#temperature {
+  color: @theme_success;
+}
+
+#network {
+  color: @theme_accent;
+}
+
+#network.disconnected {
+  color: @theme_danger;
+}
+
+#temperature.critical {
+  color: @theme_danger;
+}
+
+#workspaces {
+  color: @theme_warning;
+  background-color: @theme_surface;
+  border: 2px solid @theme_border;
+}
+
+#workspaces button {
+  background: transparent;
+  color: @theme_foreground;
+}
+
+#workspaces button:hover,
+#workspaces button:focus,
+#workspaces button:active,
+#workspaces button:checked,
+#workspaces button.empty,
+#workspaces button.visible,
+#workspaces button.active,
+#workspaces button.focused,
+#workspaces button.urgent,
+#workspaces button.current_output,
+#workspaces button.hosting-monitor,
+#workspaces button.persistent {
+  background: transparent;
+}
+
+#workspaces button.empty {
+  color: @theme_muted;
+}
+
+#workspaces button.visible {
+  color: @theme_accent;
+}
+
+#workspaces button.active {
+  color: @theme_success;
+}
+
+#workspaces button.urgent {
+  box-shadow: 0 0 0 2px @theme_danger;
+  color: @theme_danger;
+}

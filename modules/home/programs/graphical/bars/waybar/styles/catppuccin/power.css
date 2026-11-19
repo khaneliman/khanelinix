@@ -1,8 +1,0 @@
-#custom-wlogout,
-#custom-power {
-  color: @blue;
-}
-
-#power .not-power {
-  color: @red;
-}

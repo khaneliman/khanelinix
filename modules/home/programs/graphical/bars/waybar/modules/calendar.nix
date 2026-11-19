@@ -254,7 +254,7 @@ let
                 badge = event_badge(event).ljust(BADGE_WIDTH)
                 lines.append(
                     "  "
-                    f"<span color='#e0af68'>{html.escape(time)}</span>"
+                    f"<span color='${config.khanelinix.theme.active.warning}'>{html.escape(time)}</span>"
                     f" <small>{html.escape(badge)}</small>"
                     f" {html.escape(title)}"
                 )

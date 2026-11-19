@@ -13,7 +13,6 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
-import textwrap
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -136,14 +135,34 @@ class Workflows(unittest.TestCase):
         case = scratch / "sketchybar-callbacks"
         helpers = case / "helpers"
         helpers.mkdir(parents=True, exist_ok=True)
-        # Use the generated fallback palette from its owner, not a copied palette.
-        colors = (
-            (bar / "default.nix")
-            .read_text()
-            .split("\"sketchybar/helpers/colors.lua\".text = lib.mkDefault ''", 1)[1]
-            .split("'';", 1)[0]
+        # Render the fallback colors without evaluating the Darwin package setup.
+        expression = f"""let
+          root = builtins.toPath {json.dumps(str(root))};
+          flake = builtins.getFlake {json.dumps("git+" + root.as_uri())};
+          lib = flake.inputs.nixpkgs.lib;
+          theme = import (root + "/modules/home/theme/stylix") {{
+            inherit lib;
+            config = {{}};
+            pkgs = {{}};
+            inputs = {{}};
+          }};
+          module = import (builtins.toPath {json.dumps(str(bar))}) {{
+            lib = lib // {{
+              mkIf = condition: value: if condition then value else {{}};
+              mkDefault = value: value;
+            }};
+            pkgs = {{}};
+            config.khanelinix = {{
+              programs.graphical.bars.sketchybar.enable = true;
+              theme.active = theme.options.khanelinix.theme.active.default;
+            }};
+          }};
+        in module.config.xdg.configFile."sketchybar/helpers/colors.lua".text"""
+        colors = subprocess.check_output(
+            ["nix", "eval", "--offline", "--impure", "--raw", "--expr", expression],
+            text=True,
         )
-        (helpers / "colors.lua").write_text(textwrap.dedent(colors).lstrip())
+        (helpers / "colors.lua").write_text(colors)
         island = bar / "dynamic-island-sketchybar"
         config_dir = case / "home/.config/dynamic-island-sketchybar"
         config_dir.mkdir(parents=True, exist_ok=True)

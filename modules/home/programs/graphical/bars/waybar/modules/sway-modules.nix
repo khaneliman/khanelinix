@@ -55,7 +55,7 @@ in
             assignment: lib.nameValuePair assignment.workspace (lib.toList assignment.output)
           ) config.wayland.windowManager.sway.config.workspaceOutputAssign
         );
-    window-format = "<span color='@text'>{name}</span>";
+    window-format = "{name}";
     window-rewrite-default = "";
     window-rewrite = {
       "class<.blueman-manager-wrapped>" = "";

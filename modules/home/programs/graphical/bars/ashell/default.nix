@@ -10,6 +10,7 @@ let
   inherit (lib.khanelinix) mkOpt;
 
   cfg = config.khanelinix.programs.graphical.bars.ashell;
+  colors = config.khanelinix.theme.active;
   isNiri = config.khanelinix.programs.graphical.wms.niri.enable;
 
   helpers = import ./helpers.nix {
@@ -200,6 +201,16 @@ in
           };
 
           appearance = {
+            background_color = colors.background;
+            primary_color = colors.accent;
+            secondary_color = colors.surface;
+            success_color = colors.success;
+            danger_color = colors.danger;
+            text_color = colors.foreground;
+            workspace_colors = [
+              colors.secondary
+              colors.accent
+            ];
             inherit (cfg) style;
             margin = {
               inherit (cfg.margin)

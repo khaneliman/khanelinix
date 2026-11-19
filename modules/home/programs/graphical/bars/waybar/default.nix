@@ -86,19 +86,16 @@ in
 
         style =
           let
-            styleDir =
-              if config.khanelinix.theme.catppuccin.enable then ./styles/catppuccin else ./styles/base16;
             codexbarStyle = ''
               @import url("${pkgs.khanelinix.codexbar-waybar}/share/codexbar-waybar/codexbar.css");
             '';
-            commonStyle = builtins.readFile ./styles/common.css;
-            style = builtins.readFile "${styleDir}/style.css";
-            controlCenterStyle = builtins.readFile "${styleDir}/control-center.css";
-            powerStyle = builtins.readFile "${styleDir}/power.css";
-            statsStyle = builtins.readFile "${styleDir}/stats.css";
-            workspacesStyle = builtins.readFile "${styleDir}/workspaces.css";
+            colors = lib.concatStrings (
+              lib.mapAttrsToList (
+                name: color: "@define-color theme_${name} ${color};\n"
+              ) config.khanelinix.theme.active
+            );
           in
-          "${codexbarStyle}${commonStyle}${style}${controlCenterStyle}${powerStyle}${statsStyle}${workspacesStyle}";
+          codexbarStyle + colors + builtins.readFile ./styles/common.css;
       };
 
       home.packages = [

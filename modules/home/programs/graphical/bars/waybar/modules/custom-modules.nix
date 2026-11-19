@@ -64,13 +64,13 @@ let
         "  ";
 
       def notification_line:
-        indent + "<span color=\"#565f89\">" + (get_icon | escape_html) + "</span> " +
+        indent + "<span color=\"${config.khanelinix.theme.active.muted}\">" + (get_icon | escape_html) + "</span> " +
         ((.subject.title // "Untitled") | escape_html);
 
       sort_by(repo_name, (.subject.title // ""))
       | group_by(repo_name)
       | map(
-        "<span color=\"#7aa2f7\"><b>󰳏 " + ((.[0] | repo_name) | escape_html) + "</b></span>\n" +
+        "<span color=\"${config.khanelinix.theme.active.accent}\"><b>󰳏 " + ((.[0] | repo_name) | escape_html) + "</b></span>\n" +
         (map(notification_line) | join("\n"))
       )
       | join("\n\n")

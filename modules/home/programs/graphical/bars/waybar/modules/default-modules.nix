@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   osConfig ? { },
   pkgs,
@@ -7,7 +8,7 @@
 let
   inherit (lib) getExe getExe';
 
-  catppuccin = import (lib.getFile "modules/home/theme/catppuccin/colors.nix");
+  colors = config.khanelinix.theme.active;
 in
 {
   backlight =
@@ -102,11 +103,11 @@ in
       weeks-pos = "right";
       on-scroll = 1;
       format = {
-        months = "<span color='${catppuccin.colors.rosewater.hex}'><b>{}</b></span>";
-        days = "<span color='${catppuccin.colors.flamingo.hex}'><b>{}</b></span>";
-        weeks = "<span color='${catppuccin.colors.teal.hex}'><b>W{}</b></span>";
-        weekdays = "<span color='${catppuccin.colors.yellow.hex}'><b>{}</b></span>";
-        today = "<span color='${catppuccin.colors.red.hex}'><b><u>{}</u></b></span>";
+        months = "<span color='${colors.foreground}'><b>{}</b></span>";
+        days = "<span color='${colors.muted}'><b>{}</b></span>";
+        weeks = "<span color='${colors.secondary}'><b>W{}</b></span>";
+        weekdays = "<span color='${colors.warning}'><b>{}</b></span>";
+        today = "<span color='${colors.danger}'><b><u>{}</u></b></span>";
       };
     };
     actions = {
@@ -195,7 +196,7 @@ in
       on = " ";
     };
     random-icons = {
-      off = "<span color=\"#f53c3c\"></span> ";
+      off = "<span color=\"${colors.danger}\"></span> ";
       on = " ";
     };
     repeat-icons = {
