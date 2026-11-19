@@ -18,6 +18,12 @@ let
   palette = import ./colors.nix;
   colors = palette.getVariant cfg.variant;
   isDay = cfg.variant == "day";
+  stylixThemes = {
+    day = "tokyo-night-light";
+    night = "tokyo-night-dark";
+    moon = "tokyo-night-moon";
+    storm = "tokyo-night-storm";
+  };
   t3codeTheme = import ../t3code.nix {
     inherit config lib pkgs;
     appearance = if isDay then "light" else "dark";
@@ -132,7 +138,7 @@ in
             };
             stylix = {
               enable = true;
-              theme = "tokyo-night-dark";
+              theme = stylixThemes.${cfg.variant};
 
               cursor = {
                 name = "Bibata-Modern-Ice";

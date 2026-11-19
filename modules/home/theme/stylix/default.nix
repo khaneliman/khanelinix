@@ -178,7 +178,8 @@ in
         light = cfg.icon.name;
       };
 
-      polarity = "dark";
+      polarity =
+        if themeCfg.tokyonight.enable && themeCfg.tokyonight.variant == "day" then "light" else "dark";
 
       opacity = {
         desktop = 1.0;

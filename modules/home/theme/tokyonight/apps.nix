@@ -10,7 +10,7 @@ let
   inherit (lib) mkIf mkForce;
 
   cfg = config.khanelinix.theme.tokyonight;
-  variant = if cfg.variant == "storm" then "night" else cfg.variant;
+  inherit (cfg) variant;
   colors = (import ./colors.nix).getVariant cfg.variant;
   # Codex discovers custom syntax themes as {CODEX_HOME}/themes/{name}.tmTheme,
   # matching where home-manager's codex module writes config.toml.
@@ -110,9 +110,28 @@ in
         source ${tokyonight}/extras/fish/tokyonight_${variant}.fish
       '';
 
-      foot.settings.colors = /* toml */ ''
-        ${builtins.readFile "${tokyonight}/extras/foot/tokyonight_${variant}.ini"}
-      '';
+      foot.settings = mkIf config.programs.foot.enable (
+        let
+          polarity = if variant == "day" then "light" else "dark";
+          lines = lib.splitString "\n" (
+            builtins.readFile "${tokyonight}/extras/foot/tokyonight_${variant}.ini"
+          );
+          entries = lib.filter (entry: entry != null) (map (builtins.match "([a-z0-9-]+)=(.*)") lines);
+        in
+        {
+          main.initial-color-theme = polarity;
+          # The upstream [cursor].color now belongs in the active color section.
+          "colors-${polarity}" = builtins.listToAttrs (
+            map (
+              entry:
+              let
+                key = lib.head entry;
+              in
+              lib.nameValuePair (if key == "color" then "cursor" else key) (lib.last entry)
+            ) entries
+          );
+        }
+      );
 
       fzf.defaultOptions = [
         "--color=fg:${colors.fg}"

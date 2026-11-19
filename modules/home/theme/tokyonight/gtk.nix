@@ -22,7 +22,7 @@ in
       };
 
       theme = {
-        name = "Tokyonight-Dark";
+        name = if cfg.variant == "day" then "Tokyonight-Light" else "Tokyonight-Dark";
         package = pkgs.tokyonight-gtk-theme;
       };
     };
