@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import json
-import runpy
 import os
+import runpy
 import subprocess
 import tempfile
 import unittest
@@ -136,6 +136,14 @@ class OkfMemoryHookTests(unittest.TestCase):
             hook_output = output["hookSpecificOutput"]
             self.assertEqual(hook_output["hookEventName"], "SessionStart")
             self.assertEqual(hook_output["additionalContext"], EXPECTED_START_NUDGE)
+
+    def test_claude_worker_does_not_create_parent_memory_state(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            payload = {"agent_id": "child", "prompt": "Remember this decision"}
+            for event in ("session-start", "user-prompt", "stop"):
+                self.assertEqual(self.run_hook(root, "claude", event, payload), {})
+            self.assertFalse((root / "data" / "okf").exists())
 
     def test_codex_subagent_payload_skips_all_hooks(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

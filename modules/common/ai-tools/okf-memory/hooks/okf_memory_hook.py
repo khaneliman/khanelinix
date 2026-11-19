@@ -168,8 +168,12 @@ def is_subagent_source(value: Any) -> bool:
     return isinstance(value, dict) and "subagent" in value
 
 
-def is_codex_subagent(payload: dict[str, Any]) -> bool:
+def skip_subagent(provider: str, payload: dict[str, Any]) -> bool:
     if os.environ.get("OKF_MEMORY_INCLUDE_SUBAGENTS") == "1":
+        return False
+    if provider == "claude":
+        return bool(payload.get("agent_id"))
+    if provider != "codex":
         return False
     if is_subagent_source(payload.get("source")):
         return True
@@ -652,7 +656,7 @@ def main() -> None:
     args = parser.parse_args()
     try:
         payload = load_payload()
-        if args.provider == "codex" and is_codex_subagent(payload):
+        if skip_subagent(args.provider, payload):
             if args.event == "stop":
                 emit_allow(args.provider)
             else:
