@@ -146,7 +146,6 @@ in
         ports = [ "5432:5432" ];
         volumes = [ "/mnt/pool/appdata/postgres:/var/lib/postgresql/data" ];
         environment = {
-          POSTGRES_PASSWORD = "REPLACE_ME_POSTGRES_PASSWORD";
           POSTGRES_USER = "postgres";
           POSTGRES_DB = "postgres";
           TZ = "America/Chicago";
