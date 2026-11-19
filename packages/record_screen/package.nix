@@ -27,8 +27,6 @@ writeShellApplication {
 
   passthru.updateScript = null;
 
-  checkPhase = "";
-
   runtimeInputs = [
     bc
     coreutils
@@ -48,7 +46,7 @@ writeShellApplication {
 
   text = /* bash */ ''
     readonly state_dir="$XDG_RUNTIME_DIR/record_screen"
-    mkdir -m 700 -p "$state_dir"
+    install -d -m 700 "$state_dir"
     readonly TMP_FILE_UNOPTIMIZED="$state_dir/unoptimized.gif"
     readonly TMP_PALETTE_FILE="$state_dir/palette.png"
     readonly TMP_MP4_FILE="$state_dir/recording.mp4"
@@ -57,7 +55,7 @@ writeShellApplication {
     readonly TMP_PID_FILE="$state_dir/pid"
     readonly APP_NAME="Recorder"
     readonly OUT_DIR="$HOME/Videos/Recordings"
-    readonly FILENAME="$OUT_DIR/$(date +"%Y-%m-%d_%H-%M-%S")."
+    FILENAME="$OUT_DIR/$(date +"%Y-%m-%d_%H-%M-%S")."
 
     debug_log() {
         echo "[DEBUG] $*" >&2
@@ -156,8 +154,9 @@ writeShellApplication {
     	local max_height=4096 # Default max supported height
 
     	# Calculate scale factors for both dimensions
-    	local scale_w=$(awk "BEGIN {print ($max_width / $width)}")
-    	local scale_h=$(awk "BEGIN {print ($max_height / $height)}")
+        local scale_w scale_h
+        scale_w=$(awk "BEGIN {print ($max_width / $width)}")
+        scale_h=$(awk "BEGIN {print ($max_height / $height)}")
 
     	# Use the smaller scale factor to maintain aspect ratio
     	if (($(echo "$scale_w < $scale_h" | bc -l))); then
