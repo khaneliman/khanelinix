@@ -179,6 +179,58 @@ _: {
           );
         };
 
+        update-container-digests = {
+          type = "app";
+          meta.description = "Check or update a khanelilab OCI image digest";
+          program = lib.getExe (
+            pkgs.writeShellApplication {
+              name = "update-container-digests";
+              runtimeInputs = [
+                pkgs.git
+                pkgs.python3
+                pkgs.skopeo
+              ];
+              text = ''
+                exec python3 ${./apps/scripts/update_container_digests.py} "$@"
+              '';
+            }
+          );
+        };
+
+        fleet-status =
+          let
+            inherit ((import ../systems/fleet-defaults.nix { inherit lib; }).khanelinix.programs.terminal.tools.ssh)
+              hosts
+              magicDnsSuffix
+              ;
+            inventory = pkgs.writeText "fleet-status-inventory.json" (
+              builtins.toJSON {
+                inherit magicDnsSuffix;
+                hosts = lib.mapAttrs (
+                  _: host: builtins.intersectAttrs { hostname = null; system = null; username = null; tailscaleIp = null; } host
+                ) hosts;
+              }
+            );
+          in
+          {
+            type = "app";
+            meta.description = "Check fleet SSH and configured Nix cache reachability";
+            program = lib.getExe (
+              pkgs.writeShellApplication {
+                name = "fleet-status";
+                runtimeInputs = [
+                  pkgs.curl
+                  pkgs.nix
+                  pkgs.openssh
+                  pkgs.python3
+                ];
+                text = ''
+                  exec python3 ${./apps/scripts/fleet_status.py} --inventory ${inventory} "$@"
+                '';
+              }
+            );
+          };
+
         deploy =
           let
             hosts = import ../systems/fleet-ssh-hosts.nix;

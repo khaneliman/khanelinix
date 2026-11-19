@@ -34,6 +34,29 @@ service-local `/config`, `/data`, `/media` and `/plexlogs` paths where required.
 Native package versions can differ from the source containers. A successful Nix
 build does not prove that an application can upgrade its existing database.
 
+## Checking and updating image pins
+
+Run the updater from inside this checkout. Select one container from
+`images.nix`. A pin without a tag requires an explicit `--tag`; the tool never
+assumes `latest`. A pin that already includes a tag uses that same tag.
+
+```sh
+nix run .#update-container-digests -- --check ah-webapp-dev --tag main
+nix run .#update-container-digests -- --update ah-webapp-dev --tag main
+git diff -- systems/x86_64-linux/khanelilab/images.nix
+```
+
+The check reports whether the registry's tag still points to the pinned digest:
+exit 0 means it matches, 1 means it differs, and 2 means the check failed. The
+updater verifies that the tag resolves to a Linux amd64 image and uses the
+registry's top-level manifest digest. If the existing pin points to a
+platform-specific manifest, that digest may differ from the top-level digest
+even when the Linux amd64 image is unchanged.
+
+`--update` changes only the selected digest in the working tree. It does not
+stage, commit, pull image layers, or deploy. Review the upstream changes and the
+resulting diff before using a new pin.
+
 ## Storage prerequisites
 
 - Provision a separate OS disk with the layout expected by `hardware.nix`: Btrfs
@@ -81,8 +104,8 @@ for `passwordFile` and, if needed, the backend's `environmentFile`. Choose the
 schedule and retention for the destination. Use `timerConfig = null` for a
 manual rehearsal. For jobs that depend on configured mounts for sources,
 staging, or a local repository, set
-`systemd.services."restic-backups-<job>".unitConfig.RequiresMountsFor` so the job
-cannot silently read from or write to the underlying directories.
+`systemd.services."restic-backups-<job>".unitConfig.RequiresMountsFor` so the
+job cannot silently read from or write to the underlying directories.
 
 Inventory both appdata paths and back up the underlying data once, plus the VM
 state and other irreplaceable SSD data. Do not point a scheduled job at raw live
