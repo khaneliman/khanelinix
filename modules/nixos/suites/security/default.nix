@@ -7,6 +7,8 @@
 let
   cfg = config.khanelinix.suites.security;
   cacheAppdata = cfg.cacheAppdataDir;
+  vaultwarden = config.services.vaultwarden;
+  vaultwardenPort = vaultwarden.config.ROCKET_PORT or null;
 in
 {
   options.khanelinix.suites.security = {
@@ -98,10 +100,11 @@ in
     networking.firewall = lib.mkMerge [
       { allowedTCPPorts = [ ]; }
 
-      {
-        # vaultwarden
-        allowedTCPPorts = [ 8222 ];
-      }
+      (lib.mkIf (vaultwarden.enable && vaultwardenPort != null) {
+        allowedTCPPorts = [
+          (if builtins.isString vaultwardenPort then lib.toIntBase10 vaultwardenPort else vaultwardenPort)
+        ];
+      })
 
       {
         # nginx-proxy-manager
