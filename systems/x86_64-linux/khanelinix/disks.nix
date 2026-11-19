@@ -76,7 +76,6 @@ in
                 type = "swap";
                 discardPolicy = "both";
                 randomEncryption = true;
-                resumeDevice = true;
                 extraArgs = [
                   "-Lswap"
                 ];
