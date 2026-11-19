@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) mkDefault mkIf;
+  inherit (lib) mkIf;
 
   cfg = config.khanelinix.roles.gamer;
 in
@@ -15,8 +15,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.suites = {
-      emulation.enable = mkDefault true;
+    khanelinix.suites = lib.khanelinix.nested-default-attrs {
+      emulation.enable = true;
       games = {
         enable = true;
         protonToolsEnable = true;

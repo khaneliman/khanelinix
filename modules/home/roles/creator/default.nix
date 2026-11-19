@@ -15,7 +15,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.suites = {
+    khanelinix.suites = lib.khanelinix.nested-default-attrs {
       art = {
         enable = true;
         threeDimensionalEnable = true;

@@ -6,7 +6,6 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.roles.desktop;
 in
@@ -16,8 +15,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.suites = {
-      common = enabled;
+    khanelinix.suites = lib.khanelinix.nested-default-attrs {
+      common.enable = true;
       desktop = {
         enable = true;
         remoteDesktopEnable = true;

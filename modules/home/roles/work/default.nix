@@ -6,7 +6,6 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.roles.work;
 in
@@ -16,7 +15,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.suites = {
+    khanelinix.suites = lib.khanelinix.nested-default-attrs {
       business = {
         enable = true;
         annotationEnable = true;
@@ -26,7 +25,7 @@ in
         planningEnable = true;
         publishingEnable = true;
       };
-      common = enabled;
+      common.enable = true;
       development = {
         enable = true;
         dockerEnable = true;

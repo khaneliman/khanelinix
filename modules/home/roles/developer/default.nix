@@ -6,7 +6,6 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.roles.developer;
 in
@@ -16,13 +15,13 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.suites = {
+    khanelinix.suites = lib.khanelinix.nested-default-attrs {
       development = {
         enable = true;
         aiEnable = true;
         nixEnable = true;
       };
-      networking = enabled;
+      networking.enable = true;
     };
   };
 }
