@@ -22,13 +22,15 @@ let
 in
 {
   lockScript = pkgs.writeShellScriptBin "ashell-lock" ''
-    if command -v ${lib.getExe config.programs.hyprlock.package} &> /dev/null; then
-      ${lib.getExe config.programs.hyprlock.package}
-    elif command -v ${lib.getExe config.programs.swaylock.package} &> /dev/null; then
-      ${lib.getExe config.programs.swaylock.package}
-    else
-      loginctl lock-session
-    fi
+    case ":''${XDG_CURRENT_DESKTOP:-}:" in
+      *:Hyprland:* | *:hyprland:*)
+        ${lib.optionalString config.programs.hyprlock.enable "exec ${lib.getExe config.programs.hyprlock.package}"}
+        ;;
+      *:sway:* | *:Sway:* | *:niri:* | *:Niri:*)
+        ${lib.optionalString config.programs.swaylock.enable "exec ${lib.getExe config.programs.swaylock.package}"}
+        ;;
+    esac
+    exec loginctl lock-session
   '';
 
   logoutScript = pkgs.writeShellScriptBin "ashell-logout" ''
