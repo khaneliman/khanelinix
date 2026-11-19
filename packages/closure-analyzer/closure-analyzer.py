@@ -41,6 +41,10 @@ class AnalysisResult:
     categories: dict[str, list[Package]]
 
 
+def size_share(size: int, total: int) -> float:
+    return size / total * 100 if total else 0.0
+
+
 class ClosureAnalyzer:
     def __init__(
         self,
@@ -578,7 +582,7 @@ class ClosureAnalyzer:
         report.append("📊 TOP 20 PACKAGES BY ACTUAL DISK USAGE")
         report.append("-" * 80)
         for i, pkg in enumerate(packages_by_actual[:20], 1):
-            percentage = (pkg.actual_size / analysis.total_size) * 100
+            percentage = size_share(pkg.actual_size, analysis.total_size)
             report.append(
                 f"{i:2d}. {pkg.name:<50} {pkg.actual_gb:>6.2f} GB ({percentage:4.1f}%)"
             )
@@ -591,7 +595,7 @@ class ClosureAnalyzer:
         for category, packages in analysis.categories.items():
             total_actual_size = sum(p.actual_size for p in packages)
             total_gb = total_actual_size / (1024 * 1024 * 1024)
-            percentage = (total_actual_size / analysis.total_size) * 100
+            percentage = size_share(total_actual_size, analysis.total_size)
             category_totals.append((category, total_gb, percentage, len(packages)))
 
         category_totals.sort(key=lambda x: x[1], reverse=True)
@@ -834,7 +838,8 @@ class ClosureAnalyzer:
         if not previous:
             return None
 
-        size_diff = current_analysis.total_size_gb - previous["total_size_gb"]
+        previous_size = previous["total_size_gb"]
+        size_diff = current_analysis.total_size_gb - previous_size
         count_diff = len(current_analysis.packages) - previous["package_count"]
 
         comparison = []
@@ -845,9 +850,10 @@ class ClosureAnalyzer:
 
         if abs(size_diff) > 0.01:  # Only show if meaningful difference
             direction = "📈 increased" if size_diff > 0 else "📉 decreased"
-            comparison.append(
-                f"Change: {direction} by {abs(size_diff):.2f} GB ({abs(size_diff) / previous['total_size_gb'] * 100:.1f}%)"
-            )
+            change = f"Change: {direction} by {abs(size_diff):.2f} GB"
+            if previous_size:
+                change += f" ({abs(size_diff) / previous_size * 100:.1f}%)"
+            comparison.append(change)
         else:
             comparison.append("Change: No significant change")
 
@@ -938,7 +944,7 @@ def main():
     parser.add_argument(
         "--compare-only",
         action="store_true",
-        help="Only show comparison with previous run (requires cache)",
+        help="Show the cached analysis summary without building or analyzing",
     )
 
     args = parser.parse_args()
@@ -946,10 +952,6 @@ def main():
     # Set up cache directory if not disabled
     cache_dir = None  # Use default
     analyzer = ClosureAnalyzer(args.target, args.threshold, cache_dir)
-
-    # Build target unless --no-build
-    if not args.no_build and not analyzer.build_target():
-        sys.exit(1)
 
     # Handle compare-only mode
     if args.compare_only:
@@ -963,6 +965,10 @@ def main():
         print(f"Packages: {previous['package_count']}")
         print(f"Analyzed: {time.ctime(previous['timestamp'])}")
         sys.exit(0)
+
+    # Build target unless --no-build
+    if not args.no_build and not analyzer.build_target():
+        sys.exit(1)
 
     # Perform analysis
     analysis = analyzer.analyze_closure(quiet=(args.json and not args.verbose))
@@ -996,7 +1002,7 @@ def main():
                 {
                     "name": p.name,
                     "actual_gb": p.actual_gb,
-                    "percentage": (p.actual_size / analysis.total_size) * 100,
+                    "percentage": size_share(p.actual_size, analysis.total_size),
                 }
                 for p in sorted(
                     analysis.packages, key=lambda x: x.actual_size, reverse=True
@@ -1006,10 +1012,9 @@ def main():
                 category: {
                     "size_gb": sum(p.actual_size for p in packages) / (1024**3),
                     "package_count": len(packages),
-                    "percentage": (
-                        sum(p.actual_size for p in packages) / analysis.total_size
-                    )
-                    * 100,
+                    "percentage": size_share(
+                        sum(p.actual_size for p in packages), analysis.total_size
+                    ),
                 }
                 for category, packages in analysis.categories.items()
                 if sum(p.actual_size for p in packages) > 0
@@ -1020,15 +1025,14 @@ def main():
         if not args.no_cache:
             previous = analyzer.load_analysis_cache()
             if previous:
+                previous_size = previous["total_size_gb"]
+                size_change = analysis.total_size_gb - previous_size
                 output["comparison"] = {
-                    "previous_size_gb": previous["total_size_gb"],
-                    "size_change_gb": analysis.total_size_gb
-                    - previous["total_size_gb"],
+                    "previous_size_gb": previous_size,
+                    "size_change_gb": size_change,
                     "size_change_percent": (
-                        (analysis.total_size_gb - previous["total_size_gb"])
-                        / previous["total_size_gb"]
-                    )
-                    * 100,
+                        size_change / previous_size * 100 if previous_size else None
+                    ),
                     "package_count_change": len(analysis.packages)
                     - previous["package_count"],
                 }

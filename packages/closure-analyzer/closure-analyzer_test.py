@@ -36,10 +36,10 @@ class AnalysisTests(unittest.TestCase):
                 with patch.object(
                     analyzer,
                     "get_closure_info",
-                    return_value=([(STORE_PATH, 1024**3, 1024**3)], 1024**3),
+                    return_value=([(STORE_PATH, 0, 0)], 0),
                 ):
                     analyzer.save_analysis_cache(analyzer.analyze_closure(quiet=True))
-                for size in (2, 3):
+                for size, change_percent in ((1, None), (2, 100.0), (3, 50.0)):
                     output = io.StringIO()
                     with (
                         patch.object(closure, "ClosureAnalyzer", return_value=analyzer),
@@ -63,14 +63,72 @@ class AnalysisTests(unittest.TestCase):
                             data["comparison"]["previous_size_gb"], size - 1
                         )
                         self.assertEqual(data["comparison"]["size_change_gb"], 1)
+                        self.assertEqual(
+                            data["comparison"]["size_change_percent"], change_percent
+                        )
                     else:
                         self.assertIn(
                             f"Previous size: {size - 1:.2f} GB", output.getvalue()
                         )
-                        self.assertIn("increased by 1.00 GB", output.getvalue())
+                        change = "increased by 1.00 GB"
+                        if change_percent is not None:
+                            change += f" ({change_percent:.1f}%)"
+                        self.assertIn(change + "\n", output.getvalue())
                     self.assertEqual(
                         analyzer.load_analysis_cache()["total_size_gb"], size
                     )
+
+    def test_zero_size_closure(self):
+        for mode in ([], ["--json"]):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as directory:
+                analyzer = closure.ClosureAnalyzer("target", cache_dir=Path(directory))
+                output = io.StringIO()
+                with (
+                    patch.object(closure, "ClosureAnalyzer", return_value=analyzer),
+                    patch.object(
+                        analyzer,
+                        "get_closure_info",
+                        return_value=([(STORE_PATH, 0, 0)], 0),
+                    ),
+                    patch.object(
+                        sys, "argv", ["closure", "target", "--no-build", *mode]
+                    ),
+                    contextlib.redirect_stdout(output),
+                ):
+                    closure.main()
+                if mode:
+                    result = json.loads(output.getvalue())
+                    self.assertEqual(result["top_10_by_size"][0]["percentage"], 0.0)
+                else:
+                    self.assertIn("( 0.0%)", output.getvalue())
+
+    def test_compare_only_never_builds_analyzes_or_saves(self):
+        cached = {
+            "target": "target",
+            "timestamp": 0,
+            "total_size_gb": 1.0,
+            "package_count": 1,
+        }
+        for previous, exit_code, message in (
+            (cached, 0, "Previous Analysis Summary"),
+            (None, 1, "No previous analysis found"),
+        ):
+            with self.subTest(previous=previous):
+                output = io.StringIO()
+                with (
+                    patch.object(closure, "ClosureAnalyzer") as factory,
+                    patch.object(sys, "argv", ["closure", "target", "--compare-only"]),
+                    contextlib.redirect_stdout(output),
+                    self.assertRaises(SystemExit) as error,
+                ):
+                    analyzer = factory.return_value
+                    analyzer.load_analysis_cache.return_value = previous
+                    closure.main()
+                self.assertEqual(error.exception.code, exit_code)
+                self.assertIn(message, output.getvalue())
+                analyzer.build_target.assert_not_called()
+                analyzer.analyze_closure.assert_not_called()
+                analyzer.save_analysis_cache.assert_not_called()
 
     def test_no_cache_first_run_and_failed_report(self):
         with tempfile.TemporaryDirectory() as directory:
