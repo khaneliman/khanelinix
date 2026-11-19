@@ -12,6 +12,11 @@ let
 
   cfg = config.khanelinix.suites.common;
   isWSL = osConfig.khanelinix.archetypes.wsl.enable or false;
+  desktopEnabled =
+    !isWSL
+    && (
+      config.khanelinix.suites.desktop.enable || (osConfig.khanelinix.suites.desktop.enable or false)
+    );
 in
 {
   imports = [ (lib.getFile "modules/common/package-profile/default.nix") ];
@@ -38,10 +43,7 @@ in
         ncs-sys = ''f(){ nix build ".#nixosConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#nixosConfigurations.$1.config.system.build.toplevel.outPath") | tail -1; }; f'';
         ncs-darwin = ''f(){ nix build ".#darwinConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#darwinConfigurations.$1.config.system.build.toplevel.outPath") | tail -1; }; f'';
         ncs-home = ''f(){ nix build ".#homeConfigurations.$1.activationPackage" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#homeConfigurations.$1.activationPackage.outPath") | tail -1; }; f'';
-        ndu = "nix-du -s=200MB | dot -Tsvg > store.svg ${
-          lib.optionalString (!isWSL)
-            "&& ${if pkgs.stdenv.hostPlatform.isDarwin then "open" else "xdg-open"} store.svg"
-        }";
+        ndu = "nix-du -s=200MB | dot -Tsvg > store.svg ${lib.optionalString desktopEnabled "&& ${if pkgs.stdenv.hostPlatform.isDarwin then "open" else "xdg-open"} store.svg"}";
       };
     };
 
@@ -61,7 +63,7 @@ in
         nix-du
         graphviz
       ]
-      ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
+      ++ lib.optionals (desktopEnabled && pkgs.stdenv.hostPlatform.isDarwin) [
         pngpaste
       ];
 
@@ -71,8 +73,8 @@ in
       programs = {
         terminal = {
           emulators = {
-            ghostty.enable = mkDefault (!isWSL);
-            kitty.enable = mkDefault (!isWSL);
+            ghostty.enable = mkDefault desktopEnabled;
+            kitty.enable = mkDefault desktopEnabled;
           };
 
           shells = {
@@ -93,7 +95,7 @@ in
             fastfetch = mkDefault enabled;
             fzf = mkDefault enabled;
             git = mkDefault enabled;
-            glxinfo.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
+            glxinfo.enable = mkDefault (desktopEnabled && pkgs.stdenv.hostPlatform.isLinux);
             infat.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
             jq = mkDefault enabled;
             navi = mkDefault enabled;
@@ -103,7 +105,7 @@ in
             pay-respects = mkDefault enabled;
             ripgrep = mkDefault enabled;
             television = mkDefault enabled;
-            tray-tui.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
+            tray-tui.enable = mkDefault (desktopEnabled && pkgs.stdenv.hostPlatform.isLinux);
             yazi = mkDefault enabled;
             zellij = mkDefault enabled;
             zoxide = mkDefault enabled;
@@ -113,14 +115,14 @@ in
 
       services = {
         # easyeffects.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
-        udiskie.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
+        udiskie.enable = mkDefault (desktopEnabled && pkgs.stdenv.hostPlatform.isLinux);
         # ssh-agent.enable = mkDefault pkgs.stdenv.hostPlatform.isLinux;
-        tray.enable = mkDefault (pkgs.stdenv.hostPlatform.isLinux && !isWSL);
+        tray.enable = mkDefault (desktopEnabled && pkgs.stdenv.hostPlatform.isLinux);
       };
 
       system = {
-        darwin-defaults.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isDarwin;
-        input.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isDarwin;
+        darwin-defaults.enable = mkDefault (desktopEnabled && pkgs.stdenv.hostPlatform.isDarwin);
+        input.enable = mkDefault (desktopEnabled && pkgs.stdenv.hostPlatform.isDarwin);
       };
     };
 

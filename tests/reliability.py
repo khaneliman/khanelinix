@@ -145,6 +145,23 @@ evaluate(
     validate=lambda value: value is True,
 )
 evaluate(
+    "role-home-desktop",
+    """let
+      home = name: f.homeConfigurations.${name}.config.khanelinix;
+      terminals = h: [ h.programs.terminal.emulators.ghostty.enable h.programs.terminal.emulators.kitty.enable ];
+      linuxDesktop = h: terminals h ++ [ h.programs.terminal.tools.glxinfo.enable h.services.udiskie.enable h.services.tray.enable ];
+      darwinDesktop = h: terminals h ++ [ h.system.darwin-defaults.enable h.system.input.enable ];
+      lab = home "khaneliman@khanelilab";
+      builder = home "khaneliman@khanelimac-m1";
+    in
+      !(lib.any lib.id (linuxDesktop lab ++ darwinDesktop builder))
+      && lab.services.rclone.enable
+      && builder.programs.terminal.tools.lazygit.enable
+      && lib.all lib.id (linuxDesktop (home "khaneliman@nixos"))
+      && lib.all lib.id (darwinDesktop (home "khaneliman@khanelimac"))""",
+    validate=lambda value: value is True,
+)
+evaluate(
     "fleet-khanelimac-m1-builders",
     """let
       c = f.darwinConfigurations.khanelimac-m1.config;
