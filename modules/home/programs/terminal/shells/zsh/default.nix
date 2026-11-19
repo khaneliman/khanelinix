@@ -64,7 +64,7 @@ in
           zmodload zsh/complist
 
           _comp_options+=(globdots)
-          zcompdump="$XDG_DATA_HOME"/zsh/.zcompdump-"$ZSH_VERSION"-"$(date --iso-8601=date)"
+          zcompdump="$XDG_DATA_HOME"/zsh/.zcompdump-"$ZSH_VERSION"-"$(date +%Y-%m-%d)"
           compinit -d "$zcompdump"
 
           # Recompile zcompdump if it exists and is newer than zcompdump.zwc
