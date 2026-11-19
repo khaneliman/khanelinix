@@ -461,7 +461,7 @@ class RouteCapabilityTests(unittest.TestCase):
                 "opus-5-5",
                 "gpt-6-2-astra",
                 "gpt-6-2-sol",
-                "gemini-4-argon",
+                "gemini-4-neon",
                 "fable-5-2",
                 "google-opus-5-5",
             ],
@@ -665,7 +665,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.initialize()
         self.complete("gpt-6-luna", "success")
         luna = self.claim("gpt-6-luna", 2)
-        gemini = self.claim("gemini-4-argon", 3)
+        gemini = self.claim("gemini-4-neon", 3)
 
         first = capability.record_outcome(
             self.state, self.task_id, luna["claimId"], "success"
@@ -679,7 +679,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(second["revision"], 6)
         self.assertEqual(state["claims"], {})
         self.assertEqual(state["routes"]["gpt-6-luna"], "available")
-        self.assertEqual(state["routes"]["gemini-4-argon"], "available")
+        self.assertEqual(state["routes"]["gemini-4-neon"], "available")
 
     def test_route_failure_blocks_only_one_model(self) -> None:
         self.initialize()
@@ -749,7 +749,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.initialize()
         self.complete("gpt-6-luna", "success")
         blocked_claim = self.claim("opus-5-5", 2)
-        healthy_claim = self.claim("gemini-4-argon", 3)
+        healthy_claim = self.claim("gemini-4-neon", 3)
 
         capability.record_outcome(
             self.state,
@@ -777,7 +777,7 @@ class RouteCapabilityTests(unittest.TestCase):
         self.initialize()
         self.complete("gpt-6-luna", "success")
         blocked_claim = self.claim("opus-5-5", 2)
-        healthy_claim = self.claim("gemini-4-argon", 3)
+        healthy_claim = self.claim("gemini-4-neon", 3)
 
         capability.record_outcome(
             self.state,
@@ -795,7 +795,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
         self.assertEqual(recorded["outcome"], "agent-type-available")
         self.assertEqual(state["named_agents"], "available")
-        self.assertEqual(state["routes"]["gemini-4-argon"], "unknown")
+        self.assertEqual(state["routes"]["gemini-4-neon"], "unknown")
         self.assertEqual(state["pools"]["google"]["gemini"], "unknown")
         self.assertEqual(state["claims"], {})
 

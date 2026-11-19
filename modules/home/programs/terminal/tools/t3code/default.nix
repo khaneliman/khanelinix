@@ -390,7 +390,11 @@ in
             }
             {
               provider = "antigravity";
-              model = "gemini-4-argon-medium";
+              model = "gemini-4-neon";
+            }
+            {
+              provider = "antigravity";
+              model = "gemini-4-hydrogen";
             }
           ];
 
@@ -416,7 +420,7 @@ in
             // {
               antigravity = {
                 enabled = true;
-                binaryPath = lib.getExe pkgs.antigravity-acp;
+                binaryPath = lib.getExe pkgs.antigravity-cli;
               };
             };
 

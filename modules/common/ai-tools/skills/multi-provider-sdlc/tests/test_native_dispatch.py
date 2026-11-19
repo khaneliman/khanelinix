@@ -54,7 +54,7 @@ class NativeDispatchTests(unittest.TestCase):
                     "claudeAgent",
                     ["claude-opus-5-5", "claude-haiku-5-5"],
                 ),
-                provider("work-google", "antigravity", ["gemini-4-argon-high"]),
+                provider("work-google", "antigravity", ["gemini-4-neon-high"]),
             ]
         }
 
@@ -92,9 +92,32 @@ class NativeDispatchTests(unittest.TestCase):
         )
         self.assertEqual(
             result["target"],
-            {"providerInstanceId": "work-google", "model": "gemini-4-argon-high"},
+            {"providerInstanceId": "work-google", "model": "gemini-4-neon-high"},
         )
         self.assertIsNone(result["reasoning_effort"])
+
+    def test_google_grouped_model_requires_advertised_thinking_level(self) -> None:
+        catalog = self.catalog()
+        levels = ["high"]
+        catalog["providers"][2]["models"] = [
+            {
+                "id": "gemini-4-neon",
+                "options": [{"id": "thought_level", "values": levels}],
+            }
+        ]
+        request = self.t3_request(
+            capabilities=catalog, subscription="google", task_type="multimodal analysis"
+        )
+        self.assertEqual(
+            resolver.resolve(request)["target"],
+            {
+                "providerInstanceId": "work-google",
+                "model": "gemini-4-neon",
+                "options": {"thought_level": "high"},
+            },
+        )
+        levels.clear()
+        self.assertEqual(resolver.resolve(request)["status"], "blocked")
 
     def test_catalog_rejects_unavailable_and_wrong_provider_routes(self) -> None:
         catalog = self.catalog()

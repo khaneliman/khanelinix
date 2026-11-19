@@ -363,8 +363,28 @@ def select_t3(
             ):
                 continue
             for live_model in instance["models"]:
+                thinking = {}
                 if live_model["id"] != model["upstream_model"]:
-                    continue
+                    family, _, level = model["upstream_model"].rpartition("-")
+                    if (
+                        instance["driverKind"] != "antigravity"
+                        or live_model["id"] != family
+                    ):
+                        continue
+                    option = next(
+                        (
+                            opt
+                            for opt in live_model.get("options") or []
+                            if opt["id"] in ("thought_level", "thinking_level")
+                        ),
+                        {},
+                    )
+                    levels = option.get("values", []) or [
+                        choice["id"] for choice in option.get("options", [])
+                    ]
+                    if level not in levels:
+                        continue
+                    thinking[option["id"]] = level
                 effort = model["reasoning_effort"]
                 profile = registry["semantic_roles"][route["semantic_role"]]
                 source = model["upstream_provider"]
@@ -372,7 +392,7 @@ def select_t3(
                     registry, source, profile["native"].get(source, "")
                 ):
                     effort = profile["reasoning_effort"].get(source, effort)
-                options = {}
+                options = thinking
                 effort_key = (
                     "reasoningEffort" if instance["driverKind"] == "codex" else "effort"
                 )

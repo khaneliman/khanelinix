@@ -97,7 +97,7 @@ class ModelRoutingTests(unittest.TestCase):
         )
         self.assertEqual(
             routes["plan or code review"]["fallbacks"],
-            ["gpt-6-2-sol", "gemini-4-argon", "fable-5-2", "google-opus-5-5"],
+            ["gpt-6-2-sol", "gemini-4-neon", "fable-5-2", "google-opus-5-5"],
         )
         self.assertEqual(
             self.registry["semantic_roles"]["reviewer"]["gateway"]["claude"],
@@ -364,7 +364,7 @@ class ModelRoutingTests(unittest.TestCase):
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
             False: "9101295885f20711e258a46d89b38a46ab5cf145119ac63a01b6d66143303f27",
-            True: "d60a60bdb4daae7168b435dffb2723fd300175ab405ab5dc49a60a87fe098295",
+            True: "8677f0248cf4072f6f35e1ac7d7ab5f39e958a88d5eebe2291da8288a3419ed5",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():
