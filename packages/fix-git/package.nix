@@ -2,9 +2,6 @@
   coreutils,
   findutils,
   git,
-  gnugrep,
-  gnused,
-  wget,
   writeShellApplication,
   ...
 }:
@@ -17,100 +14,78 @@ writeShellApplication {
 
   passthru.updateScript = null;
 
-  checkPhase = "";
-
   runtimeInputs = [
     coreutils
     findutils
     git
-    gnugrep
-    gnused
-    wget
   ];
 
   text = ''
     # Usage: fix-git [REMOTE-URL]
-    #   Must be run from the root directory of the repository.
-    #   If a remote is not supplied, it will be read from .git/config
-    #
-    # For when you have a corrupted local repo, but a trusted remote.
-    # This script replaces all your history with that of the remote.
-    # If there is a .git, it is backed up as .git_old, removing the last backup.
-    # This does not affect your working tree.
-    #
-    # This does not currently work with submodules!
-    # This will abort if a suspected submodule is found.
-    # You will have to delete them first
-    # and re-clone them after (with `git submodule update --init`)
-    #
-    # Error codes:
-    # 1: If a URL is not supplied, and one cannot be read from .git/config
-    # 4: If the URL cannot be reached
-    # 5: If a Git submodule is detected
+    # Run from the repository root. Without a URL, use remote.origin.url.
 
-    if [[ "$(find -name .git -not -path ./.git | wc -l)" -gt 0 ]] ;
-    then
-        echo "It looks like this repo uses submodules" >&2
-        echo "You will need to remove them before this script can safely execute" >&2
-        echo "Then use \`git submodule update --init\` to re-clone them" >&2
-        exit 5
+    # A caller's Git environment must not redirect the staging commands to its repository.
+    git_local_env="$(git rev-parse --local-env-vars)"
+    mapfile -t git_local_vars <<< "$git_local_env"
+    unset "''${git_local_vars[@]}"
+
+    if [[ -L .git || ( -e .git && ! -d .git ) ]]; then
+      echo "Cannot repair a linked Git directory or worktree" >&2
+      exit 5
     fi
 
-    if [[ $# -ge 1 ]] ;
-    then
-        url="$1"
-    else
-        if ! url="$(git config --local --get remote.origin.url)" ;
-        then
-            echo "Unable to find remote 'origin': missing in '.git/config'" >&2
-            exit 1
+    if prefix="$(git rev-parse --show-prefix 2>/dev/null)" && [[ -n "$prefix" ]]; then
+      echo "Run fix-git from the repository root" >&2
+      exit 1
+    fi
+
+    nested_git="$(find . -mindepth 1 \( -path ./.git -o -path ./.git_old -o -path './.git_old.~*~' \) -prune -o -name .git -print -quit)"
+    if [[ -n "$nested_git" ]]; then
+      echo "Cannot repair a repository containing submodules or nested repositories: $nested_git" >&2
+      exit 5
+    fi
+
+    if [[ $# -ge 1 ]]; then
+      url="$1"
+    elif ! url="$(git config --file .git/config --get remote.origin.url)"; then
+      echo "Unable to find remote 'origin' in .git/config" >&2
+      exit 1
+    fi
+
+    printf 'This operation will replace the local Git history with the remote at:\n%s\n\n' "$url"
+    echo "Your working tree will stay intact, and existing Git metadata will be backed up."
+    printf 'Are you sure? (y/N): '
+    if ! read -r confirm || [[ ! "$confirm" =~ ^[Yy]([Ee][Ss])?$ ]]; then
+      echo "Aborting without doing anything"
+      exit 0
+    fi
+
+    stage="$(mktemp -d ./.fix-git.XXXXXXXX)"
+    backed_up=false
+    cleanup() {
+      if "$backed_up" && [[ ! -e .git && ! -L .git ]]; then
+        if ! mv -T --no-copy --update=none-fail -- .git_old .git; then
+          echo "Could not restore .git; the backup is at .git_old" >&2
         fi
+      fi
+      rm -rf -- "$stage"
+    }
+    trap cleanup EXIT
+    trap 'exit 129' HUP
+    trap 'exit 130' INT
+    trap 'exit 143' TERM
+
+    # Prepare the remote's default branch and index before touching local metadata.
+    if ! git clone --no-checkout -- "$url" "$stage/repo" ||
+       ! git -C "$stage/repo" reset --mixed --no-refresh HEAD; then
+      echo "Unable to prepare the remote repository; local metadata is unchanged" >&2
+      exit 4
     fi
 
-    if ! branch_default="$(git config --get init.defaultBranch)" ;
-    then
-        # if the defaultBranch config option isn't present, then it's likely an old version of git that uses "master" by default
-        branch_default="master"
+    if [[ -d .git ]]; then
+      mv -vT --no-copy --backup=numbered -- .git .git_old
+      backed_up=true
     fi
-
-    url_base="$(echo "$url" | sed -E 's;^([^/]*://)?([^/]*)(/.*)?$;\2;')"
-    echo "Attempting to access $url_base before continuing"
-    if ! wget -p "$url_base" -O /dev/null -q --dns-timeout=5 --connect-timeout=5 ;
-    then
-        echo "Unable to reach $url_base: Aborting before any damage is done" >&2
-        exit 4
-    fi
-
-    echo
-    echo "This operation will replace the local repo with the remote at:"
-    echo $url
-    echo
-    echo "This will completely rewrite history,"
-    echo "but will leave your working tree intact"
-    echo -n "Are you sure? (y/N): "
-
-    read confirm
-    if ! [ -t 0 ] ; # i'm open in a pipe
-    then
-        # print the piped input
-        echo "$confirm"
-    fi
-    if echo "$confirm"|grep -Eq "[Yy]+[EeSs]*" ; # it looks like a yes
-    then
-        if [[ -e .git ]] ;
-        then
-            # remove old backup
-            rm -vrf .git_old | tail -n 1 &&
-            # backup .git iff it exists
-            mv -v .git .git_old
-        fi &&
-        git init &&
-        git remote add origin "$url" &&
-        git config --local --get remote.origin.url | sed 's/^/Added remote origin at /' &&
-        git fetch &&
-        git reset "origin/$branch_default" --mixed
-    else
-        echo "Aborting without doing anything"
-    fi
+    mv -T --no-copy --update=none-fail -- "$stage/repo/.git" .git
   '';
 }
