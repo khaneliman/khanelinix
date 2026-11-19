@@ -17,6 +17,7 @@ _: {
                 mainProgram = "update-${name}";
                 description = "Update ${description} inputs";
               };
+              runtimeInputs = [ pkgs.nix ];
               text = ''
                 set -euo pipefail
 
@@ -59,6 +60,7 @@ _: {
                 mainProgram = "update-all";
                 description = "Update all flake inputs";
               };
+              runtimeInputs = [ pkgs.nix ];
               text = ''
                 set -euo pipefail
 
@@ -132,6 +134,7 @@ _: {
                 name = "update-plugins";
                 runtimeInputs = [
                   pkgs.git
+                  pkgs.nix
                   pythonWithRich
                 ];
                 text = ''
@@ -281,6 +284,7 @@ _: {
                 };
                 runtimeInputs = [
                   pkgs.gawk
+                  pkgs.nix
                   pkgs.openssh
                   (pkgs.nixos-rebuild-ng or pkgs.nixos-rebuild)
                 ];
@@ -455,6 +459,7 @@ _: {
               name = "update-vicinae-extensions";
               runtimeInputs = [
                 pkgs.git
+                pkgs.nix
                 pkgs.python3
               ];
               text = ''
