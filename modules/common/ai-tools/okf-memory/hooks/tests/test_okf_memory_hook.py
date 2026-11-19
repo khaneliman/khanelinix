@@ -607,6 +607,19 @@ class OkfMemoryHookTests(unittest.TestCase):
             stop = self.run_hook(root, "claude", "stop", payload)
             self.assertEqual(stop["decision"], "block")
 
+    def test_antigravity_state_error_fails_open_for_each_event(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "data").touch()
+            payload = {"conversationId": "test", "workspacePaths": [str(root)]}
+            for event, expected in (
+                ("stop", {"decision": "stop"}),
+                ("pre-invocation", {"injectSteps": []}),
+            ):
+                self.assertEqual(
+                    self.run_hook(root, "antigravity", event, payload), expected
+                )
+
     def test_antigravity_pre_invocation_stays_silent(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

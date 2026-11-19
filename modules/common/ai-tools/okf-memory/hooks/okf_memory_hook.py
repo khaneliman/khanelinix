@@ -650,24 +650,27 @@ def main() -> None:
         choices=("session-start", "pre-invocation", "user-prompt", "stop"),
     )
     args = parser.parse_args()
-    payload = load_payload()
-    if args.provider == "codex" and is_codex_subagent(payload):
+    try:
+        payload = load_payload()
+        if args.provider == "codex" and is_codex_subagent(payload):
+            if args.event == "stop":
+                emit_allow(args.provider)
+            else:
+                emit_no_context(args.provider)
+            return
+        if args.event in ("session-start", "pre-invocation"):
+            handle_start(args.provider, payload)
+        elif args.event == "user-prompt":
+            handle_user_prompt(args.provider, payload)
+        elif args.event == "stop":
+            handle_stop(args.provider, payload)
+    except Exception as exc:  # Hooks must fail open.  # noqa: BLE001
+        print(f"[okf-memory hook] {exc}", file=sys.stderr)
         if args.event == "stop":
             emit_allow(args.provider)
         else:
             emit_no_context(args.provider)
-        return
-    if args.event in ("session-start", "pre-invocation"):
-        handle_start(args.provider, payload)
-    elif args.event == "user-prompt":
-        handle_user_prompt(args.provider, payload)
-    elif args.event == "stop":
-        handle_stop(args.provider, payload)
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as exc:  # Hooks must fail open.  # noqa: BLE001
-        print(f"[okf-memory hook] {exc}", file=sys.stderr)
-        print("{}")
+    main()
