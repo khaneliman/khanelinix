@@ -193,7 +193,7 @@ in
       shellAliases = {
         # Nixpkgs
         lua-update = "nix run nixpkgs#luarocks-packages-updater update";
-        lua-update-all = "nix run nixpkgs#luarocks-packages-updater -- --github-token=$(echo $GITHUB_TOKEN)";
+        lua-update-all = ''f(){ nix run nixpkgs#luarocks-packages-updater -- --github-token="$GITHUB_TOKEN" "$@"; }; f'';
         bbp-beast = "${nixBeastConfig} ${lib.getExe pkgs.khanelinix.build-by-path} --fast .";
         npr-beast = "${nixBeastConfig} nixpkgs-review";
         vra = ''f(){ ${nixBeastConfig} ${lib.getExe pkgs.khanelinix.vim-plugins-review} --systems "aarch64-darwin x86_64-linux aarch64-linux" --num-eval-workers 3 "$@"; }; f'';
@@ -201,33 +201,33 @@ in
         ncs = ''f(){ nix build "nixpkgs#$1" --no-link && nix path-info --recursive --closure-size --human-readable $(nix-build --no-out-link '<nixpkgs>' -A "$1"); }; f'';
         ncsdc = ''f(){ nix build ".#darwinConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#darwinConfigurations.$1.config.system.build.toplevel.outPath"); }; f'';
         ncsnc = ''f(){ nix build ".#nixosConfigurations.$1.config.system.build.toplevel" --no-link && nix path-info --recursive --closure-size --human-readable $(nix eval --raw ".#nixosConfigurations.$1.config.system.build.toplevel.outPath"); }; f'';
-        nras = ''nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux"'';
-        nra = ''${nixBeastConfig} nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux"'';
-        nraps = ''nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-eval-workers 3'';
-        nrap = ''${nixBeastConfig} nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-eval-workers 3'';
-        nrapas = ''nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-eval-workers 3 --approve-pr'';
-        nrapa = ''${nixBeastConfig} nixpkgs-review pr $1 --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-eval-workers 3 --approve-pr'';
-        nrds = ''nixpkgs-review pr $1 --systems "aarch64-darwin"'';
-        nrd = ''${nixBeastConfig} nixpkgs-review pr $1 --systems "aarch64-darwin"'';
-        nrdps = ''nixpkgs-review pr $1 --systems "aarch64-darwin" --post-result'';
-        nrdp = ''${nixBeastConfig} nixpkgs-review pr $1 --systems "aarch64-darwin" --post-result'';
+        nras = ''nixpkgs-review pr "$1" --systems "aarch64-darwin x86_64-linux aarch64-linux"'';
+        nra = ''${nixBeastConfig} nixpkgs-review pr "$1" --systems "aarch64-darwin x86_64-linux aarch64-linux"'';
+        nraps = ''nixpkgs-review pr "$1" --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-eval-workers 3'';
+        nrap = ''${nixBeastConfig} nixpkgs-review pr "$1" --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-eval-workers 3'';
+        nrapas = ''nixpkgs-review pr "$1" --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-eval-workers 3 --approve-pr'';
+        nrapa = ''${nixBeastConfig} nixpkgs-review pr "$1" --systems "aarch64-darwin x86_64-linux aarch64-linux" --post-result --num-eval-workers 3 --approve-pr'';
+        nrds = ''nixpkgs-review pr "$1" --systems "aarch64-darwin"'';
+        nrd = ''${nixBeastConfig} nixpkgs-review pr "$1" --systems "aarch64-darwin"'';
+        nrdps = ''nixpkgs-review pr "$1" --systems "aarch64-darwin" --post-result'';
+        nrdp = ''${nixBeastConfig} nixpkgs-review pr "$1" --systems "aarch64-darwin" --post-result'';
         nrhs = "nixpkgs-review rev HEAD";
         nrh = "${nixBeastConfig} nixpkgs-review rev HEAD";
-        nrls = ''nixpkgs-review pr $1 --systems "x86_64-linux aarch64-linux" --num-eval-workers 2'';
-        nrl = ''${nixBeastConfig} nixpkgs-review pr $1 --systems "x86_64-linux aarch64-linux" --num-eval-workers 2'';
-        nrlps = ''nixpkgs-review pr $1 --systems "x86_64-linux aarch64-linux" --num-eval-workers 2 --post-result'';
-        nrlp = ''${nixBeastConfig} nixpkgs-review pr $1 --systems "x86_64-linux aarch64-linux" --num-eval-workers 2 --post-result'';
-        num = "nix-shell maintainers/scripts/update.nix --argstr maintainer $1";
-        nup = "nix-update --commit -u $1";
-        prefetch-sri = "nix store prefetch-file $1";
+        nrls = ''nixpkgs-review pr "$1" --systems "x86_64-linux aarch64-linux" --num-eval-workers 2'';
+        nrl = ''${nixBeastConfig} nixpkgs-review pr "$1" --systems "x86_64-linux aarch64-linux" --num-eval-workers 2'';
+        nrlps = ''nixpkgs-review pr "$1" --systems "x86_64-linux aarch64-linux" --num-eval-workers 2 --post-result'';
+        nrlp = ''${nixBeastConfig} nixpkgs-review pr "$1" --systems "x86_64-linux aarch64-linux" --num-eval-workers 2 --post-result'';
+        num = ''nix-shell maintainers/scripts/update.nix --argstr maintainer "$1"'';
+        nup = ''nix-update --commit -u "$1"'';
+        prefetch-sri = ''nix store prefetch-file "$1"'';
         tree-check = "nix build .#vimPlugins.nvim-treesitter.passthru.tests.check-queries";
         tree-update-all = ''./pkgs/applications/editors/vim/plugins/utils/nvim-treesitter/update.py && git add ./pkgs/applications/editors/vim/plugins/nvim-treesitter/generated.nix && git commit -m "vimPlugins.nvim-treesitter: update grammars"'';
         # NOTE: vim-add 'owner/repo'
         vim-add = "nix run nixpkgs#vimPluginsUpdater add";
         # NOTE: vim-update 'plugin-name'
         vim-update = "nix run nixpkgs#vimPluginsUpdater update";
-        vim-update-all = "nix run nixpkgs#vimPluginsUpdater -- --github-token=$(echo $GITHUB_TOKEN)";
-        yazi-update = "f(){ ./pkgs/by-name/ya/yazi/plugins/update.py --plugin $1 --commit }; f";
+        vim-update-all = ''f(){ nix run nixpkgs#vimPluginsUpdater -- --github-token="$GITHUB_TOKEN" "$@"; }; f'';
+        yazi-update = ''f(){ ./pkgs/by-name/ya/yazi/plugins/update.py --plugin "$1" --commit }; f'';
         yazi-update-all = "./pkgs/by-name/ya/yazi/plugins/update.py --all --commit";
 
         # Home-Manager
