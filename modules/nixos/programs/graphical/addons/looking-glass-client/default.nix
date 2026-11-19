@@ -15,6 +15,15 @@ in
   options.khanelinix.programs.graphical.addons.looking-glass-client = {
     enable = lib.mkEnableOption "the Looking Glass client";
     enableKvmfr = lib.mkEnableOption "ivshmem support";
+    vfioDevicePaths = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      example = [
+        "/dev/vfio/11"
+        "/dev/vfio/12"
+      ];
+      description = "Host-specific VFIO device nodes to add to libvirt's cgroup_device_acl.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -35,36 +44,49 @@ in
     ];
 
     environment.etc."looking-glass-client.ini" = {
-      user = "+${toString config.users.users.${user.name}.uid}";
       source = ./client.ini;
+    }
+    // lib.optionalAttrs (user.name != null) {
+      user = user.name;
     };
 
-    # Allow user to have access to kvmfr interface
+    # Allow user and qemu-libvirtd (both in group kvm) access to kvmfr.
     services.udev.extraRules = lib.mkIf cfg.enableKvmfr ''
-      SUBSYSTEM=="kvmfr", OWNER="${user.name}", GROUP="kvm", MODE="0660"
       SUBSYSTEM=="kvmfr", OWNER="qemu-libvirtd", GROUP="kvm", MODE="0660"
     '';
 
     # Only set up /dev/shm when not using kvmfr
-    systemd.tmpfiles.settings = lib.mkIf (!cfg.enableKvmfr) {
+    systemd.tmpfiles.settings = lib.mkIf (!cfg.enableKvmfr && user.name != null) {
       "looking-glass" = {
         "/dev/shm/looking-glass".f = {
           age = "-";
           group = "kvm";
           mode = "0660";
-          user = toString config.users.users.${user.name}.uid;
+          user = user.name;
         };
       };
     };
 
-    virtualisation.libvirtd.qemu.verbatimConfig = ''
-      cgroup_device_acl = [
-        ${lib.optionalString cfg.enableKvmfr "\"dev/kvmfr0\","}
-        "/dev/vfio/vfio", "/dev/vfio/11", "/dev/vfio/12",
-        "/dev/null", "/dev/full", "/dev/zero",
-        "/dev/random", "/dev/urandom",
-        "/dev/ptmx", "/dev/kvm"
-      ]
-    '';
+    virtualisation.libvirtd.qemu.verbatimConfig =
+      let
+        aclDevices =
+          lib.optional cfg.enableKvmfr "/dev/kvmfr0"
+          ++ [ "/dev/vfio/vfio" ]
+          ++ cfg.vfioDevicePaths
+          ++ [
+            "/dev/null"
+            "/dev/full"
+            "/dev/zero"
+            "/dev/random"
+            "/dev/urandom"
+            "/dev/ptmx"
+            "/dev/kvm"
+          ];
+      in
+      ''
+        cgroup_device_acl = [
+          ${lib.concatMapStringsSep ",\n  " builtins.toJSON aclDevices}
+        ]
+      '';
   };
 }

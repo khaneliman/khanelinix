@@ -20,6 +20,7 @@ in
 {
   options.khanelinix.virtualisation.kvm = with types; {
     enable = lib.mkEnableOption "KVM virtualisation";
+    desktopEnable = lib.mkEnableOption "desktop KVM tooling (virt-manager, Looking Glass, SPICE USB, Scream)";
     # Use `machinectl` and then `machinectl status <name>` to
     # get the unit "*.scope" of the virtual machine.
     machineUnits = mkOpt (listOf str) [
@@ -45,7 +46,7 @@ in
         "vfio_pci"
       ];
       kernelParams = [
-        "${cfg.platform}_iommu=force_isolation"
+        (if cfg.platform == "intel" then "intel_iommu=on" else "${cfg.platform}_iommu=force_isolation")
         "iommu=pt"
         "kvm.ignore_msrs=1"
       ];
@@ -54,15 +55,12 @@ in
       ) "options vfio-pci ids=${lib.concatStringsSep "," cfg.vfioIds}";
     };
 
-    environment.systemPackages = with pkgs; [ virt-manager ];
+    environment.systemPackages = lib.optionals cfg.desktopEnable [ pkgs.virt-manager ];
 
-    # trust bridge network interface(s)
-    networking.firewall.trustedInterfaces = [
-      "virbr0"
-      "br0"
-    ];
+    # Trust only libvirt's local virtual bridge, not host LAN bridges.
+    networking.firewall.trustedInterfaces = [ "virbr0" ];
 
-    systemd.tmpfiles.rules = [
+    systemd.tmpfiles.rules = lib.optionals (cfg.desktopEnable && user.name != null) [
       "f /dev/shm/scream 0660 ${user.name} qemu-libvirtd -"
     ];
 
@@ -71,7 +69,7 @@ in
         # Libvirt documentation
         # See: https://libvirt.org/docs.html
         enable = true;
-        extraConfig = ''
+        extraConfig = optionalString (user.name != null) ''
           user="${user.name}"
         '';
 
@@ -83,19 +81,18 @@ in
           swtpm.enable = true;
 
           verbatimConfig = ''
-            s = []
-            user = "+${toString config.users.users.${user.name}.uid}"
+            namespaces = []
+            ${optionalString (user.name != null) ''user = "+${toString config.users.users.${user.name}.uid}"''}
           '';
         };
       };
 
-      spiceUSBRedirection.enable = true;
+      spiceUSBRedirection.enable = cfg.desktopEnable;
     };
 
     khanelinix = {
       user = {
         extraGroups = [
-          "disk"
           "input"
           "kvm"
           "libvirtd"
@@ -103,14 +100,14 @@ in
         ];
       };
 
-      programs.graphical.addons = {
+      programs.graphical.addons = lib.mkIf cfg.desktopEnable {
         looking-glass-client = {
           enable = true;
           enableKvmfr = true;
         };
       };
 
-      home = {
+      home = lib.mkIf cfg.desktopEnable {
         extraOptions = {
           systemd.user.services.scream = {
             Install.RequiredBy = cfg.machineUnits;
