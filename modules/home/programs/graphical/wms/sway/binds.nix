@@ -131,10 +131,10 @@ in
 
               # Additional bindings - Multiple launchers like Hyprland
               # bindings are generated dynamically above based on enabled launchers
-              "Super_L+Shift+Return" = "exec ${mkStartCommand "${swayCfg.terminal} zellij"}";
-              "Super_L+Shift+P" = "exec ${color_picker}";
+              "${swayCfg.modifier}+Shift+Return" = "exec ${mkStartCommand "${swayCfg.terminal} zellij"}";
+              "${swayCfg.modifier}+Shift+p" = "exec ${color_picker}";
               "${swayCfg.modifier}+b" = "exec ${mkStartCommand browser}";
-              "Super_L+Shift+E" = "exec ${mkStartCommand explorer}";
+              "${swayCfg.modifier}+Shift+e" = "exec ${mkStartCommand explorer}";
               # Background tools - use background slice for monitoring/file management
               "${swayCfg.modifier}+e" = "exec ${mkStartCommand { slice = "b"; } "${swayCfg.terminal} yazi"}";
               "${swayCfg.modifier}+Control+l" = mkForce "exec ${screen-locker} --grace 0";
@@ -147,45 +147,41 @@ in
 
               # Kill window
               "${swayCfg.modifier}+Q" = "kill";
-              "Control+Shift+q" = "kill";
 
               # File screenshots
               "Print" = "exec ${sway_active_file}";
               "Shift+Print" = "exec ${sway_area_file}";
-              "Super_L+Print" = "exec ${sway_screen_file}";
+              "${swayCfg.modifier}+Print" = "exec ${sway_screen_file}";
 
               # Area / Window screenshots
               "Alt+Print" = "exec ${sway_active_annotate}";
               "Alt+Control+Print" = "exec ${sway_area_annotate}";
-              "Alt+Super_L+Print" = "exec ${sway_screen_annotate}";
+              "${swayCfg.modifier}+Alt+Print" = "exec ${sway_screen_annotate}";
 
               # Clipboard screenshots
               "Control+Print" = "exec ${sway_active_clipboard}";
               "Control+Shift+Print" = "exec ${sway_area_clipboard}";
-              "Super_L+Control+Print" = "exec ${sway_screen_clipboard}";
+              "${swayCfg.modifier}+Control+Print" = "exec ${sway_screen_clipboard}";
 
               # Screen recording
               "${swayCfg.modifier}+Control+Alt+Print" = "exec ${screen-recorder} screen";
               "${swayCfg.modifier}+Control+Alt+Shift+Print" = "exec ${screen-recorder} area";
 
               # Floating toggle
-              "Super_L+Alt+v" = "floating toggle";
+              "${swayCfg.modifier}+Alt+v" = "floating toggle";
               "${swayCfg.modifier}+p" = "layout tabbed";
               "${swayCfg.modifier}+j" = "split vertical";
               "${swayCfg.modifier}+f" = "fullscreen";
 
-              # Focus and move windows
+              # Keep Home Manager's Mod+Shift+arrow window movement.
               "Alt+left" = "focus left";
               "Alt+right" = "focus right";
               "Alt+up" = "focus up";
               "Alt+down" = "focus down";
-              "Super_L+left" = "move left";
-              "Super_L+right" = "move right";
-              "Super_L+up" = "move up";
-              "Super_L+down" = "move down";
-
-              "Control+Shift+h" = "resize shrink width 10px";
-              "Control+Shift+l" = "resize grow width 10px";
+              "${swayCfg.modifier}+Alt+h" = "focus left";
+              "${swayCfg.modifier}+Alt+j" = "focus down";
+              "${swayCfg.modifier}+Alt+k" = "focus up";
+              "${swayCfg.modifier}+Alt+l" = "focus right";
 
               # Workspace switching
               "Control+Alt+right" = "workspace next";
@@ -198,18 +194,18 @@ in
               "Alt+Shift+Control+left" = "move container to workspace prev";
 
               # Scratchpad
-              "Super_L+Shift+grave" = "move container to scratchpad";
-              "Super_L+grave" = "scratchpad show";
+              "${swayCfg.modifier}+Shift+grave" = "move container to scratchpad";
+              "${swayCfg.modifier}+grave" = "scratchpad show";
 
               # Inactive
               "Alt+Shift+grave" = "move container to workspace special:inactive";
               "Alt+grave" = "workspace special:inactive";
 
               # Monitor focus
-              "Super_L+Alt+up" = "focus output up";
-              "Super_L+Alt+down" = "focus output down";
-              "Super_L+Alt+left" = "focus output left";
-              "Super_L+Alt+right" = "focus output right";
+              "${swayCfg.modifier}+Alt+up" = "focus output up";
+              "${swayCfg.modifier}+Alt+down" = "focus output down";
+              "${swayCfg.modifier}+Alt+left" = "focus output left";
+              "${swayCfg.modifier}+Alt+right" = "focus output right";
 
               # Move workspace to monitor
               "Hyper_L+down" = "move workspace to output down";
@@ -232,7 +228,7 @@ in
               "${swayCfg.modifier}+u" = "output * power on";
 
               # Bar toggle (similar to Hyprland)
-              "Control+Shift+b" = "exec pkill -SIGUSR1 waybar || waybar &";
+              "${swayCfg.modifier}+Shift+b" = "exec pkill -SIGUSR1 waybar || waybar &";
 
               # Additional workspace navigation similar to Hyprland
               # Note: Sway doesn't support mouse_up/mouse_down bindings like Hyprland

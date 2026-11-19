@@ -122,10 +122,6 @@ let
         to = "SUPER_ALT_L_CTRL_L";
       }
       {
-        from = "$CTRL_SHIFT";
-        to = "CTRL_SHIFT";
-      }
-      {
         from = "$CTRL_ALT";
         to = "CTRL_ALT";
       }
@@ -508,11 +504,6 @@ in
                 dispatcher = "killactive";
               })
               (mkBind {
-                mods = "CTRL_SHIFT";
-                key = "Q";
-                dispatcher = "killactive";
-              })
-              (mkBind {
                 mods = "$mainMod";
                 key = "F";
                 dispatcher = "fullscreen";
@@ -527,7 +518,7 @@ in
               (mkExecBind "SUPER" "Print" "$screenshot_screen_clipboard")
             ];
 
-            # Window movement binds - keeping basic movement
+            # Alt+arrows stay available on keyboards without home-row navigation.
             movementBinds = [
               # Window Focus
               (mkBind {
@@ -579,7 +570,24 @@ in
                 dispatcher = "movewindow";
                 args = "d";
               })
-            ];
+            ]
+            ++
+              lib.mapAttrsToList
+                (
+                  key: direction:
+                  mkBind {
+                    mods = "SUPER_ALT";
+                    inherit key;
+                    dispatcher = "movefocus";
+                    args = direction;
+                  }
+                )
+                {
+                  h = "l";
+                  j = "d";
+                  k = "u";
+                  l = "r";
+                };
 
             # Workspace management binds
             workspaceBinds = [
@@ -845,7 +853,7 @@ in
             ++ [
               (mkExecBind "$mainMod" "I" "notify-send \"$($window-inspector)\"")
               (mkExecBind "$mainMod" "PERIOD" "smile")
-              (mkExecBind "$CTRL_SHIFT" "B" "killall -SIGUSR1 $bar")
+              (mkExecBind "SUPER_SHIFT" "B" "killall -SIGUSR1 $bar")
             ]
             ++
               lib.optional (lib.elem pkgs.hyprlandPlugins.hyprexpo config.wayland.windowManager.hyprland.plugins)
