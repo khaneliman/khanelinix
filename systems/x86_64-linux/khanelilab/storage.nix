@@ -19,9 +19,9 @@ let
       "tautulli"
     ]
   );
-  containerUnits = lib.mapAttrsToList (_: container: "${container.serviceName}.service") (
-    config.virtualisation.oci-containers.containers
-  );
+  containerUnits = lib.mapAttrsToList (
+    _: container: "${container.serviceName}.service"
+  ) config.virtualisation.oci-containers.containers;
   mediaUnits = nativeMediaUnits ++ containerUnits;
   mountedTmpfiles = {
     cache = [ ];
@@ -40,6 +40,15 @@ let
   excludeMountedPaths = lib.concatMapStringsSep " " (name: "--exclude-prefix=/mnt/${name}") (
     lib.attrNames mountedTmpfiles
   );
+  snapraidMounts = [
+    "/mnt/disk1"
+    "/mnt/disk2"
+    "/mnt/disk3"
+    "/mnt/disk4"
+    "/mnt/cache"
+    "/mnt/pool"
+    "/mnt/parity"
+  ];
 
   xfsDataOptions = [
     "rw"
@@ -203,27 +212,14 @@ in
     }
   ) mountedTmpfiles
   // lib.genAttrs [ "snapraid-sync" "snapraid-scrub" ] (_: {
-    unitConfig.RequiresMountsFor = [
-      "/mnt/disk1"
-      "/mnt/disk2"
-      "/mnt/disk3"
-      "/mnt/disk4"
-      "/mnt/cache"
-      "/mnt/pool"
-      "/mnt/parity"
-    ];
+    unitConfig = {
+      RequiresMountsFor = snapraidMounts;
+      # RequiresMountsFor does not discover masked mount units.
+      AssertPathIsMountPoint = snapraidMounts;
+    };
     # The first sync creates the parity file. Sandboxing its nonexistent file
     # path would fail before SnapRAID can initialize it.
-    serviceConfig.ReadWritePaths = lib.mkForce [
-      "/var/lib"
-      "/mnt/disk1"
-      "/mnt/disk2"
-      "/mnt/disk3"
-      "/mnt/disk4"
-      "/mnt/cache"
-      "/mnt/pool"
-      "/mnt/parity"
-    ];
+    serviceConfig.ReadWritePaths = lib.mkForce ([ "/var/lib" ] ++ snapraidMounts);
   });
 
 }
