@@ -183,6 +183,25 @@ class PresentationTests(unittest.TestCase):
                 reset_inventory(usage, NOW, exact_mode="utc")[1].endswith("UTC")
             )
 
+    def test_exact_dates_use_the_injected_year(self):
+        stamp = "2026-09-09T21:56:00Z"
+        usage = {
+            "primary": window(resets=stamp),
+            "codexResetCredits": {
+                "availableCount": 1,
+                "credits": [{"status": "available", "expires_at": stamp}],
+            },
+        }
+        for now, year in ((NOW, ""), (NOW.replace(year=2025), " 2026")):
+            with self.subTest(now=now):
+                expected = f"Sep 9{year}, 9:56 PM UTC"
+                row = quota_rows({"usage": usage}, now, exact_mode="utc")[0]
+                self.assertEqual(row.exact_reset, expected)
+                self.assertEqual(
+                    reset_inventory(usage, now, exact_mode="utc")[1],
+                    f"Expires {expected}",
+                )
+
     def test_invalid_or_missing_reset_is_unknown(self):
         for stamp in (None, "not a date", "2026-09-09T22:00:00"):
             row = quota_rows({"usage": {"primary": window(resets=stamp)}}, NOW)[0]

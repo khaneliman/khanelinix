@@ -55,16 +55,17 @@ def duration(seconds):
     return f"{minutes}m"
 
 
-def exact_date(value, mode=None):
+def exact_date(value, mode=None, *, now=None):
     timestamp = parse_iso(value)
     if timestamp is None:
         return "Unknown"
-    timestamp = (
-        timestamp
-        if (mode or os.environ.get("CODEXBAR_RESET_TIME_FORMAT")) == "utc"
-        else timestamp.astimezone()
-    )
-    year = " %Y" if timestamp.year != dt.datetime.now(UTC).year else ""
+    now = now or dt.datetime.now(UTC)
+    if (mode or os.environ.get("CODEXBAR_RESET_TIME_FORMAT")) == "utc":
+        now = now.astimezone(UTC)
+    else:
+        timestamp = timestamp.astimezone()
+        now = now.astimezone()
+    year = " %Y" if timestamp.year != now.year else ""
     return timestamp.strftime(f"%b %-d{year}, %-I:%M %p %Z")
 
 
@@ -196,7 +197,7 @@ def quota_rows(entry, now=None, exact_mode=None):
                 value,
                 used,
                 reset_text(window, now),
-                exact_date(window.get("resetsAt"), exact_mode),
+                exact_date(window.get("resetsAt"), exact_mode, now=now),
             )
         )
     return rows
@@ -257,7 +258,7 @@ def reset_inventory(usage, now=None, exact_mode=None, *, provider=None, stale=Fa
     if future:
         stamp = future[0]
         prefix = "Expires" if count == 1 else "Next expires"
-        return summary, f"{prefix} {exact_date(stamp.isoformat(), exact_mode)}"
+        return summary, f"{prefix} {exact_date(stamp.isoformat(), exact_mode, now=now)}"
     return summary, "Expiry unknown"
 
 
