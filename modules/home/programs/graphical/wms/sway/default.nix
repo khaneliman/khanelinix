@@ -74,7 +74,7 @@ in
           hyprpicker
           # NOTE: removed from nixpkgs
           # kdePackages.xwaylandvideobridge
-          khanelinix.record_screen
+          khanelinix.record-screen
           libnotify
           playerctl
           slurp

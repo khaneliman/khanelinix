@@ -99,7 +99,7 @@ in
           hyprsysteminfo
           # NOTE: removed from nixpkgs
           # kdePackages.xwaylandvideobridge
-          khanelinix.record_screen
+          khanelinix.record-screen
           slurp
         ];
 

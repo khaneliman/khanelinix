@@ -65,7 +65,7 @@ in
             pkgs.grim
             pkgs.grimblast
             pkgs.hyprpicker
-            pkgs.khanelinix.record_screen
+            pkgs.khanelinix.record-screen
           ] "screencopy" "allow"
           ++ [
             (mkPackagePathPermission portalPackage "libexec/.xdg-desktop-portal-hyprland-wrapped" "screencopy"
