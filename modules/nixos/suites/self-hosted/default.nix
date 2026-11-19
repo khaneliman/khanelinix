@@ -7,6 +7,7 @@ let
   cfg = config.khanelinix.suites.self-hosted;
   hostAddress = config.khanelinix.system.networking.hostAddress;
   inherit (cfg) appdataDir dataDir;
+  containers = config.virtualisation.oci-containers.containers;
 in
 {
   options.khanelinix.suites.self-hosted = {
@@ -234,69 +235,17 @@ in
       };
     };
 
-    networking.firewall = lib.mkMerge [
-      { allowedTCPPorts = [ ]; }
-
-      {
-        # ah-webapp
-        allowedTCPPorts = [ 8088 ];
-      }
-
-      {
-        # ah-webapp-dev
-        allowedTCPPorts = [ 8099 ];
-      }
-
-      {
-        # cleanuparr
-        allowedTCPPorts = [ 11011 ];
-      }
-
-      {
-        # flaresolverr
-        allowedTCPPorts = [ 8191 ];
-      }
-
-      {
-        # neutarr
-        allowedTCPPorts = [ 9705 ];
-      }
-
-      {
-        # reclaimerr
-        allowedTCPPorts = [ 8001 ];
-      }
-
-      {
-        # profilarr
-        allowedTCPPorts = [ 6868 ];
-      }
-
-      {
-        # postgres11
-        allowedTCPPorts = [ 5432 ];
-      }
-
-      {
-        # pwm
-        allowedTCPPorts = [ 8282 ];
-      }
-
-      {
-        # organizr
-        allowedTCPPorts = [ 280 ];
-      }
-
-      {
-        # wakapi
-        allowedTCPPorts = [ 5000 ];
-      }
-
-      {
-        # seerr
-        allowedTCPPorts = [ 5055 ];
-      }
-
+    networking.firewall.allowedTCPPorts = lib.concatLists [
+      (lib.optional (containers.cleanuparr.autoStart or false) 11011)
+      (lib.optional (containers.flaresolverr.autoStart or false) 8191)
+      (lib.optional (containers.neutarr.autoStart or false) 9705)
+      (lib.optional (containers.reclaimerr.autoStart or false) 8001)
+      (lib.optional (containers.profilarr.autoStart or false) 6868)
+      (lib.optional (containers.postgres11.autoStart or false) 5432)
+      (lib.optional (containers.pwm.autoStart or false) 8282)
+      (lib.optional (containers.organizrv2.autoStart or false) 280)
+      (lib.optional (containers.wakapi.autoStart or false) 5000)
+      (lib.optional (containers.seerr.autoStart or false) 5055)
     ];
   };
 }

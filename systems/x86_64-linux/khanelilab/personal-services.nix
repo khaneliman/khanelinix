@@ -1,7 +1,15 @@
 { config, lib, ... }:
+let
+  containers = config.virtualisation.oci-containers.containers;
+in
 {
   config = lib.mkMerge [
     (lib.mkIf config.khanelinix.suites.self-hosted.enable {
+      networking.firewall.allowedTCPPorts = lib.concatLists [
+        (lib.optional (containers.ah-webapp.autoStart or false) 8088)
+        (lib.optional (containers.ah-webapp-dev.autoStart or false) 8099)
+      ];
+
       virtualisation.oci-containers.containers = {
         ah-webapp = {
           image = "ghcr.io/khaneliman/austin-horstman-webapp:latest";

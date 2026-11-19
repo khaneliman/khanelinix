@@ -5,6 +5,7 @@
   ...
 }:
 let
+  redis = config.services.redis.servers.khanelilab;
   # Keep addresses stable for native clients of the former Docker DNS names.
   endpoints = {
     adminer = {
@@ -139,7 +140,7 @@ in
     // {
       "127.0.0.1" = nativeNames;
     };
-  networking.firewall.interfaces.khaneproxy.allowedTCPPorts = [ 6379 ];
+  networking.firewall.interfaces.khaneproxy.allowedTCPPorts = lib.mkIf redis.enable [ redis.port ];
 
   assertions = [
     {
@@ -172,7 +173,7 @@ in
       }
     ) config.virtualisation.oci-containers.containers
     // {
-      redis-khanelilab = {
+      redis-khanelilab = lib.mkIf redis.enable {
         requires = [ networkUnit ];
         after = [ networkUnit ];
       };
