@@ -221,7 +221,7 @@ writeShellApplication {
         	yabai -m window "$YABAI_WINDOW_ID" --space "$2"
         fi
         yabai -m space --focus "$2"
-        set_wallpaper ${wallpapers}/share/wallpapers/$(ls ${wallpapers}/share/wallpapers/ | shuf -n 1)
+        set_random_wallpaper
         return 0
       fi
 
@@ -234,7 +234,7 @@ writeShellApplication {
         echo "$i"
         yabai -m space --create
         yabai -m space --focus "$i"
-    		set_wallpaper ${wallpapers}/share/wallpapers/$(ls ${wallpapers}/share/wallpapers/ | shuf -n 1)
+        set_random_wallpaper
       done
       yabai -m space "$CURRENT_SPACE" --focus
 
@@ -244,23 +244,24 @@ writeShellApplication {
       osascript -e 'tell application "Finder" to set desktop picture to POSIX file "'"$1"'"'
     }
 
+    wallpaper_files() {
+      find "${wallpapers}/share/wallpapers" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) -print0
+    }
+
+    set_random_wallpaper() {
+      local file
+      IFS= read -r -d "" file < <(wallpaper_files | shuf -z -n 1) && set_wallpaper "$file"
+    }
+
     set_wallpapers() {
-      if [[ $(command -v yabai) ]]; then
-        LOCAL_WALLPAPERS="$(realpath ${wallpapers}/share/wallpapers/)"
-
-        yabai -m space --focus 1
-
-        i=0
-
-        for file in "$LOCAL_WALLPAPERS"/*.png; do
-        	((i = i + 1))
-        	echo "Setting wallpaper on space $i to $file..."
-        	# take action on each file. $f store current file name
-        	osascript -e 'tell application "Finder" to set desktop picture to POSIX file "'"$file"'"'
-        	yabai -m space --focus next 2 &>/dev/null
-        	sleep 0.1
-        done
-      fi
+      command -v yabai >/dev/null || return
+      yabai -m space --focus 1
+      local file
+      while IFS= read -r -d "" file; do
+        set_wallpaper "$file"
+        yabai -m space --focus next >/dev/null 2>&1 || break
+        sleep 0.1
+      done < <(wallpaper_files | sort -z)
     }
 
     get_pixel_color() {
