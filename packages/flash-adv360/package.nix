@@ -1,14 +1,18 @@
 {
-  lib,
-  writeShellApplication,
   coreutils,
+  lib,
+  util-linux,
+  writeShellApplication,
   ...
 }:
 
 writeShellApplication {
   name = "flash-adv360";
 
-  runtimeInputs = [ coreutils ];
+  runtimeInputs = [
+    coreutils
+    util-linux
+  ];
 
   text = ''
     usage() {
@@ -57,13 +61,18 @@ writeShellApplication {
       exit 1
     fi
 
-    if [ ! -d "$mountpoint" ]; then
-      echo "missing mountpoint: $mountpoint" >&2
+    firmware="$(realpath -e -- "$firmware")"
+    bootloader="$(realpath -e -- "$mountpoint")"
+    if ! cd -- "$bootloader" ||
+       ! label="$(findmnt --noheadings --mountpoint . --output LABEL)" ||
+       [[ "$label" != ADV360PRO ]]; then
+      echo "not an ADV360PRO bootloader mountpoint: $mountpoint" >&2
       exit 1
     fi
 
-    cp "$firmware" "$mountpoint/"
-    sync "$mountpoint"
+    # Stay on the checked filesystem even if the bootloader detaches after the copy.
+    cp -T --update=none-fail -- "$firmware" "./zmk_$part.uf2"
+    sync -f -- .
     echo "flashed $firmware to $mountpoint"
   '';
 
