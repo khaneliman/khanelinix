@@ -81,6 +81,7 @@ in
 
     # Run once from each client host that needs access:
     # ssh-copy-id -i ~/.ssh/id_ed25519.pub ${config.khanelinix.user.name}@${serverLocalHostname}
+    programs.ssh.enable = lib.mkDefault true;
     programs.ssh.settings = lib.mkMerge [
       {
         "austinserver austinserver.local server" = lib.mkDefault (
