@@ -69,15 +69,22 @@
                     _children = [ { NewTab = { }; } ];
                   };
                 } # New tab
+                # Alt+Tab can be reserved for switching desktop windows.
                 {
                   bind = {
-                    _args = [ "Alt Tab" ];
+                    _args = [
+                      "Alt ."
+                      "Alt Tab"
+                    ];
                     _children = [ { GoToNextTab = { }; } ];
                   };
                 } # Go to next tab
                 {
                   bind = {
-                    _args = [ "Alt Shift Tab" ];
+                    _args = [
+                      "Alt ,"
+                      "Alt Shift Tab"
+                    ];
                     _children = [ { GoToPreviousTab = { }; } ];
                   };
                 } # Go to previous tab
