@@ -97,7 +97,7 @@
             entry = "${
               lib.getExe (pkgs.python3.withPackages (ps: [ ps.pyyaml ]))
             } -B modules/common/ai-tools/skills/ai-tools-architect/scripts/run_skill_tests.py modules/common/ai-tools/skills";
-            files = "^modules/(common/ai-tools/(skills/|planning-with-files/|marketplace/|[^/]+/hooks/)|home/programs/terminal/tools/claude-code/hooks/[^/]+\\.nix$)";
+            files = "^modules/(common/ai-tools/|home/programs/terminal/tools/claude-code/hooks/[^/]+\\.nix$)";
             language = "system";
             pass_filenames = false;
           };
