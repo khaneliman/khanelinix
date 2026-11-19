@@ -21,8 +21,10 @@ let
   # service that owns it (see opencode/provider.nix).
   ollamaEnabled =
     (config.services.ollama.enable or false) || (osConfig.services.ollama.enable or false);
-  swapCfg = osConfig.khanelinix.services.llm.llamaSwap or { };
-  swapEnabled = swapCfg.enable or false;
+  llmCfg = osConfig.khanelinix.services.llm or { };
+  swapCfg = llmCfg.llamaSwap or { };
+  swapModels = swapCfg.clientCatalog or { };
+  swapEnabled = (llmCfg.enable or false) && (swapCfg.enable or false) && swapModels != { };
   swapEndpoint = swapCfg.endpoint or "http://127.0.0.1:8090/v1";
   # These servers do not accept the developer role or reasoning_effort.
   localCompat = {
@@ -59,20 +61,15 @@ let
         api = "openai-completions";
         apiKey = "llama-swap";
         compat = localCompat;
-        models = [
+        models = lib.mapAttrsToList (
+          id: model:
           {
-            id = "qwen3-8-27b";
-            name = "Qwen3.8 27B";
+            inherit id;
+            inherit (model) name;
           }
-          {
-            id = "qwen3-coder-30b";
-            name = "Qwen3 Coder 30B";
-          }
-          {
-            id = "qwen36-colibri";
-            name = "Qwen3.6 35B-A3B (streamed)";
-          }
-        ];
+          // lib.optionalAttrs (model.contextWindow != null) { inherit (model) contextWindow; }
+          // lib.optionalAttrs (model.maxOutputTokens != null) { maxTokens = model.maxOutputTokens; }
+        ) swapModels;
       };
     }
     // lib.optionalAttrs ollamaEnabled {

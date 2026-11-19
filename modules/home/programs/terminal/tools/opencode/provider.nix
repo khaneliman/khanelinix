@@ -8,14 +8,16 @@ let
   ollamaEnabled =
     (config.services.ollama.enable or false) || (osConfig.services.ollama.enable or false);
 
-  swapCfg = osConfig.khanelinix.services.llm.llamaSwap or { };
+  llmCfg = osConfig.khanelinix.services.llm or { };
+  swapCfg = llmCfg.llamaSwap or { };
 
   # The proxy publishes its base URL, so a host or port change needs no edit
   # here. The literal only guards an evaluation without this system's config,
   # and the provider is gated on that config anyway.
   swapEndpoint = swapCfg.endpoint or "http://127.0.0.1:8090/v1";
 
-  swapEnabled = swapCfg.enable or false;
+  swapModels = swapCfg.clientCatalog or { };
+  swapEnabled = (llmCfg.enable or false) && (swapCfg.enable or false) && swapModels != { };
 in
 {
   config = {
@@ -47,11 +49,18 @@ in
         options = {
           baseURL = swapEndpoint;
         };
-        models = {
-          "qwen3-8-27b".name = "Qwen3.8 27B";
-          "qwen3-coder-30b".name = "Qwen3 Coder 30B";
-          "qwen36-colibri".name = "Qwen3.6 35B-A3B (streamed)";
-        };
+        models = lib.mapAttrs (
+          _: model:
+          {
+            inherit (model) name;
+          }
+          // lib.optionalAttrs (model.contextWindow != null && model.maxOutputTokens != null) {
+            limit = {
+              context = model.contextWindow;
+              output = model.maxOutputTokens;
+            };
+          }
+        ) swapModels;
       };
 
       ollama = lib.mkIf ollamaEnabled {

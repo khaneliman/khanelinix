@@ -12,6 +12,13 @@ let
 
   ollamaCfg = config.services.ollama;
 
+  requestContext =
+    model:
+    if model.contextSize == null || model.backend == "colibri" then
+      model.contextSize
+    else
+      model.contextSize / model.parallelSlots;
+
   # ollama keeps its store under /var/lib/private, which only root may traverse,
   # and /var/lib/ollama is a symlink into that directory. Binding onto the
   # symlink resolves back to the unreachable path, so the service reads the
@@ -144,6 +151,18 @@ in
       '';
     };
 
+    clientCatalog = lib.mkOption {
+      type = lib.types.attrsOf lib.types.attrs;
+      readOnly = true;
+      default = lib.mapAttrs (id: model: {
+        name = if model.displayName == null then id else model.displayName;
+        contextWindow = requestContext model;
+        inherit (model) maxOutputTokens;
+      }) swapCfg.models;
+      defaultText = lib.literalExpression "derived from llamaSwap.models";
+      description = "Chat-completions model metadata projected from the served models.";
+    };
+
     openFirewall = lib.mkEnableOption "opening the llama-swap port";
 
     healthCheckTimeout = lib.mkOption {
@@ -168,6 +187,12 @@ in
       type = lib.types.attrsOf (
         lib.types.submodule {
           options = {
+            displayName = lib.mkOption {
+              type = lib.types.nullOr lib.types.nonEmptyStr;
+              default = null;
+              description = "Model name shown to clients. Null uses the model ID.";
+            };
+
             backend = lib.mkOption {
               type = lib.types.enum [
                 "colibri"
@@ -202,6 +227,12 @@ in
               type = lib.types.nullOr lib.types.ints.positive;
               default = null;
               description = "Context window in tokens. Null keeps the engine default.";
+            };
+
+            maxOutputTokens = lib.mkOption {
+              type = lib.types.nullOr lib.types.ints.positive;
+              default = null;
+              description = "Maximum generated tokens to advertise to clients. Null keeps client defaults.";
             };
 
             gpu = lib.mkOption {
@@ -339,6 +370,13 @@ in
       } for the ${model.backend} backend.";
     }) swapCfg.models
     ++ lib.mapAttrsToList (name: model: {
+      assertion =
+        model.maxOutputTokens == null
+        || requestContext model == null
+        || model.maxOutputTokens < requestContext model;
+      message = "khanelinix.services.llm.llamaSwap.models.${name}.maxOutputTokens must leave room for input in the per-request context.";
+    }) swapCfg.models
+    ++ lib.mapAttrsToList (name: model: {
       # These render llama-server flags, so a colibri entry would drop them.
       assertion =
         model.backend == "llama-cpp" || (model.cpuMoeLayers == null && model.kvCacheType == "q8_0");
@@ -378,10 +416,14 @@ in
         # its command exited.
         logToStdout = "both";
 
-        models = lib.mapAttrs (name: model: {
-          cmd = if model.backend == "colibri" then mkColibriCmd name model else mkLlamaCmd model;
-          inherit (model) ttl;
-        }) swapCfg.models;
+        models = lib.mapAttrs (
+          name: model:
+          {
+            cmd = if model.backend == "colibri" then mkColibriCmd name model else mkLlamaCmd model;
+            inherit (model) ttl;
+          }
+          // lib.optionalAttrs (model.displayName != null) { name = model.displayName; }
+        ) swapCfg.models;
       };
     };
 
