@@ -5,7 +5,7 @@
 }:
 let
   inherit (lib) mkIf;
-  inherit (lib.khanelinix) disabled enabled;
+  inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.suites.networking;
 in
@@ -15,14 +15,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix = {
-      services = {
-        tailscale = lib.mkDefault disabled;
-      };
-
-      system = {
-        networking = lib.mkDefault enabled;
-      };
-    };
+    khanelinix.system.networking = lib.mkDefault enabled;
   };
 }

@@ -4,14 +4,13 @@
   ...
 }:
 let
-  inherit (lib) types mkIf;
-  inherit (lib.khanelinix) mkOpt;
+  inherit (lib) mkIf;
 
   cfg = config.khanelinix.services.tailscale;
 in
 {
   options.khanelinix.services.tailscale = {
-    enable = mkOpt types.bool true "Whether to enable Tailscale.";
+    enable = lib.mkEnableOption "Tailscale";
 
     # Default off: every host sits on a LAN that a subnet router also
     # advertises, so accepting that route would shadow the interface's own link
