@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
@@ -15,7 +16,17 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      usbimager
+      xclip
+    ];
+
     khanelinix = {
+      hardware = {
+        power = lib.mkDefault enabled;
+        fans = lib.mkDefault enabled;
+      };
+
       programs = {
         graphical = {
           addons = {
@@ -29,7 +40,10 @@ in
       };
 
       services = {
+        ddc = lib.mkDefault enabled;
         flatpak = lib.mkDefault enabled;
+        lact = lib.mkDefault enabled;
+        printing = lib.mkDefault enabled;
       };
     };
   };

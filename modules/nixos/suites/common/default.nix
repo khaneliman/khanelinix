@@ -36,18 +36,12 @@ in
         pciutils
         pkgs.khanelinix.nixos-needsreboot
         rsync
-        usbimager
         util-linux
         wget
       ];
     };
 
     khanelinix = {
-      hardware = {
-        power = mkDefault enabled;
-        fans = mkDefault enabled;
-      };
-
       nix = mkDefault enabled;
 
       programs = {
@@ -70,15 +64,12 @@ in
       services = {
         ananicy = mkDefault enabled;
         coredump = mkDefault enabled;
-        ddccontrol = mkDefault enabled;
         earlyoom = mkDefault enabled;
         journald = mkDefault enabled;
-        lact = mkDefault enabled;
         logind = mkDefault enabled;
         logrotate = mkDefault enabled;
         oomd = mkDefault enabled;
         openssh = mkDefault enabled;
-        printing = mkDefault enabled;
         resources-limiter = mkDefault enabled;
       };
 

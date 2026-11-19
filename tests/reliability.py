@@ -106,6 +106,27 @@ for name in inventory["darwin"]:
         "{ drvPath = f.darwinConfigurations." + json.dumps(name) + ".system.drvPath; }",
     )
 evaluate(
+    "role-nixos-desktop",
+    """let
+      lab = f.nixosConfigurations.khanelilab.config;
+      desktop = c: with c.khanelinix; [
+        hardware.power.enable hardware.fans.enable
+        services.ddc.enable services.lact.enable services.printing.enable
+        (builtins.elem "usbimager" (map lib.getName c.environment.systemPackages))
+        (builtins.elem "xclip" (map lib.getName c.environment.systemPackages))
+      ];
+    in
+      !(lib.any lib.id (desktop lab))
+      && lab.hardware.graphics.enable
+      && lab.khanelinix.suites.common.enable
+      && lab.khanelinix.suites.media-server.enable
+      && lab.khanelinix.suites.nas.enable
+      && lab.khanelinix.virtualisation.kvm.enable
+      && lib.all (name: lib.all lib.id (desktop f.nixosConfigurations.${name}.config))
+        [ "khanelinix" "bruddynix" "nixos" ]""",
+    validate=lambda value: value is True,
+)
+evaluate(
     "fleet-khanelimac-m1-builders",
     """let
       c = f.darwinConfigurations.khanelimac-m1.config;

@@ -24,14 +24,12 @@ in
       findutils
       killall
       lsof
-      pciutils
       pkgs.khanelinix.trace-symlink
       pkgs.khanelinix.trace-which
       pkgs.khanelinix.why-depends
       tldr
       unzip
       wget
-      xclip
     ];
   };
 }
