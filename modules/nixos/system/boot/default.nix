@@ -94,7 +94,7 @@ in
       loader = {
         efi = {
           canTouchEfiVariables = true;
-          efiSysMountPoint = "/boot";
+          efiSysMountPoint = lib.mkDefault "/boot";
         };
 
         generationsDir.copyKernels = true;
