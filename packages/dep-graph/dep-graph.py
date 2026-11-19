@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
+import argparse
 import subprocess
-import sys
 
 
 def run(cmd, capture_output=True):
@@ -34,23 +34,22 @@ def convert_to_svg(dot_path="graph.dot", svg_path="graph.svg"):
         subprocess.run(["sfdp", "-Tsvg", "-x", "-o", svg_path, dot_path], check=True)
         print(f"✅ SVG written to: {svg_path}")
     except FileNotFoundError:
-        print("⚠️ 'dot' (graphviz) not found. Skipping SVG generation.")
+        print("⚠️ 'sfdp' (graphviz) not found. Skipping SVG generation.")
         print("   You can install it by adding `graphviz` to your packages.")
     except subprocess.CalledProcessError as e:
         print(f"❌ Error during SVG conversion: {e}")
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: dep_graph.py <flake-output>")
-        print(
-            "Example: dep_graph.py .#nixosConfigurations.khanelinix.config.system.build.toplevel"
-        )
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        prog="nix-dep-graph",
+        description="Generate DOT and SVG dependency graphs for a Nix flake output.",
+        epilog="Example: nix-dep-graph .#closure-analyzer",
+    )
+    parser.add_argument("flake_output", metavar="flake-output")
+    args = parser.parse_args()
 
-    flake_output = sys.argv[1]
-
-    drv_path = get_drv_path(flake_output)
+    drv_path = get_drv_path(args.flake_output)
 
     generate_dot(drv_path)
     convert_to_svg()
