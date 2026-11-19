@@ -7,13 +7,12 @@ import argparse
 import json
 import os
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
 import textwrap
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 BRANCH_PACKAGES = {
@@ -62,8 +61,10 @@ def run(
     )
 
 
-def git(repo: Path, *args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
-    return run(("git", *args), cwd=repo, check=check)
+def git(
+    repo: Path, *args: str, check: bool = True, env: dict[str, str] | None = None
+) -> subprocess.CompletedProcess[str]:
+    return run(("git", *args), cwd=repo, check=check, env=env)
 
 
 def repository_root() -> Path:
@@ -73,14 +74,11 @@ def repository_root() -> Path:
     return Path(result.stdout.strip()).resolve()
 
 
-def require_branch(repo: Path) -> None:
-    branch = git(repo, "symbolic-ref", "--quiet", "--short", "HEAD", check=False)
+def require_branch(repo: Path) -> str:
+    branch = git(repo, "symbolic-ref", "--quiet", "HEAD", check=False)
     if branch.returncode != 0:
         raise RuntimeError("update-packages requires a checked-out branch")
-
-
-def unstage_repository(repo: Path) -> None:
-    git(repo, "restore", "--staged", ":/")
+    return branch.stdout.strip()
 
 
 def current_system(repo: Path) -> str:
@@ -106,6 +104,7 @@ def flake_packages(repo: Path, system: str) -> list[str]:
             "nix",
             "eval",
             "--json",
+            "--no-write-lock-file",
             f".#packages.{system}",
             "--apply",
             UPDATABLE_PACKAGES_FILTER,
@@ -135,58 +134,69 @@ def package_path(repo: Path, package: str) -> Path:
     return target
 
 
-def target_changed(repo: Path, target: Path) -> bool:
+def target_changed(
+    repo: Path, target: Path, *, env: dict[str, str] | None = None
+) -> bool:
     relative_target = str(target.relative_to(repo))
     status = git(
         repo,
+        "--no-optional-locks",
+        "--literal-pathspecs",
         "status",
         "--porcelain",
+        "--ignored=matching",
         "--untracked-files=all",
         "--",
         relative_target,
+        env=env,
     ).stdout
     return bool(status)
 
 
-def rollback_failed_update(repo: Path, target: Path) -> None:
-    relative_target = str(target.relative_to(repo))
-    git(
-        repo,
-        "restore",
-        "--source=HEAD",
-        "--staged",
-        "--worktree",
-        "--",
-        relative_target,
-    )
-    untracked = git(
-        repo,
-        "ls-files",
-        "--others",
-        "--exclude-standard",
-        "-z",
-        "--",
-        relative_target,
-    ).stdout.split("\0")
-    for item in filter(None, untracked):
-        path = (repo / item).resolve()
-        if target not in path.parents and path != target:
-            raise RuntimeError(f"refusing to remove unexpected path {path}")
-        if path.is_dir():
-            shutil.rmtree(path)
-        else:
-            path.unlink(missing_ok=True)
+def advance_checkout(
+    repo: Path, target: Path, branch: str, before: str, committed: str, log_path: Path
+) -> str | None:
+    # Prepare locks HEAD and its branch and checks the base before read-tree can
+    # write anything. Closing stdin without committing releases both locks.
+    with (
+        log_path.open("a") as log,
+        subprocess.Popen(
+            ("git", "update-ref", "-m", "update-packages", "--stdin"),
+            cwd=repo,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=log,
+            text=True,
+        ) as transaction,
+    ):
+        assert transaction.stdin is not None and transaction.stdout is not None
+        transaction.stdin.write(f"start\nupdate HEAD {committed} {before}\nprepare\n")
+        transaction.stdin.flush()
+        transaction.stdout.readline()  # start acknowledgement
+        if transaction.stdout.readline() != "prepare: ok\n":
+            return "could not lock caller at the expected base"
 
+        if (
+            git(repo, "symbolic-ref", "--quiet", "HEAD", check=False).stdout.strip()
+            != branch
+        ):
+            return "checked-out branch changed during the update"
+        if target_changed(repo, target):
+            return "package directory changed during the update"
 
-def discard_generated_commit(
-    repo: Path, before: str, generated: str, target: Path
-) -> None:
-    current = git(repo, "rev-parse", "HEAD").stdout.strip()
-    if current != generated:
-        raise RuntimeError("cannot discard a generated commit after HEAD changed")
-    git(repo, "update-ref", "HEAD", before, generated)
-    unstage_repository(repo)
-    rollback_failed_update(repo, target)
+        # The two-tree merge carries forward unrelated index and worktree edits
+        # and refuses to overwrite conflicting local or untracked files.
+        checkout = git(repo, "read-tree", "-m", "-u", before, committed, check=False)
+        if checkout.returncode:
+            return f"could not apply the scoped update: {checkout.stderr.strip()}"
+
+        transaction.communicate("commit\n")
+        if transaction.returncode:
+            raise RuntimeError(
+                "could not advance HEAD after applying the package update; "
+                f"the index and worktree may contain the scoped update (see {log_path})"
+            )
+    return None
 
 
 def parse_nix_update_subject(subject: str) -> tuple[str, str] | None:
@@ -196,16 +206,20 @@ def parse_nix_update_subject(subject: str) -> tuple[str, str] | None:
     return match.group("old"), match.group("new")
 
 
-def commit_is_scoped_to(repo: Path, commit: str, target: Path) -> bool:
+def commit_is_scoped_to(
+    repo: Path, commit: str, target: Path, *, env: dict[str, str]
+) -> bool:
     relative_target = str(target.relative_to(repo))
     paths = git(
         repo,
         "diff-tree",
         "--no-commit-id",
+        "--no-renames",
         "--name-only",
         "-r",
         "-z",
         commit,
+        env=env,
     ).stdout.split("\0")
     prefix = f"{relative_target}/"
     return all(
@@ -215,12 +229,12 @@ def commit_is_scoped_to(repo: Path, commit: str, target: Path) -> bool:
 
 
 def source_revision_unchanged(
-    repo: Path, before: str, after: str, target: Path
+    repo: Path, before: str, after: str, target: Path, *, env: dict[str, str]
 ) -> bool:
     package_file = str((target / "package.nix").relative_to(repo))
     revisions = []
     for commit in (before, after):
-        source = git(repo, "show", f"{commit}:{package_file}").stdout
+        source = git(repo, "show", f"{commit}:{package_file}", env=env).stdout
         match = SOURCE_REVISION.search(source)
         if not match:
             return False
@@ -249,8 +263,8 @@ def commit_message(package: str, original_subject: str) -> tuple[str, str]:
     return subject, body
 
 
-def nix_update_environment() -> dict[str, str]:
-    env = os.environ.copy()
+def nix_update_environment(env: dict[str, str]) -> dict[str, str]:
+    env = env.copy()
     skipped_hooks = [item for item in env.get("SKIP", "").split(",") if item]
     if "technical-writing-commit-message" not in skipped_hooks:
         skipped_hooks.append("technical-writing-commit-message")
@@ -268,7 +282,40 @@ def update_package(repo: Path, package: str, log_dir: Path) -> UpdateResult:
             package, "skipped", "package directory has existing changes"
         )
 
-    before = git(repo, "rev-parse", "HEAD").stdout.strip()
+    branch = require_branch(repo)
+    before = git(repo, "rev-parse", branch).stdout.strip()
+    local_vars = git(repo, "rev-parse", "--local-env-vars").stdout.splitlines()
+    env = {name: value for name, value in os.environ.items() if name not in local_vars}
+    hooks = git(
+        repo, "rev-parse", "--path-format=absolute", "--git-path", "hooks"
+    ).stdout.strip()
+    checkout_env = {
+        **env,
+        "GIT_CONFIG_COUNT": "1",
+        "GIT_CONFIG_KEY_0": "core.hooksPath",
+        "GIT_CONFIG_VALUE_0": hooks,
+    }
+    log_path = log_dir / f"{package}.log"
+    with tempfile.TemporaryDirectory(prefix="checkout-", dir=log_dir) as scratch:
+        checkout = Path(scratch).resolve() / "tree"
+        git(repo, "worktree", "add", "--detach", str(checkout), before, env=env)
+        try:
+            outcome = prepare_update(checkout, package, before, log_path, checkout_env)
+        finally:
+            git(repo, "worktree", "remove", "--force", str(checkout), env=env)
+
+    if outcome.status != "updated":
+        return outcome
+    committed = outcome.detail
+    if error := advance_checkout(repo, target, branch, before, committed, log_path):
+        return replace(outcome, status="failed", detail=error)
+    return replace(outcome, detail=committed[:12])
+
+
+def prepare_update(
+    repo: Path, package: str, before: str, log_path: Path, env: dict[str, str]
+) -> UpdateResult:
+    target = package_path(repo, package)
     command = ["nix-update", "--flake", "--build", "--commit"]
     if package in BRANCH_PACKAGES:
         command.extend(("--version", "branch"))
@@ -280,12 +327,10 @@ def update_package(repo: Path, package: str, log_dir: Path) -> UpdateResult:
         command.extend(("--version", "unstable"))
     command.append(package)
 
-    result = run(command, cwd=repo, env=nix_update_environment())
-    log_path = log_dir / f"{package}.log"
+    result = run(command, cwd=repo, env=nix_update_environment(env))
     log_path.write_text(result.stdout + result.stderr)
 
     if result.returncode != 0:
-        rollback_failed_update(repo, target)
         return UpdateResult(
             package,
             "failed",
@@ -293,10 +338,9 @@ def update_package(repo: Path, package: str, log_dir: Path) -> UpdateResult:
             log_path,
         )
 
-    after = git(repo, "rev-parse", "HEAD").stdout.strip()
+    after = git(repo, "rev-parse", "HEAD", env=env).stdout.strip()
     if after == before:
-        if target_changed(repo, target):
-            rollback_failed_update(repo, target)
+        if target_changed(repo, target, env=env):
             return UpdateResult(
                 package,
                 "failed",
@@ -305,11 +349,10 @@ def update_package(repo: Path, package: str, log_dir: Path) -> UpdateResult:
             )
         return UpdateResult(package, "current", "no update available", log_path)
 
-    parent = git(repo, "rev-parse", f"{after}^").stdout.strip()
-    if parent != before:
-        raise RuntimeError(f"{package} created an unexpected commit sequence")
-    if not commit_is_scoped_to(repo, after, target):
-        discard_generated_commit(repo, before, after, target)
+    parents = git(repo, "show", "-s", "--format=%P", after, env=env).stdout.split()
+    if parents != [before]:
+        return UpdateResult(package, "failed", "unexpected commit sequence", log_path)
+    if not commit_is_scoped_to(repo, after, target, env=env):
         return UpdateResult(
             package,
             "failed",
@@ -318,19 +361,20 @@ def update_package(repo: Path, package: str, log_dir: Path) -> UpdateResult:
         )
 
     if package in BRANCH_PACKAGES and source_revision_unchanged(
-        repo, before, after, target
+        repo, before, after, target, env=env
     ):
-        discard_generated_commit(repo, before, after, target)
         return UpdateResult(
             package, "current", "upstream revision is unchanged", log_path
         )
 
-    original_subject = git(repo, "show", "-s", "--format=%s", after).stdout.strip()
+    original_subject = git(
+        repo, "show", "-s", "--format=%s", after, env=env
+    ).stdout.strip()
     subject, body = commit_message(package, original_subject)
-    git(repo, "restore", "--staged", ":/")
     amend = run(
-        ("git", "commit", "--amend", "--message", subject, "--message", body),
+        ("git", "commit", "--amend", "--only", "--message", subject, "--message", body),
         cwd=repo,
+        env=env,
     )
     if amend.returncode != 0:
         log_path.write_text(
@@ -339,7 +383,6 @@ def update_package(repo: Path, package: str, log_dir: Path) -> UpdateResult:
             + amend.stdout
             + amend.stderr
         )
-        discard_generated_commit(repo, before, after, target)
         return UpdateResult(
             package,
             "failed",
@@ -347,8 +390,15 @@ def update_package(repo: Path, package: str, log_dir: Path) -> UpdateResult:
             log_path,
         )
 
-    committed = git(repo, "rev-parse", "HEAD").stdout.strip()
-    return UpdateResult(package, "updated", committed[:12], log_path)
+    committed, parents, tree = git(
+        repo, "show", "-s", "--format=%H%n%P%n%T", "HEAD", env=env
+    ).stdout.splitlines()
+    expected_tree = git(repo, "rev-parse", f"{after}^{{tree}}", env=env).stdout.strip()
+    if parents != before or tree != expected_tree:
+        return UpdateResult(
+            package, "failed", "amend changed the verified commit", log_path
+        )
+    return UpdateResult(package, "updated", committed, log_path)
 
 
 def parse_args(argv: Sequence[str]) -> argparse.Namespace:
@@ -399,8 +449,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                 print(f"{package}{f' (skip: {reason})' if reason else ''}")
             return 0
 
-        unstage_repository(repo)
-        log_dir = Path(tempfile.mkdtemp(prefix="update-packages-"))
+        cache_dir = Path(os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache")
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        log_dir = Path(tempfile.mkdtemp(prefix="update-packages-", dir=cache_dir))
         results: list[UpdateResult] = []
         for index, package in enumerate(requested, start=1):
             print(f"[{index}/{len(requested)}] {package}")

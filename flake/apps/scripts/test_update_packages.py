@@ -116,19 +116,118 @@ class UpdatePackagesTests(unittest.TestCase):
     def test_dry_run_does_not_unstage_repository(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             repo = Path(temp_dir)
+            self.init_repository(repo)
+            marker = repo / "marker.txt"
+            marker.write_text("staged\n")
+            update_packages.git(repo, "add", "marker.txt")
             with (
                 patch.object(update_packages, "repository_root", return_value=repo),
-                patch.object(update_packages, "require_branch"),
                 patch.object(
                     update_packages, "current_system", return_value="test-system"
                 ),
                 patch.object(
                     update_packages, "flake_packages", return_value=["berrycode"]
                 ),
-                patch.object(update_packages, "unstage_repository") as unstage,
             ):
                 self.assertEqual(0, update_packages.main(["--dry-run"]))
-                unstage.assert_not_called()
+            self.assertEqual(
+                "staged\n", update_packages.git(repo, "show", ":marker.txt").stdout
+            )
+
+    def test_skips_package_with_existing_changes(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo = Path(temp_dir)
+            target = self.init_repository(repo)
+            package_file = target / "package.nix"
+            package_file.write_text("version = staged;\n")
+            update_packages.git(repo, "add", str(package_file))
+            package_file.write_text("version = unstaged;\n")
+
+            with patch.object(update_packages, "prepare_update") as update:
+                result = update_packages.update_package(repo, "example", repo)
+
+            self.assertEqual("skipped", result.status)
+            update.assert_not_called()
+            self.assertEqual("version = unstaged;\n", package_file.read_text())
+            self.assertEqual(
+                "version = staged;\n",
+                update_packages.git(
+                    repo, "show", ":packages/example/package.nix"
+                ).stdout,
+            )
+
+    def test_update_preserves_unrelated_work(self) -> None:
+        for outcome in ("success", "failure", "failure after commit", "no commit"):
+            with self.subTest(outcome=outcome):
+                self.assert_update_preserves_unrelated_work(outcome)
+
+    def assert_update_preserves_unrelated_work(self, outcome: str) -> None:
+        temp_dir = self.enterContext(tempfile.TemporaryDirectory())
+        repo = Path(temp_dir)
+        target = self.init_repository(repo)
+        before = update_packages.git(repo, "rev-parse", "HEAD").stdout
+        marker = repo / "marker.txt"
+        marker.write_text("staged\n")
+        update_packages.git(repo, "add", "marker.txt")
+        marker.write_text("unstaged\n")
+        original_run = update_packages.run
+
+        def simulate_nix_update(command, **kwargs):
+            if command[0] != "nix-update":
+                return original_run(command, **kwargs)
+            checkout = kwargs["cwd"]
+            scratch_target = checkout / target.relative_to(repo)
+            (scratch_target / "package.nix").write_text("version = new;\n")
+            env = kwargs["env"]
+            if outcome in ("success", "failure after commit"):
+                update_packages.git(
+                    checkout,
+                    "commit",
+                    "-qm",
+                    "example: old -> new",
+                    "--",
+                    "packages/example",
+                    env=env,
+                )
+            if outcome != "success":
+                (scratch_target / "generated").symlink_to(checkout / "marker.txt")
+            (checkout / "marker.txt").write_text("extraneous overwrite\n")
+            (checkout / "extraneous.txt").write_text("new file\n")
+            update_packages.git(checkout, "add", ":/", env=env)
+            code = int(outcome.startswith("failure"))
+            return subprocess.CompletedProcess(command, code, "", "")
+
+        with (
+            patch.dict("os.environ", {"GIT_INDEX_FILE": str(repo / ".git/index")}),
+            patch.object(update_packages, "run", side_effect=simulate_nix_update),
+        ):
+            result = update_packages.update_package(repo, "example", repo)
+
+        self.assertEqual("unstaged\n", marker.read_text())
+        self.assertFalse((repo / "extraneous.txt").exists())
+        self.assertEqual(
+            1, update_packages.git(repo, "worktree", "list").stdout.count("\n")
+        )
+        self.assertEqual(
+            "staged\n", update_packages.git(repo, "show", ":marker.txt").stdout
+        )
+        self.assertFalse(update_packages.target_changed(repo, target))
+        head = update_packages.git(repo, "rev-parse", "HEAD").stdout
+        if outcome == "success":
+            self.assertEqual("updated", result.status)
+            self.assertNotEqual(before, head)
+            self.assertEqual(
+                "chore(example): update to new\n",
+                update_packages.git(repo, "show", "-s", "--format=%s").stdout,
+            )
+            self.assertEqual(
+                "before\n",
+                update_packages.git(repo, "show", "HEAD:marker.txt").stdout,
+            )
+        else:
+            self.assertEqual("failed", result.status)
+            self.assertEqual(before, head)
+            self.assertEqual("version = old;\n", (target / "package.nix").read_text())
 
     def test_out_of_scope_commit_is_discarded(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -146,12 +245,18 @@ class UpdatePackagesTests(unittest.TestCase):
             def simulate_nix_update(command, **kwargs):
                 if command[0] != "nix-update":
                     return original_run(command, **kwargs)
-                (target / "package.nix").write_text("version = new;\n")
-                (repo / "marker.txt").write_text("after\n")
-                subprocess.run(("git", "add", ":/"), cwd=repo, check=True)
+                checkout = kwargs["cwd"]
+                (checkout / target.relative_to(repo) / "package.nix").write_text(
+                    "version = new;\n"
+                )
+                (checkout / "marker.txt").write_text("after\n")
+                subprocess.run(
+                    ("git", "add", ":/"), cwd=checkout, env=kwargs["env"], check=True
+                )
                 subprocess.run(
                     ("git", "commit", "--quiet", "-m", "example: old -> new"),
-                    cwd=repo,
+                    cwd=checkout,
+                    env=kwargs["env"],
                     check=True,
                 )
                 return subprocess.CompletedProcess(command, 0, "", "")
@@ -174,12 +279,102 @@ class UpdatePackagesTests(unittest.TestCase):
                 ).stdout.strip(),
             )
             self.assertEqual("version = old;\n", (target / "package.nix").read_text())
-            self.assertEqual("after\n", (repo / "marker.txt").read_text())
+            self.assertEqual("before\n", (repo / "marker.txt").read_text())
+            self.assertEqual(
+                "before\n", update_packages.git(repo, "show", ":marker.txt").stdout
+            )
+
+    def test_concurrent_commit_is_not_rewound(self) -> None:
+        for exit_status in (0, 1):
+            with self.subTest(exit_status=exit_status):
+                self.assert_concurrent_commit_survives(exit_status)
+
+    def assert_concurrent_commit_survives(self, exit_status: int) -> None:
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        target = self.init_repository(repo)
+        marker = repo / "marker.txt"
+        marker.write_text("staged\n")
+        update_packages.git(repo, "add", "marker.txt")
+        marker.write_text("unstaged\n")
+        original_run = update_packages.run
+
+        def simulate_nix_update(command, **kwargs):
+            if command[0] != "nix-update":
+                return original_run(command, **kwargs)
+            checkout = kwargs["cwd"]
+            (checkout / target.relative_to(repo) / "package.nix").write_text(
+                "version = new;\n"
+            )
+            update_packages.git(
+                checkout, "commit", "-qam", "example: old -> new", env=kwargs["env"]
+            )
+            (repo / "concurrent.txt").write_text("user content\n")
+            update_packages.git(repo, "add", "concurrent.txt")
+            update_packages.git(
+                repo, "commit", "-qm", "user commit", "--", "concurrent.txt"
+            )
+            return subprocess.CompletedProcess(command, exit_status, "", "")
+
+        with patch.object(update_packages, "run", side_effect=simulate_nix_update):
+            result = update_packages.update_package(repo, "example", repo)
+
+        self.assertEqual("failed", result.status)
+        if not exit_status:
+            self.assertIn("expected base", result.detail)
+        self.assertEqual(
+            "user commit\n",
+            update_packages.git(repo, "show", "-s", "--format=%s").stdout,
+        )
+        self.assertEqual(
+            "user content\n",
+            update_packages.git(repo, "show", "HEAD:concurrent.txt").stdout,
+        )
+        self.assertEqual("version = old;\n", (target / "package.nix").read_text())
+        self.assertEqual("unstaged\n", marker.read_text())
+        self.assertEqual(
+            "staged\n", update_packages.git(repo, "show", ":marker.txt").stdout
+        )
+
+    def test_apply_refuses_package_edit_during_handoff(self) -> None:
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        target = self.init_repository(repo)
+        before = update_packages.git(repo, "rev-parse", "HEAD").stdout
+        package_file = target / "package.nix"
+        original_run = update_packages.run
+
+        def simulate_update_and_local_edit(command, **kwargs):
+            if command[0] == "nix-update":
+                checkout = kwargs["cwd"]
+                (checkout / package_file.relative_to(repo)).write_text(
+                    "version = new;\n"
+                )
+                update_packages.git(
+                    checkout, "commit", "-qam", "example: old -> new", env=kwargs["env"]
+                )
+                return subprocess.CompletedProcess(command, 0, "", "")
+            if command[:2] == ("git", "read-tree"):
+                package_file.write_text("version = local;\n")
+            return original_run(command, **kwargs)
+
+        with patch.object(
+            update_packages, "run", side_effect=simulate_update_and_local_edit
+        ):
+            result = update_packages.update_package(repo, "example", repo)
+
+        self.assertEqual("failed", result.status)
+        self.assertIn("could not apply", result.detail)
+        self.assertEqual(before, update_packages.git(repo, "rev-parse", "HEAD").stdout)
+        self.assertEqual("version = local;\n", package_file.read_text())
+        self.assertEqual("", update_packages.git(repo, "diff", "--cached").stdout)
 
     def test_amend_failure_discards_package_commit(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             repo = Path(temp_dir)
             target = self.init_repository(repo)
+            marker = repo / "marker.txt"
+            marker.write_text("staged\n")
+            update_packages.git(repo, "add", "marker.txt")
+            marker.write_text("unstaged\n")
             before = subprocess.run(
                 ("git", "rev-parse", "HEAD"),
                 cwd=repo,
@@ -191,21 +386,26 @@ class UpdatePackagesTests(unittest.TestCase):
 
             def simulate_amend_failure(command, **kwargs):
                 if command[0] == "nix-update":
-                    (target / "package.nix").write_text("version = new;\n")
-                    subprocess.run(("git", "add", ":/"), cwd=repo, check=True)
-                    subprocess.run(
-                        (
-                            "git",
-                            "commit",
-                            "--quiet",
-                            "-m",
-                            "example: old -> new",
-                        ),
-                        cwd=repo,
-                        check=True,
+                    checkout = kwargs["cwd"]
+                    (checkout / target.relative_to(repo) / "package.nix").write_text(
+                        "version = new;\n"
+                    )
+                    update_packages.git(
+                        checkout,
+                        "commit",
+                        "-qm",
+                        "example: old -> new",
+                        "--",
+                        "packages/example",
+                        env=kwargs["env"],
                     )
                     return subprocess.CompletedProcess(command, 0, "", "")
                 if command[:3] == ("git", "commit", "--amend"):
+                    checkout = kwargs["cwd"]
+                    (checkout / "marker.txt").write_text("hook overwrite\n")
+                    update_packages.git(
+                        checkout, "add", "marker.txt", env=kwargs["env"]
+                    )
                     return subprocess.CompletedProcess(command, 1, "", "hook failed")
                 return original_run(command, **kwargs)
 
@@ -229,6 +429,10 @@ class UpdatePackagesTests(unittest.TestCase):
                 ).stdout.strip(),
             )
             self.assertEqual("version = old;\n", (target / "package.nix").read_text())
+            self.assertEqual("unstaged\n", marker.read_text())
+            self.assertEqual(
+                "staged\n", update_packages.git(repo, "show", ":marker.txt").stdout
+            )
 
     def test_branch_update_with_unchanged_revision_is_current(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -255,11 +459,17 @@ class UpdatePackagesTests(unittest.TestCase):
             def simulate_nix_update(command, **kwargs):
                 if command[0] != "nix-update":
                     return original_run(command, **kwargs)
-                package_file.write_text(f'version = "2";\nrev = "{revision}";\n')
-                subprocess.run(("git", "add", ":/"), cwd=repo, check=True)
+                checkout = kwargs["cwd"]
+                (checkout / package_file.relative_to(repo)).write_text(
+                    f'version = "2";\nrev = "{revision}";\n'
+                )
+                subprocess.run(
+                    ("git", "add", ":/"), cwd=checkout, env=kwargs["env"], check=True
+                )
                 subprocess.run(
                     ("git", "commit", "--quiet", "-m", "example: 1 -> 2"),
-                    cwd=repo,
+                    cwd=checkout,
+                    env=kwargs["env"],
                     check=True,
                 )
                 return subprocess.CompletedProcess(command, 0, "", "")
@@ -292,9 +502,11 @@ class UpdatePackagesTests(unittest.TestCase):
         current = update_packages.UpdateResult("second", "current", "no update")
         with tempfile.TemporaryDirectory() as temp_dir:
             repo = Path(temp_dir)
+            self.init_repository(repo)
+            (repo / "marker.txt").write_text("staged\n")
+            update_packages.git(repo, "add", "marker.txt")
             with (
                 patch.object(update_packages, "repository_root", return_value=repo),
-                patch.object(update_packages, "require_branch"),
                 patch.object(
                     update_packages, "current_system", return_value="test-system"
                 ),
@@ -303,15 +515,20 @@ class UpdatePackagesTests(unittest.TestCase):
                     "flake_packages",
                     return_value=["first", "second"],
                 ),
-                patch.object(update_packages, "unstage_repository"),
                 patch.object(
                     update_packages,
                     "update_package",
                     side_effect=[failed, current],
                 ) as update,
+                patch.object(
+                    update_packages.tempfile, "mkdtemp", return_value=temp_dir
+                ),
             ):
                 self.assertEqual(1, update_packages.main([]))
                 self.assertEqual(2, update.call_count)
+            self.assertEqual(
+                "staged\n", update_packages.git(repo, "show", ":marker.txt").stdout
+            )
 
 
 if __name__ == "__main__":
