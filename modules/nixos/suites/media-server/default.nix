@@ -13,6 +13,7 @@ let
   inherit (cfg) dataDir;
   hostAddress = config.khanelinix.system.networking.hostAddress;
   media = cfg.mediaDir;
+  nas = config.khanelinix.suites.nas;
 in
 {
   options.khanelinix.suites.media-server = {
@@ -233,7 +234,6 @@ in
           REDIS_HOSTNAME = hostAddress;
           DB_PORT = "5433";
           REDIS_PORT = "6379";
-          REDIS_PASSWORD = "";
           MACHINE_LEARNING_GPU_ACCELERATION = "";
           MACHINE_LEARNING_WORKERS = "1";
           MACHINE_LEARNING_WORKER_TIMEOUT = "120";
@@ -289,7 +289,6 @@ in
           MODE = "report";
           PLEX_PATH = "";
           PLEX_URL = "";
-          PLEX_TOKEN = "";
           LOCAL_DB = "False";
           IGNORE_RUNNING = "False";
           USE_EXISTING = "False";
@@ -337,8 +336,6 @@ in
           WEB_NOTIFICATION = "0";
           WEB_AUTHENTICATION = "0";
           WEB_AUTHENTICATION_TOKEN_VALIDITY_TIME = "24";
-          WEB_AUTHENTICATION_USERNAME = "";
-          WEB_AUTHENTICATION_PASSWORD = "";
           SECURE_CONNECTION = "0";
           SECURE_CONNECTION_VNC_METHOD = "SSL";
           SECURE_CONNECTION_CERTS_CHECK_INTERVAL = "60";
@@ -376,7 +373,6 @@ in
           "${media}/tv:/media/tv-shows"
         ];
         environment = {
-          PASSWORD = "";
           ALLOW_DIRECT_VNC = "true";
           TZ = "America/Chicago";
           PUID = "99";
@@ -389,12 +385,23 @@ in
       };
     };
 
-    systemd.tmpfiles.rules = [
-      "d ${appdata} 0775 ${config.khanelinix.user.name} users -"
-      "d ${cacheAppdata} 0775 ${config.khanelinix.user.name} users -"
-      "d ${dataDir} 0775 ${config.khanelinix.user.name} users -"
-      "d ${media} 0775 ${config.khanelinix.user.name} users -"
-    ];
+    systemd.tmpfiles.rules =
+      let
+        nasDirs = lib.optionals nas.enable [
+          "${nas.userRoot}/appdata"
+          "${nas.userRoot}/data"
+        ];
+      in
+      map (path: "d ${path} 0775 ${config.khanelinix.user.name} users -") (
+        lib.subtractLists nasDirs (
+          lib.unique [
+            appdata
+            cacheAppdata
+            dataDir
+            media
+          ]
+        )
+      );
 
     networking.firewall = lib.mkMerge [
       {

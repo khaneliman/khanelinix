@@ -1,5 +1,42 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
+  nativeMediaUnits = map (name: "${name}.service") (
+    lib.filter (name: config.services.${name}.enable) [
+      "bazarr"
+      "jellyfin"
+      "lidarr"
+      "photoprism"
+      "plex"
+      "prowlarr"
+      "radarr"
+      "readarr"
+      "sonarr"
+      "tautulli"
+    ]
+  );
+  containerUnits = lib.mapAttrsToList (_: container: "${container.serviceName}.service") (
+    config.virtualisation.oci-containers.containers
+  );
+  mediaUnits = nativeMediaUnits ++ containerUnits;
+  mountedTmpfiles = {
+    cache = [ ];
+    pool = mediaUnits ++ [ "rclone-state-directory.service" ];
+    user = mediaUnits ++ [
+      "nfs-mountd.service"
+      "nfs-server.service"
+      "samba-smbd.service"
+    ];
+  };
+  tmpfiles = lib.getExe' config.systemd.package "systemd-tmpfiles";
+  excludeMountedPaths = lib.concatMapStringsSep " " (name: "--exclude-prefix=/mnt/${name}") (
+    lib.attrNames mountedTmpfiles
+  );
+
   xfsDataOptions = [
     "rw"
     "noatime"
@@ -131,7 +168,37 @@ in
     };
   };
 
-  systemd.services = lib.genAttrs [ "snapraid-sync" "snapraid-scrub" ] (_: {
+  systemd.services = {
+    # The nofail mounts may not be ready during boot or reactivation. Run both
+    # suite and upstream application rules for these paths only after mounting.
+    systemd-tmpfiles-setup.serviceConfig.ExecStart = [
+      ""
+      "${tmpfiles} --create --remove --boot --exclude-prefix=/dev ${excludeMountedPaths}"
+    ];
+    systemd-tmpfiles-resetup.serviceConfig.ExecStart = lib.mkForce "${tmpfiles} --create --remove --exclude-prefix=/dev ${excludeMountedPaths}";
+  }
+  // lib.mapAttrs' (
+    name: consumers:
+    lib.nameValuePair "tmpfiles-mnt-${name}" {
+      description = "Create directories on /mnt/${name}";
+      wantedBy = [ "multi-user.target" ];
+      requiredBy = consumers;
+      before = consumers;
+      # mergerfs sees both backing mounts, so create their directories first.
+      after = lib.optionals (name == "user") [
+        "tmpfiles-mnt-cache.service"
+        "tmpfiles-mnt-pool.service"
+      ];
+      restartTriggers = [ config.environment.etc."tmpfiles.d".source ];
+      unitConfig.RequiresMountsFor = [ "/mnt/${name}" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = "${tmpfiles} --create --prefix=/mnt/${name}";
+      };
+    }
+  ) mountedTmpfiles
+  // lib.genAttrs [ "snapraid-sync" "snapraid-scrub" ] (_: {
     unitConfig.RequiresMountsFor = [
       "/mnt/disk1"
       "/mnt/disk2"
