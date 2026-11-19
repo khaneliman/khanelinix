@@ -36,11 +36,9 @@ in
   config = mkIf cfg.enable {
     home.packages =
       with pkgs;
-      [
-        bitwarden-desktop
-        np
-      ]
-      ++ lib.optionals (includes "maximal") [
+      [ np ]
+      ++ lib.optional (!isWSL) bitwarden-desktop
+      ++ lib.optionals (!isWSL && includes "maximal") [
         slack
       ]
       ++ lib.optionals cfg.architectureEnable [

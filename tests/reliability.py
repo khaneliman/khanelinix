@@ -162,6 +162,33 @@ evaluate(
     validate=lambda value: value is True,
 )
 evaluate(
+    "role-wsl",
+    """let
+      names = [ "CORE-PW0D2M1A" "VT0-IT-47-D443" ];
+      check = name: let
+        c = f.nixosConfigurations.${name}.config;
+        h = f.homeConfigurations."nixos@${name}".config;
+        packages = map lib.getName h.home.packages;
+      in
+        c.wsl.enable && c.wsl.defaultUser == "nixos"
+        && c.environment.sessionVariables.BROWSER == "wsl-open"
+        && !c.khanelinix.theme.gtk.enable && !c.khanelinix.theme.qt.enable
+        && c.khanelinix.suites.development.enable
+        && h.khanelinix.suites.development.enable
+        && h.khanelinix.programs.terminal.tools.git.wslAgentBridge
+        && !(lib.any (p: builtins.elem p packages) [ "bitwarden-desktop" "slack" "podman-desktop" ]);
+      gui = (f.nixosConfigurations.CORE-PW0D2M1A.extendModules {
+        modules = [ { khanelinix.archetypes.wsl.enableGUI = true; } ];
+      }).config;
+      core = f.homeConfigurations."nixos@CORE-PW0D2M1A".config;
+    in lib.all check names
+      && gui.khanelinix.theme.gtk.enable && gui.khanelinix.theme.qt.enable
+      && core.khanelinix.roles.work.enable
+      && core.khanelinix.suites.development.dockerEnable
+      && core.khanelinix.suites.development.kubernetesEnable""",
+    validate=lambda value: value is True,
+)
+evaluate(
     "fleet-khanelimac-m1-builders",
     """let
       c = f.darwinConfigurations.khanelimac-m1.config;

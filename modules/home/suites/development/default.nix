@@ -127,9 +127,9 @@ in
         # Darwin runs containers through Colima with docker-client instead.
         ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && cfg.dockerEnable) [
           podman
-          podman-desktop
           podman-tui
         ]
+        ++ lib.optional (pkgs.stdenv.hostPlatform.isLinux && cfg.dockerEnable && !isWSL) podman-desktop
         ++ lib.optionals (pkgs.stdenv.hostPlatform.isDarwin && cfg.dockerEnable) [
           docker-client
         ]

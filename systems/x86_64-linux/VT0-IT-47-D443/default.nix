@@ -33,11 +33,6 @@ in
       };
     };
 
-    theme = {
-      gtk = enabled;
-      qt = enabled;
-    };
-
     user = {
       name = "nixos";
     };

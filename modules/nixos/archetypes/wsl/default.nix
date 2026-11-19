@@ -6,14 +6,19 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkForce mkMerge;
+  inherit (lib)
+    mkDefault
+    mkForce
+    mkIf
+    mkMerge
+    ;
 
   cfg = config.khanelinix.archetypes.wsl;
 in
 {
   options.khanelinix.archetypes.wsl = {
     enable = lib.mkEnableOption "the wsl archetype";
-    enableGUI = lib.mkEnableOption "GUI support in WSL (enables desktop portals, graphics, theming)";
+    enableGUI = lib.mkEnableOption "GTK and Qt theming for WSL GUI applications";
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -73,7 +78,7 @@ in
 
         services = {
           # Display management not applicable in WSL
-          ddccontrol.enable = mkForce false;
+          ddc.enable = mkForce false;
           # Printing not applicable in WSL
           printing.enable = mkForce false;
           # LACT for AMD GPU control not needed in WSL
@@ -82,30 +87,11 @@ in
       };
     }
 
-    # TODO: figure out what's breaking nixos-wsl systemd
-    # If no GUI support enabled, disable bloated gui components
-    # (mkIf (!cfg.enableGUI) {
-    #   hardware.graphics = {
-    #     enable = mkForce false;
-    #     enable32Bit = mkForce false;
-    #   };
-    #
-    #   services = {
-    #     colord.enable = mkForce false;
-    #     gnome.gnome-settings-daemon.enable = mkForce false;
-    #     pipewire.enable = mkForce false;
-    #     pulseaudio.enable = mkForce false;
-    #   };
-    #
-    #   xdg.portal = {
-    #     enable = mkForce false;
-    #     extraPortals = mkForce [ ];
-    #   };
-    #
-    #   khanelinix.theme = {
-    #     gtk.enable = mkForce false;
-    #     qt.enable = mkForce false;
-    #   };
-    # })
+    (mkIf cfg.enableGUI {
+      khanelinix.theme = {
+        gtk.enable = mkDefault true;
+        qt.enable = mkDefault true;
+      };
+    })
   ]);
 }
