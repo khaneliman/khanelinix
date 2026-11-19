@@ -153,6 +153,9 @@ in
         settings = {
           substituters = lib.mkIf (localCaches != { }) (
             lib.mapAttrsToList (name: _: "http://${name}.local:5020") localCaches
+            # This Harmonia endpoint answered over its tailnet address. Reuse
+            # the existing signing key and prefer the LAN endpoint (priority 50).
+            ++ lib.optional (localCaches ? khanelinix) "http://100.91.175.48:5020?priority=51"
           );
           trusted-public-keys = lib.mkIf (localCaches != { }) (lib.attrValues localCaches);
           allowed-users = lib.mkIf (config.khanelinix.user.name != null) [
@@ -163,8 +166,7 @@ in
           experimental-features = experimentalFeatures;
           # Prevent builds failing just because we can't contact a substituter
           fallback = true;
-          # The harmonia substituters are only reachable on the home LAN; fail
-          # over to the public caches quickly when they are absent.
+          # Fail over quickly when a LAN or tailnet cache is unreachable.
           connect-timeout = 5;
           flake-registry = "/etc/nix/registry.json";
           log-lines = 50;
