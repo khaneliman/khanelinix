@@ -14,6 +14,7 @@ let
   hostAddress = config.khanelinix.system.networking.hostAddress;
   media = cfg.mediaDir;
   nas = config.khanelinix.suites.nas;
+  containers = config.virtualisation.oci-containers.containers;
 in
 {
   options.khanelinix.suites.media-server = {
@@ -404,51 +405,27 @@ in
       );
 
     networking.firewall = lib.mkMerge [
-      {
-        allowedTCPPorts = [ ];
-        allowedUDPPorts = [ ];
-      }
-
-      {
-        # qbittorrentvpn
+      (lib.mkIf (containers.qbittorrentvpn.autoStart or false) {
         allowedTCPPorts = [
           6881
           8082
           8119
         ];
         allowedUDPPorts = [ 6881 ];
-      }
-
+      })
       {
-        # immich sidecars + service
-        allowedTCPPorts = [
-          8081
-        ];
-      }
-
-      {
-        # maintainerr
-        allowedTCPPorts = [ 8154 ];
-      }
-
-      {
-        # stash
-        allowedTCPPorts = [ 6969 ];
-      }
-
-      {
-        # qdirstat
-        allowedTCPPorts = [
-          7815
-          7915
-        ];
-      }
-
-      {
-        # tinymm-gui-v5
-        allowedTCPPorts = [
-          4066
-          5966
+        allowedTCPPorts = lib.concatLists [
+          (lib.optional (containers.immich.autoStart or false) 8081)
+          (lib.optional (containers.maintainerr.autoStart or false) 8154)
+          (lib.optional (containers.stash.autoStart or false) 6969)
+          (lib.optionals (containers.qdirstat.autoStart or false) [
+            7815
+            7915
+          ])
+          (lib.optionals (containers."tinymm-gui-v5".autoStart or false) [
+            4066
+            5966
+          ])
         ];
       }
     ];

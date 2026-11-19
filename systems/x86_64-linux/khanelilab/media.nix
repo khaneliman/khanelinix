@@ -50,20 +50,26 @@ in
   ];
 
   systemd.services = lib.mkMerge [
-    (lib.genAttrs (nativeApps ++ [ "prowlarr" ]) (_: {
-      unitConfig.RequiresMountsFor = [
-        appdata
-        data
-        media
-      ];
-    }))
-    (lib.genAttrs [ "lidarr" "radarr" "sonarr" ] (name: {
-      serviceConfig.BindPaths = [
-        "${data}:/data"
-        "${appdata}/${name}:/config"
-      ];
-    }))
-    {
+    (lib.genAttrs (nativeApps ++ [ "prowlarr" ]) (
+      name:
+      lib.mkIf config.services.${name}.enable {
+        unitConfig.RequiresMountsFor = [
+          appdata
+          data
+          media
+        ];
+      }
+    ))
+    (lib.genAttrs [ "lidarr" "radarr" "sonarr" ] (
+      name:
+      lib.mkIf config.services.${name}.enable {
+        serviceConfig.BindPaths = [
+          "${data}:/data"
+          "${appdata}/${name}:/config"
+        ];
+      }
+    ))
+    (lib.mapAttrs (name: lib.mkIf config.services.${name}.enable) {
       plex.serviceConfig.BindPaths = [
         "${media}:/data"
         "${appdata}/plex:/config"
@@ -94,6 +100,6 @@ in
         ];
       };
       radarr.serviceConfig.BindReadOnlyPaths = [ "${appdata}/binhex-qbittorrentvpn:/qbittorrent" ];
-    }
+    })
   ];
 }
