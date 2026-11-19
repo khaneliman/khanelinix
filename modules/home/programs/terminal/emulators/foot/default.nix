@@ -37,8 +37,6 @@ in
           term = "xterm-256color";
           title = "foot";
 
-          # notifications
-          notify = "notify-send -a \${app-id} -i \${app-id} \${title} \${body}";
           selection-target = "clipboard";
 
           # font and font rendering
@@ -71,13 +69,11 @@ in
           label-letters = "sadfjklewcmpgh";
           launch = "xdg-open \${url}";
           osc8-underline = "url-mode";
-          protocols = "http, https, ftp, ftps, file";
-          uri-characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.,~:;/?#@!$&%*+=\"'()[]";
+          regex = ''((https?|ftps?|file)://[][0-9A-Za-z_.,~:;/?#@!$&%*+="'()-]+)'';
         };
 
-        colors = {
-          alpha = lib.mkDefault "0.85";
-        };
+        colors-dark.alpha = lib.mkDefault "0.85";
+        colors-light.alpha = lib.mkDefault "0.85";
       };
     };
   };
