@@ -2,6 +2,7 @@ import contextlib
 import io
 import json
 import os
+import shlex
 import subprocess
 import tempfile
 import threading
@@ -20,9 +21,38 @@ HOST = {
 }
 
 
+UNKNOWN = {
+    "active_system": "unknown",
+    "active_revision": "unknown",
+    "needs_reboot": "unknown",
+    "failed_units": "unknown",
+    "snapraid": {"sync": "unknown", "scrub": "unknown"},
+    "disk_health": "unknown",
+}
+
+
+def records(**fields):
+    return "".join(
+        f"{key}\0{value}\0"
+        for key, value in {"protocol": "fleet-health-v1", **fields}.items()
+    )
+
+
 class FleetStatusTests(unittest.TestCase):
     def test_ssh_probes_fall_back_without_enabling_forwarding_or_host_key_writes(self):
-        with patch.object(fleet, "probe", side_effect=[None, None, ""]) as probe:
+        with patch.object(
+            fleet,
+            "probe",
+            side_effect=[
+                None,
+                None,
+                records(
+                    active_revision="abcd",
+                    needs_reboot="yes",
+                    failed_units='[{"unit":"backup.service"}]',
+                ),
+            ],
+        ) as probe:
             row = fleet.check_host("example", HOST, "example.ts.net", "workstation")
         self.assertEqual(row["status"], "reachable")
         self.assertEqual(row["route"], "tailnet-ip")
@@ -39,10 +69,17 @@ class FleetStatusTests(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            [cmd[-2:] for cmd in commands],
-            [["example", "true"], ["example-ts", "true"], ["example", "true"]],
+            [cmd[-2] for cmd in commands],
+            ["example", "example-ts", "example"],
         )
+        self.assertEqual(row["active_revision"], "abcd")
+        self.assertIs(row["needs_reboot"], True)
+        self.assertEqual(row["failed_units"], ["backup.service"])
         for cmd in commands:
+            self.assertEqual(
+                shlex.split(cmd[-1]),
+                ["/bin/sh", "-c", fleet.HEALTH_PROBE, "fleet-status", "nixos"],
+            )
             self.assertIn("-oStrictHostKeyChecking=yes", cmd)
             self.assertIn("-oUpdateHostKeys=no", cmd)
             self.assertIn("-oClearAllForwardings=yes", cmd)
@@ -62,6 +99,77 @@ class FleetStatusTests(unittest.TestCase):
         ) as runner:
             self.assertIsNone(fleet.probe(command))
         self.assertEqual(runner.call_args.kwargs["timeout"], 5)
+
+    def test_recorded_storage_results_do_not_imply_live_disk_health(self):
+        entry = {
+            "device": {"device_name": "sda", "host_id": "lab", "device_status": 1},
+            "smart": {"collector_date": "2026-10-01T00:00:00Z"},
+        }
+        summary = {
+            "one": entry,
+            "two": {"device": {"device_name": "sdb", "device_status": 0}},
+        }
+        row = fleet.health_report(
+            records(
+                failed_units="[]",
+                needs_reboot="no",
+                snapraid_sync="LoadState=loaded\nActiveState=inactive\nResult=success\nExecMainExitTimestamp=Thu 2026-10-01",
+                snapraid_scrub="LoadState=loaded\nActiveState=inactive\nResult=success\nExecMainExitTimestamp=",
+                disk_health=json.dumps({"success": True, "data": {"summary": summary}}),
+            )
+        )
+        self.assertEqual(row["failed_units"], [])
+        self.assertIs(row["needs_reboot"], False)
+        self.assertEqual(
+            row["snapraid"],
+            {
+                "sync": {"last_result": "success", "finished_at": "Thu 2026-10-01"},
+                "scrub": "unknown",
+            },
+        )
+        self.assertEqual(
+            row["disk_health"][0],
+            {
+                "device": "sda",
+                "collector_host": "lab",
+                "last_status": "SMART failure",
+                "observed_at": "2026-10-01T00:00:00Z",
+            },
+        )
+        self.assertEqual(row["disk_health"][1]["last_status"], "unknown")
+
+    def test_darwin_reports_only_known_fields(self):
+        host = dict(HOST, system="darwin")
+        with patch.object(
+            fleet, "probe", return_value=records(active_revision="abcd")
+        ) as probe:
+            row = fleet.check_host("example", host, "", "example")
+        probe.assert_called_once_with(
+            ["/bin/sh", "-c", fleet.HEALTH_PROBE, "fleet-status", "darwin"]
+        )
+        self.assertEqual(
+            row,
+            {
+                **UNKNOWN,
+                "active_revision": "abcd",
+                "status": "local",
+                "name": "example",
+                "system": "darwin",
+            },
+        )
+
+    def test_timeout_preserves_only_complete_records(self):
+        partial = records(active_revision="abc") + "failed_units\0["
+        with patch.object(
+            fleet.subprocess,
+            "run",
+            side_effect=subprocess.TimeoutExpired("ssh", 5, output=partial.encode()),
+        ) as runner:
+            row = fleet.check_host("example", HOST, "", "other")
+        self.assertEqual(runner.call_count, 1)
+        self.assertEqual(row["status"], "reachable")
+        self.assertEqual(row["active_revision"], "abc")
+        self.assertEqual(row["failed_units"], "unknown")
 
     def test_local_http_cache_checks_metadata_not_just_http_status(self):
         class CacheHandler(BaseHTTPRequestHandler):
@@ -148,8 +256,18 @@ class FleetStatusTests(unittest.TestCase):
                 json.loads(output.getvalue()),
                 {
                     "hosts": [
-                        {"name": "example", "system": "nixos", "status": "unavailable"},
-                        {"name": "local", "system": "nixos", "status": "local"},
+                        {
+                            "name": "example",
+                            "system": "nixos",
+                            "status": "unavailable",
+                            **UNKNOWN,
+                        },
+                        {
+                            "name": "local",
+                            "system": "nixos",
+                            "status": "local",
+                            **UNKNOWN,
+                        },
                     ],
                     "caches": [
                         {"cache": "https://cache.example", "status": "unavailable"}

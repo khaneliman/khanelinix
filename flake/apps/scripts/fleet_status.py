@@ -1,5 +1,6 @@
 import argparse
 import json
+import shlex
 import socket
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
@@ -22,6 +23,129 @@ SSH_OPTIONS = [
 ]
 
 
+# NUL-delimited records keep multiline systemctl/JSON output inside one field.
+# Print the marker first so a slow observation does not discard the route or
+# completed fields when the client deadline expires.
+HEALTH_PROBE = r"""
+export LC_ALL=C
+field() { printf '%s\0%s\0' "$1" "$2"; }
+field protocol fleet-health-v1
+active=/run/current-system
+target=$(readlink "$active") && field active_system "$target"
+case "$1" in
+  darwin)
+    revision=$("$active/sw/bin/darwin-version" --configuration-revision) &&
+      field active_revision "$revision"
+    ;;
+  nixos)
+    revision=$("$active/sw/bin/nixos-version" --configuration-revision) &&
+      field active_revision "$revision"
+    "$active/sw/bin/nixos-needsreboot" --dry-run >/dev/null
+    case $? in
+      0) field needs_reboot no ;;
+      2) field needs_reboot yes ;;
+    esac
+    units=$(timeout 1 systemctl list-units --failed --all --output=json --no-pager) &&
+      field failed_units "$units"
+    for job in sync scrub; do
+      state=$(timeout 1 systemctl show "snapraid-$job.service" --no-pager \
+        -p LoadState -p Result -p ExecMainExitTimestamp -p ActiveState) &&
+        field "snapraid_$job" "$state"
+    done
+    if timeout 1 systemctl is-active --quiet scrutiny.service; then
+      summary=$(curl --disable --noproxy '*' --silent --fail --max-time 1 \
+        --max-filesize 1048576 http://127.0.0.1:8080/api/summary) &&
+        field disk_health "$summary"
+    fi
+    ;;
+esac
+exit 0
+"""
+
+
+def health_report(output):
+    fields = {
+        name: "unknown"
+        for name in (
+            "active_system",
+            "active_revision",
+            "needs_reboot",
+            "failed_units",
+            "disk_health",
+        )
+    }
+    fields["snapraid"] = {"sync": "unknown", "scrub": "unknown"}
+    records = (output or "").split("\0")[:-1]
+    if records[:2] != ["protocol", "fleet-health-v1"]:
+        return fields
+    values = dict(zip(records[::2], records[1::2], strict=False))
+    for key in ("active_system", "active_revision"):
+        if values.get(key) and values[key] not in ("null", "unknown"):
+            fields[key] = values[key]
+    if values.get("needs_reboot") in ("yes", "no"):
+        fields["needs_reboot"] = values["needs_reboot"] == "yes"
+    if "failed_units" in values:
+        try:
+            units = json.loads(values["failed_units"])
+            if isinstance(units, list) and all(
+                isinstance(unit, dict) and isinstance(unit.get("unit"), str)
+                for unit in units
+            ):
+                fields["failed_units"] = [unit["unit"] for unit in units]
+        except ValueError:
+            pass
+    for job in ("sync", "scrub"):
+        properties = dict(
+            line.split("=", 1)
+            for line in values.get(f"snapraid_{job}", "").splitlines()
+            if "=" in line
+        )
+        if properties.get("LoadState") != "loaded":
+            continue
+        if properties.get("ActiveState") in ("active", "activating"):
+            fields["snapraid"][job] = "running"
+        elif properties.get("ExecMainExitTimestamp") and properties.get("Result"):
+            fields["snapraid"][job] = {
+                "last_result": properties["Result"],
+                "finished_at": properties["ExecMainExitTimestamp"],
+            }
+    if "disk_health" in values:
+        fields["disk_health"] = disk_summary(values["disk_health"])
+    return fields
+
+
+def disk_summary(payload):
+    states = {
+        0: "passed",
+        1: "SMART failure",
+        2: "Scrutiny failure",
+        3: "SMART and Scrutiny failure",
+    }
+    try:
+        response = json.loads(payload)
+        if response["success"] is not True:
+            return "unknown"
+        disks = []
+        for entry in response["data"]["summary"].values():
+            device = entry["device"]
+            if device.get("archived"):
+                continue
+            observed = (entry.get("smart") or {}).get("collector_date")
+            disks.append(
+                {
+                    "device": device["device_name"],
+                    "collector_host": device.get("host_id") or "unknown",
+                    "last_status": states.get(device.get("device_status"), "unknown")
+                    if observed
+                    else "unknown",
+                    "observed_at": observed or "unknown",
+                }
+            )
+        return disks or "unknown"
+    except (ValueError, KeyError, AttributeError, TypeError):
+        return "unknown"
+
+
 def probe(command):
     try:
         result = subprocess.run(
@@ -34,7 +158,10 @@ def probe(command):
             timeout=PROBE_TIMEOUT,
             check=False,
         )
-    except (OSError, subprocess.TimeoutExpired):
+    except subprocess.TimeoutExpired as error:
+        partial = (error.stdout or b"").decode(errors="replace")
+        return partial if partial.startswith("protocol\0fleet-health-v1\0") else None
+    except OSError:
         return None
     return result.stdout if result.returncode == 0 else None
 
@@ -42,8 +169,9 @@ def probe(command):
 def check_host(name, host, magic_dns_suffix, current_host):
     hostname = host["hostname"]
     row = {"name": name, "system": host["system"], "status": "unavailable"}
+    health_command = ["/bin/sh", "-c", HEALTH_PROBE, "fleet-status", host["system"]]
     if current_host in (name.lower(), hostname.split(".")[0].lower()):
-        return dict(row, status="local")
+        return dict(row, status="local", **health_report(probe(health_command)))
 
     routes = [("lan", name, hostname)]
     if magic_dns_suffix:
@@ -61,11 +189,18 @@ def check_host(name, host, magic_dns_suffix, current_host):
             host["username"],
             "--",
             alias,
-            "true",
+            shlex.join(health_command),
         ]
-        if probe(command) is not None:
-            return dict(row, status="reachable", route=route, address=address)
-    return row
+        output = probe(command)
+        if output is not None:
+            return dict(
+                row,
+                status="reachable",
+                route=route,
+                address=address,
+                **health_report(output),
+            )
+    return dict(row, **health_report(None))
 
 
 def check_cache(substituter):
@@ -117,7 +252,7 @@ def check_cache(substituter):
 def main(argv=None):
     parser = argparse.ArgumentParser(
         prog="fleet-status",
-        description="Check fleet SSH and the local Nix client's HTTP cache metadata.",
+        description="Report fleet system health, SSH reachability, and configured Nix caches.",
         epilog="Unreachable hosts and caches are reported without failing the command.",
     )
     parser.add_argument("--inventory", type=Path, required=True, help=argparse.SUPPRESS)
@@ -171,6 +306,20 @@ def main(argv=None):
                 f" via {host['route']} ({host['address']})" if "route" in host else ""
             )
             print(f"{host['name']} ({host['system']}): {host['status']}{route}")
+            for key in (
+                "active_system",
+                "active_revision",
+                "needs_reboot",
+                "failed_units",
+                "snapraid",
+                "disk_health",
+            ):
+                value = host[key]
+                if key == "failed_units" and isinstance(value, list):
+                    value = ", ".join(value) or "none"
+                elif not isinstance(value, str):
+                    value = json.dumps(value, ensure_ascii=True)
+                print(f"  {key.replace('_', ' ')}: {value}")
         if not args.no_caches:
             print("\nConfigured Nix caches:")
             for cache in report["caches"]:
