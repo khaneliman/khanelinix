@@ -28,9 +28,14 @@ python3Packages.buildPythonApplication rec {
     ruff check ${src}
   '';
 
-  propagatedBuildInputs = [
-    ffmpeg
-    mkvtoolnix-cli
+  makeWrapperArgs = [
+    "--prefix"
+    "PATH"
+    ":"
+    (lib.makeBinPath [
+      ffmpeg
+      mkvtoolnix-cli
+    ])
   ];
 
   meta = {
