@@ -5,6 +5,7 @@ import contextlib
 import importlib.util
 import io
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -227,6 +228,25 @@ class Workflows(unittest.TestCase):
         rendered = subprocess.check_output(
             ["nix", "eval", "--impure", "--raw", "--expr", expression], text=True
         )
+        bindings = {}
+        for modes, chord, action in re.findall(
+            r"^([a-z, ]+) < (.+?) [;:] (.+)$", rendered, re.MULTILINE
+        ):
+            for mode in modes.split(", "):
+                self.assertNotIn((mode, chord), bindings)
+                bindings[mode, chord] = action
+        self.assertEqual(bindings["default", "ctrl - escape"], "window")
+        self.assertEqual(bindings["window", "ctrl - escape"], "scripts")
+        self.assertEqual(bindings["scripts", "ctrl - escape"], "window")
+        for mode in ("window", "scripts"):
+            self.assertEqual(bindings[mode, "escape"], "default")
+            self.assertIn(f":: {mode} : ", rendered)
+        for index in range(1, 5):
+            self.assertIn(
+                "query --displays --display",
+                bindings["default", f"shift + lalt - {index}"],
+            )
+
         env = os.environ | {"TEST_ARGV_LOG": str(log)}
         launch = scratch / "launchctl"
         launch.symlink_to(executable) if not launch.exists() else None
@@ -241,6 +261,8 @@ class Workflows(unittest.TestCase):
                 "shift + lalt + cmd - r",
                 ["kickstart", "-k", f"gui/{uid}/org.nix-community.home.skhd"],
             ),
+            ("shift + lalt - x", ["-m", "space", "--mirror", "x-axis"]),
+            ("shift + lalt - f", ["-m", "space", "--layout", "float"]),
             (
                 "shift + lalt - p",
                 [
@@ -257,11 +279,7 @@ class Workflows(unittest.TestCase):
                 ],
             ),
         ]:
-            command = next(
-                line.split(" : ", 1)[1]
-                for line in rendered.splitlines()
-                if line.strip().startswith("default < " + key + " :")
-            )
+            command = bindings["default", key]
             log.write_text("")
             subprocess.run(["bash", "-c", command], env=env, check=True)
             self.assertEqual(log.read_text().splitlines(), expected)

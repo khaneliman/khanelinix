@@ -65,14 +65,14 @@ in
         # meh (shift + alt + ctrl)
         # Modes
         :: default : ${sketchybar} -m --set skhd icon="N" icon.color="0xff8aadf4" drawing=off
-        :: window @ : ${sketchybar} -m --set skhd icon="W" icon.color="0xffa6da95" drawing=on
-        :: scripts @ : ${sketchybar} -m --set skhd icon="S" icon.color="0xffed8796" drawing=on
+        :: window : ${sketchybar} -m --set skhd icon="W" icon.color="0xffa6da95" drawing=on
+        :: scripts : ${sketchybar} -m --set skhd icon="S" icon.color="0xffed8796" drawing=on
 
         # Mode Shortcuts
-        # NOTE: This will toggle through modes with ctrl - escape
+        # Ctrl+Escape enters window mode, then toggles between window and scripts.
         default, scripts < ctrl - escape ; window
         window, scripts < escape ; default
-        default, window < ctrl - escape ; scripts
+        window < ctrl - escape ; scripts
 
         # ░█▀█░█▀█░█▀█░░░█░░░█▀█░█░█░█▀█░█▀▀░█░█░█▀▀░█▀▄░█▀▀
         # ░█▀█░█▀▀░█▀▀░░░█░░░█▀█░█░█░█░█░█░░░█▀█░█▀▀░█▀▄░▀▀█
@@ -134,7 +134,7 @@ in
         default < shift + lalt - k : ${yabai} -m window --warp north || $(${yabai} -m window --display north && ${sketchybar} --trigger windows_on_spaces && ${yabai} -m display --focus north) || ${yabai} -m window --move rel:0:-10
         default < shift + lalt - l : ${yabai} -m window --warp east || $(${yabai} -m window --display east && ${sketchybar} --trigger windows_on_spaces && ${yabai} -m display --focus east && ${yabai} -m window --warp first) || ${yabai} -m window --move rel:10:0
 
-        # Moving windows between spaces: shift + lalt - {1, 2, 3, 4, p, n } (Assumes 4 Spaces Max per Display)
+        # Move windows to the first four spaces on the current display.
         default < shift + lalt - 1 : SPACES=($(${yabai} -m query --displays --display | jq '.spaces[]')) && [[ -n $SPACES[1] ]] \
                           && ${yabai} -m window --space $SPACES[1]
 
@@ -182,15 +182,7 @@ in
         default < cmd + ctrl - 7 : ${yabai} -m space --focus 7
         default < cmd + ctrl - 8 : ${yabai} -m space --focus 8
 
-        # Moving windows between spaces: shift + lalt
-        default < shift + lalt - 1 : ${yabai} -m window --space 1;\
-                           ${sketchybar} --trigger windows_on_spaces
-        default < shift + lalt - 2 : ${yabai} -m window --space 2;\
-                           ${sketchybar} --trigger windows_on_spaces
-        default < shift + lalt - 3 : ${yabai} -m window --space 3;\
-                           ${sketchybar} --trigger windows_on_spaces
-        default < shift + lalt - 4 : ${yabai} -m window --space 4;\
-                           ${sketchybar} --trigger windows_on_spaces
+        # Move windows to spaces 5 through 7 by global index.
         default < shift + lalt - 5 : ${yabai} -m window --space 5;\
                            ${sketchybar} --trigger windows_on_spaces
         default < shift + lalt - 6 : ${yabai} -m window --space 6;\
@@ -269,7 +261,7 @@ in
                    ${yabai} -m window --grid 4:4:2:4:4:0; \
 
         default < shift + lalt - z : ${yabai} -m space --layout bsp
-        default < shift + lalt - x : ${yabai} -m space --layout float
+        default < shift + lalt - f : ${yabai} -m space --layout float
         default < shift + lalt - c : ${yabai} -m space --layout stack
       '';
     };
