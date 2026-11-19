@@ -25,7 +25,7 @@ let
     let
       entries = builtins.readDir wallpaperSourceDir;
       names = lib.sort lib.lessThan (
-        lib.filter (name: entries.${name} == "regular") (lib.attrNames entries)
+        lib.filter (name: entries.${name} == "regular" && name != "LICENSE") (lib.attrNames entries)
       );
     in
     map (name: "${workspaceWallpaperDir}${name}") names;

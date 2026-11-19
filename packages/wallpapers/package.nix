@@ -59,7 +59,13 @@ stdenvNoCC.mkDerivation {
     mkdir -p ${installTarget}
 
     cp -r . "${installTarget}/"
-    find "${installTarget}" -name "LICENSE" -delete
+    for themeDir in "${installTarget}"/*; do
+      if [ -f "$themeDir/LICENSE" ]; then
+        licenseDir="$out/share/licenses/wallpapers/$(basename "$themeDir")"
+        mkdir -p "$licenseDir"
+        mv "$themeDir/LICENSE" "$licenseDir/"
+      fi
+    done
   '';
 
   passthru = {
