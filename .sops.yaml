@@ -19,6 +19,7 @@ creation_rules:
       - age:
           - *admin_khaneliman
           - *admin_khanelimac_khaneliman
+          - *user_CORE_nixos
           - *user_khanelinix_khaneliman
           - *user_khanelimac_khaneliman
           - *user_VT0_khaneliman
