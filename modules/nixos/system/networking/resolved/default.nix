@@ -25,7 +25,7 @@ in
           # this is necessary to get tailscale picking up your headscale instance
           # and allows you to ping connected hosts by hostname
           Domains = [ "~." ];
-          DNSOverTLS = "true";
+          DNSOverTLS = "opportunistic";
           FallbackDNS = [
             "1.1.1.1"
             "1.0.0.1"
