@@ -7,6 +7,7 @@
 }:
 let
   cfg = config.khanelinix.suites.development;
+  homeCfg = lib.khanelinix.hmUserConfig config;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
   tomlFormat = pkgs.formats.toml { };
   acceptXcodeLicense = /* Bash */ ''
@@ -69,8 +70,7 @@ in
     assertions = [
       {
         assertion =
-          config.home-manager.users.${config.khanelinix.user.name}.khanelinix.suites.development.dockerEnable
-          == (cfg.containerBackend != "none");
+          (homeCfg.khanelinix.suites.development.dockerEnable or false) == (cfg.containerBackend != "none");
         message = "The embedded Home Manager Docker capability must match khanelinix.suites.development.containerBackend.";
       }
     ];

@@ -7,12 +7,9 @@
 }:
 let
   cfg = config.khanelinix.system.tcc;
+  homeCfg = lib.khanelinix.hmUserConfig config;
   userName = config.khanelinix.user.name;
-  stableBinaries =
-    if userName == null then
-      { }
-    else
-      config.home-manager.users.${userName}.khanelinix.system.tcc.stableBinaries or { };
+  stableBinaries = homeCfg.khanelinix.system.tcc.stableBinaries or { };
   # TCC pins ad-hoc signed code to one exact build, so every rebuild needed a
   # new grant. A stable certificate lets grants survive rebuilds. Only root can
   # read the key, so user processes cannot sign code that inherits the grants.

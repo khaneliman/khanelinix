@@ -12,6 +12,8 @@ let
   cfg = config.khanelinix.display-managers.sddm;
 
   userName = config.khanelinix.user.name;
+  homeCfg = lib.khanelinix.hmUserConfig config;
+  icon = homeCfg.khanelinix.user.icon or null;
 
   themePackage = pkgs.catppuccin-sddm-corners;
 
@@ -28,13 +30,9 @@ in
   };
 
   config = mkIf cfg.enable {
-    khanelinix.home.configFile =
-      let
-        inherit (config.home-manager.users.${userName}.khanelinix.user) icon;
-      in
-      lib.mkIf (icon != null) {
-        "sddm/faces/.${userName}".source = icon;
-      };
+    khanelinix.home.configFile = lib.mkIf (icon != null) {
+      "sddm/faces/.${toString userName}".source = icon;
+    };
 
     services = {
       displayManager = {
@@ -58,13 +56,15 @@ in
 
     # C = copy only when the destination is missing, so SDDM's own last-user
     # tracking still wins after the first login (C+ would force it every boot)
-    systemd.tmpfiles.rules = [
-      "C /var/lib/sddm/state.conf 0600 sddm sddm - ${seedStateFile}"
-    ];
+    systemd.tmpfiles.rules = lib.optional (
+      userName != null
+    ) "C /var/lib/sddm/state.conf 0600 sddm sddm - ${seedStateFile}";
 
-    system.activationScripts.postInstallSddm = stringAfter [ "users" ] /* Bash */ ''
-      echo "Setting sddm permissions for user icon"
-      ${getExe' pkgs.acl "setfacl"} -m u:sddm:x /home/${userName}
-    '';
+    system.activationScripts.postInstallSddm = lib.mkIf (userName != null) (
+      stringAfter [ "users" ] /* Bash */ ''
+        echo "Setting sddm permissions for user icon"
+        ${getExe' pkgs.acl "setfacl"} -m u:sddm:x /home/${userName}
+      ''
+    );
   };
 }

@@ -8,7 +8,7 @@ let
   cfg = config.khanelinix.services.swarmui;
 
   userName = config.khanelinix.user.name;
-  homeCfg = config.home-manager.users.${userName} or { };
+  homeCfg = lib.khanelinix.hmUserConfig config;
 
   picturesDir =
     if homeCfg.xdg.userDirs.enable or false then

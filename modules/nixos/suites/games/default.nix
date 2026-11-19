@@ -16,7 +16,7 @@ let
   cfg = config.khanelinix.suites.games;
   includes = suiteProfileIncludes config cfg;
   userName = config.khanelinix.user.name;
-  homeCfg = config.home-manager.users.${userName} or { };
+  homeCfg = lib.khanelinix.hmUserConfig config;
   prismLauncherEnabled = homeCfg.khanelinix.programs.graphical.apps.prismlauncher.enable or false;
   soberEnabled =
     config.khanelinix.services.flatpak.enable

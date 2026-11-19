@@ -7,7 +7,7 @@
 }:
 let
   cfg = config.khanelinix.system.networking;
-  homeCfg = config.home-manager.users.${config.khanelinix.user.name} or { };
+  homeCfg = lib.khanelinix.hmUserConfig config;
   exoEnabled = homeCfg.services.exo.enable or false;
   exoLibp2pPort = 52416;
   syncthingEnabled = homeCfg.services.syncthing.enable or false;

@@ -7,7 +7,8 @@ let
   inherit (lib) mkIf mkEnableOption;
 
   cfg = config.khanelinix.system.interface;
-  hmCfg = config.home-manager.users.${config.khanelinix.user.name};
+  hmCfg = lib.khanelinix.hmUserConfig config;
+  userName = config.khanelinix.user.name;
 in
 {
   options.khanelinix.system.interface = {
@@ -32,7 +33,7 @@ in
         };
         "com.apple.Terminal" = {
           # skhd requires Secure Keyboard Entry to be disabled.
-          SecureKeyboardEntry = !hmCfg.services.skhd.enable;
+          SecureKeyboardEntry = !(hmCfg.services.skhd.enable or false);
         };
       };
 
@@ -76,8 +77,8 @@ in
 
         persistent-apps =
           let
-            hmApps = "/Users/${config.khanelinix.user.name}/Applications/Home Manager Apps";
-            hasPkg = p: builtins.any (x: (x.pname or x.name) == p) hmCfg.home.packages;
+            hmApps = "/Users/${userName}/Applications/Home Manager Apps";
+            hasPkg = p: builtins.any (x: (x.pname or x.name) == p) (hmCfg.home.packages or [ ]);
 
             systemApps = [
               "/System/Applications/System Settings.app"
@@ -132,7 +133,7 @@ in
               ++ lib.optional (hasPkg "bruno") "${hmApps}/Bruno.app"
             );
 
-            terminalApps = [ "${hmApps}/kitty.app" ];
+            terminalApps = lib.optional (userName != null) "${hmApps}/kitty.app";
 
             spacer = {
               spacer = {
@@ -207,12 +208,12 @@ in
         NSAutomaticQuoteSubstitutionEnabled = false;
         NSAutomaticSpellingCorrectionEnabled = false;
         NSAutomaticWindowAnimationsEnabled = false;
-        _HIHideMenuBar = hmCfg.programs.sketchybar.enable;
+        _HIHideMenuBar = hmCfg.programs.sketchybar.enable or false;
       };
 
       screencapture = {
         disable-shadow = true;
-        location = "/Users/${config.khanelinix.user.name}/Pictures/screenshots/";
+        location = lib.mkIf (userName != null) "/Users/${userName}/Pictures/screenshots/";
         type = "png";
       };
 

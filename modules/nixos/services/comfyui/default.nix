@@ -21,7 +21,7 @@ let
   hasClipSegBundle = lib.all (name: builtins.hasAttr name cfg.models) clipSegFiles;
 
   userName = config.khanelinix.user.name;
-  homeCfg = config.home-manager.users.${userName} or { };
+  homeCfg = lib.khanelinix.hmUserConfig config;
 
   # Generations belong where the desktop already looks for images. XDG user
   # dirs are Home Manager state, so fall back to the conventional path when

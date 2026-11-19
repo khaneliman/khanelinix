@@ -9,8 +9,7 @@ let
 
   cfg = config.khanelinix.suites.development;
   aiTools = import (lib.getFile "modules/common/ai-tools") { inherit lib pkgs; };
-  userName = config.khanelinix.user.name;
-  homeCfg = if userName != null then config.home-manager.users.${userName} or { } else { };
+  homeCfg = lib.khanelinix.hmUserConfig config;
   exoEnabled = homeCfg.services.exo.enable or false;
   exoLibp2pPort = 52416;
   tomlFormat = pkgs.formats.toml { };
