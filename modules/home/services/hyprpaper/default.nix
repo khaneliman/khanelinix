@@ -134,13 +134,13 @@ in
                       local monitor = resolveMonitor(workspace)
                       local wallpaper
 
-                      if type(workspace_id) ~= "number" or workspace_id < 1 then
+                      if monitor == nil or type(workspace_id) ~= "number" or workspace_id < 1 then
                         return
                       end
 
                       wallpaper = fallbackWallpapers[math.min(workspace_id, #fallbackWallpapers)]
 
-                      if wallpaper == nil and monitor ~= nil then
+                      if wallpaper == nil then
                         wallpaper = monitorWallpapers[monitor]
                       end
 
@@ -149,9 +149,7 @@ in
                       end
 
                       lastApplied[monitor] = wallpaper
-                      if monitor ~= nil then
-                        hl.exec_cmd("hyprctl hyprpaper wallpaper " .. monitor .. "," .. wallpaper)
-                      end
+                      hl.exec_cmd("hyprctl hyprpaper wallpaper " .. monitor .. "," .. wallpaper)
                     end
                   end)()
                 '')
