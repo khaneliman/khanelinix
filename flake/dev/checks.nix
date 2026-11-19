@@ -85,8 +85,8 @@
           okf-memory-conformance = {
             enable = true;
             description = "OKF bundle conformance + memory char budget";
-            entry = "sh ${toString ../../modules/common/ai-tools/skills/okf-memory/scripts/check-bundle.sh}";
-            files = "^\\.okf/.*\\.md$";
+            entry = "sh modules/common/ai-tools/skills/okf-memory/scripts/check-bundle.sh";
+            always_run = true;
             language = "system";
             pass_filenames = false;
           };
