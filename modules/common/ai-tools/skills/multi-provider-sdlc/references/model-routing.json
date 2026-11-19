@@ -138,7 +138,7 @@
 			"upstream_model": "gemini-4-argon-high",
 			"gateway_alias": "claude-gemini-4-argon",
 			"display_name": "Google · Gemini 4 Argon",
-			"description": "Google Gemini 4 Argon gateway worker for explicit requests on the separate Argon quota.",
+			"description": "Google Gemini 4 Argon gateway worker for Gemini quota fallbacks and explicit requests on the separate Argon allowance.",
 			"reasoning_effort": null,
 			"write": true,
 			"workspace_write": true,
@@ -442,14 +442,19 @@
 		{
 			"need": "obvious lookup or mechanical one-file edit",
 			"preferred": ["gpt-6-luna"],
-			"fallbacks": ["haiku-5-5", "gemini-4-hydrogen"],
+			"fallbacks": ["haiku-5-5", "gemini-4-hydrogen", "gemini-4-argon"],
 			"semantic_role": "mechanic",
 			"write_policy": "read-only unless edit is explicit"
 		},
 		{
 			"need": "repository discovery",
 			"preferred": ["gpt-6-luna"],
-			"fallbacks": ["haiku-5-5", "gpt-6-2-sol", "gemini-4-hydrogen"],
+			"fallbacks": [
+				"haiku-5-5",
+				"gpt-6-2-sol",
+				"gemini-4-hydrogen",
+				"gemini-4-argon"
+			],
 			"semantic_role": "fact-finder",
 			"write_policy": "read-only"
 		},
@@ -460,7 +465,8 @@
 				"haiku-5-5",
 				"gpt-6-2-sol",
 				"opus-5-5",
-				"gemini-4-hydrogen"
+				"gemini-4-hydrogen",
+				"gemini-4-argon"
 			],
 			"semantic_role": "probe-runner",
 			"write_policy": "build artifacts only"
@@ -468,35 +474,46 @@
 		{
 			"need": "focused validation",
 			"preferred": ["gpt-6-luna"],
-			"fallbacks": ["haiku-5-5", "gemini-4-hydrogen"],
+			"fallbacks": ["haiku-5-5", "gemini-4-hydrogen", "gemini-4-argon"],
 			"semantic_role": "checker",
 			"write_policy": "build artifacts only"
 		},
 		{
 			"need": "noisy validation",
 			"preferred": ["gpt-6-luna"],
-			"fallbacks": ["haiku-5-5", "gemini-4-hydrogen", "gpt-oss-120b"],
+			"fallbacks": ["haiku-5-5", "gemini-4-hydrogen", "gemini-4-argon"],
 			"semantic_role": "test-runner",
 			"write_policy": "build artifacts only"
 		},
 		{
 			"need": "implementation",
 			"preferred": ["gpt-6-2-sol"],
-			"fallbacks": ["opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
+			"fallbacks": [
+				"opus-5-5",
+				"gpt-6-luna",
+				"haiku-5-5",
+				"gemini-4-hydrogen",
+				"gemini-4-argon"
+			],
 			"semantic_role": "implementer",
 			"write_policy": "workspace write"
 		},
 		{
 			"need": "difficult implementation",
 			"preferred": ["gpt-6-2-sol", "opus-5-5"],
-			"fallbacks": ["gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
+			"fallbacks": [
+				"gpt-6-luna",
+				"haiku-5-5",
+				"gemini-4-hydrogen",
+				"gemini-4-argon"
+			],
 			"semantic_role": "implementer",
 			"write_policy": "workspace write"
 		},
 		{
 			"need": "ambiguous diagnosis",
 			"preferred": ["gpt-6-2-sol"],
-			"fallbacks": ["opus-5-5", "gemini-4-neon"],
+			"fallbacks": ["opus-5-5", "gemini-4-neon", "gemini-4-argon"],
 			"semantic_role": "debugger",
 			"write_policy": "read-only"
 		},
@@ -506,6 +523,7 @@
 			"fallbacks": [
 				"gpt-6-2-sol",
 				"gemini-4-neon",
+				"gemini-4-argon",
 				"fable-5-2",
 				"google-opus-5-5"
 			],
@@ -515,7 +533,7 @@
 		{
 			"need": "routine code review",
 			"preferred": ["gpt-6-2-sol"],
-			"fallbacks": ["opus-5-5", "gemini-4-neon"],
+			"fallbacks": ["opus-5-5", "gemini-4-neon", "gemini-4-argon"],
 			"semantic_role": "reviewer",
 			"write_policy": "read-only"
 		},
@@ -529,7 +547,12 @@
 		{
 			"need": "multimodal analysis",
 			"preferred": ["gemini-4-neon"],
-			"fallbacks": ["gemini-4-hydrogen", "gpt-6-2-sol", "opus-5-5"],
+			"fallbacks": [
+				"gemini-4-hydrogen",
+				"gemini-4-argon",
+				"gpt-6-2-sol",
+				"opus-5-5"
+			],
 			"semantic_role": "fact-finder",
 			"write_policy": "read-only"
 		}
@@ -537,7 +560,7 @@
 	"deliberation": {
 		"anthropic": "opus-5-5",
 		"google": "gemini-4-neon",
-		"google_fallback": "google-opus-5-5",
+		"google_fallback": "gemini-4-argon",
 		"openai": "gpt-6-2-astra"
 	},
 	"quota_pools": {

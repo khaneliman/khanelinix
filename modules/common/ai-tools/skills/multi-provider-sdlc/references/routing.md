@@ -35,8 +35,8 @@ weekly cap. Google positions Hydrogen for work that needs no separate planning
 phase, so hand it a settled plan.
 [Neon](https://antigravity.google/blog/gemini-4-neon-in-google-antigravity) now
 fills the Google diagnosis, review, deliberation, and multimodal seats. Argon
-remains available by name. Gemini 3.8 Flash holds no route and stays available
-for explicit requests only. See the
+uses its separate weekly quota as the next Gemini fallback. Gemini 3.8 Flash
+holds no route and stays available for explicit requests only. See the
 [November 2026 Hydrogen evidence](routing-evidence-2026-11.md).
 
 Use Luna for bounded discovery, reproduction, mechanical edits, and checks; Sol
@@ -73,24 +73,23 @@ Every subscription requires a live route and current authentication.
 
 <!-- BEGIN GENERATED ROUTES -->
 
-| Need                                       | Preferred                   | Fallback                                                       | Semantic role  | Write policy                      |
-| ------------------------------------------ | --------------------------- | -------------------------------------------------------------- | -------------- | --------------------------------- |
-| obvious lookup or mechanical one-file edit | `gpt-6-luna`                | `haiku-5-5`, `gemini-4-hydrogen`                               | `mechanic`     | read-only unless edit is explicit |
-| repository discovery                       | `gpt-6-luna`                | `haiku-5-5`, `gpt-6-2-sol`, `gemini-4-hydrogen`                | `fact-finder`  | read-only                         |
-| bounded reproduction                       | `gpt-6-luna`                | `haiku-5-5`, `gpt-6-2-sol`, `opus-5-5`, `gemini-4-hydrogen`    | `probe-runner` | build artifacts only              |
-| focused validation                         | `gpt-6-luna`                | `haiku-5-5`, `gemini-4-hydrogen`                               | `checker`      | build artifacts only              |
-| noisy validation                           | `gpt-6-luna`                | `haiku-5-5`, `gemini-4-hydrogen`, `gpt-oss-120b`               | `test-runner`  | build artifacts only              |
-| implementation                             | `gpt-6-2-sol`               | `opus-5-5`, `gpt-6-luna`, `haiku-5-5`, `gemini-4-hydrogen`     | `implementer`  | workspace write                   |
-| difficult implementation                   | `gpt-6-2-sol`, `opus-5-5`   | `gpt-6-luna`, `haiku-5-5`, `gemini-4-hydrogen`                 | `implementer`  | workspace write                   |
-| ambiguous diagnosis                        | `gpt-6-2-sol`               | `opus-5-5`, `gemini-4-neon`                                    | `debugger`     | read-only                         |
-| plan or code review                        | `opus-5-5`, `gpt-6-2-astra` | `gpt-6-2-sol`, `gemini-4-neon`, `fable-5-2`, `google-opus-5-5` | `reviewer`     | read-only                         |
-| routine code review                        | `gpt-6-2-sol`               | `opus-5-5`, `gemini-4-neon`                                    | `reviewer`     | read-only                         |
-| bounded Sonnet trial                       | `sonnet-5-5`                | `gpt-6-2-sol`, `opus-5-5`                                      | `implementer`  | workspace write                   |
-| multimodal analysis                        | `gemini-4-neon`             | `gemini-4-hydrogen`, `gpt-6-2-sol`, `opus-5-5`                 | `fact-finder`  | read-only                         |
+| Need                                       | Preferred                   | Fallback                                                                         | Semantic role  | Write policy                      |
+| ------------------------------------------ | --------------------------- | -------------------------------------------------------------------------------- | -------------- | --------------------------------- |
+| obvious lookup or mechanical one-file edit | `gpt-6-luna`                | `haiku-5-5`, `gemini-4-hydrogen`, `gemini-4-argon`                               | `mechanic`     | read-only unless edit is explicit |
+| repository discovery                       | `gpt-6-luna`                | `haiku-5-5`, `gpt-6-2-sol`, `gemini-4-hydrogen`, `gemini-4-argon`                | `fact-finder`  | read-only                         |
+| bounded reproduction                       | `gpt-6-luna`                | `haiku-5-5`, `gpt-6-2-sol`, `opus-5-5`, `gemini-4-hydrogen`, `gemini-4-argon`    | `probe-runner` | build artifacts only              |
+| focused validation                         | `gpt-6-luna`                | `haiku-5-5`, `gemini-4-hydrogen`, `gemini-4-argon`                               | `checker`      | build artifacts only              |
+| noisy validation                           | `gpt-6-luna`                | `haiku-5-5`, `gemini-4-hydrogen`, `gemini-4-argon`                               | `test-runner`  | build artifacts only              |
+| implementation                             | `gpt-6-2-sol`               | `opus-5-5`, `gpt-6-luna`, `haiku-5-5`, `gemini-4-hydrogen`, `gemini-4-argon`     | `implementer`  | workspace write                   |
+| difficult implementation                   | `gpt-6-2-sol`, `opus-5-5`   | `gpt-6-luna`, `haiku-5-5`, `gemini-4-hydrogen`, `gemini-4-argon`                 | `implementer`  | workspace write                   |
+| ambiguous diagnosis                        | `gpt-6-2-sol`               | `opus-5-5`, `gemini-4-neon`, `gemini-4-argon`                                    | `debugger`     | read-only                         |
+| plan or code review                        | `opus-5-5`, `gpt-6-2-astra` | `gpt-6-2-sol`, `gemini-4-neon`, `gemini-4-argon`, `fable-5-2`, `google-opus-5-5` | `reviewer`     | read-only                         |
+| routine code review                        | `gpt-6-2-sol`               | `opus-5-5`, `gemini-4-neon`, `gemini-4-argon`                                    | `reviewer`     | read-only                         |
+| bounded Sonnet trial                       | `sonnet-5-5`                | `gpt-6-2-sol`, `opus-5-5`                                                        | `implementer`  | workspace write                   |
+| multimodal analysis                        | `gemini-4-neon`             | `gemini-4-hydrogen`, `gemini-4-argon`, `gpt-6-2-sol`, `opus-5-5`                 | `fact-finder`  | read-only                         |
 
 For explicit three-provider deliberation, use Anthropic `opus-5-5`, Google
-`gemini-4-neon` with `google-opus-5-5` fallback (degraded family diversity), and
-OpenAI `gpt-6-2-astra`.
+`gemini-4-neon` with `gemini-4-argon` fallback, and OpenAI `gpt-6-2-astra`.
 
 <!-- END GENERATED ROUTES -->
 

@@ -67,7 +67,7 @@ class ModelRoutingTests(unittest.TestCase):
         )
         self.assertEqual(
             self.registry["models"][seats["google_fallback"]]["model_family"],
-            "anthropic-claude",
+            "google-gemini",
         )
 
     def test_duplicate_primary_family_is_rejected(self) -> None:
@@ -97,7 +97,13 @@ class ModelRoutingTests(unittest.TestCase):
         )
         self.assertEqual(
             routes["plan or code review"]["fallbacks"],
-            ["gpt-6-2-sol", "gemini-4-neon", "fable-5-2", "google-opus-5-5"],
+            [
+                "gpt-6-2-sol",
+                "gemini-4-neon",
+                "gemini-4-argon",
+                "fable-5-2",
+                "google-opus-5-5",
+            ],
         )
         self.assertEqual(
             self.registry["semantic_roles"]["reviewer"]["gateway"]["claude"],
@@ -115,7 +121,7 @@ class ModelRoutingTests(unittest.TestCase):
         )
         self.assertEqual(
             routes["difficult implementation"]["fallbacks"],
-            ["gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
+            ["gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen", "gemini-4-argon"],
         )
         self.assertTrue(self.registry["models"]["gemini-4-hydrogen"]["write"])
         self.assertTrue(self.registry["models"]["gpt-6-2-sol"]["workspace_write"])
@@ -364,7 +370,7 @@ class ModelRoutingTests(unittest.TestCase):
     def test_provider_projections_match_frozen_baseline(self) -> None:
         expected_digests = {
             False: "9101295885f20711e258a46d89b38a46ab5cf145119ac63a01b6d66143303f27",
-            True: "8677f0248cf4072f6f35e1ac7d7ab5f39e958a88d5eebe2291da8288a3419ed5",
+            True: "40bc10af35a1cf964d790b29691f6d23659de13679106c8bc679017a21acc1f6",
         }
 
         for gateway_enabled, expected_digest in expected_digests.items():

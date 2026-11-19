@@ -462,6 +462,7 @@ class RouteCapabilityTests(unittest.TestCase):
                 "gpt-6-2-astra",
                 "gpt-6-2-sol",
                 "gemini-4-neon",
+                "gemini-4-argon",
                 "fable-5-2",
                 "google-opus-5-5",
             ],
@@ -484,7 +485,14 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(claim["planRevision"], 0)
         self.assertEqual(
             claim["plannedCandidates"],
-            ["gpt-6-2-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
+            [
+                "gpt-6-2-sol",
+                "opus-5-5",
+                "gpt-6-luna",
+                "haiku-5-5",
+                "gemini-4-hydrogen",
+                "gemini-4-argon",
+            ],
         )
         self.assertIsNone(claim["candidateOverride"])
         self.assertEqual(
@@ -512,7 +520,14 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(stored_claim["plan_revision"], 0)
         self.assertEqual(
             stored_claim["planned_candidates"],
-            ["gpt-6-2-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
+            [
+                "gpt-6-2-sol",
+                "opus-5-5",
+                "gpt-6-luna",
+                "haiku-5-5",
+                "gemini-4-hydrogen",
+                "gemini-4-argon",
+            ],
         )
         self.assertIsNone(stored_claim["candidate_override"])
 
@@ -593,7 +608,14 @@ class RouteCapabilityTests(unittest.TestCase):
         )
         self.assertEqual(
             claim["plannedCandidates"],
-            ["gpt-6-2-sol", "opus-5-5", "gpt-6-luna", "haiku-5-5", "gemini-4-hydrogen"],
+            [
+                "gpt-6-2-sol",
+                "opus-5-5",
+                "gpt-6-luna",
+                "haiku-5-5",
+                "gemini-4-hydrogen",
+                "gemini-4-argon",
+            ],
         )
         self.assertEqual(stored_claim["candidate_override"], claim["candidateOverride"])
 
@@ -807,7 +829,7 @@ class RouteCapabilityTests(unittest.TestCase):
             self.state,
             self.task_id,
             4,
-            self.google_telemetry("exhausted", "exhausted"),
+            self.google_telemetry("exhausted", "exhausted", "exhausted"),
         )
 
         plan = capability.plan_route(self.state, self.task_id, "noisy validation", True)
@@ -825,7 +847,7 @@ class RouteCapabilityTests(unittest.TestCase):
             self.state,
             self.task_id,
             4,
-            self.google_telemetry("exhausted", "exhausted"),
+            self.google_telemetry("exhausted", "exhausted", "exhausted"),
         )
 
         plan = capability.plan_route(
@@ -841,7 +863,7 @@ class RouteCapabilityTests(unittest.TestCase):
 
     def test_gateway_role_in_healthy_pool_keeps_semantic_fallback(self) -> None:
         self.initialize()
-        self.complete("gpt-oss-120b", "agent-type-unavailable")
+        self.complete("gemini-4-argon", "agent-type-unavailable")
 
         plan = capability.plan_route(self.state, self.task_id, "noisy validation", True)
         state = self.load_state()
@@ -980,6 +1002,24 @@ class RouteCapabilityTests(unittest.TestCase):
         self.assertEqual(state["pools"]["google"]["claude-gpt"], "open")
         self.assertEqual(state["pools"]["google"]["gemini"], "available")
         self.assertNotIn("usedPercent", self.state.read_text(encoding="utf-8"))
+
+    def test_argon_remains_routable_when_general_gemini_quota_runs_out(self) -> None:
+        self.initialize()
+        capability.ingest_google_telemetry(
+            self.state,
+            self.task_id,
+            0,
+            self.google_telemetry(gemini_status="exhausted"),
+        )
+        for need in ("multimodal analysis", "noisy validation"):
+            with self.subTest(need=need):
+                plan = capability.plan_route(self.state, self.task_id, need)
+                google = [
+                    candidate["model"]
+                    for candidate in plan["candidates"]
+                    if candidate["subscription"] == "google"
+                ]
+                self.assertEqual(google, ["gemini-4-argon"])
 
     def test_unknown_google_telemetry_does_not_mutate_state(self) -> None:
         self.initialize()
