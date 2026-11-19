@@ -14,8 +14,6 @@ writeShellApplication {
 
   passthru.updateScript = null;
 
-  checkPhase = "";
-
   runtimeInputs = [ nix-fast-build ];
 
   text = builtins.readFile ./build-by-path.sh;
