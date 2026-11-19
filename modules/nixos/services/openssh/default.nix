@@ -86,8 +86,8 @@ in
       inherit (cfg) extraConfig startAgent;
     };
 
-    khanelinix = {
-      user.extraOptions.openssh.authorizedKeys.keys = cfg.authorizedKeys;
+    users.users = lib.mkIf (config.khanelinix.user.name != null) {
+      ${config.khanelinix.user.name}.openssh.authorizedKeys.keys = cfg.authorizedKeys;
     };
   };
 }

@@ -66,10 +66,7 @@ in
 
   users.users.${cfg.name} = {
     openssh = {
-      authorizedKeys.keys = hostUserPublicKeys ++ [
-        # `austinserver hermes`
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG1MjYs1zQ6dxFyNwUTR/1K0QI65nuJ6h1xINWnQEUdy hermes-agent@austinserver"
-      ];
+      authorizedKeys.keys = hostUserPublicKeys;
     };
   };
 

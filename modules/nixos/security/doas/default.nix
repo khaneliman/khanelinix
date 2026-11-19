@@ -26,10 +26,13 @@ in
     security.doas = {
       enable = true;
 
-      extraRules = [
+      extraRules = lib.optionals (config.khanelinix.user.name != null) [
         {
-          keepEnv = true;
           noPass = true;
+          setEnv = [
+            "EDITOR"
+            "TERM"
+          ];
           users = [ config.khanelinix.user.name ];
         }
       ];

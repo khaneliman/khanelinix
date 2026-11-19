@@ -172,7 +172,7 @@ in
           IdentityFile = config.sops.secrets."hermes-agent/ssh-key".path;
           IdentitiesOnly = true;
           BatchMode = true;
-          StrictHostKeyChecking = "accept-new";
+          StrictHostKeyChecking = "yes";
         };
 
         "khanelimac khanelimac-ts" = {
@@ -182,7 +182,7 @@ in
           IdentityFile = config.sops.secrets."hermes-agent/ssh-key".path;
           IdentitiesOnly = true;
           BatchMode = true;
-          StrictHostKeyChecking = "accept-new";
+          StrictHostKeyChecking = "yes";
         };
       };
     };

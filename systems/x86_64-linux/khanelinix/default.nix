@@ -21,7 +21,13 @@ in
 
   users = {
     manageLingering = true;
-    users.${config.khanelinix.user.name}.linger = true;
+    users.${config.khanelinix.user.name} = {
+      linger = true;
+      openssh.authorizedKeys.keys = [
+        # `austinserver hermes`
+        "no-port-forwarding,no-agent-forwarding,no-X11-forwarding ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG1MjYs1zQ6dxFyNwUTR/1K0QI65nuJ6h1xINWnQEUdy hermes-agent@austinserver"
+      ];
+    };
   };
 
   khanelinix = {
