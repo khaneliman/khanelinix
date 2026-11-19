@@ -270,7 +270,7 @@ label:focus {
 
 #control-center {
   color: @theme_warning;
-  background-color: @theme_surface;
+  background-color: @theme_surfaceRaised;
   border: 2px solid @theme_border;
 }
 
@@ -287,7 +287,7 @@ label:focus {
 }
 
 #systemd-failed-units {
-  color: @theme_secondary;
+  color: @theme_tertiary;
 }
 
 #pulseaudio.muted {
@@ -295,7 +295,7 @@ label:focus {
 }
 
 #keyboard-state {
-  color: @theme_secondary;
+  color: @theme_tertiary;
 }
 
 #keyboard-state > label.locked {
@@ -326,7 +326,7 @@ label:focus {
 #stats,
 #stats-drawer {
   color: @theme_warning;
-  background-color: @theme_surface;
+  background-color: @theme_surfaceRaised;
   border: 2px solid @theme_border;
 }
 
@@ -355,7 +355,7 @@ label:focus {
 
 #workspaces {
   color: @theme_warning;
-  background-color: @theme_surface;
+  background-color: @theme_surfaceRaised;
   border: 2px solid @theme_border;
 }
 
@@ -380,7 +380,7 @@ label:focus {
 }
 
 #workspaces button.empty {
-  color: @theme_muted;
+  color: @theme_subtle;
 }
 
 #workspaces button.visible {
