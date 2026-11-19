@@ -105,6 +105,25 @@ for name in inventory["darwin"]:
         "darwin-" + name,
         "{ drvPath = f.darwinConfigurations." + json.dumps(name) + ".system.drvPath; }",
     )
+evaluate(
+    "fleet-khanelimac-m1-builders",
+    """let
+      c = f.darwinConfigurations.khanelimac-m1.config;
+      key = c.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+    in builtins.listToAttrs (map (machine: {
+      name = machine.hostName;
+      value = machine.sshKey == key;
+    }) c.nix.buildMachines)""",
+    validate=lambda value: (
+        value
+        == {
+            "aarch64-build-box.nix-community.org": True,
+            "darwin-build-box.nix-community.org": True,
+            "khanelimac.local": True,
+            "khanelinix.local": True,
+        }
+    ),
+)
 summary = """x: {
   username = x.home.username; directory = x.home.homeDirectory;
   name = x.khanelinix.user.name; profile = x.khanelinix.packageProfile;

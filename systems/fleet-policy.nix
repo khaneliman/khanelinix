@@ -24,6 +24,9 @@ in
       let
         sshUser = "khaneliman";
         protocol = "ssh-ng";
+        darwinSshIdentity = lib.optionalAttrs (hostname == "khanelimac" || hostname == "khanelimac-m1") {
+          sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
+        };
         supportedFeatures = [
           "benchmark"
           "big-parallel"
@@ -61,9 +64,7 @@ in
             speedFactor = 2;
             supportedFeatures = supportedFeatures ++ [ "kvm" ];
           }
-          // lib.optionalAttrs (hostname == "khanelimac") {
-            sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
-          }
+          // darwinSshIdentity
         ))
         (
           {
@@ -80,9 +81,7 @@ in
               "nixos-test"
             ];
           }
-          // lib.optionalAttrs (hostname == "khanelimac") {
-            sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
-          }
+          // darwinSshIdentity
           // lib.optionalAttrs (hostname == "khanelinix") {
             sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
           }
@@ -100,6 +99,7 @@ in
             speedFactor = 10;
             supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
           }
+          // darwinSshIdentity
           // lib.optionalAttrs (hostname == "khanelinix") {
             sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
           }
@@ -116,11 +116,11 @@ in
             speedFactor = 5;
             supportedFeatures = supportedFeatures ++ [ "apple-virt" ];
           }
+          // darwinSshIdentity
           // lib.optionalAttrs (hostname == "khanelinix") {
             sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
           }
           // lib.optionalAttrs (hostname == "khanelimac") {
-            sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
             # Prefer local builds for personal usage
             systems = [
               "x86_64-darwin"
@@ -140,11 +140,9 @@ in
             supportedFeatures = [ "big-parallel" ];
             publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUtNSGhsY243ZlVwVXVpT0ZlSWhEcUJ6Qk5Gc2JOcXErTnB6dUdYM2U2enYgCg";
           }
+          // darwinSshIdentity
           // lib.optionalAttrs (hostname == "khanelinix") {
             sshKey = config.sops.secrets.khanelinix_khaneliman_ssh_key.path;
-          }
-          // lib.optionalAttrs (hostname == "khanelimac-m1") {
-            sshKey = config.sops.secrets.khanelimac_khaneliman_ssh_key.path;
           }
         ))
       ];
