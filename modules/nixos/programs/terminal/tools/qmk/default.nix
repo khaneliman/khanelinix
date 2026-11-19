@@ -8,10 +8,17 @@
 let
   inherit (lib) mkIf;
 
-  cfg = config.khanelinix.tools.qmk;
+  cfg = config.khanelinix.programs.terminal.tools.qmk;
 in
 {
-  options.khanelinix.tools.qmk = {
+  imports = [
+    (lib.mkRenamedOptionModule
+      [ "khanelinix" "tools" "qmk" "enable" ]
+      [ "khanelinix" "programs" "terminal" "tools" "qmk" "enable" ]
+    )
+  ];
+
+  options.khanelinix.programs.terminal.tools.qmk = {
     enable = lib.mkEnableOption "QMK";
   };
 
