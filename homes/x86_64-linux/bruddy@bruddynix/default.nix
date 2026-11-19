@@ -8,7 +8,6 @@ let
   inherit (lib.khanelinix) enabled disabled;
 in
 {
-  imports = [ ../../identity.nix ];
   khanelinix = {
     user = {
       enable = true;
@@ -16,7 +15,11 @@ in
     };
 
     environments = {
-      home-network = enabled;
+      home-network = {
+        enable = true;
+        serverHostname = "austinserver.taild8431e.ts.net";
+        serverLocalHostname = "austinserver.local";
+      };
     };
 
     programs = {
@@ -94,7 +97,10 @@ in
           };
 
           run-as-service = enabled;
-          ssh = enabled;
+          ssh = {
+            enable = true;
+            authorizedKeys = import ../../../systems/fleet-authorized-keys.nix;
+          };
         };
       };
     };
@@ -105,12 +111,6 @@ in
         backupDirectory = "/mnt/austinserver/data/backups/bruddynix";
         networkMount = "/mnt/austinserver/data";
       };
-
-      # sops = {
-      #   enable = true;
-      #   defaultSopsFile = lib.getFile "secrets/khanelinix/khaneliman/default.yaml";
-      #   sshKeyPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
-      # };
     };
 
     system = {

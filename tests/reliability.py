@@ -189,6 +189,27 @@ evaluate(
     validate=lambda value: value is True,
 )
 evaluate(
+    "identity-bruddy-home",
+    """let
+      standalone = f.homeConfigurations."bruddy@bruddynix".config;
+      integrated = f.nixosConfigurations.bruddynix.config.home-manager.users.bruddy;
+      check = c: let k = c.khanelinix; git = k.programs.terminal.tools.git; in
+        c.home.username == "bruddy" && k.user.icon == null
+        && git.enable && git.userName == "" && git.userEmail == "" && git.allowedSignerKeys == []
+        && k.programs.graphical.apps.thunderbird.extraCalendarAccounts == {}
+        && !(c.home.shellAliases ? ghrck)
+        && k.programs.terminal.tools.ssh.authorizedKeys == import (f.outPath + "/systems/fleet-authorized-keys.nix")
+        && c.programs.ssh.settings."austinserver austinserver.local server".data.User == "bruddy"
+        && k.roles.desktop.enable && k.roles.gamer.enable
+        && k.programs.graphical.desktop-environment.plasma.enable
+        && k.services.ludusavi.enable;
+      owner = f.homeConfigurations."khaneliman@khanelinix".config.khanelinix;
+    in check standalone && check integrated
+      && owner.programs.terminal.tools.git.userEmail == "khaneliman12@gmail.com"
+      && owner.user.icon != null""",
+    validate=lambda value: value is True,
+)
+evaluate(
     "fleet-khanelimac-m1-builders",
     """let
       c = f.darwinConfigurations.khanelimac-m1.config;
