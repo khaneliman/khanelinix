@@ -65,7 +65,7 @@ in
     };
 
     security = {
-      doas = enabled;
+      sudo-rs = enabled;
       keyring = enabled;
       sops = {
         enable = true;
