@@ -210,22 +210,14 @@ in
 
       mcpServers = lib.optionalAttrs cfg.enableDefaultMcpServers {
         filesystem = {
-          command = "npx";
+          command = lib.getExe pkgs.mcp-server-filesystem;
           args = [
-            "-y"
-            "@modelcontextprotocol/server-filesystem"
             workingDirectory
             stateDir
           ];
         };
 
-        sequential-thinking = {
-          command = "npx";
-          args = [
-            "-y"
-            "@modelcontextprotocol/server-sequential-thinking"
-          ];
-        };
+        sequential-thinking.command = lib.getExe pkgs.mcp-server-sequential-thinking;
       };
 
       extraPackages = [
