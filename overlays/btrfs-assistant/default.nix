@@ -1,3 +1,5 @@
+# audit-package: btrfs-assistant linux
+# audit-review: Verify rootless polkit behavior and translation lookup on the upstream package.
 _: _final: prev: {
   btrfs-assistant = prev.btrfs-assistant.overrideAttrs (old: {
     version = "2.3.1-rootless-polkit";

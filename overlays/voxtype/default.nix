@@ -1,8 +1,10 @@
+# audit-package: voxtype-onnx linux
+# audit-review: Verify the streaming and learning changes and the Cargo inputs separately; matching the source tag is not enough.
 _: final: prev: {
   voxtype-onnx = prev.voxtype-onnx.overrideAttrs (
     finalAttrs: old:
     let
-      # Nemotron cache-aware streaming (peteonrails/voxtype#699).
+      # Nemotron cache-aware streaming: https://github.com/peteonrails/voxtype/pull/699
       nemotronPatches = [
         (final.fetchpatch2 {
           name = "voxtype-nemotron-streaming.patch";
@@ -36,7 +38,7 @@ _: final: prev: {
           # Apply [text] replacements to streamed partials, holding back only
           # words that could still start a replacement.
           ./streaming-replacements.patch
-          # `voxtype learn` (peteonrails/voxtype#668), minus its authors line.
+          # `voxtype learn`, minus its authors line: https://github.com/peteonrails/voxtype/pull/668
           (final.fetchpatch2 {
             name = "voxtype-learn.patch";
             url = "https://github.com/peteonrails/voxtype/commit/9dc192fa2b458a857cfc9e800e5e2653a3f2ff40.patch";

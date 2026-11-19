@@ -215,6 +215,23 @@ _: {
           );
         };
 
+        audit-overrides = {
+          type = "app";
+          meta.description = "Audit overlay pins and input patches against locked nixpkgs";
+          program = lib.getExe (
+            pkgs.writeShellApplication {
+              name = "audit-overrides";
+              runtimeInputs = [
+                pkgs.nix
+                pkgs.python3
+              ];
+              text = ''
+                exec python3 ${./apps/scripts/audit_overrides.py} "$@"
+              '';
+            }
+          );
+        };
+
         fleet-status =
           let
             inherit

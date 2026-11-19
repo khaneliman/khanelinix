@@ -1,3 +1,5 @@
+# audit-package: karabiner-elements darwin
+# audit-review: Check version-marker handling and verify that SMAppService can register the upstream helper bundles.
 _: final: prev: {
   karabiner-elements =
     let

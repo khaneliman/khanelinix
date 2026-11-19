@@ -1,7 +1,7 @@
 # nixpkgs' cargo setup hook forces Rust crates onto system libraries
 # (AWS_LC_SYS_USE_SYSTEM, LIBSQLITE3_SYS_USE_PKG_CONFIG, ZSTD_SYS_USE_PKG_CONFIG),
 # so packages that vendored those libraries fail until they gain the inputs.
-# Drop each entry once the pinned channels contain its fix.
+# audit-review: Check each package's system-library inputs or build independently on the locked channel.
 _: final: prev:
 let
   withInputs =
@@ -16,10 +16,10 @@ let
     });
 in
 {
-  # NixOS/nixpkgs#585086
+  # https://github.com/NixOS/nixpkgs/pull/585086
   anyrun = withInputs { buildInputs = [ final.aws-lc ]; } prev.anyrun;
 
-  # NixOS/nixpkgs#585208, merged to master.
+  # https://github.com/NixOS/nixpkgs/pull/585208, merged to master.
   ncspot = withInputs { buildInputs = [ final.aws-lc ]; } prev.ncspot;
 
   # No upstream fix yet. CMake links taskchampion's Rust static library
@@ -28,7 +28,7 @@ in
 
   pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
     (_pythonFinal: pythonPrev: {
-      # NixOS/nixpkgs#584300, merged to master.
+      # https://github.com/NixOS/nixpkgs/pull/584300, merged to master.
       tree-sitter-language-pack = withInputs {
         nativeBuildInputs = [ final.pkg-config ];
         buildInputs = [ final.zstd ];
