@@ -24,8 +24,6 @@ writeShellApplication {
 
   name = "yabai-helper";
 
-  checkPhase = "";
-
   text = ''
     set +o errexit
     set +o nounset
@@ -93,32 +91,32 @@ writeShellApplication {
 
     increase_gaps() {
       GAP=$(yabai -m config window_gap)
-      yabai -m config window_gap $(echo "$GAP" + 1 | bc)
+      yabai -m config window_gap "$(echo "$GAP" + 1 | bc)"
     }
 
     decrease_gaps() {
       GAP=$(yabai -m config window_gap)
-      yabai -m config window_gap $(echo "$GAP" - 1 | bc)
+      yabai -m config window_gap "$(echo "$GAP" - 1 | bc)"
     }
 
     increase_padding_top() {
       PADDING=$(yabai -m config top_padding)
-      yabai -m config top_padding $(echo "$PADDING" + 1 | bc)
+      yabai -m config top_padding "$(echo "$PADDING" + 1 | bc)"
     }
 
     increase_padding_bottom() {
       PADDING=$(yabai -m config bottom_padding)
-      yabai -m config bottom_padding $(echo "$PADDING" + 1 | bc)
+      yabai -m config bottom_padding "$(echo "$PADDING" + 1 | bc)"
     }
 
     increase_padding_left() {
       PADDING=$(yabai -m config left_padding)
-      yabai -m config left_padding $(echo "$PADDING" + 1 | bc)
+      yabai -m config left_padding "$(echo "$PADDING" + 1 | bc)"
     }
 
     increase_padding_right() {
       PADDING=$(yabai -m config right_padding)
-      yabai -m config right_padding $(echo "$PADDING" + 1 | bc)
+      yabai -m config right_padding "$(echo "$PADDING" + 1 | bc)"
     }
 
     increase_padding_all() {
@@ -128,31 +126,31 @@ writeShellApplication {
       PADDING_RIGHT=$(yabai -m config right_padding)
       WINDOW_GAP=$(yabai -m config window_gap)
 
-      yabai -m config top_padding $(echo "$PADDING_TOP" + 10 | bc)
-      yabai -m config bottom_padding $(echo "$PADDING_BOTTOM" + 10 | bc)
-      yabai -m config left_padding $(echo "$PADDING_LEFT" + 10 | bc)
-      yabai -m config right_padding $(echo "$PADDING_RIGHT" + 10 | bc)
-      yabai -m config window_gap $(echo "$WINDOW_GAP" + 10 | bc)
+      yabai -m config top_padding "$(echo "$PADDING_TOP" + 10 | bc)"
+      yabai -m config bottom_padding "$(echo "$PADDING_BOTTOM" + 10 | bc)"
+      yabai -m config left_padding "$(echo "$PADDING_LEFT" + 10 | bc)"
+      yabai -m config right_padding "$(echo "$PADDING_RIGHT" + 10 | bc)"
+      yabai -m config window_gap "$(echo "$WINDOW_GAP" + 10 | bc)"
     }
 
     decrease_padding_top() {
       PADDING=$(yabai -m config top_padding)
-      yabai -m config top_padding $(echo "$PADDING" - 1 | bc)
+      yabai -m config top_padding "$(echo "$PADDING" - 1 | bc)"
     }
 
     decrease_padding_bottom() {
       PADDING=$(yabai -m config bottom_padding)
-      yabai -m config bottom_padding $(echo "$PADDING" - 1 | bc)
+      yabai -m config bottom_padding "$(echo "$PADDING" - 1 | bc)"
     }
 
     decrease_padding_left() {
       PADDING=$(yabai -m config left_padding)
-      yabai -m config left_padding $(echo "$PADDING" - 1 | bc)
+      yabai -m config left_padding "$(echo "$PADDING" - 1 | bc)"
     }
 
     decrease_padding_right() {
       PADDING=$(yabai -m config right_padding)
-      yabai -m config right_padding $(echo "$PADDING" - 1 | bc)
+      yabai -m config right_padding "$(echo "$PADDING" - 1 | bc)"
     }
 
     decrease_padding_all() {
@@ -162,16 +160,15 @@ writeShellApplication {
       PADDING_RIGHT=$(yabai -m config right_padding)
       WINDOW_GAP=$(yabai -m config window_gap)
 
-      yabai -m config top_padding $(echo "$PADDING_TOP" - 10 | bc)
-      yabai -m config bottom_padding $(echo "$PADDING_BOTTOM" - 10 | bc)
-      yabai -m config left_padding $(echo "$PADDING_LEFT" - 10 | bc)
-      yabai -m config right_padding $(echo "$PADDING_RIGHT" - 10 | bc)
-      yabai -m config window_gap $(echo "$WINDOW_GAP" - 10 | bc)
+      yabai -m config top_padding "$(echo "$PADDING_TOP" - 10 | bc)"
+      yabai -m config bottom_padding "$(echo "$PADDING_BOTTOM" - 10 | bc)"
+      yabai -m config left_padding "$(echo "$PADDING_LEFT" - 10 | bc)"
+      yabai -m config right_padding "$(echo "$PADDING_RIGHT" - 10 | bc)"
+      yabai -m config window_gap "$(echo "$WINDOW_GAP" - 10 | bc)"
     }
 
     new_window() {
       APP_TO_OPEN="$1"
-      CURRENT_APP=$(yabai -m query --windows --window | jq -r '.app')
 
       click_menu_bar() {
         osascript -e 'tell application "System Events"' \
@@ -228,7 +225,6 @@ writeShellApplication {
       if [[ "$CURRENT_SPACES" -ge "$NEEDED_SPACES" ]]; then
         return
       fi
-      SPACES_TO_CREATE=$(("$NEEDED_SPACES" - "$CURRENT_SPACES"))
 
       for i in $(seq $((1 + CURRENT_SPACES)) "$NEEDED_SPACES"); do
         echo "$i"
@@ -313,13 +309,12 @@ writeShellApplication {
         | map( $first.id, .id )
         | .[]' |
         tail -n +3 |
-        xargs -n2 sh -c 'echo $1 $2; yabai -m window $1 --swap $2' sh
+        xargs -n2 sh -c "echo \"\$1\" \"\$2\"; yabai -m window \"\$1\" --swap \"\$2\"" sh
     }
 
     float_reset() {
-      ids=($(yabai -m query --windows --space | jq -re '.[].id'))
-
-      for window in $ids; do
+      local window
+      while IFS= read -r window; do
         top=$(yabai -m query --windows --window "$window" | jq -re '."is-topmost"')
         floating=$(yabai -m query --windows --window "$window" | jq -re '."is-floating"')
 
@@ -329,7 +324,7 @@ writeShellApplication {
         	fi
         	yabai -m window "$window" --toggle topmost
         fi
-      done
+      done < <(yabai -m query --windows --space | jq -re '.[].id')
     }
 
     float_signal() {
