@@ -15,26 +15,28 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    programs.eza = {
-      # Eza documentation
-      # See: https://github.com/eza-community/eza
-      enable = true;
-      package = pkgs.eza;
+    programs.eza =
+      lib.khanelinix.shellIntegrations config [
+        "bash"
+        "fish"
+        "zsh"
+      ]
+      // {
+        # Eza documentation
+        # See: https://github.com/eza-community/eza
+        enable = true;
+        package = pkgs.eza;
 
-      enableBashIntegration = true;
-      enableZshIntegration = true;
-      enableFishIntegration = true;
+        extraOptions = [
+          "--group-directories-first"
+          "--header"
+          "--hyperlink"
+          "--follow-symlinks"
+        ];
 
-      extraOptions = [
-        "--group-directories-first"
-        "--header"
-        "--hyperlink"
-        "--follow-symlinks"
-      ];
-
-      git = true;
-      icons = "auto";
-    };
+        git = true;
+        icons = "auto";
+      };
 
     home.shellAliases = {
       la = lib.mkDefault "eza -lah --tree";

@@ -16,18 +16,20 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.zoxide = {
-      # Zoxide documentation
-      # See: https://github.com/ajeetdsouza/zoxide
-      enable = true;
-      package = pkgs.zoxide;
+    programs.zoxide =
+      lib.khanelinix.shellIntegrations config [
+        "bash"
+        "fish"
+        "nushell"
+        "zsh"
+      ]
+      // {
+        # Zoxide documentation
+        # See: https://github.com/ajeetdsouza/zoxide
+        enable = true;
+        package = pkgs.zoxide;
 
-      enableBashIntegration = true;
-      enableZshIntegration = true;
-      enableFishIntegration = true;
-      enableNushellIntegration = true;
-
-      options = [ "--cmd cd" ];
-    };
+        options = [ "--cmd cd" ];
+      };
   };
 }

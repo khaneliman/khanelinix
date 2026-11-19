@@ -15,9 +15,12 @@ let
     inherit system;
     config.allowAliases = false;
   };
-  lib = pkgs.lib // {
-    khanelinix = import (root + "/lib/module") { inputs.nixpkgs.lib = pkgs.lib; };
-  };
+  lib = pkgs.lib.extend (
+    _: prev: {
+      khanelinix = import (root + "/lib/module") { inputs.nixpkgs.lib = prev; };
+      getFile = path: root + "/${path}";
+    }
+  );
   tools = root + "/modules/home/programs/terminal/tools";
   home = {
     username = "fixture";
@@ -27,12 +30,7 @@ let
   evaluate =
     modules: configuration:
     (import (homeManager + "/modules") {
-      inherit pkgs;
-      lib = pkgs.lib.extend (
-        _: _: {
-          getFile = path: root + "/${path}";
-        }
-      );
+      inherit lib pkgs;
       configuration = {
         inherit home;
         imports = modules;

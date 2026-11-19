@@ -19,19 +19,21 @@ in
     programs = {
       nix-index-database.comma.enable = true;
 
-      nix-index = {
-        # Nix-index documentation
-        # See: https://github.com/nix-community/nix-index
-        enable = true;
-        package = pkgs.nix-index;
+      nix-index =
+        lib.khanelinix.shellIntegrations config [
+          "bash"
+          "fish"
+          "zsh"
+        ]
+        // {
+          # Nix-index documentation
+          # See: https://github.com/nix-community/nix-index
+          enable = true;
+          package = pkgs.nix-index;
 
-        enableBashIntegration = true;
-        enableFishIntegration = true;
-        enableZshIntegration = true;
-
-        # link nix-inde database to ~/.cache/nix-index
-        symlinkToCacheHome = true;
-      };
+          # link nix-inde database to ~/.cache/nix-index
+          symlinkToCacheHome = true;
+        };
     };
   };
 }

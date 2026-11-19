@@ -416,13 +416,15 @@ in
             text_composition_strategy = "1.0";
           };
 
-          shellIntegration = {
-            enableBashIntegration = true;
-            enableFishIntegration = true;
-            enableZshIntegration = true;
-
-            mode = "no-title";
-          };
+          shellIntegration =
+            lib.khanelinix.shellIntegrations config [
+              "bash"
+              "fish"
+              "zsh"
+            ]
+            // {
+              mode = "no-title";
+            };
         };
         ripgrep.arguments = [
           # Enable hyperlinks in ripgrep results

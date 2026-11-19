@@ -7,7 +7,11 @@
 }:
 let
   pkgs = import nixpkgs { system = builtins.currentSystem; };
-  inherit (pkgs) lib;
+  lib = pkgs.lib.extend (
+    _: prev: {
+      khanelinix = import (root + "/lib/module") { inputs.nixpkgs.lib = prev; };
+    }
+  );
   terminal = root + "/modules/home/programs/terminal";
   aliasFixture = {
     probe = "head -n 1";
@@ -50,13 +54,10 @@ let
   zellij = import (terminal + "/tools/zellij") { inherit config lib pkgs; };
   compat = import (terminal + "/shells/alias-compat.nix") { inherit lib pkgs; };
   development = import (root + "/modules/home/suites/development") {
-    inherit config pkgs;
-    lib = lib // {
-      khanelinix = import (root + "/lib/module") { inputs.nixpkgs.lib = lib; };
-    };
+    inherit config lib pkgs;
   };
   shells = import (homeManager + "/modules") {
-    inherit pkgs;
+    inherit lib pkgs;
     configuration = {
       imports = [
         (terminal + "/shells/bash")

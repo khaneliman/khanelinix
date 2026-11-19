@@ -17,75 +17,77 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.ghostty = {
-      enable = true;
-      package = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin pkgs.ghostty-bin;
+    programs.ghostty =
+      lib.khanelinix.shellIntegrations config [
+        "bash"
+        "fish"
+        "zsh"
+      ]
+      // {
+        enable = true;
+        package = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin pkgs.ghostty-bin;
 
-      installBatSyntax = pkgs.stdenv.hostPlatform.isLinux;
-      installVimSyntax = pkgs.stdenv.hostPlatform.isLinux;
+        installBatSyntax = pkgs.stdenv.hostPlatform.isLinux;
+        installVimSyntax = pkgs.stdenv.hostPlatform.isLinux;
 
-      enableBashIntegration = true;
-      enableFishIntegration = true;
-      enableZshIntegration = true;
+        # Ghostty configuration
+        # See: https://ghostty.org/docs/config/reference
+        settings =
+          let
+            monaspaceKrypton = fontCfg.monaspace.families.krypton;
+            monaspaceNeon = fontCfg.monaspace.families.neon;
+            monaspaceRadon = fontCfg.monaspace.families.radon;
+            monaspaceXenon = fontCfg.monaspace.families.xenon;
+          in
+          {
+            adw-toolbar-style = "flat";
+            background-blur-radius = 20;
+            background-opacity = lib.mkDefault 0.8;
+            clipboard-trim-trailing-spaces = true;
+            copy-on-select = "clipboard";
+            cursor-click-to-move = true;
+            cursor-style = "block";
+            cursor-style-blink = false;
+            focus-follows-mouse = true;
+            font-family = lib.mkForce monaspaceNeon;
+            font-family-bold = lib.mkForce monaspaceXenon;
+            font-family-bold-italic = lib.mkForce monaspaceKrypton;
+            font-family-italic = lib.mkForce monaspaceRadon;
+            font-feature = "+ss01,+ss02,+ss03,+ss04,+ss05,+ss06,+ss07,+ss08,+ss09,+ss10,+liga,+dlig,+calt";
+            font-size = lib.mkDefault 13;
 
-      # Ghostty configuration
-      # See: https://ghostty.org/docs/config/reference
-      settings =
-        let
-          monaspaceKrypton = fontCfg.monaspace.families.krypton;
-          monaspaceNeon = fontCfg.monaspace.families.neon;
-          monaspaceRadon = fontCfg.monaspace.families.radon;
-          monaspaceXenon = fontCfg.monaspace.families.xenon;
-        in
-        {
-          adw-toolbar-style = "flat";
-          background-blur-radius = 20;
-          background-opacity = lib.mkDefault 0.8;
-          clipboard-trim-trailing-spaces = true;
-          copy-on-select = "clipboard";
-          cursor-click-to-move = true;
-          cursor-style = "block";
-          cursor-style-blink = false;
-          focus-follows-mouse = true;
-          font-family = lib.mkForce monaspaceNeon;
-          font-family-bold = lib.mkForce monaspaceXenon;
-          font-family-bold-italic = lib.mkForce monaspaceKrypton;
-          font-family-italic = lib.mkForce monaspaceRadon;
-          font-feature = "+ss01,+ss02,+ss03,+ss04,+ss05,+ss06,+ss07,+ss08,+ss09,+ss10,+liga,+dlig,+calt";
-          font-size = lib.mkDefault 13;
+            # NOTE: Different methods of using cgroups for every surface.
+            # linux-cgroup = "always";
+            gtk-single-instance = false;
 
-          # NOTE: Different methods of using cgroups for every surface.
-          # linux-cgroup = "always";
-          gtk-single-instance = false;
+            macos-auto-secure-input = true;
+            # macos-hidden = "always";
+            macos-option-as-alt = true;
+            macos-secure-input-indication = true;
+            macos-titlebar-style = "tabs";
+            macos-icon-frame = lib.mkDefault "plastic";
+            macos-titlebar-proxy-icon = "hidden";
 
-          macos-auto-secure-input = true;
-          # macos-hidden = "always";
-          macos-option-as-alt = true;
-          macos-secure-input-indication = true;
-          macos-titlebar-style = "tabs";
-          macos-icon-frame = lib.mkDefault "plastic";
-          macos-titlebar-proxy-icon = "hidden";
+            mouse-hide-while-typing = true;
+            notify-on-command-finish = "always";
+            quit-after-last-window-closed = true;
+            unfocused-split-opacity = 0.8;
+            window-colorspace = "srgb";
+            window-theme = "ghostty";
+            window-padding-x = 2;
+            window-padding-y = 2;
+            window-padding-balance = true;
+            window-save-state = "always";
+            window-step-resize = true;
 
-          mouse-hide-while-typing = true;
-          notify-on-command-finish = "always";
-          quit-after-last-window-closed = true;
-          unfocused-split-opacity = 0.8;
-          window-colorspace = "srgb";
-          window-theme = "ghostty";
-          window-padding-x = 2;
-          window-padding-y = 2;
-          window-padding-balance = true;
-          window-save-state = "always";
-          window-step-resize = true;
+            selection-background = "cell-foreground";
+            selection-foreground = "cell-background";
+            split-divider-color = "#313244";
 
-          selection-background = "cell-foreground";
-          selection-foreground = "cell-background";
-          split-divider-color = "#313244";
-
-          # NOTE: Disables some functionality available through window
-          # But, doesn't fit theme of a clean WM with its GTK interface
-          window-decoration = lib.mkIf pkgs.stdenv.hostPlatform.isLinux false;
-        };
-    };
+            # NOTE: Disables some functionality available through window
+            # But, doesn't fit theme of a clean WM with its GTK interface
+            window-decoration = lib.mkIf pkgs.stdenv.hostPlatform.isLinux false;
+          };
+      };
   };
 }

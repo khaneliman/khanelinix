@@ -88,57 +88,59 @@ in
       Wants = [ "sops-nix.service" ];
     };
 
-    programs.atuin = {
-      enable = true;
-
-      enableBashIntegration = true;
-      enableFishIntegration = true;
-      enableZshIntegration = true;
-      enableNushellIntegration = true;
-
-      daemon = {
+    programs.atuin =
+      lib.khanelinix.shellIntegrations config [
+        "bash"
+        "fish"
+        "nushell"
+        "zsh"
+      ]
+      // {
         enable = true;
-      }
-      // lib.optionalAttrs cfg.enableDebug {
-        logLevel = "debug";
-      };
 
-      # flags = [
-      #   "--disable-up-arrow"
-      # ];
-
-      # Atuin configuration
-      # See: https://docs.atuin.sh/configuration/config/
-      settings = lib.mkMerge [
-        {
-          auto_sync = cfg.sync.enable;
-          enter_accept = true;
-          # Filter modes can still be toggled via `ctrl-r`
-          filter_mode = "workspace";
-          keymap_mode = "auto";
-          show_preview = true;
-          # NOTE: Whether to store commands that failed.
-          # Can be useful to auto prune, but lose commands that might have
-          # a simple typo to fix and would need to type again.
-          # store_failed = false;
-          style = "auto";
-          update_check = false;
-          workspaces = true;
-
-          # Filter some commands we don't want to accidentally call from history
-          history_filter = [
-            "^(sudo reboot)$"
-            "^(reboot)$"
-          ];
+        daemon = {
+          enable = true;
         }
-        (mkIf cfg.sync.enable {
-          sync_address = "https://api.atuin.sh";
-          sync_frequency = "30m";
-        })
-        (mkIf syncWithSops {
-          key_path = config.sops.secrets."atuin/key".path;
-        })
-      ];
-    };
+        // lib.optionalAttrs cfg.enableDebug {
+          logLevel = "debug";
+        };
+
+        # flags = [
+        #   "--disable-up-arrow"
+        # ];
+
+        # Atuin configuration
+        # See: https://docs.atuin.sh/configuration/config/
+        settings = lib.mkMerge [
+          {
+            auto_sync = cfg.sync.enable;
+            enter_accept = true;
+            # Filter modes can still be toggled via `ctrl-r`
+            filter_mode = "workspace";
+            keymap_mode = "auto";
+            show_preview = true;
+            # NOTE: Whether to store commands that failed.
+            # Can be useful to auto prune, but lose commands that might have
+            # a simple typo to fix and would need to type again.
+            # store_failed = false;
+            style = "auto";
+            update_check = false;
+            workspaces = true;
+
+            # Filter some commands we don't want to accidentally call from history
+            history_filter = [
+              "^(sudo reboot)$"
+              "^(reboot)$"
+            ];
+          }
+          (mkIf cfg.sync.enable {
+            sync_address = "https://api.atuin.sh";
+            sync_frequency = "30m";
+          })
+          (mkIf syncWithSops {
+            key_path = config.sops.secrets."atuin/key".path;
+          })
+        ];
+      };
   };
 }

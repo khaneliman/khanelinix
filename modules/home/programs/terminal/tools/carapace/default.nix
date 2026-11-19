@@ -16,22 +16,25 @@ in
 
   config = mkIf cfg.enable {
     programs = {
-      carapace = {
-        # Carapace documentation
-        # See: https://carapace-sh.github.io/carapace-bin/
-        enable = true;
+      carapace =
+        lib.khanelinix.shellIntegrations config [
+          "bash"
+          "fish"
+          "nushell"
+        ]
+        // {
+          # Carapace documentation
+          # See: https://carapace-sh.github.io/carapace-bin/
+          enable = true;
 
-        enableBashIntegration = true;
-        enableFishIntegration = true;
-        # Prefer fzf-tab plugin
-        enableZshIntegration = false;
-        enableNushellIntegration = true;
+          # Prefer fzf-tab plugin
+          enableZshIntegration = false;
 
-        # Wrapping the binary reaches every shell integration; exporting from
-        # zsh init only covered interactive zsh, and zsh integration is off.
-        environment.CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense";
-        extraPackages = [ pkgs.inshellisense ];
-      };
+          # Wrapping the binary reaches every shell integration; exporting from
+          # zsh init only covered interactive zsh, and zsh integration is off.
+          environment.CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense";
+          extraPackages = [ pkgs.inshellisense ];
+        };
 
       zsh.initContent = /* Bash */ ''
         zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
