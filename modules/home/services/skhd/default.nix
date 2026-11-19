@@ -26,17 +26,20 @@ let
     else
       getExe pkgs.yabai;
 
-  logPath = lib.attrByPath [ "khanelinix" "services" "skhd" "logPath" ] (
+  logDirectory =
     if pkgs.stdenv.hostPlatform.isDarwin then
-      "${userHome}/Library/Logs/skhd/skhd.out.log"
+      "${userHome}/Library/Logs/skhd"
     else
-      "${userHome}/.local/state/skhd/skhd.out.log"
-  ) osConfig;
+      "${userHome}/.local/state/skhd";
+  logPaths = lib.attrByPath [ "khanelinix" "services" "skhd" "logPaths" ] {
+    stdout = "${logDirectory}/skhd.out.log";
+    stderr = "${logDirectory}/skhd.err.log";
+  } osConfig;
 in
 {
   options.khanelinix.services.skhd = {
     enable = lib.mkEnableOption "skhd";
-    logFile = mkOpt lib.types.str logPath "Filepath of log output";
+    logFile = mkOpt lib.types.str logPaths.stdout "Path to the skhd stdout log file.";
   };
 
   config = mkIf cfg.enable {
@@ -59,6 +62,8 @@ in
       # See: https://github.com/koekeishiya/skhd
       enable = true;
       package = pkgs.skhd;
+      outLogFile = lib.mkDefault cfg.logFile;
+      errorLogFile = lib.mkDefault logPaths.stderr;
 
       config = /* Bash */ ''
         # hyper (cmd + shift + alt + ctrl)

@@ -60,70 +60,6 @@ let
     ]
     ++ config.services.fast-nix-optimise.argv
   );
-  nixJobLogPaths = {
-    gc = {
-      stdout = "/var/log/nix-gc.out.log";
-      stderr = "/var/log/nix-gc.err.log";
-    };
-    optimise = {
-      stdout = "/var/log/nix-optimise.out.log";
-      stderr = "/var/log/nix-optimise.err.log";
-    };
-  };
-  nixLogRotationEntries = {
-    gc = [
-      {
-        logfilename = nixJobLogPaths.gc.stderr;
-        mode = "644";
-        owner = "root";
-        group = "wheel";
-        count = 7;
-        size = "2048";
-        flags = [
-          "Z"
-          "C"
-        ];
-      }
-      {
-        logfilename = nixJobLogPaths.gc.stdout;
-        mode = "644";
-        owner = "root";
-        group = "wheel";
-        count = 7;
-        size = "2048";
-        flags = [
-          "Z"
-          "C"
-        ];
-      }
-    ];
-    optimise = [
-      {
-        logfilename = nixJobLogPaths.optimise.stderr;
-        mode = "644";
-        owner = "root";
-        group = "wheel";
-        count = 7;
-        size = "2048";
-        flags = [
-          "Z"
-          "C"
-        ];
-      }
-      {
-        logfilename = nixJobLogPaths.optimise.stdout;
-        mode = "644";
-        owner = "root";
-        group = "wheel";
-        count = 7;
-        size = "2048";
-        flags = [
-          "Z"
-          "C"
-        ];
-      }
-    ];
-  };
 in
 {
   imports = [
@@ -133,12 +69,12 @@ in
 
   config = lib.mkIf cfg.enable (
     lib.mkMerge [
-      (lib.mkIf config.services.fast-nix-gc.automatic {
+      (lib.mkIf (config.services.fast-nix-gc.enable && config.services.fast-nix-gc.automatic) {
         launchd.daemons.fast-nix-gc = {
           serviceConfig = {
             ProgramArguments = lib.mkForce [ "${gcWrapper}" ];
-            StandardOutPath = nixJobLogPaths.gc.stdout;
-            StandardErrorPath = nixJobLogPaths.gc.stderr;
+            StandardOutPath = lib.mkDefault "/var/log/nix-gc.out.log";
+            StandardErrorPath = lib.mkDefault "/var/log/nix-gc.err.log";
 
             # Idle CPU + throttled disk I/O so maintenance yields to foreground
             # work instead of stalling the shared APFS container and tripping
@@ -164,23 +100,22 @@ in
               ${lib.getExe pkgs.khanelinix.remove-imperative-nix-state} \
               || echo "warning: could not remove imperative Nix state" >&2
           '';
-
-          newsyslog.files.nix-gc = nixLogRotationEntries.gc;
-          newsyslog.files.nix-optimise = nixLogRotationEntries.optimise;
         };
 
-        launchd.daemons.fast-nix-optimise = lib.mkIf config.services.fast-nix-optimise.automatic {
-          serviceConfig = {
-            ProgramArguments = lib.mkForce [ "${optimiseWrapper}" ];
-            StandardOutPath = nixJobLogPaths.optimise.stdout;
-            StandardErrorPath = nixJobLogPaths.optimise.stderr;
+        launchd.daemons.fast-nix-optimise =
+          lib.mkIf (config.services.fast-nix-optimise.enable && config.services.fast-nix-optimise.automatic)
+            {
+              serviceConfig = {
+                ProgramArguments = lib.mkForce [ "${optimiseWrapper}" ];
+                StandardOutPath = lib.mkDefault "/var/log/nix-optimise.out.log";
+                StandardErrorPath = lib.mkDefault "/var/log/nix-optimise.err.log";
 
-            # Idle CPU + throttled disk I/O (see nix-gc); optimise scans ~2M
-            # link inodes and was the worst APFS-contention offender.
-            ProcessType = "Background";
-            LowPriorityIO = true;
-          };
-        };
+                # Idle CPU + throttled disk I/O (see nix-gc); optimise scans ~2M
+                # link inodes and was the worst APFS-contention offender.
+                ProcessType = "Background";
+                LowPriorityIO = true;
+              };
+            };
 
         nix = {
           # fast-nix-gc replaces the upstream daemons while it is automatic.
