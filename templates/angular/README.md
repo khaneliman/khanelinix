@@ -8,8 +8,8 @@ This project was generated with
 Run `nix develop`, then `npm ci` from the project root. The shell's `ng` and
 `tsc` commands use the installed project binaries without implicit downloads.
 The current dependencies require attention before installation: Angular 22.0.6
-requires TypeScript `>=6.0 <6.1`, while this template pins TypeScript 7.0.2.
-The dependency declarations are unchanged.
+requires TypeScript `>=6.0 <6.1`, while this template pins TypeScript 7.0.2. The
+dependency declarations are unchanged.
 
 For a compatible installed project, configure an LSP-capable editor to run
 `typescript-lsp --stdio` from the project root. This invokes TypeScript 7's

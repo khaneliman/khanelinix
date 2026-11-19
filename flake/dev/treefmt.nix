@@ -101,6 +101,13 @@
               "LICENSE.md"
               "LICENSE.txt"
             ];
+            # These templates are maintained here; their licenses preserve upstream attribution.
+            maintainedTemplates = [
+              "templates/angular"
+              "templates/go"
+              "templates/node"
+              "templates/rust"
+            ];
             rootPrefix = "${toString repoRoot}/";
 
             findLicensedDirectories =
@@ -110,9 +117,10 @@
                 nestedDirectories = lib.concatMap findLicensedDirectories subdirectories;
                 relativeDirectory = lib.removePrefix rootPrefix (toString dir);
               in
-              lib.optional (builtins.any (
-                marker: builtins.pathExists (dir + "/${marker}")
-              ) licenseMarkers) "${relativeDirectory}/**"
+              lib.optional (
+                !(lib.elem relativeDirectory maintainedTemplates)
+                && builtins.any (marker: builtins.pathExists (dir + "/${marker}")) licenseMarkers
+              ) "${relativeDirectory}/**"
               ++ nestedDirectories;
 
             licensedDirectoryExcludes = findLicensedDirectories repoRoot;
