@@ -62,8 +62,19 @@ in
     };
   };
 
-  systemd.network.links."10-lab-lan" = {
-    matchConfig.PermanentMACAddress = "d8:bb:c1:1c:35:18";
-    linkConfig.Name = "lan0";
+  systemd.network = {
+    links."10-lab-lan" = {
+      matchConfig.PermanentMACAddress = "d8:bb:c1:1c:35:18";
+      linkConfig.Name = "lan0";
+    };
+
+    wait-online = {
+      enable = true;
+      anyInterface = false;
+      extraArgs = [
+        "--interface=br0"
+        "--ipv4"
+      ];
+    };
   };
 }

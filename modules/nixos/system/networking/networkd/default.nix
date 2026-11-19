@@ -22,10 +22,10 @@ in
       enable = true;
 
       wait-online = {
-        # Slows down rebuilds timing out for network.
-        enable = false;
-        anyInterface = true;
-        extraArgs = [ "--ipv4" ];
+        # Slows down rebuilds timing out for network on laptops/workstations.
+        enable = lib.mkDefault false;
+        anyInterface = lib.mkDefault true;
+        extraArgs = lib.mkDefault [ "--ipv4" ];
       };
 
       # https://wiki.archlinux.org/title/Systemd-networkd
