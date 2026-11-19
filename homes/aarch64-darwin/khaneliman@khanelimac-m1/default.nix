@@ -8,7 +8,12 @@ let
   inherit (lib.khanelinix) enabled;
 in
 {
-  imports = [ ../../identity.nix ];
+  imports = [
+    ../../user-identity.nix
+    ../../personal-preferences.nix
+    ../../credentials.nix
+    ../../fleet-ssh.nix
+  ];
   khanelinix = {
     user = {
       enable = true;

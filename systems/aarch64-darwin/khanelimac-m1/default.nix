@@ -15,6 +15,8 @@ let
 in
 {
   khanelinix = {
+    archetypes.build-host = enabled;
+
     environments = {
       home-network = {
         enable = true;
@@ -29,17 +31,6 @@ in
         sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
         defaultSopsFile = lib.getFile "secrets/khanelimac/default.yaml";
       };
-    };
-
-    services.time-machine.enable = false;
-
-    suites = {
-      common = enabled;
-      networking = enabled;
-    };
-
-    tools = {
-      homebrew.enable = false;
     };
   };
 
