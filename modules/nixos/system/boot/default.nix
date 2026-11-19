@@ -101,7 +101,7 @@ in
 
         systemd-boot = {
           enable = useSystemdBoot && !cfg.secureBoot;
-          configurationLimit = 20;
+          configurationLimit = lib.mkDefault 20;
           editor = false;
         };
 
