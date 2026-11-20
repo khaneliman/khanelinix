@@ -86,7 +86,7 @@ in
             dots_spacing = "0.4";
             dots_center = true;
             outer_color = rgb colors.accent;
-            inner_color = rgb colors.surface;
+            inner_color = rgb colors.surfaceRaised;
             font_color = rgb colors.foreground;
             check_color = rgb colors.warning;
             fail_color = rgb colors.danger;
@@ -191,7 +191,7 @@ in
           {
             monitor = "";
             size = "300, 50";
-            color = rgb colors.surface;
+            color = rgb colors.surfaceRaised;
             rounding = 10;
             border_size = 0;
             border_color = lib.mkDefault "rgba(255, 255, 255, 0)";
