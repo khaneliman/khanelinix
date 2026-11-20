@@ -37,20 +37,26 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    nix-rosetta-builder = {
-      inherit (cfg)
-        enable
-        cores
-        memory
-        speedFactor
-        sshProtocol
-        ;
-
-      onDemand = true;
-      onDemandLingerMinutes = 30;
-      permitNonRootSshAccess = true;
+  config = lib.mkMerge [
+    {
+      # The upstream module enables itself by default; a consumer that
+      # configures it directly can still override this.
+      nix-rosetta-builder.enable = lib.mkDefault cfg.enable;
     }
-    // lib.optionalAttrs (cfg.maxJobs != null) { inherit (cfg) maxJobs; };
-  };
+    (lib.mkIf cfg.enable {
+      nix-rosetta-builder = {
+        inherit (cfg)
+          cores
+          memory
+          speedFactor
+          sshProtocol
+          ;
+
+        onDemand = true;
+        onDemandLingerMinutes = 30;
+        permitNonRootSshAccess = true;
+      }
+      // lib.optionalAttrs (cfg.maxJobs != null) { inherit (cfg) maxJobs; };
+    })
+  ];
 }
