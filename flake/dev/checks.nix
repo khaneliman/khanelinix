@@ -96,9 +96,23 @@
             enable = true;
             description = "Canonical skill, hook, and harness-adapter unit tests";
             # skill-creator's quick_validate.py parses frontmatter with PyYAML.
-            entry = "${
-              lib.getExe (pkgs.python3.withPackages (ps: [ ps.pyyaml ]))
-            } -B modules/common/ai-tools/skills/ai-tools-architect/scripts/run_skill_tests.py modules/common/ai-tools/skills";
+            # Resolve the locked nixpkgs input at runtime instead of embedding
+            # its source tree in the devShell closure, then pin NIX_PATH so
+            # Nix-invoking skill tests run against flake.lock on hosts without
+            # channels.
+            entry = lib.getExe (
+              pkgs.writeShellScriptBin "run-skill-tests" ''
+                set -euo pipefail
+                nixpkgs="$(
+                  nix eval --no-warn-dirty --impure --raw --expr \
+                    '(builtins.getFlake ("git+file://" + toString ./.)).inputs.nixpkgs.outPath'
+                )"
+                export NIX_PATH="nixpkgs=$nixpkgs"
+                exec ${lib.getExe (pkgs.python3.withPackages (ps: [ ps.pyyaml ]))} \
+                  -B modules/common/ai-tools/skills/ai-tools-architect/scripts/run_skill_tests.py \
+                  modules/common/ai-tools/skills
+              ''
+            );
             files = "^modules/(common/ai-tools/|home/programs/terminal/tools/claude-code/hooks/[^/]+\\.nix$)";
             language = "system";
             pass_filenames = false;
