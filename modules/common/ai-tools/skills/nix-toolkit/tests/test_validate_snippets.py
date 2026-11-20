@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import subprocess
@@ -9,6 +10,29 @@ import unittest
 from pathlib import Path
 
 SCRIPT = Path(__file__).parents[1] / "scripts" / "validate-snippets.sh"
+
+MINIMAL_LIB_NIX = """
+let
+  hasAttrByPath =
+    path: set:
+    if path == [ ] then
+      true
+    else if builtins.isAttrs set && builtins.hasAttr (builtins.head path) set then
+      hasAttrByPath (builtins.tail path) set.${builtins.head path}
+    else
+      false;
+in
+{
+  inherit hasAttrByPath;
+  concatStringsSep = builtins.concatStringsSep;
+  splitString =
+    sep: str:
+    builtins.filter builtins.isString (
+      builtins.split (builtins.replaceStrings [ "." ] [ "\\\\." ] sep) str
+    );
+  %s = true;
+}
+"""
 
 
 class ValidateSnippetsTest(unittest.TestCase):
@@ -140,6 +164,67 @@ if then fi
             result = self.run_fixture(script)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("syntax error", result.stderr.lower())
+
+    def test_prefers_nix_path_nixpkgs_lib(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            pinned_lib = root / "pinned-nixpkgs" / "lib"
+            pinned_lib.mkdir(parents=True)
+            (pinned_lib / "default.nix").write_text(
+                MINIMAL_LIB_NIX % "pinnedMarker",
+                encoding="utf-8",
+            )
+            script = self.setUpFixture(root, "`lib.pinnedMarker`\n")
+            env = {
+                **os.environ,
+                "NIX_PATH": f"nixpkgs={root / 'pinned-nixpkgs'}",
+            }
+
+            result = self.run_fixture(script, env)
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("nix-toolkit snippets validated", result.stdout)
+
+    def test_falls_back_to_nixpkgs_flake_without_nix_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            flake_dir = root / "flake-nixpkgs"
+            flake_dir.mkdir()
+            (flake_dir / "flake.nix").write_text(
+                f"{{ outputs = _: {{ lib = {MINIMAL_LIB_NIX % 'fallbackMarker'}; }}; }}\n",
+                encoding="utf-8",
+            )
+            nix_config_dir = root / ".config" / "nix"
+            nix_config_dir.mkdir(parents=True)
+            registry_path = nix_config_dir / "registry.json"
+            registry_path.write_text(
+                json.dumps(
+                    {
+                        "version": 2,
+                        "flakes": [
+                            {
+                                "from": {"type": "indirect", "id": "nixpkgs"},
+                                "to": {"type": "path", "path": str(flake_dir)},
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            script = self.setUpFixture(root, "`lib.fallbackMarker`\n")
+            env = {
+                **os.environ,
+                "HOME": str(root),
+                "XDG_CACHE_HOME": str(root / ".cache"),
+                "XDG_CONFIG_HOME": str(root / ".config"),
+                "NIX_PATH": "",
+                "NIX_CONFIG": f"nix-path =\nflake-registry = {registry_path}",
+            }
+
+            result = self.run_fixture(script, env)
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("nix-toolkit snippets validated", result.stdout)
 
 
 if __name__ == "__main__":

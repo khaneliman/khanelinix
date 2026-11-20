@@ -84,8 +84,12 @@ jq -R -s 'split("\n") | map(select(length > 0))' <"$tmp_dir/attrpaths.txt" \
 missing="$(
     nix eval --impure --raw --expr "
       let
-        pkgs = import <nixpkgs> { };
-        inherit (pkgs) lib;
+        nixpkgsPath = builtins.tryEval <nixpkgs>;
+        lib =
+          if nixpkgsPath.success then
+            import (nixpkgsPath.value + \"/lib\")
+          else
+            (builtins.getFlake \"nixpkgs\").lib;
         paths = builtins.fromJSON (builtins.readFile $tmp_dir/attrpaths.json);
         resolve =
           path:
