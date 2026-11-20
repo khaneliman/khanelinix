@@ -198,20 +198,20 @@ in
         ''
           local colors = {
             base = ${toLua colors.background},
-            mantle = ${toLua colors.shadow},
+            mantle = ${toLua colors.surface},
             text = ${toLua colors.foreground},
             subtext0 = ${toLua colors.muted},
-            surface0 = ${toLua colors.surface},
+            surface0 = ${toLua colors.surfaceRaised},
             surface1 = ${toLua colors.border},
-            overlay0 = ${toLua colors.muted},
-            overlay1 = ${toLua colors.muted},
+            overlay0 = ${toLua colors.subtle},
+            overlay1 = ${toLua colors.subtle},
             bg2 = ${toLua colors.surface},
             grey = ${toLua colors.muted},
             white = ${toLua colors.foreground},
             blue = ${toLua colors.accent},
             green = ${toLua colors.success},
             yellow = ${toLua colors.warning},
-            peach = ${toLua colors.warning},
+            peach = ${toLua colors.orange},
             maroon = ${toLua colors.danger},
             red = ${toLua colors.danger},
           }
@@ -219,9 +219,12 @@ in
           local workspaceColors = {
             ${toLua colors.accent},
             ${toLua colors.secondary},
+            ${toLua colors.tertiary},
             ${toLua colors.success},
             ${toLua colors.warning},
+            ${toLua colors.orange},
             ${toLua colors.danger},
+            ${toLua colors.pink},
           }
 
           function colors.getRandomCatColor()
