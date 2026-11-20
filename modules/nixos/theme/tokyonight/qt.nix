@@ -6,6 +6,7 @@
 }:
 let
   cfg = config.khanelinix.theme.tokyonight;
+  tokyonight = import (lib.getFile "modules/home/theme/tokyonight/colors.nix");
 in
 {
   config = lib.mkIf cfg.enable {
@@ -15,13 +16,8 @@ in
         package = pkgs.papirus-icon-theme;
       };
 
-      theme = {
-        name = "catppuccin-macchiato-blue";
-        package = pkgs.catppuccin-kvantum.override {
-          accent = "blue";
-          variant = "macchiato";
-        };
-      };
+      # Tokyo Night has no Kvantum theme in nixpkgs.
+      palette = tokyonight.qtPalette cfg.variant;
     };
   };
 }

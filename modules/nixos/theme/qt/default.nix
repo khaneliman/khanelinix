@@ -20,13 +20,23 @@ let
     listToValue = values: concatStringsSep ", " values;
   };
 
+  # Fusion draws with the application palette, so a palette stands in for the
+  # Kvantum theme when a theme family has none.
+  usesPalette = cfg.palette != { };
+  qtctColorScheme = pkgs.writeText "khanelinix-qtct-colors.conf" (
+    lib.khanelinix.theme.qtctColorScheme cfg.palette
+  );
+
   # Elevated Qt apps cannot read the user's Home Manager theme files.
   qtctSettings = {
     Appearance = {
-      custom_palette = false;
+      custom_palette = usesPalette;
       icon_theme = cfg.icon.name;
       standard_dialogs = "gtk3";
-      style = "kvantum";
+      style = if usesPalette then "fusion" else "kvantum";
+    }
+    // lib.optionalAttrs usesPalette {
+      color_scheme_path = "${qtctColorScheme}";
     };
 
     Fonts = {
@@ -73,6 +83,11 @@ in
       }) "The package to use for the theme.";
     };
 
+    palette = mkOpt (attrsOf str) { } ''
+      Qt palette, keyed by QPalette color role. When set, system Qt
+      applications use Fusion with these colors instead of the Kvantum theme.
+    '';
+
     icon = {
       name = mkOpt str "Papirus-Dark" "The icon theme to use for system Qt applications.";
       package = mkOpt package pkgs.papirus-icon-theme "The package providing the system Qt icon theme.";
@@ -81,17 +96,21 @@ in
 
   config = mkIf cfg.enable {
     environment = {
-      etc = {
-        "xdg/Kvantum/${cfg.theme.name}".source = "${cfg.theme.package}/share/Kvantum/${cfg.theme.name}";
-        "xdg/Kvantum/kvantum.kvconfig".source = qtctFormat.generate "kvantum.kvconfig" kvantumSettings;
-        "xdg/qt5ct/qt5ct.conf".source = qtctFormat.generate "qt5ct.conf" qtctSettings;
-        "xdg/qt6ct/qt6ct.conf".source = qtctFormat.generate "qt6ct.conf" qtctSettings;
-      };
+      etc = lib.mkMerge [
+        {
+          "xdg/qt5ct/qt5ct.conf".source = qtctFormat.generate "qt5ct.conf" qtctSettings;
+          "xdg/qt6ct/qt6ct.conf".source = qtctFormat.generate "qt6ct.conf" qtctSettings;
+        }
+        (mkIf (!usesPalette) {
+          "xdg/Kvantum/${cfg.theme.name}".source = "${cfg.theme.package}/share/Kvantum/${cfg.theme.name}";
+          "xdg/Kvantum/kvantum.kvconfig".source = qtctFormat.generate "kvantum.kvconfig" kvantumSettings;
+        })
+      ];
 
       systemPackages =
         with pkgs;
-        [
-          cfg.icon.package
+        [ cfg.icon.package ]
+        ++ lib.optionals (!usesPalette) [
           cfg.theme.package
           qt6Packages.qtstyleplugin-kvantum
           systemKvantumQt5
