@@ -1,6 +1,44 @@
 { inputs }:
 let
-  inherit (inputs.nixpkgs.lib) getExe;
+  inherit (inputs.nixpkgs.lib)
+    concatMapStringsSep
+    elem
+    generators
+    getExe
+    removePrefix
+    ;
+
+  # qt5ct and qt6ct read a color scheme as one list per color group, in
+  # QPalette::ColorRole order and as #AARRGGBB.
+  qtctRoles = [
+    "WindowText"
+    "Button"
+    "Light"
+    "Midlight"
+    "Dark"
+    "Mid"
+    "Text"
+    "BrightText"
+    "ButtonText"
+    "Base"
+    "Window"
+    "Shadow"
+    "Highlight"
+    "HighlightedText"
+    "Link"
+    "LinkVisited"
+    "AlternateBase"
+    "NoRole"
+    "ToolTipBase"
+    "ToolTipText"
+    "PlaceholderText"
+  ];
+  qtctDisabledRoles = [
+    "WindowText"
+    "Text"
+    "ButtonText"
+    "HighlightedText"
+  ];
 in
 rec {
   mkColorScheme = name: colors: {
@@ -70,6 +108,31 @@ rec {
           ;
       }
     ) names;
+
+  # Renders a QPalette, as an attribute set of #RRGGBB colors keyed by color
+  # role, to the text of a qt5ct or qt6ct color scheme file.
+  qtctColorScheme =
+    palette:
+    let
+      colors =
+        disabled:
+        concatMapStringsSep ", " (
+          role:
+          let
+            # NoRole is never painted; it only has to keep the list aligned.
+            color = palette.${if role == "NoRole" then "Window" else role};
+            alpha = if disabled && elem role qtctDisabledRoles then "80" else "ff";
+          in
+          "#${alpha}${removePrefix "#" color}"
+        ) qtctRoles;
+    in
+    generators.toINI { } {
+      ColorScheme = {
+        active_colors = colors false;
+        disabled_colors = colors true;
+        inactive_colors = colors false;
+      };
+    };
 
   # Migrated SCSS compilation utility
   # a function that takes a theme name and a source file and compiles it to CSS

@@ -70,6 +70,7 @@
     "compileSCSS",
     "getColors",
     "mkColorScheme",
+    "qtctColorScheme",
     "variants",
     "wallpaperDir",
     "wallpaperPath",

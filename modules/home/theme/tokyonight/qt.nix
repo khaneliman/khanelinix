@@ -6,33 +6,11 @@
 }:
 let
   cfg = config.khanelinix.theme.tokyonight;
-  colors = (import ./colors.nix).getVariant cfg.variant;
 in
 {
   config = lib.mkIf cfg.enable {
     khanelinix.theme.qt = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-      qml.palette = {
-        AlternateBase = colors.bg_highlight;
-        Base = colors.bg_dark;
-        BrightText = colors.fg;
-        Button = colors.bg_highlight;
-        ButtonText = colors.fg;
-        Dark = colors.bg_dark1;
-        Highlight = colors.blue;
-        HighlightedText = if cfg.variant == "day" then "#ffffff" else colors.bg_dark1;
-        Light = colors.dark3;
-        Link = colors.blue;
-        LinkVisited = colors.purple;
-        Mid = colors.bg_dark;
-        Midlight = colors.bg_highlight;
-        PlaceholderText = colors.fg_dark;
-        Shadow = colors.bg_dark1;
-        Text = colors.fg;
-        ToolTipBase = colors.bg_dark;
-        ToolTipText = colors.fg;
-        Window = colors.bg;
-        WindowText = colors.fg;
-      };
+      qml.palette = (import ./colors.nix).qtPalette cfg.variant;
     };
   };
 }

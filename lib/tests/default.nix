@@ -483,6 +483,39 @@ in
     };
   };
 
+  # Each color's last byte is its QPalette::ColorRole index, so the lists show
+  # the role order; NoRole (17) repeats Window.
+  testThemeQtctColorScheme = {
+    expr = theme.qtctColorScheme {
+      AlternateBase = "#000010";
+      Base = "#000009";
+      BrightText = "#000007";
+      Button = "#000001";
+      ButtonText = "#000008";
+      Dark = "#000004";
+      Highlight = "#00000c";
+      HighlightedText = "#00000d";
+      Light = "#000002";
+      Link = "#00000e";
+      LinkVisited = "#00000f";
+      Mid = "#000005";
+      Midlight = "#000003";
+      PlaceholderText = "#000014";
+      Shadow = "#00000b";
+      Text = "#000006";
+      ToolTipBase = "#000012";
+      ToolTipText = "#000013";
+      Window = "#00000a";
+      WindowText = "#000000";
+    };
+    expected = ''
+      [ColorScheme]
+      active_colors=#ff000000, #ff000001, #ff000002, #ff000003, #ff000004, #ff000005, #ff000006, #ff000007, #ff000008, #ff000009, #ff00000a, #ff00000b, #ff00000c, #ff00000d, #ff00000e, #ff00000f, #ff000010, #ff00000a, #ff000012, #ff000013, #ff000014
+      disabled_colors=#80000000, #ff000001, #ff000002, #ff000003, #ff000004, #ff000005, #80000006, #ff000007, #80000008, #ff000009, #ff00000a, #ff00000b, #ff00000c, #8000000d, #ff00000e, #ff00000f, #ff000010, #ff00000a, #ff000012, #ff000013, #ff000014
+      inactive_colors=#ff000000, #ff000001, #ff000002, #ff000003, #ff000004, #ff000005, #ff000006, #ff000007, #ff000008, #ff000009, #ff00000a, #ff00000b, #ff00000c, #ff00000d, #ff00000e, #ff00000f, #ff000010, #ff00000a, #ff000012, #ff000013, #ff000014
+    '';
+  };
+
   # module.userDir
   testUserDirEnabled = {
     expr = module.userDir {

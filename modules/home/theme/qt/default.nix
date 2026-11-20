@@ -26,56 +26,8 @@ let
   # theme's palette has to reach widgets through qtct.
   usesQtctPalette = !hasKvantumTheme && cfg.qml.palette != { };
 
-  # qt5ct and qt6ct read a color scheme as one list per color group, in
-  # QPalette::ColorRole order and as #AARRGGBB.
-  qtctRoles = [
-    "WindowText"
-    "Button"
-    "Light"
-    "Midlight"
-    "Dark"
-    "Mid"
-    "Text"
-    "BrightText"
-    "ButtonText"
-    "Base"
-    "Window"
-    "Shadow"
-    "Highlight"
-    "HighlightedText"
-    "Link"
-    "LinkVisited"
-    "AlternateBase"
-    "NoRole"
-    "ToolTipBase"
-    "ToolTipText"
-    "PlaceholderText"
-  ];
-  qtctDisabledRoles = [
-    "WindowText"
-    "Text"
-    "ButtonText"
-    "HighlightedText"
-  ];
-  qtctColors =
-    disabled:
-    lib.concatMapStringsSep ", " (
-      role:
-      let
-        # NoRole is never painted; it only has to keep the list aligned.
-        color = cfg.qml.palette.${if role == "NoRole" then "Window" else role};
-        alpha = if disabled && lib.elem role qtctDisabledRoles then "80" else "ff";
-      in
-      "#${alpha}${lib.removePrefix "#" color}"
-    ) qtctRoles;
   qtctColorScheme = pkgs.writeText "khanelinix-qtct-colors.conf" (
-    lib.generators.toINI { } {
-      ColorScheme = {
-        active_colors = qtctColors false;
-        disabled_colors = qtctColors true;
-        inactive_colors = qtctColors false;
-      };
-    }
+    lib.khanelinix.theme.qtctColorScheme cfg.qml.palette
   );
 
   qtQuickControlsConfig = "${config.xdg.configHome}/qtquickcontrols2.conf";

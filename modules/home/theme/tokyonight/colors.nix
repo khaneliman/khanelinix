@@ -130,6 +130,17 @@ let
       delete = "#c47981";
     };
   };
+
+  # Helper to get palette by variant name
+  getVariant =
+    variant:
+    {
+      "storm" = storm;
+      "night" = night;
+      "moon" = moon;
+      "day" = day;
+    }
+    .${variant} or night; # Default to night if variant not found
 in
 {
   # Export all color palettes
@@ -142,14 +153,34 @@ in
       ;
   };
 
-  # Helper to get palette by variant name
-  getVariant =
+  inherit getVariant;
+
+  # QPalette color roles, shared by the Home Manager and NixOS Qt modules.
+  qtPalette =
     variant:
+    let
+      colors = getVariant variant;
+    in
     {
-      "storm" = storm;
-      "night" = night;
-      "moon" = moon;
-      "day" = day;
-    }
-    .${variant} or night; # Default to night if variant not found
+      AlternateBase = colors.bg_highlight;
+      Base = colors.bg_dark;
+      BrightText = colors.fg;
+      Button = colors.bg_highlight;
+      ButtonText = colors.fg;
+      Dark = colors.bg_dark1;
+      Highlight = colors.blue;
+      HighlightedText = if variant == "day" then "#ffffff" else colors.bg_dark1;
+      Light = colors.dark3;
+      Link = colors.blue;
+      LinkVisited = colors.purple;
+      Mid = colors.bg_dark;
+      Midlight = colors.bg_highlight;
+      PlaceholderText = colors.fg_dark;
+      Shadow = colors.bg_dark1;
+      Text = colors.fg;
+      ToolTipBase = colors.bg_dark;
+      ToolTipText = colors.fg;
+      Window = colors.bg;
+      WindowText = colors.fg;
+    };
 }
