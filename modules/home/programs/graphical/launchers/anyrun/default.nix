@@ -166,7 +166,7 @@ in
         }
 
         .match:selected {
-          background: ${colors.accent};
+          background: ${colors.tertiary};
           color: ${colors.accentForeground};
         }
 
