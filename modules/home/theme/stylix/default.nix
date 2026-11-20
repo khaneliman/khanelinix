@@ -108,6 +108,8 @@ let
     danger = fallback.red.hex;
     foreground = fallback.text.hex;
     muted = fallback.subtext0.hex;
+    orange = fallback.peach.hex;
+    pink = fallback.pink.hex;
     secondary = fallback.teal.hex;
     shadow = fallback.crust.hex;
     subtle = fallback.overlay2.hex;
@@ -154,6 +156,9 @@ in
           # Base16 does not guarantee that base04 is readable as text, so it
           # only backs subtle, which draws de-emphasized icons.
           muted = stylixPalette.base05;
+          orange = stylixPalette.base09;
+          # Base16 has no pink, so pink repeats the purple that backs tertiary.
+          pink = stylixPalette.base0E;
           secondary = stylixPalette.base0C;
           shadow = stylixPalette.base01;
           subtle = stylixPalette.base04;

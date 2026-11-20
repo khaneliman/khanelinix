@@ -106,6 +106,9 @@ in
               danger = palette.readable.red;
               foreground = palette.palette.nord6.hex;
               muted = palette.palette.nord4.hex;
+              inherit (palette.readable) orange;
+              # Nord has no pink, so pink repeats the purple that backs tertiary.
+              pink = palette.readable.purple;
               secondary = palette.palette.nord7.hex;
               shadow = palette.palette.nord0.hex;
               # Nord has no readable foreground dimmer than nord4.

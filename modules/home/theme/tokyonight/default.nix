@@ -121,6 +121,10 @@ in
               danger = colors.red;
               foreground = colors.fg;
               muted = colors.fg_dark;
+              inherit (colors) orange;
+              # magenta2 is the same in every variant and reaches only 2.93:1
+              # on day, so solve one if a host adopts day.
+              pink = colors.magenta2;
               secondary = colors.cyan;
               shadow = colors.bg_dark1;
               # dark5 clears 3:1 as an icon color on night and storm; moon

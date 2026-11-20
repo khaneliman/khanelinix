@@ -263,6 +263,8 @@ in
                 danger = readableColors.red;
                 foreground = readableColors.text;
                 muted = readableColors.subtext0;
+                orange = readableColors.peach;
+                inherit (readableColors) pink;
                 secondary = readableColors.teal;
                 shadow = readableColors.crust;
                 subtle = readableColors.overlay2;
