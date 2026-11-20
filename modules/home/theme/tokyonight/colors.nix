@@ -175,7 +175,9 @@ in
       LinkVisited = colors.purple;
       Mid = colors.bg_dark;
       Midlight = colors.bg_highlight;
-      PlaceholderText = colors.fg_dark;
+      # Hint text sits below the 4.5:1 kept for body text: dark5 reaches
+      # 4.31:1 on night's Base and at least 3.7:1 on the other variants.
+      PlaceholderText = colors.dark5;
       Shadow = colors.bg_dark1;
       Text = colors.fg;
       ToolTipBase = colors.bg_dark;
