@@ -269,7 +269,7 @@ label:focus {
 }
 
 #control-center {
-  color: @theme_warning;
+  color: @theme_orange;
   background-color: @theme_surfaceRaised;
   border: 2px solid @theme_border;
 }
@@ -325,7 +325,7 @@ label:focus {
 
 #stats,
 #stats-drawer {
-  color: @theme_warning;
+  color: @theme_orange;
   background-color: @theme_surfaceRaised;
   border: 2px solid @theme_border;
 }
@@ -345,16 +345,14 @@ label:focus {
   color: @theme_accent;
 }
 
-#network.disconnected {
-  color: @theme_danger;
-}
-
+#network.disconnected,
 #temperature.critical {
-  color: @theme_danger;
+  background-color: @theme_danger;
+  color: @theme_accentForeground;
 }
 
 #workspaces {
-  color: @theme_warning;
+  color: @theme_orange;
   background-color: @theme_surfaceRaised;
   border: 2px solid @theme_border;
 }
