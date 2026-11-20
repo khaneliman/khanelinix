@@ -22,6 +22,61 @@ let
   fontCfg = config.khanelinix.fonts;
   inherit (pkgs.stdenv.hostPlatform) isLinux;
   hasKvantumTheme = cfg.theme.name != null && cfg.theme.package != null;
+  # Fusion draws with the application palette, so without a Kvantum theme the
+  # theme's palette has to reach widgets through qtct.
+  usesQtctPalette = !hasKvantumTheme && cfg.qml.palette != { };
+
+  # qt5ct and qt6ct read a color scheme as one list per color group, in
+  # QPalette::ColorRole order and as #AARRGGBB.
+  qtctRoles = [
+    "WindowText"
+    "Button"
+    "Light"
+    "Midlight"
+    "Dark"
+    "Mid"
+    "Text"
+    "BrightText"
+    "ButtonText"
+    "Base"
+    "Window"
+    "Shadow"
+    "Highlight"
+    "HighlightedText"
+    "Link"
+    "LinkVisited"
+    "AlternateBase"
+    "NoRole"
+    "ToolTipBase"
+    "ToolTipText"
+    "PlaceholderText"
+  ];
+  qtctDisabledRoles = [
+    "WindowText"
+    "Text"
+    "ButtonText"
+    "HighlightedText"
+  ];
+  qtctColors =
+    disabled:
+    lib.concatMapStringsSep ", " (
+      role:
+      let
+        # NoRole is never painted; it only has to keep the list aligned.
+        color = cfg.qml.palette.${if role == "NoRole" then "Window" else role};
+        alpha = if disabled && lib.elem role qtctDisabledRoles then "80" else "ff";
+      in
+      "#${alpha}${lib.removePrefix "#" color}"
+    ) qtctRoles;
+  qtctColorScheme = pkgs.writeText "khanelinix-qtct-colors.conf" (
+    lib.generators.toINI { } {
+      ColorScheme = {
+        active_colors = qtctColors false;
+        disabled_colors = qtctColors true;
+        inactive_colors = qtctColors false;
+      };
+    }
+  );
 
   qtQuickControlsConfig = "${config.xdg.configHome}/qtquickcontrols2.conf";
   qtQuickControlsFormat = pkgs.formats.ini { };
@@ -49,12 +104,17 @@ in
       package = mkOpt (nullOr package) null "The package to use for the theme.";
     };
 
-    qml.palette = mkOpt (attrsOf str) { } "Qt Quick Controls palette";
+    qml.palette = mkOpt (attrsOf str) { } ''
+      Qt palette, keyed by QPalette color role, for Qt Quick Controls and,
+      when no Kvantum theme is set, for widgets.
+    '';
 
     settings = {
       Appearance = {
-        color_scheme_path = mkOpt types.str "" "Color scheme path";
-        custom_palette = mkBoolOpt false "Whether to use custom palette";
+        color_scheme_path = mkOpt types.str (
+          if usesQtctPalette then "${qtctColorScheme}" else ""
+        ) "Color scheme path";
+        custom_palette = mkBoolOpt usesQtctPalette "Whether to use custom palette";
         icon_theme = mkOpt (types.nullOr types.str) (
           if isLinux then config.khanelinix.theme.gtk.icon.name else null
         ) "Icon theme";
