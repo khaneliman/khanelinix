@@ -244,6 +244,8 @@ in
           {
             meta = {
               name = "Khanelinix";
+              # Vicinae rejects a theme whose meta table lacks a description.
+              description = "Colors from the active khanelinix theme.";
               inherit variant;
               inherits = "vicinae-${variant}";
             };
@@ -261,12 +263,22 @@ in
                 blue = colors.accent;
                 cyan = colors.secondary;
                 green = colors.success;
+                magenta = colors.pink;
+                inherit (colors) orange;
+                purple = colors.tertiary;
                 red = colors.danger;
                 yellow = colors.warning;
               };
+              grid.item.background = colors.surfaceRaised;
               list.item = {
-                hover.background = colors.surface;
-                selection.background.name = colors.surface;
+                hover.background = {
+                  name = colors.surfaceRaised;
+                  opacity = 0.6;
+                };
+                selection = {
+                  background = colors.surfaceRaised;
+                  secondary_background = colors.surfaceRaised;
+                };
               };
             };
           };
