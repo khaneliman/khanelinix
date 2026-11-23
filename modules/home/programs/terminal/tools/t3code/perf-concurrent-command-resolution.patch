@@ -1,5 +1,5 @@
 diff --git a/apps/server/src/process/externalLauncher.ts b/apps/server/src/process/externalLauncher.ts
-index caa6664a1b..e9b1b3164f 100644
+index 09a53a51..74eda8bd 100644
 --- a/apps/server/src/process/externalLauncher.ts
 +++ b/apps/server/src/process/externalLauncher.ts
 @@ -466,23 +466,22 @@ const buildAvailableEditors = Effect.fn("externalLauncher.buildAvailableEditors"
@@ -42,13 +42,13 @@ index caa6664a1b..e9b1b3164f 100644
  
  const resolveBrowserLaunch = Effect.fn("externalLauncher.resolveBrowserLaunch")(function* (
 diff --git a/packages/shared/src/editor.ts b/packages/shared/src/editor.ts
-index 902e06bd7f..99418c26cb 100644
+index 544da3d6..835b6b01 100644
 --- a/packages/shared/src/editor.ts
 +++ b/packages/shared/src/editor.ts
-@@ -84,9 +84,17 @@ export const resolveEditorCommand = Effect.fn("editor.resolveEditorCommand")(fun
+@@ -88,9 +88,17 @@ export const resolveEditorCommand = Effect.fn("editor.resolveEditorCommand")(fun
      }
      if (firstCommand !== undefined) return Option.some({ command: firstCommand, baseArgs });
-   } else if (!preferBundle && !preferZeditor) {
+   } else if (!preferBundle && !preferZeditor && !probeCursor) {
 -    for (const command of editor.commands) {
 -      if (yield* isCommandAvailable(command, { env })) return Option.some({ command, baseArgs });
 -    }

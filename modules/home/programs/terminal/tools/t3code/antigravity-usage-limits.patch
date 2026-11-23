@@ -1,1078 +1,180 @@
-# Retain nonblocking quota reads and account-switch guards on upstream usage limits.
+# Drop the previous Antigravity account's quota when a failed usage read follows a sign-in change.
 diff --git a/apps/server/src/provider/AntigravityProvider.test.ts b/apps/server/src/provider/AntigravityProvider.test.ts
-index da51837..8253c8b 100644
+index 88589d1c..17b2e7a2 100644
 --- a/apps/server/src/provider/AntigravityProvider.test.ts
 +++ b/apps/server/src/provider/AntigravityProvider.test.ts
-@@ -9,6 +9,7 @@ import {
-   ProviderSetupError,
-   type ServerProviderUsageLimits,
- } from "@t3tools/contracts";
-+import * as Cause from "effect/Cause";
- import * as Deferred from "effect/Deferred";
- import * as Effect from "effect/Effect";
- import * as Fiber from "effect/Fiber";
-@@ -17,6 +18,7 @@ import * as Ref from "effect/Ref";
- import * as Schema from "effect/Schema";
- import * as Stream from "effect/Stream";
- import * as TestClock from "effect/testing/TestClock";
-+import * as TestClock from "effect/testing/TestClock";
- import * as EffectAcpErrors from "effect-acp/errors";
- import type * as EffectAcpSchema from "effect-acp/compat";
- 
-@@ -138,6 +140,7 @@ const makeHarness = Effect.fn("makeAntigravityProviderHarness")(function* (
-     readonly enabled?: boolean;
-     readonly safe?: boolean;
-     readonly probeUsage?: Effect.Effect<ServerProviderUsageLimits>;
-+    readonly usageLimitsCredentialFingerprint?: Effect.Effect<string | undefined, Error>;
-   } = {},
- ) {
-   const initialProbe = yield* Deferred.make<EffectAcpSchema.InitializeResponse, ProbeError>();
-@@ -152,7 +155,6 @@ const makeHarness = Effect.fn("makeAntigravityProviderHarness")(function* (
-     {
-       stampIdentity: (snapshot) => Effect.succeed({ ...snapshot, instanceId, driver }),
-       ...(options.auth ? { auth: options.auth } : {}),
--      ...(options.probeUsage ? { probeUsage: options.probeUsage } : {}),
-       probe: Ref.update(probeCalls, (count) => count + 1).pipe(
-         Effect.andThen(Ref.get(probe)),
-         Effect.flatten,
-@@ -161,6 +163,10 @@ const makeHarness = Effect.fn("makeAntigravityProviderHarness")(function* (
-         Effect.andThen(Ref.get(safety)),
-         Effect.flatten,
-       ),
-+      ...(options.probeUsage ? { probeUsage: options.probeUsage } : {}),
-+      ...(options.usageLimitsCredentialFingerprint
-+        ? { usageLimitsCredentialFingerprint: options.usageLimitsCredentialFingerprint }
-+        : {}),
-     },
-   );
-   const initialUpdate = yield* Stream.toPull(
-@@ -702,25 +708,15 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
-         const published = yield* harness.nextPublish((snapshot) => !!snapshot.usageLimits);
-         yield* harness.initialize;
-         expect((yield* published)?.usageLimits).toEqual(limits);
--        // The second health check is the one the failed background read triggers.
--        const checks = yield* Ref.make(0);
--        const failedReadApplied = yield* Deferred.make<void>();
--        yield* Ref.set(
--          harness.probe,
--          Ref.updateAndGet(checks, (count) => count + 1).pipe(
--            Effect.tap((count) =>
--              count === 2 ? Deferred.succeed(failedReadApplied, undefined) : Effect.void,
--            ),
--            Effect.as(initializeResult),
--          ),
--        );
-+        yield* Ref.set(harness.probe, Effect.succeed(initializeResult));
-         yield* Ref.set(usage, {
-           checkedAt: "2026-10-09T12:01:00.000Z",
-           windows: [],
-           unavailable: { reason: "probeFailed" },
-         });
-+        yield* TestClock.adjust("30 seconds");
-         yield* harness.provider.snapshot.refresh;
--        yield* Deferred.await(failedReadApplied);
-+        yield* TestClock.adjust("0 seconds");
-         expect((yield* harness.provider.snapshot.getSnapshot).usageLimits).toEqual(limits);
-         yield* harness.provider.onSignedOut;
-         expect((yield* harness.provider.snapshot.getSnapshot).usageLimits).toBeUndefined();
-@@ -732,7 +728,7 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
-         const unsupported = yield* harness.nextPublish(
-           (snapshot) => snapshot.usageLimits?.unavailable?.reason === "unsupported",
-         );
--        yield* harness.provider.snapshot.refresh;
-+        yield* harness.provider.onSessionStarted(started);
-         expect((yield* unsupported)?.usageLimits?.windows).toEqual([]);
+@@ -797,6 +797,34 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
        }),
    );
-@@ -751,6 +747,7 @@ it.layer(layerTest)("Antigravity provider snapshots", (it) => {
-         usage,
-         Deferred.succeed(readStarted, undefined).pipe(Effect.andThen(Deferred.await(readResult))),
-       );
-+      yield* TestClock.adjust("30 seconds");
-       const refresh = yield* harness.provider.snapshot.refresh.pipe(Effect.forkChild);
-       yield* Deferred.await(readStarted);
-       yield* harness.provider.onSignedOut;
-@@ -873,3 +870,491 @@ it.layer(makeLayerTest(true))("Antigravity periodic health checks", (it) => {
-     }),
-   );
- });
-+
-+const testLimits = {
-+  checkedAt: "2026-10-03T00:00:00.000Z",
-+  windows: [{ id: "gemini-5h", kind: "session", label: "Gemini · 5 hours", usedPercent: 25 }],
-+} satisfies ServerProviderUsageLimits;
-+const unsupportedLimits = {
-+  checkedAt: "2026-10-03T00:00:00.000Z",
-+  windows: [],
-+  unavailable: { reason: "unsupported" },
-+} satisfies ServerProviderUsageLimits;
-+
-+describe("Antigravity quota lifecycle", () => {
-+  it.effect("retries a failed shared quota read once after pending session starts", () =>
-+    Effect.scoped(
-+      Effect.gen(function* () {
-+        const requested = yield* Deferred.make<void>();
-+        const release = yield* Deferred.make<ServerProviderUsageLimits>();
-+        const reads = yield* Ref.make(0);
-+        const harness = yield* makeHarness({
-+          probeUsage: Ref.updateAndGet(reads, (count) => count + 1).pipe(
-+            Effect.flatMap((count) =>
-+              count === 1
-+                ? Deferred.succeed(requested, undefined).pipe(
-+                    Effect.andThen(Deferred.await(release)),
-+                  )
-+                : Effect.succeed(testLimits),
-+            ),
-+          ),
-+        });
-+        const published = yield* harness.nextPublish(
-+          (snapshot) => snapshot.usageLimits?.windows.length === 1,
-+        );
-+        yield* harness.initialize;
-+        yield* Deferred.await(requested);
-+        yield* harness.provider.onSessionStarted(started, "/workspace-a");
-+        yield* harness.provider.onSessionStarted(started, "/workspace-b");
-+        expect(yield* Ref.get(reads)).toBe(1);
-+        yield* Deferred.succeed(release, {
-+          checkedAt: testLimits.checkedAt,
-+          windows: [],
-+          unavailable: { reason: "probeFailed" },
-+        });
-+        expect((yield* published)?.usageLimits).toEqual(testLimits);
-+        expect(yield* Ref.get(reads)).toBe(2);
-+      }),
-+    ).pipe(Effect.provide(layerTest)),
-+  );
-+
-+  it.effect("sign-out cancels a quota read and its pending forced retry", () =>
-+    Effect.scoped(
-+      Effect.gen(function* () {
-+        const requested = yield* Deferred.make<void>();
-+        const interrupted = yield* Deferred.make<void>();
-+        const release = yield* Deferred.make<ServerProviderUsageLimits>();
-+        const reads = yield* Ref.make(0);
-+        const harness = yield* makeHarness({
-+          probeUsage: Ref.updateAndGet(reads, (count) => count + 1).pipe(
-+            Effect.flatMap((count) =>
-+              count === 1
-+                ? Deferred.succeed(requested, undefined).pipe(
-+                    Effect.andThen(Deferred.await(release)),
-+                    Effect.onInterrupt(() => Deferred.succeed(interrupted, undefined)),
-+                  )
-+                : Effect.succeed(testLimits),
-+            ),
-+          ),
-+        });
-+        yield* harness.initialize;
-+        yield* Deferred.await(requested);
-+        yield* harness.provider.onSessionStarted(started);
-+        yield* harness.provider.onSignedOut;
-+        yield* Deferred.await(interrupted);
-+        yield* Deferred.succeed(release, {
-+          checkedAt: testLimits.checkedAt,
-+          windows: [],
-+          unavailable: { reason: "probeFailed" },
-+        });
-+        const snapshot = yield* harness.provider.snapshot.refresh;
-+        expect(snapshot.auth.status).toBe("unauthenticated");
-+        expect(snapshot.usageLimits).toBeUndefined();
-+        expect(yield* Ref.get(reads)).toBe(1);
-+      }),
-+    ).pipe(Effect.provide(layerTest)),
-+  );
-+
-+  it.effect("health refreshes finish while a serialized quota read is pending", () =>
-+    Effect.scoped(
-+      Effect.gen(function* () {
-+        const release = yield* Deferred.make<ServerProviderUsageLimits>();
-+        const requested = yield* Deferred.make<void>();
-+        const reads = yield* Ref.make(0);
-+        const harness = yield* makeHarness({
-+          probeUsage: Ref.update(reads, (count) => count + 1).pipe(
-+            Effect.andThen(Deferred.succeed(requested, undefined)),
-+            Effect.andThen(Deferred.await(release)),
-+          ),
-+        });
-+        yield* harness.initialize;
-+        yield* Deferred.await(requested);
-+        const first = yield* harness.provider.snapshot.refresh;
-+        const second = yield* harness.provider.snapshot.refresh;
-+        expect(first.installed).toBe(true);
-+        expect(second.status).toBe("warning");
-+        expect(second.usageLimits).toBeUndefined();
-+        expect(yield* Ref.get(reads)).toBe(1);
-+        expect(yield* Ref.get(harness.probeCalls)).toBe(3);
-+        const published = yield* Stream.toPull(
-+          harness.provider.snapshot.streamChanges.pipe(
-+            Stream.filter((snapshot) => snapshot.usageLimits?.windows.length === 1),
-+          ),
-+        );
-+        yield* Deferred.succeed(release, testLimits);
-+        const update = yield* published;
-+        expect(Array.from(update)[0]?.usageLimits).toEqual(testLimits);
-+        yield* TestClock.adjust("0 seconds");
-+        expect(yield* Ref.get(reads)).toBe(1);
-+      }),
-+    ).pipe(Effect.provide(layerTest)),
-+  );
-+
-+  it.effect("publishes models immediately, then publishes quota after sign-in", () =>
-+    Effect.scoped(
-+      Effect.gen(function* () {
-+        const read = yield* Ref.make<Effect.Effect<ServerProviderUsageLimits>>(
-+          Effect.succeed(unsupportedLimits),
-+        );
-+        const harness = yield* makeHarness({ probeUsage: Ref.get(read).pipe(Effect.flatten) });
-+        yield* harness.initialize;
-+        yield* harness.provider.snapshot.refresh;
-+        const release = yield* Deferred.make<ServerProviderUsageLimits>();
-+        const requested = yield* Deferred.make<void>();
-+        yield* Ref.set(
-+          read,
-+          Deferred.succeed(requested, undefined).pipe(Effect.andThen(Deferred.await(release))),
-+        );
-+        yield* harness.provider.onSessionStarted(started);
-+        const connected = yield* harness.provider.snapshot.getSnapshot;
-+        expect(connected.auth.status).toBe("authenticated");
-+        expect(connected.models.length).toBeGreaterThan(0);
-+        yield* Deferred.await(requested);
-+        const published = yield* Stream.toPull(
-+          harness.provider.snapshot.streamChanges.pipe(
-+            Stream.filter((snapshot) => snapshot.usageLimits?.windows.length === 1),
-+          ),
-+        );
-+        yield* Deferred.succeed(release, testLimits);
-+        const update = yield* published;
-+        expect(Array.from(update)[0]?.usageLimits).toEqual(testLimits);
-+      }),
-+    ).pipe(Effect.provide(layerTest)),
-+  );
-+
-+  it.effect(
-+    "a quota response started before sign-out cannot restore the old account's limits",
-+    () =>
-+      Effect.scoped(
-+        Effect.gen(function* () {
-+          const read = yield* Ref.make<Effect.Effect<ServerProviderUsageLimits>>(
-+            Effect.succeed(unsupportedLimits),
-+          );
-+          const harness = yield* makeHarness({ probeUsage: Ref.get(read).pipe(Effect.flatten) });
-+          yield* harness.initialize;
-+          const release = yield* Deferred.make<ServerProviderUsageLimits>();
-+          const requested = yield* Deferred.make<void>();
-+          yield* Ref.set(
-+            read,
-+            Deferred.succeed(requested, undefined).pipe(Effect.andThen(Deferred.await(release))),
-+          );
-+          yield* harness.provider.onSessionStarted(started);
-+          yield* Deferred.await(requested);
-+          yield* harness.provider.onSignedOut;
-+          expect((yield* harness.provider.snapshot.getSnapshot).usageLimits).toBeUndefined();
-+          yield* Deferred.succeed(release, testLimits);
-+          yield* harness.provider.snapshot.refresh;
-+          yield* TestClock.adjust("0 seconds");
-+          const snapshot = yield* harness.provider.snapshot.getSnapshot;
-+          expect(snapshot.auth.status).toBe("unauthenticated");
-+          expect(snapshot.usageLimits).toBeUndefined();
-+        }),
-+      ).pipe(Effect.provide(layerTest)),
-+  );
-+
-+  it.effect.each(["onSignedOut", "onAuthRequired"] as const)(
-+    "a health response finishing after %s cannot restart quota reads",
-+    (invalidate) =>
-+      Effect.scoped(
-+        Effect.gen(function* () {
-+          const reads = yield* Ref.make(0);
-+          const harness = yield* makeHarness({
-+            probeUsage: Ref.update(reads, (count) => count + 1).pipe(Effect.as(testLimits)),
-+          });
-+          const published = yield* Stream.toPull(
-+            harness.provider.snapshot.streamChanges.pipe(
-+              Stream.filter((snapshot) => snapshot.usageLimits?.windows.length === 1),
-+            ),
-+          );
-+          yield* harness.initialize;
-+          yield* published;
-+          const requested = yield* Deferred.make<void>();
-+          const release = yield* Deferred.make<typeof initializeResult>();
-+          yield* Ref.set(
-+            harness.probe,
-+            Deferred.succeed(requested, undefined).pipe(Effect.andThen(Deferred.await(release))),
-+          );
-+          const refresh = yield* harness.provider.snapshot.refresh.pipe(Effect.forkChild);
-+          yield* Deferred.await(requested);
-+          yield* harness.provider[invalidate];
-+          yield* Deferred.succeed(release, initializeResult);
-+          yield* Fiber.join(refresh);
-+          yield* TestClock.adjust("0 seconds");
-+          const snapshot = yield* harness.provider.snapshot.getSnapshot;
-+          expect(yield* Ref.get(reads)).toBe(1);
-+          expect(snapshot.auth.status).toBe("unauthenticated");
-+          expect(snapshot.usageLimits).toBeUndefined();
-+        }),
-+      ).pipe(Effect.provide(layerTest)),
-+  );
-+
-+  it.effect.each(["onSignedOut", "onAuthRequired"] as const)(
-+    "a session callback pending credential lookup cannot undo %s",
-+    (invalidate) =>
-+      Effect.scoped(
-+        Effect.gen(function* () {
-+          const fingerprint = yield* Ref.make<Effect.Effect<string | undefined, Error>>(
-+            Effect.succeed("account-a"),
-+          );
-+          const harness = yield* makeHarness({
-+            probeUsage: Effect.succeed({ ...testLimits, credentialFingerprint: "account-a" }),
-+            usageLimitsCredentialFingerprint: Ref.get(fingerprint).pipe(Effect.flatten),
-+          });
-+          const published = yield* Stream.toPull(
-+            harness.provider.snapshot.streamChanges.pipe(
-+              Stream.filter((snapshot) => snapshot.usageLimits?.windows.length === 1),
-+            ),
-+          );
-+          yield* harness.initialize;
-+          yield* published;
-+          const requested = yield* Deferred.make<void>();
-+          const release = yield* Deferred.make<string>();
-+          yield* Ref.set(
-+            fingerprint,
-+            Deferred.succeed(requested, undefined).pipe(Effect.andThen(Deferred.await(release))),
-+          );
-+          const session = yield* harness.provider.onSessionStarted(started).pipe(Effect.forkChild);
-+          yield* Deferred.await(requested);
-+          yield* harness.provider[invalidate];
-+          yield* Deferred.succeed(release, "account-a");
-+          yield* Fiber.join(session);
-+          const snapshot = yield* harness.provider.snapshot.getSnapshot;
-+          expect(snapshot.auth.status).toBe("unauthenticated");
-+          expect(snapshot.models).toEqual([]);
-+          expect(snapshot.usageLimits).toBeUndefined();
-+        }),
-+      ).pipe(Effect.provide(layerTest)),
-+  );
-+
-+  it.effect("keeps both workspaces when session starts await the same credential lookup", () =>
-+    Effect.scoped(
-+      Effect.gen(function* () {
-+        const requested = yield* Deferred.make<void>();
-+        const release = yield* Deferred.make<string>();
-+        const lookups = yield* Ref.make(0);
-+        const harness = yield* makeHarness({
-+          usageLimitsCredentialFingerprint: Ref.updateAndGet(lookups, (count) => count + 1).pipe(
-+            Effect.flatMap((count) =>
-+              count === 2 ? Deferred.succeed(requested, undefined) : Effect.void,
-+            ),
-+            Effect.andThen(Deferred.await(release)),
-+          ),
-+        });
-+        yield* harness.initialize;
-+        const sessions = yield* Effect.all(
-+          [
-+            harness.provider.onSessionStarted(started, "/workspace-a"),
-+            harness.provider.onSessionStarted(started, "/workspace-b"),
-+          ],
-+          { concurrency: "unbounded" },
-+        ).pipe(Effect.forkChild);
-+        yield* Deferred.await(requested);
-+        yield* Deferred.succeed(release, "account-a");
-+        yield* Fiber.join(sessions);
-+        const snapshot = yield* harness.provider.snapshot.getSnapshot;
-+        expect(snapshot.workspaceSnapshots?.map((workspace) => workspace.cwd).toSorted()).toEqual([
-+          "/workspace-a",
-+          "/workspace-b",
-+        ]);
-+        expect(snapshot.auth.status).toBe("authenticated");
-+      }),
-+    ).pipe(Effect.provide(layerTest)),
-+  );
-+
-+  it.effect.each(["session", "health"] as const)(
-+    "clears another account's quota before a failing %s refresh",
-+    (trigger) =>
-+      Effect.scoped(
-+        Effect.gen(function* () {
-+          const accountA = { ...testLimits, credentialFingerprint: "account-a" };
-+          const identity = yield* Ref.make<string | undefined>("account-a");
-+          const read = yield* Ref.make<Effect.Effect<ServerProviderUsageLimits>>(
-+            Effect.succeed(accountA),
-+          );
-+          const harness = yield* makeHarness({
-+            probeUsage: Ref.get(read).pipe(Effect.flatten),
-+            usageLimitsCredentialFingerprint: Ref.get(identity),
-+          });
-+          const initial = yield* Stream.toPull(
-+            harness.provider.snapshot.streamChanges.pipe(
-+              Stream.filter(
-+                (snapshot) => snapshot.usageLimits?.credentialFingerprint === "account-a",
-+              ),
-+            ),
-+          );
-+          yield* harness.initialize;
-+          yield* initial;
-+          yield* harness.provider.onSessionStarted(started);
-+          yield* TestClock.adjust("0 seconds");
-+          const release = yield* Deferred.make<ServerProviderUsageLimits>();
-+          const requested = yield* Deferred.make<void>();
-+          yield* Ref.set(
-+            read,
-+            Deferred.succeed(requested, undefined).pipe(Effect.andThen(Deferred.await(release))),
-+          );
-+          const cleared = yield* Stream.toPull(
-+            harness.provider.snapshot.streamChanges.pipe(
-+              Stream.filter((snapshot) => snapshot.usageLimits === undefined),
-+            ),
-+          );
-+          const clearUpdate = yield* cleared.pipe(Effect.forkChild);
-+          yield* TestClock.adjust("0 seconds");
-+          yield* Ref.set(identity, "account-b");
-+          if (trigger === "session") yield* harness.provider.onSessionStarted(started);
-+          else yield* harness.provider.snapshot.refresh;
-+          yield* Deferred.await(requested);
-+          yield* Fiber.join(clearUpdate);
-+          expect((yield* harness.provider.snapshot.getSnapshot).usageLimits).toBeUndefined();
-+          const failed = {
-+            checkedAt: testLimits.checkedAt,
-+            windows: [],
-+            credentialFingerprint: "account-b",
-+            unavailable: { reason: "probeFailed" },
-+          } satisfies ServerProviderUsageLimits;
-+          const published = yield* Stream.toPull(
-+            harness.provider.snapshot.streamChanges.pipe(
-+              Stream.filter(
-+                (snapshot) => snapshot.usageLimits?.unavailable?.reason === "probeFailed",
-+              ),
-+            ),
-+          );
-+          yield* Deferred.succeed(release, failed);
-+          expect(Array.from(yield* published)[0]?.usageLimits).toEqual(failed);
-+        }),
-+      ).pipe(Effect.provide(layerTest)),
-+  );
-+
-+  it.effect("keeps the published quota when the account identity cannot be read", () =>
-+    Effect.scoped(
-+      Effect.gen(function* () {
-+        const accountA = { ...testLimits, credentialFingerprint: "account-a" };
-+        const identity = yield* Ref.make<Effect.Effect<string | undefined, Error>>(
-+          Effect.succeed("account-a"),
-+        );
-+        const read = yield* Ref.make<Effect.Effect<ServerProviderUsageLimits>>(
-+          Effect.succeed(accountA),
-+        );
-+        const reads = yield* Ref.make(0);
-+        const harness = yield* makeHarness({
-+          probeUsage: Ref.update(reads, (count) => count + 1).pipe(
-+            Effect.andThen(Ref.get(read)),
-+            Effect.flatten,
-+          ),
-+          usageLimitsCredentialFingerprint: Ref.get(identity).pipe(Effect.flatten),
-+        });
-+        const published = yield* Stream.toPull(
-+          harness.provider.snapshot.streamChanges.pipe(
-+            Stream.filter((snapshot) => snapshot.usageLimits?.windows.length === 1),
-+          ),
-+        );
-+        yield* harness.initialize;
-+        yield* published;
-+
-+        const lookedUp = yield* Deferred.make<void>();
-+        yield* Ref.set(
-+          identity,
-+          Deferred.succeed(lookedUp, undefined).pipe(
-+            Effect.andThen(Effect.fail(new Cause.TimeoutError())),
-+          ),
-+        );
-+        yield* harness.provider.snapshot.refresh;
-+        yield* Deferred.await(lookedUp);
-+
-+        // Quota reads are serialized, so this read observes the state after the failed lookup.
-+        const observed = yield* Deferred.make<ServerProviderUsageLimits | undefined>();
-+        yield* Ref.set(identity, Effect.succeed("account-a"));
-+        yield* Ref.set(
-+          read,
-+          harness.provider.snapshot.getSnapshot.pipe(
-+            Effect.tap((snapshot) => Deferred.succeed(observed, snapshot.usageLimits)),
-+            Effect.as(accountA),
-+          ),
-+        );
-+        yield* TestClock.adjust("30 seconds");
-+        yield* harness.provider.snapshot.refresh;
-+        expect(yield* Deferred.await(observed)).toEqual(accountA);
-+        // Clearing would also reset the throttle and force an extra read.
-+        expect(yield* Ref.get(reads)).toBe(2);
-+      }),
-+    ).pipe(Effect.provide(layerTest)),
-+  );
-+
-+  it.effect(
-+    "clears old account limits when credentials change during an untagged failed read",
-+    () =>
-+      Effect.scoped(
-+        Effect.gen(function* () {
-+          const identity = yield* Ref.make("account-a");
-+          const read = yield* Ref.make<Effect.Effect<ServerProviderUsageLimits>>(
-+            Effect.succeed({ ...testLimits, credentialFingerprint: "account-a" }),
-+          );
-+          const harness = yield* makeHarness({
-+            probeUsage: Ref.get(read).pipe(Effect.flatten),
-+            usageLimitsCredentialFingerprint: Ref.get(identity),
-+          });
-+          const first = yield* Stream.toPull(
-+            harness.provider.snapshot.streamChanges.pipe(
-+              Stream.filter((snapshot) => snapshot.usageLimits?.windows.length === 1),
-+            ),
-+          );
-+          yield* harness.initialize;
-+          yield* first;
-+          const requested = yield* Deferred.make<void>();
-+          const release = yield* Deferred.make<ServerProviderUsageLimits>();
-+          yield* Ref.set(
-+            read,
-+            Deferred.succeed(requested, undefined).pipe(Effect.andThen(Deferred.await(release))),
-+          );
-+          yield* TestClock.adjust("30 seconds");
-+          yield* harness.provider.snapshot.refresh;
-+          yield* Deferred.await(requested);
-+          yield* Ref.set(identity, "account-b");
-+          yield* Deferred.succeed(release, {
-+            checkedAt: "2026-10-03T00:01:00.000Z",
-+            windows: [],
-+            unavailable: { reason: "probeFailed" },
-+          });
-+          yield* TestClock.adjust("0 seconds");
-+          expect((yield* harness.provider.snapshot.getSnapshot).usageLimits?.windows).toEqual([]);
-+        }),
-+      ).pipe(Effect.provide(layerTest)),
-+  );
-+
-+  it.effect("retains the last successful quota when a later read fails", () =>
-+    Effect.scoped(
-+      Effect.gen(function* () {
-+        const read = yield* Ref.make<Effect.Effect<ServerProviderUsageLimits>>(
-+          Effect.succeed({ ...testLimits, credentialFingerprint: "account-a" }),
-+        );
-+        const harness = yield* makeHarness({
-+          probeUsage: Ref.get(read).pipe(Effect.flatten),
-+          usageLimitsCredentialFingerprint: Effect.succeed("account-a"),
-+        });
-+        const published = yield* Stream.toPull(
-+          harness.provider.snapshot.streamChanges.pipe(
-+            Stream.filter((snapshot) => snapshot.usageLimits?.windows.length === 1),
-+          ),
-+        );
-+        yield* harness.initialize;
-+        yield* published;
-+        const failed = yield* Deferred.make<void>();
-+        yield* Ref.set(
-+          read,
-+          Effect.succeed({
-+            checkedAt: "2026-10-03T00:01:00.000Z",
-+            credentialFingerprint: "account-a",
-+            windows: [],
-+            unavailable: { reason: "probeFailed" },
-+          } satisfies ServerProviderUsageLimits).pipe(
-+            Effect.tap(() => Deferred.succeed(failed, undefined)),
-+          ),
-+        );
-+        yield* TestClock.adjust("30 seconds");
-+        yield* harness.provider.snapshot.refresh;
-+        yield* Deferred.await(failed);
-+        const snapshot = yield* harness.provider.snapshot.getSnapshot;
-+        expect(snapshot.usageLimits).toEqual({ ...testLimits, credentialFingerprint: "account-a" });
-+      }),
-+    ).pipe(Effect.provide(layerTest)),
-+  );
-+});
-diff --git a/apps/server/src/provider/AntigravityProvider.ts b/apps/server/src/provider/AntigravityProvider.ts
-index 8e903d4..7817470 100644
---- a/apps/server/src/provider/AntigravityProvider.ts
-+++ b/apps/server/src/provider/AntigravityProvider.ts
-@@ -10,12 +10,13 @@ import {
-   type ServerProviderUsageLimits,
- } from "@t3tools/contracts";
- import { createModelCapabilities } from "@t3tools/shared/model";
--import * as Context from "effect/Context";
-+import * as Clock from "effect/Clock";
-+import * as Ref from "effect/Ref";
- import * as DateTime from "effect/DateTime";
--import * as Deferred from "effect/Deferred";
- import * as Effect from "effect/Effect";
- import * as FiberHandle from "effect/FiberHandle";
- import * as Option from "effect/Option";
-+import * as Queue from "effect/Queue";
- import * as Predicate from "effect/Predicate";
- import * as Result from "effect/Result";
- import * as Stream from "effect/Stream";
-@@ -48,11 +49,6 @@ const HEALTH_CHECK_TIMEOUT_MS = 90_000;
- const SIGN_IN_MESSAGE = "Sign in with Google to use Antigravity.";
- const AUTH_UNCHECKED_MESSAGE =
-   "Antigravity is installed. Google account access is not checked yet.";
--// Set while a finished quota read republishes, so that health check does not read again.
--const PublishingUsage = Context.Reference<boolean>("t3/provider/AntigravityPublishingUsage", {
--  defaultValue: () => false,
--});
--
- type SessionSetupResult = Pick<
-   AcpSessionRuntime.AcpSessionRuntimeStartResult["sessionSetupResult"],
-   "configOptions" | "models"
-@@ -156,6 +152,7 @@ function isMissingInstallation(error: EffectAcpErrors.AcpError | ProviderSetupEr
- interface AntigravityProviderState {
-   readonly draft: ServerProviderDraft;
-   readonly authRevision: number;
-+  readonly authInvalidationRevision: number;
- }
  
- interface AntigravityProviderOptions {
-@@ -168,6 +165,8 @@ interface AntigravityProviderOptions {
-   readonly supportsTextGeneration: Effect.Effect<boolean>;
-   readonly probeUsage?: Effect.Effect<ServerProviderUsageLimits>;
-   readonly clearUsage?: Effect.Effect<void>;
-+  /** Fails when the account identity cannot be determined right now. */
-+  readonly usageLimitsCredentialFingerprint?: Effect.Effect<string | undefined, Error>;
-   readonly maintenanceCapabilities?: ProviderMaintenanceCapabilities;
-   readonly auth?: { readonly type: string; readonly label: string };
- }
-@@ -185,6 +184,7 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
-     ? `Antigravity is installed. Connect with ${options.auth.label} to load models.`
-     : AUTH_UNCHECKED_MESSAGE;
-   const checkedAt = DateTime.formatIso(yield* DateTime.now);
-+  const lastUsageAttempt = yield* Ref.make<number | undefined>(undefined);
-   const initialDraft = {
-     ...buildServerProvider({
-       presentation: {
-@@ -214,6 +214,7 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
-   const metadata = yield* SubscriptionRef.make<AntigravityProviderState>({
-     draft: initialDraft,
-     authRevision: 0,
-+    authInvalidationRevision: 0,
-   });
-   // Preserve disk-discovered skills when callbacks replace workspace commands; the registry will not rescan them.
-   const discoveredSkills = new Map<string, ServerProvider["skills"]>();
-@@ -232,45 +233,119 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
-     Effect.flatMap((state) => options.stampIdentity(state.draft)),
++  it.effect("a failed quota read for another sign-in does not keep the previous limits", () =>
++    Effect.gen(function* () {
++      const limits = {
++        checkedAt: "2026-10-09T12:00:00.000Z",
++        windows: [{ id: "gemini-5h", kind: "session", label: "Gemini · 5-hour", usedPercent: 10 }],
++        credentialFingerprint: "account-a",
++      } satisfies ServerProviderUsageLimits;
++      const usage = yield* Ref.make<ServerProviderUsageLimits>(limits);
++      const harness = yield* makeHarness({ probeUsage: Ref.get(usage) });
++      const published = yield* harness.nextPublish((snapshot) => !!snapshot.usageLimits);
++      yield* harness.initialize;
++      expect((yield* published)?.usageLimits).toEqual(limits);
++      yield* Ref.set(harness.probe, Effect.succeed(initializeResult));
++      const failed = {
++        checkedAt: "2026-10-09T12:01:00.000Z",
++        windows: [],
++        credentialFingerprint: "credential-b",
++        unavailable: { reason: "probeFailed" },
++      } satisfies ServerProviderUsageLimits;
++      yield* Ref.set(usage, failed);
++      const republished = yield* harness.nextPublish(
++        (snapshot) => snapshot.usageLimits?.unavailable?.reason === "probeFailed",
++      );
++      yield* harness.provider.snapshot.refresh;
++      expect((yield* republished)?.usageLimits).toEqual(failed);
++    }),
++  );
++
+   it.effect("a quota read finishing after sign-out cannot restore account limits", () =>
+     Effect.gen(function* () {
+       const readStarted = yield* Deferred.make<void>();
+diff --git a/apps/server/src/provider/antigravityUsageLimits.test.ts b/apps/server/src/provider/antigravityUsageLimits.test.ts
+index eec70e2e..74611f36 100644
+--- a/apps/server/src/provider/antigravityUsageLimits.test.ts
++++ b/apps/server/src/provider/antigravityUsageLimits.test.ts
+@@ -587,6 +587,26 @@ describe("Antigravity subscription limits", () => {
+     }).pipe(Effect.scoped, Effect.provide(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))),
    );
  
--  // The quota read can take 30 seconds, so it never blocks readiness or a session start.
--  // One read runs at a time; sign-in and sign-out interrupt it so a stale account never lands.
-+  // Only one quota read runs at a time; account changes interrupt a pending read.
-   const usageRead = yield* FiberHandle.make();
--  const republish = yield* Deferred.make<Effect.Effect<ServerProvider>>();
--  const scope = yield* Effect.scope;
--  const refreshUsage = Effect.fn("AntigravityProvider.refreshUsage")(function* () {
--    if (!options.probeUsage || (yield* PublishingUsage)) return;
--    yield* FiberHandle.run(
--      usageRead,
--      options.probeUsage.pipe(
--        Effect.flatMap((probed) =>
--          SubscriptionRef.update(metadata, (state) => ({
--            ...state,
-+  const usageRequests = yield* Queue.dropping<void>(1);
-+  const pendingUsageRefresh = yield* Ref.make<
-+    { readonly revision: number; readonly force: boolean } | undefined
-+  >(undefined);
-+  const resetUsage = Effect.gen(function* () {
-+    yield* FiberHandle.clear(usageRead);
-+    yield* Ref.set(pendingUsageRefresh, undefined);
-+    yield* Queue.poll(usageRequests);
-+    yield* Ref.set(lastUsageAttempt, undefined);
-+    if (options.clearUsage) yield* options.clearUsage;
-+  });
-+
-+  /** Clear the previous account's limits without waiting for the quota backend. */
-+  const clearChangedAccountLimits = Effect.fn("AntigravityProvider.clearChangedAccountLimits")(
-+    function* (revision: number) {
-+      if (!options.usageLimitsCredentialFingerprint) return;
-+      const lookup = yield* Effect.option(options.usageLimitsCredentialFingerprint);
-+      // An unknown identity is not an account change; keep the published quota.
-+      if (Option.isNone(lookup)) return;
-+      const fingerprint = lookup.value;
-+      const cleared = yield* SubscriptionRef.modify(metadata, (state) => {
-+        const limits = state.draft.usageLimits;
-+        if (
-+          state.authInvalidationRevision !== revision ||
-+          !limits ||
-+          (limits.credentialFingerprint === undefined && limits.windows.length === 0) ||
-+          (fingerprint !== undefined && limits.credentialFingerprint === fingerprint)
-+        ) {
-+          return [false, state] as const;
-+        }
-+        return [true, { ...state, draft: { ...state.draft, usageLimits: undefined } }] as const;
-+      });
-+      if (cleared) yield* Ref.set(lastUsageAttempt, undefined);
-+    },
++  it.effect("tags a failed read only when the stored sign-in changed since the last success", () =>
++    Effect.gen(function* () {
++      const options: { userId: string; summaryStatus?: number } = { userId: "google-user-1" };
++      const { probe, clear, writeToken } = yield* fixture(options);
++      const first = yield* probe;
++      expect(first.unavailable).toBeUndefined();
++      options.summaryStatus = 503;
++      const sameSignIn = yield* probe;
++      expect(sameSignIn.unavailable?.reason).toBe("probeFailed");
++      expect(sameSignIn.credentialFingerprint).toBeUndefined();
++      yield* writeToken("refresh-b");
++      const otherSignIn = yield* probe;
++      expect(otherSignIn.unavailable?.reason).toBe("probeFailed");
++      expect(otherSignIn.credentialFingerprint).toMatch(/^[0-9a-f]{64}$/);
++      expect(otherSignIn.credentialFingerprint).not.toBe(first.credentialFingerprint);
++      yield* clear;
++      expect((yield* probe).credentialFingerprint).toBeUndefined();
++    }).pipe(Effect.scoped, Effect.provide(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))),
 +  );
 +
-+  const readUsageLimits = Effect.fn("AntigravityProvider.readUsageLimits")(function* (
-+    revision: number,
-+    force: boolean,
-+  ) {
-+    const read = options.probeUsage;
-+    if (!read) return;
-+    yield* clearChangedAccountLimits(revision);
-+    const state = yield* SubscriptionRef.get(metadata);
-+    if (
-+      state.authInvalidationRevision !== revision ||
-+      state.draft.auth.status === "unauthenticated" ||
-+      !state.draft.enabled ||
-+      !state.draft.installed
-+    )
-+      return;
-+    const now = yield* Clock.currentTimeMillis;
-+    const last = yield* Ref.get(lastUsageAttempt);
-+    if (!force && last !== undefined && now - last < 30_000) return;
-+    yield* Ref.set(lastUsageAttempt, now);
-+    const limits = yield* read;
-+    yield* clearChangedAccountLimits(revision);
-+    if (
-+      options.usageLimitsCredentialFingerprint &&
-+      limits.credentialFingerprint !== undefined &&
-+      Option.exists(
-+        yield* Effect.option(options.usageLimitsCredentialFingerprint),
-+        (current) => current !== limits.credentialFingerprint,
-+      )
-+    ) {
-+      yield* clearChangedAccountLimits(revision);
-+      return;
-+    }
-+    yield* SubscriptionRef.update(metadata, (current) =>
-+      current.authInvalidationRevision !== revision
-+        ? current
-+        : {
-+            ...current,
-             draft: {
--              ...state.draft,
-+              ...current.draft,
-               usageLimits: resolveUsageLimitsAfterProbe({
--                published: state.draft.usageLimits,
--                probed,
-+                published: current.draft.usageLimits,
-+                probed: limits,
-               }),
-             },
--          })),
--        ),
--        // Enrichment cannot change published limits; a health check publishes them.
--        Effect.andThen(
--          Deferred.await(republish).pipe(
--            Effect.flatten,
--            Effect.provideService(PublishingUsage, true),
--            Effect.ignoreCause({ log: true }),
--            Effect.forkIn(scope),
--          ),
--        ),
--      ),
--      // Store the fiber before it runs, so a sign-out during the read can interrupt it.
--      { onlyIfMissing: true, startImmediately: false },
-+          },
-     );
-+    // A successful shared read satisfies session refreshes queued while it was pending.
-+    if (!limits.unavailable && limits.windows.length > 0) {
-+      yield* Ref.update(pendingUsageRefresh, (pending) =>
-+        pending?.revision === revision ? undefined : pending,
-+      );
-+    }
-   });
--  const resetUsage = Effect.gen(function* () {
--    yield* FiberHandle.clear(usageRead);
--    if (options.clearUsage) yield* options.clearUsage;
-+
-+  const refreshUsageLimits = Effect.fn("AntigravityProvider.refreshUsageLimits")(function* (
-+    revision: number,
-+    force = false,
-+  ) {
-+    if (!options.probeUsage) return;
-+    yield* Ref.update(pendingUsageRefresh, (pending) =>
-+      pending && pending.revision > revision
-+        ? pending
-+        : { revision, force: force || (pending?.revision === revision && pending.force) },
-+    );
-+    // Keep one wake-up; a health refresh must not overwrite a pending forced retry.
-+    yield* Queue.offer(usageRequests, undefined);
-+    yield* FiberHandle.run(
-+      usageRead,
-+      Effect.gen(function* () {
-+        yield* Queue.take(usageRequests);
-+        const pending = yield* Ref.getAndSet(pendingUsageRefresh, undefined);
-+        if (pending) yield* readUsageLimits(pending.revision, pending.force);
-+      }).pipe(Effect.forever),
-+      { onlyIfMissing: true, startImmediately: false },
-+    );
-   });
- 
-   const checkProvider = Effect.fn("checkAntigravityProvider")(function* () {
-@@ -347,8 +422,10 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
-       const stored = deferFailure && state.draft.status === "ready" ? state : checked;
-       return [checked, stored === state ? Option.none() : Option.some(stored)];
-     });
--    if (initialized !== undefined) yield* refreshUsage();
--    return yield* options.stampIdentity(next.draft);
-+    if (initialized !== undefined) {
-+      yield* refreshUsageLimits(next.authInvalidationRevision);
-+    }
-+    return yield* getSnapshot;
-   });
- 
-   const maintenanceCapabilities =
-@@ -367,11 +444,14 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
-     enrichSnapshot: ({ publishSnapshot }) =>
-       SubscriptionRef.changes(metadata).pipe(
-         Stream.runForEach((state) =>
--          options.stampIdentity(state.draft).pipe(Effect.flatMap(publishSnapshot)),
-+          options
-+            .stampIdentity(state.draft)
-+            .pipe(
-+              Effect.flatMap((snapshot) => publishSnapshot(snapshot, { replaceUsageLimits: true })),
-+            ),
-         ),
-       ),
-   });
--  yield* Deferred.succeed(republish, managed.refresh);
- 
-   const onSessionStarted = Effect.fn("AntigravityProvider.onSessionStarted")(function* (
-     started: AcpSessionRuntime.AcpSessionRuntimeStartResult,
-@@ -380,20 +460,19 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
-     if (!settings.enabled) return;
-     observeThinkingLevels(started.sessionSetupResult.configOptions);
-     const before = yield* SubscriptionRef.get(metadata);
-+    yield* clearChangedAccountLimits(before.authInvalidationRevision);
-     const supportsTextGeneration = yield* options.supportsTextGeneration;
-     const updatedAt = DateTime.formatIso(yield* DateTime.now);
--    yield* SubscriptionRef.update(metadata, (state) => {
--      if (
--        state.authRevision !== before.authRevision &&
--        state.draft.auth.status === "unauthenticated"
--      ) {
--        return state;
-+    const revision = yield* SubscriptionRef.modify(metadata, (state) => {
-+      if (state.authInvalidationRevision !== before.authInvalidationRevision) {
-+        return [undefined, state] as const;
-       }
-       const { message: _previousMessage, ...draft } = state.draft;
-       const workspaces = draft.workspaceSnapshots ?? [];
-       const workspace = cwd ? workspaces.find((entry) => entry.cwd === cwd) : undefined;
--      return {
-+      const next = {
-         authRevision: state.authRevision + 1,
-+        authInvalidationRevision: state.authInvalidationRevision,
-         draft: {
-           ...draft,
-           installed: true,
-@@ -422,8 +501,14 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
-             : {}),
-         },
-       } satisfies AntigravityProviderState;
-+      return [next.authInvalidationRevision, next] as const;
-     });
--    if (!before.draft.usageLimits || before.draft.usageLimits.unavailable) yield* refreshUsage();
-+    if (revision !== undefined) {
-+      yield* refreshUsageLimits(
-+        revision,
-+        before.draft.auth.status !== "authenticated" || !before.draft.usageLimits?.windows.length,
-+      );
-+    }
-   });
- 
-   const onConfigOptionsUpdated = Effect.fn("AntigravityProvider.onConfigOptionsUpdated")(function* (
-@@ -476,11 +561,13 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
-     yield* resetUsage;
-     if (!settings.enabled) return;
-     const updatedAt = DateTime.formatIso(yield* DateTime.now);
-+    yield* Ref.set(lastUsageAttempt, undefined);
-     yield* SubscriptionRef.update(
-       metadata,
-       (state) =>
-         ({
-           authRevision: state.authRevision + 1,
-+          authInvalidationRevision: state.authInvalidationRevision + 1,
-           draft: {
-             ...state.draft,
-             auth: {
-@@ -536,22 +623,15 @@ export const makeAntigravityProvider = Effect.fn("makeAntigravityProvider")(func
-     onSessionStarted,
-     onConfigOptionsUpdated,
-     onAvailableCommands,
--    // The new sign-in may be another account. Clear and republish its limits so a failed read
--    // cannot fall back to them; the session start then reads the new account's limits.
-     onSignedIn: resetUsage.pipe(
-       Effect.andThen(
--        SubscriptionRef.update(metadata, (state) => {
--          const { usageLimits: _previousAccount, ...draft } = state.draft;
--          return { ...state, draft };
--        }),
--      ),
--      Effect.andThen(
--        Deferred.await(republish).pipe(
--          Effect.flatten,
--          Effect.provideService(PublishingUsage, true),
--        ),
-+        SubscriptionRef.update(metadata, (state) => ({
-+          ...state,
-+          authRevision: state.authRevision + 1,
-+          authInvalidationRevision: state.authInvalidationRevision + 1,
-+          draft: { ...state.draft, usageLimits: undefined },
-+        })),
-       ),
--      Effect.asVoid,
-     ),
-     onSignedOut: clearAccountMetadata(),
-     onAuthRequired: clearAccountMetadata(),
-diff --git a/apps/server/src/provider/Drivers/AntigravityDriver.ts b/apps/server/src/provider/Drivers/AntigravityDriver.ts
-index 1117fc3..27e598b 100644
---- a/apps/server/src/provider/Drivers/AntigravityDriver.ts
-+++ b/apps/server/src/provider/Drivers/AntigravityDriver.ts
-@@ -449,6 +449,7 @@ export const AntigravityDriver: ProviderDriver<
-       stampIdentity: classifyModels,
-       probe,
-       probeUsage: usage.probe,
-+      usageLimitsCredentialFingerprint: usage.credentialFingerprint,
-       clearUsage: usage.clear,
-       auth: { type: auth.authMethod, label: antigravityAuthLabel(auth.authMethod) },
-       supportsTextGeneration: isAntigravityTextGenerationAvailable(profileDirectory).pipe(
+   it.effect("names one Google account the same way from every sign-in", () =>
+     Effect.gen(function* () {
+       const read = (refreshToken: string, userId: string) =>
 diff --git a/apps/server/src/provider/antigravityUsageLimits.ts b/apps/server/src/provider/antigravityUsageLimits.ts
-index ede0e5c..fd76bbc 100644
+index fadf2207..a94baf9a 100644
 --- a/apps/server/src/provider/antigravityUsageLimits.ts
 +++ b/apps/server/src/provider/antigravityUsageLimits.ts
-@@ -230,6 +230,14 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
+@@ -339,6 +339,8 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
+     | { fingerprint: string; account: string; accessToken: string; expiresAt: number }
+     | undefined;
+   let generation = 0;
++  // The stored sign-in behind the last successful read.
++  let lastCredential: string | undefined;
+ 
+   const request = (request: HttpClientRequest.HttpClientRequest) =>
+     client.execute(request).pipe(
+@@ -347,7 +349,7 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
        Effect.flatMap((response) => response.json),
        Effect.timeout("10 seconds"),
      );
-+  const fingerprintForToken = (token: typeof TokenFile.Type) =>
-+    sha256(`${token.client_id}\0${token.refresh_token}\0${token.project_id ?? ""}`);
-+  const credentialFingerprint = Effect.gen(function* () {
-+    if (!(yield* fs.exists(tokenPath))) return undefined;
-+    const token = yield* fs.readFileString(tokenPath).pipe(Effect.flatMap(decodeTokenFile));
-+    return yield* fingerprintForToken(token);
-+  }).pipe(Effect.provideService(Digest.Digest, crypto), Effect.timeout("10 seconds"));
-+
-   const read = Effect.gen(function* () {
+-  const read = Effect.gen(function* () {
++  const read = Effect.fn("AntigravityUsageProbe.read")(function* (run: { credential?: string }) {
      const startedGeneration = generation;
      const checkedAt = DateTime.formatIso(yield* DateTime.now);
-@@ -245,9 +253,7 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
+     if (input.authMethod !== "oauth-personal" && input.authMethod !== "oauth-business") {
+@@ -373,6 +375,10 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
+         });
+       }
+       const { token } = yield* decodeCliToken(stored);
++      const credential = yield* sha256(
++        `antigravity-cli\0${token.refresh_token || token.access_token}`,
++      );
++      run.credential = credential;
+       if (!(Date.parse(token.expiry ?? "") > now + 60_000)) {
+         return makeUnavailableUsageLimits({
+           checkedAt,
+@@ -388,7 +394,7 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
+         ),
+       ).pipe(
+         Effect.flatMap(antigravityAccountFingerprint),
+-        Effect.catch(() => sha256(`antigravity-cli\0${token.refresh_token || accessToken}`)),
++        Effect.orElseSucceed(() => credential),
+       );
+     } else {
+       const token = yield* fs.readFileString(tokenPath).pipe(Effect.flatMap(decodeTokenFile));
+@@ -396,6 +402,7 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
+       const fingerprint = yield* sha256(
+         `${token.client_id}\0${token.refresh_token}\0${token.project_id ?? ""}`,
+       );
++      run.credential = fingerprint;
+       if (cached?.fingerprint !== fingerprint || cached.expiresAt <= now + 60_000) {
+         cached = undefined;
+         const refreshed = yield* request(
+@@ -480,25 +487,40 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
+         message: "Antigravity did not return usable quota information.",
        });
      }
-     const token = yield* fs.readFileString(tokenPath).pipe(Effect.flatMap(decodeTokenFile));
--    const fingerprint = yield* sha256(
--      `${token.client_id}\0${token.refresh_token}\0${token.project_id ?? ""}`,
--    );
-+    const fingerprint = yield* fingerprintForToken(token);
-     const now = yield* Clock.currentTimeMillis;
-     let accessToken: string;
-     let account: string;
-@@ -353,6 +359,7 @@ export const makeAntigravityUsageProbe = Effect.fn("makeAntigravityUsageProbe")(
-   );
++    if (generation === startedGeneration) lastCredential = run.credential;
+     return { ...makeUsageLimits({ checkedAt, windows }), credentialFingerprint: account };
+   });
+-  const probe = read.pipe(
+-    Effect.provideService(Digest.Digest, crypto),
+-    Effect.timeout("30 seconds"),
+-    Effect.catch(() =>
+-      Effect.gen(function* () {
+-        return makeUnavailableUsageLimits({
+-          checkedAt: DateTime.formatIso(yield* DateTime.now),
+-          reason: "probeFailed",
+-          message: "Could not read Antigravity limits. Refresh provider status to retry.",
+-        });
+-      }),
+-    ),
+-  );
++  const probe = Effect.suspend(() => {
++    const run: { credential?: string } = {};
++    return read(run).pipe(
++      Effect.provideService(Digest.Digest, crypto),
++      Effect.timeout("30 seconds"),
++      Effect.catch(() =>
++        Effect.gen(function* () {
++          return makeUnavailableUsageLimits({
++            checkedAt: DateTime.formatIso(yield* DateTime.now),
++            reason: "probeFailed",
++            message: "Could not read Antigravity limits. Refresh provider status to retry.",
++          });
++        }),
++      ),
++      // A failed read under a different stored sign-in may be another account, so tag it to keep
++      // the previous account's bars from being retained. An unreadable sign-in stays untagged.
++      Effect.map((limits) =>
++        limits.unavailable?.reason === "probeFailed" &&
++        run.credential !== undefined &&
++        lastCredential !== undefined &&
++        run.credential !== lastCredential
++          ? { ...limits, credentialFingerprint: run.credential }
++          : limits,
++      ),
++    );
++  });
    return {
      probe,
-+    credentialFingerprint,
      clear: Effect.sync(() => {
        cached = undefined;
++      lastCredential = undefined;
        generation++;
-diff --git a/packages/provider-core/src/server/managedProvider.test.ts b/packages/provider-core/src/server/managedProvider.test.ts
-index f878b2f..f6ae20b 100644
---- a/packages/provider-core/src/server/managedProvider.test.ts
-+++ b/packages/provider-core/src/server/managedProvider.test.ts
-@@ -791,6 +791,49 @@ describe("makeManagedServerProvider", () => {
-     ).pipe(Effect.provide(layerAlwaysRunTest)),
-   );
- 
-+  it.effect("allows provider-owned enrichment to replace and clear usage limits", () =>
-+    Effect.scoped(
-+      Effect.gen(function* () {
-+        const replace = yield* Deferred.make<void>();
-+        const replaced = yield* Deferred.make<void>();
-+        const clear = yield* Deferred.make<void>();
-+        const cleared = yield* Deferred.make<void>();
-+        const limits = {
-+          checkedAt: "2026-04-10T00:00:02.000Z",
-+          windows: [{ id: "primary", kind: "session", label: "Session", usedPercent: 60 }],
-+        } as const;
-+        const provider = yield* makeManagedServerProvider<TestSettings>({
-+          resolveMaintenance: () => Effect.succeed(maintenanceCapabilities),
-+          getSettings: Effect.succeed({ enabled: true }),
-+          streamSettings: Stream.empty,
-+          haveSettingsChanged: (previous, next) => previous.enabled !== next.enabled,
-+          initialSnapshot: () => Effect.succeed(initialSnapshot),
-+          checkProvider: Effect.succeed(refreshedSnapshot),
-+          enrichSnapshot: ({ publishSnapshot }) =>
-+            Effect.gen(function* () {
-+              yield* Deferred.await(replace);
-+              yield* publishSnapshot(
-+                { ...refreshedSnapshot, usageLimits: limits },
-+                { replaceUsageLimits: true },
-+              );
-+              yield* Deferred.succeed(replaced, undefined);
-+              yield* Deferred.await(clear);
-+              yield* publishSnapshot(refreshedSnapshot, { replaceUsageLimits: true });
-+              yield* Deferred.succeed(cleared, undefined);
-+            }),
-+          refreshInterval: "1 hour",
-+        });
-+        yield* Stream.take(provider.streamChanges, 1).pipe(Stream.runDrain);
-+        yield* Deferred.succeed(replace, undefined);
-+        yield* Deferred.await(replaced);
-+        assert.deepStrictEqual((yield* provider.getSnapshot).usageLimits, limits);
-+        yield* Deferred.succeed(clear, undefined);
-+        yield* Deferred.await(cleared);
-+        assert.strictEqual((yield* provider.getSnapshot).usageLimits, undefined);
-+      }),
-+    ).pipe(Effect.provide(layerAlwaysRunTest)),
-+  );
-+
-   it.effect.each([
-     { name: "a live plan", clearPlan: false },
-     { name: "a cleared plan", clearPlan: true },
-diff --git a/packages/provider-core/src/server/managedProvider.ts b/packages/provider-core/src/server/managedProvider.ts
-index 2762930..c095986 100644
---- a/packages/provider-core/src/server/managedProvider.ts
-+++ b/packages/provider-core/src/server/managedProvider.ts
-@@ -68,7 +68,10 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
-     readonly settings: Settings;
-     readonly snapshot: ServerProvider;
-     readonly getSnapshot: Effect.Effect<ServerProvider>;
--    readonly publishSnapshot: (snapshot: ServerProvider) => Effect.Effect<void>;
-+    readonly publishSnapshot: (
-+      snapshot: ServerProvider,
-+      options?: { readonly replaceUsageLimits: boolean },
-+    ) => Effect.Effect<void>;
-   }) => Effect.Effect<void>;
-   readonly refreshInterval?: Duration.Input;
-   readonly refreshOnInterval?: boolean | ((snapshot: ServerProvider) => boolean);
-@@ -101,12 +104,14 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
-   const publishEnrichedSnapshot = Effect.fn("publishEnrichedSnapshot")(function* (
-     generation: number,
-     nextSnapshot: ServerProvider,
-+    options?: { readonly replaceUsageLimits: boolean },
-   ) {
-     const snapshotToPublish = yield* Ref.modify(snapshotStateRef, (state) => {
-       if (state.enrichmentGeneration !== generation) {
-         return [null, state] as const;
-       }
-       // Enrichment must not revert usage updates newer than its input snapshot.
-+      // Providers whose enrichment owns usage state can explicitly replace or clear it.
-       const merged = withUsageLimits(
-         state.usageAuthLabel === undefined
-           ? nextSnapshot
-@@ -114,7 +119,7 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
-               ...nextSnapshot,
-               auth: { ...nextSnapshot.auth, label: state.usageAuthLabel ?? undefined },
-             },
--        state.snapshot.usageLimits,
-+        options?.replaceUsageLimits ? nextSnapshot.usageLimits : state.snapshot.usageLimits,
-       );
-       if (Equal.equals(state.snapshot, merged)) {
-         return [null, state] as const;
-@@ -146,7 +151,8 @@ export const makeManagedServerProvider = Effect.fn("makeManagedServerProvider")(
-         settings,
-         snapshot,
-         getSnapshot: Ref.get(snapshotStateRef).pipe(Effect.map((state) => state.snapshot)),
--        publishSnapshot: (nextSnapshot) => publishEnrichedSnapshot(generation, nextSnapshot),
-+        publishSnapshot: (nextSnapshot, options) =>
-+          publishEnrichedSnapshot(generation, nextSnapshot, options),
-       })
-       .pipe(Effect.ignoreCause({ log: true }), Effect.forkIn(scope));
- 
+     }),
+   };
 diff --git a/packages/provider-core/src/server/usageLimits.test.ts b/packages/provider-core/src/server/usageLimits.test.ts
-index 2acdb0b..9b3cc56 100644
+index 2acdb0ba..9b3cc568 100644
 --- a/packages/provider-core/src/server/usageLimits.test.ts
 +++ b/packages/provider-core/src/server/usageLimits.test.ts
 @@ -136,6 +136,23 @@ describe("resolveUsageLimitsAfterProbe", () => {
@@ -1100,7 +202,7 @@ index 2acdb0b..9b3cc56 100644
      const failed = { checkedAt, windows: [], unavailable: { reason: "probeFailed" as const } };
      const unsupported = { checkedAt, windows: [], unavailable: { reason: "unsupported" as const } };
 diff --git a/packages/provider-core/src/server/usageLimits.ts b/packages/provider-core/src/server/usageLimits.ts
-index 7d1f6e6..8f4ac38 100644
+index 7d1f6e6a..8f4ac384 100644
 --- a/packages/provider-core/src/server/usageLimits.ts
 +++ b/packages/provider-core/src/server/usageLimits.ts
 @@ -115,7 +115,14 @@ export function resolveUsageLimitsAfterProbe(input: {

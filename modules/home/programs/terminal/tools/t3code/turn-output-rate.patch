@@ -1,21 +1,21 @@
 # Show output tokens per second of model time on each run's final assistant message.
 diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/ChatView.tsx
-index e6f0fc7..5794e61 100644
+index 10cbb215..98c5a62f 100644
 --- a/apps/web/src/components/ChatView.tsx
 +++ b/apps/web/src/components/ChatView.tsx
-@@ -3527,6 +3527,7 @@ export default function ChatView(props: ChatViewProps) {
+@@ -3673,6 +3673,7 @@ export default function ChatView(props: ChatViewProps) {
                    footer={timelineFooter}
                    listRef={legendListRef}
                    runs={serverProjection?.runs ?? []}
 +                  providerTurns={serverProjection?.providerTurns ?? []}
                    latestRun={activeActivityRun}
+                   usageLimitRunId={usageLimitRunId}
                    announcedRun={announcedRun(activeActivityRun, serverProjection?.runs ?? [])}
-                   detailBehindShell={isDetailBehindShell(
 diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/components/chat/MessagesTimeline.tsx
-index e94c052..f6fe184 100644
+index aaaba1d4..4fc342a5 100644
 --- a/apps/web/src/components/chat/MessagesTimeline.tsx
 +++ b/apps/web/src/components/chat/MessagesTimeline.tsx
-@@ -42,6 +42,7 @@ import {
+@@ -45,6 +45,7 @@ import {
    useLayoutEffect,
    useEffect,
    useEffectEvent,
@@ -23,7 +23,7 @@ index e94c052..f6fe184 100644
    useRef,
    useState,
    type ReactNode,
-@@ -309,6 +310,8 @@ interface MessagesTimelineProps {
+@@ -318,6 +319,8 @@ interface MessagesTimelineProps {
    workspaceRoot: string | undefined;
    skills?: ReadonlyArray<ServerProviderSkill>;
    runs: ReadonlyArray<HandoffTimelineRun>;
@@ -32,7 +32,7 @@ index e94c052..f6fe184 100644
    anchorMessageId: MessageId | null;
    onAnchorReady: (messageId: MessageId, anchorIndex: number) => void;
    onAnchorSizeChanged: (messageId: MessageId, size: number) => void;
-@@ -411,6 +414,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
+@@ -422,6 +425,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
    workspaceRoot,
    skills = EMPTY_TIMELINE_SKILLS,
    runs: runsProp,
@@ -40,7 +40,7 @@ index e94c052..f6fe184 100644
    anchorMessageId,
    onAnchorReady,
    onAnchorSizeChanged,
-@@ -1096,6 +1100,13 @@ const ConversationTimeline = memo(function ConversationTimeline({
+@@ -1108,6 +1112,13 @@ const ConversationTimeline = memo(function ConversationTimeline({
      };
    };
  
@@ -54,7 +54,7 @@ index e94c052..f6fe184 100644
    // Built from props after the last hook so the compiler can memoize the row context; a map
    // made before a hook would rebuild it, and re-render every row, on each streamed update.
    const pendingApprovalsByRequestId = new Map(
-@@ -1119,6 +1130,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
+@@ -1131,6 +1142,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
      workspaceRoot,
      skills,
      runs,
@@ -63,7 +63,7 @@ index e94c052..f6fe184 100644
      onRevertToTurnCount,
      onRunShellCommand,
 diff --git a/apps/web/src/components/chat/ThreadTimeline.tsx b/apps/web/src/components/chat/ThreadTimeline.tsx
-index d600e5b..d15cc33 100644
+index d600e5b5..d15cc33b 100644
 --- a/apps/web/src/components/chat/ThreadTimeline.tsx
 +++ b/apps/web/src/components/chat/ThreadTimeline.tsx
 @@ -9,6 +9,7 @@ import {
@@ -116,10 +116,10 @@ index d600e5b..d15cc33 100644
    );
  }
 diff --git a/apps/web/src/components/chat/TimelineAssistantRows.tsx b/apps/web/src/components/chat/TimelineAssistantRows.tsx
-index 7f9e447..d54160d 100644
+index 72fcf790..ea383025 100644
 --- a/apps/web/src/components/chat/TimelineAssistantRows.tsx
 +++ b/apps/web/src/components/chat/TimelineAssistantRows.tsx
-@@ -231,6 +231,7 @@ function AssistantMessageMeta({
+@@ -236,6 +236,7 @@ function AssistantMessageMeta({
  }) {
    const ctx = use(TimelineRowCtx);
    const m = useMessages();
@@ -127,7 +127,7 @@ index 7f9e447..d54160d 100644
  
    return (
      <div
-@@ -272,6 +273,16 @@ function AssistantMessageMeta({
+@@ -277,6 +278,16 @@ function AssistantMessageMeta({
            </TooltipPopup>
          </Tooltip>
        )}
@@ -145,10 +145,10 @@ index 7f9e447..d54160d 100644
    );
  }
 diff --git a/apps/web/src/components/chat/timelineRowContext.ts b/apps/web/src/components/chat/timelineRowContext.ts
-index 6a298fd..901731d 100644
+index 139379fb..bff7bf72 100644
 --- a/apps/web/src/components/chat/timelineRowContext.ts
 +++ b/apps/web/src/components/chat/timelineRowContext.ts
-@@ -62,6 +62,7 @@ export interface TimelineRowSharedState {
+@@ -65,6 +65,7 @@ export interface TimelineRowSharedState {
    workspaceRoot: string | undefined;
    skills: ReadonlyArray<ServerProviderSkill>;
    runs: ReadonlyArray<HandoffTimelineRun>;
@@ -158,7 +158,7 @@ index 6a298fd..901731d 100644
    onUseArtifactTemplate: (template: CodexArtifactTemplate) => void;
 diff --git a/apps/web/src/lib/outputRate.test.ts b/apps/web/src/lib/outputRate.test.ts
 new file mode 100644
-index 0000000..8e580ca
+index 00000000..8e580cae
 --- /dev/null
 +++ b/apps/web/src/lib/outputRate.test.ts
 @@ -0,0 +1,104 @@
@@ -268,7 +268,7 @@ index 0000000..8e580ca
 +});
 diff --git a/apps/web/src/lib/outputRate.ts b/apps/web/src/lib/outputRate.ts
 new file mode 100644
-index 0000000..29c9954
+index 00000000..29c99543
 --- /dev/null
 +++ b/apps/web/src/lib/outputRate.ts
 @@ -0,0 +1,109 @@
