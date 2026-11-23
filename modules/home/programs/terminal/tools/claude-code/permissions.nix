@@ -356,9 +356,11 @@ in
         # Deny is the only rule class that survives bypassPermissions without
         # prompting, so it carries the catastrophic-deletion circuit breaker.
         # Claude Code additionally prompts for `rm -rf /` and `rm -rf ~` in every
-        # mode on its own.
+        # mode on its own. A `*` in a rule matches any suffix, so `rm -rf /*`
+        # would deny every absolute-path removal; the built-in check already
+        # stops that glob. It does not stop `sudo rm -rf /*`, so that rule keeps
+        # the broad match and blocks every privileged absolute-path removal.
         deny = [
-          "Bash(rm -rf /*)"
           "Bash(rm -rf /)"
           "Bash(sudo rm -rf /*)"
           "Bash(sudo rm -rf /)"
