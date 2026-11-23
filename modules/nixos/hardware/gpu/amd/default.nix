@@ -53,5 +53,23 @@ in
 
     nixpkgs.config.rocmSupport = cfg.enableRocmSupport;
 
+    # aotriton and torch build from source and compile kernels for every
+    # supported GPU by default. Narrowing `clr.localGpuTargets` instead would
+    # also rebuild every cached ROCm library.
+    nixpkgs.overlays = lib.mkIf (cfg.enableRocmSupport && cfg.rocmGfxTarget != null) [
+      (_final: prev: {
+        rocmPackages = prev.rocmPackages.overrideScope (
+          _: rocmPrev: {
+            aotriton = rocmPrev.aotriton.override { gpuTargets = [ cfg.rocmGfxTarget ]; };
+          }
+        );
+        pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+          (_: pythonPrev: {
+            torch = pythonPrev.torch.override { gpuTargets = [ cfg.rocmGfxTarget ]; };
+          })
+        ];
+      })
+    ];
+
   };
 }
