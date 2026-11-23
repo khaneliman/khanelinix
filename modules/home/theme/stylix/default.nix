@@ -207,6 +207,11 @@ in
   };
 
   config = lib.mkMerge [
+    (mkIf (config.stylix.enable or false) {
+      # Home Manager removed programs.wayprompt, but the stylix target still
+      # defines its settings. Drop this once stylix removes the target.
+      stylix.targets.wayprompt.enable = false;
+    })
     (mkIf (isLinux && (config.stylix.enable or false)) {
       khanelinix.theme.gtk.cursor = mkIf ((config.stylix.cursor or null) != null) {
         name = mkDefault config.stylix.cursor.name;
