@@ -166,10 +166,7 @@ in
             };
           };
 
-          dwindle = {
-            preserve_split = true;
-            special_scale_factor = 0.9;
-          };
+          dwindle.preserve_split = true;
 
           ecosystem = {
             no_donation_nag = true;
