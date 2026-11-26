@@ -19,6 +19,7 @@ in
 {
   khanelinix.programs.terminal.tools = {
     ssh = {
+      # Keep the NixOS replacement out of the SSH inventory until cutover.
       hosts = lib.mapAttrs (
         name: host:
         {
@@ -27,7 +28,7 @@ in
           username = config.khanelinix.user.name;
         }
         // (overrides.${name} or { })
-      ) (lib.filterAttrs (name: _: name != hostname) hosts);
+      ) (lib.filterAttrs (name: _: name != hostname && name != "khanelilab") hosts);
       magicDnsSuffix = "taild8431e.ts.net";
       authorizedKeys = lib.mkOptionDefault (import ../systems/fleet-authorized-keys.nix);
     };
