@@ -166,12 +166,7 @@
                     _children = [
                       {
                         pane = {
-                          # Get at least some image previews in zellij
-                          command = "sh";
-                          args = [
-                            "-c"
-                            "TERM=xterm-kitty yazi"
-                          ];
+                          command = "yazi";
                         };
                       }
                     ];
