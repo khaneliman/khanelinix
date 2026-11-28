@@ -1,8 +1,7 @@
-# Focused native Home Manager and locked Niri rendering, without a host.
+# Focused native Home Manager rendering, without a host.
 {
   nixpkgs,
   homeManager,
-  niri,
   root ? ../.,
   repo ? root,
 }:
@@ -41,20 +40,6 @@ let
       codexbar-waybar = pkgsBase.hello;
     };
   };
-  inputs = { };
-  kdl = import (niri + "/kdl.nix") { inherit lib; };
-  binds = import (niri + "/parse-binds.nix") { inherit lib; };
-  docs = import (niri + "/generate-docs.nix") { inherit lib inputs; };
-  settings = import (niri + "/settings.nix") {
-    inherit
-      lib
-      inputs
-      kdl
-      binds
-      docs
-      settings
-      ;
-  };
   launchers = builtins.listToAttrs (
     map
       (name: {
@@ -80,7 +65,6 @@ let
         inputs.self = repo;
       };
       modules = [
-        settings.module
         (graphical + "/wms/niri/binds.nix")
         (graphical + "/wms/sway/apps.nix")
         (graphical + "/wms/sway/binds.nix")
@@ -90,7 +74,6 @@ let
         (root + "/modules/home/services/niri-wallpaper-watch")
         (root + "/modules/home/services/hyprpaper")
         {
-          options.programs.niri.package = lib.mkOption { type = lib.types.package; };
           options.khanelinix = {
             suites = lib.mkOption { type = lib.types.attrs; };
             programs.graphical =
@@ -156,27 +139,27 @@ let
             };
             programs = {
               hyprlock.enable = hyprEnabled;
-              niri.package = pkgs.writeShellScriptBin "niri" "exit 1";
               waybar = {
                 enable = true;
                 settings = [ { "custom/power" = (waybar cfg)."custom/power"; } ];
               };
-              niri.settings.workspaces = builtins.listToAttrs (
-                map (i: {
-                  name = toString i;
-                  value = { };
-                }) (lib.range 1 9)
-              );
             };
-            wayland.windowManager.sway = {
-              enable = true;
-              checkConfig = false;
-              config = {
-                modifier = "Mod4";
-                terminal = "kitty";
+            wayland.windowManager = {
+              niri = {
+                enable = true;
+                package = pkgs.writeShellScriptBin "niri" "exit 1";
+                settings._children = map (i: { workspace._args = [ (toString i) ]; }) (lib.range 1 9);
               };
+              sway = {
+                enable = true;
+                checkConfig = false;
+                config = {
+                  modifier = "Mod4";
+                  terminal = "kitty";
+                };
+              };
+              hyprland.configType = "lua";
             };
-            wayland.windowManager.hyprland.configType = "lua";
           };
         }
       ];
@@ -195,11 +178,12 @@ let
 in
 {
   niri = {
-    argv = lib.mapAttrs (_: v: lib.toList v.action.spawn) (
-      lib.filterAttrs (_: v: v.action ? spawn) cfg.programs.niri.settings.binds
+    argv = lib.mapAttrs (_: v: lib.toList v.spawn) (
+      lib.filterAttrs (_: v: v ? spawn) cfg.wayland.windowManager.niri.settings.binds
     );
-    kdl = cfg.programs.niri.finalConfig;
-    swappy = (evaluate true true false [ ]).programs.niri.settings.binds."Ctrl+Alt+Print".action.spawn;
+    kdl = cfg.xdg.configFile."niri/config.kdl".source.renderedText;
+    swappy =
+      (evaluate true true false [ ]).wayland.windowManager.niri.settings.binds."Ctrl+Alt+Print".spawn;
     emptyWallpaperUnit = cfg.systemd.user.services ? niri-wallpaper-watch;
     inherit wallpaperExec;
   };
@@ -263,7 +247,7 @@ in
     hyprlock = lib.getExe cfg.programs.hyprlock.package;
     brightnessctl = lib.getExe pkgs.brightnessctl;
     jq = lib.getExe pkgs.jq;
-    niri = lib.getExe' cfg.programs.niri.package "niri";
+    niri = lib.getExe' cfg.wayland.windowManager.niri.package "niri";
     swaybg = lib.getExe pkgs.swaybg;
     tailscale = lib.getExe pkgs.tailscale;
     wayvnc = lib.getExe pkgs.wayvnc;

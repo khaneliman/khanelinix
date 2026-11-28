@@ -159,25 +159,24 @@ do not update inputs:
 ```bash
 nixpkgs=$(nix eval --impure --raw --expr '(builtins.getFlake ("git+file://" + toString ./.)).inputs.nixpkgs.outPath')
 homeManager=$(nix eval --impure --raw --expr '(builtins.getFlake ("git+file://" + toString ./.)).inputs.home-manager.outPath')
-niriSource=$(nix eval --impure --raw --expr '(builtins.getFlake ("git+file://" + toString ./.)).inputs.niri.outPath')
 regressionScratch="${XDG_CACHE_HOME:-$HOME/.cache}/khanelinix-regressions"
 mkdir -p "$regressionScratch"
 ```
 
-| Behavior                                                   | Command                                                                                                                                                         |
-| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Credentials, suite defaults, SSH, LightDM and Dolphin      | `python3 tests/module-regressions.py "$nixpkgs" "$regressionScratch/modules"`                                                                                   |
-| Shell aliases, generated commands and service environments | `python3 tests/command-regressions.py "$nixpkgs" "$homeManager" "$regressionScratch/commands"`                                                                  |
-| Selective stash and Fish backup/extraction                 | `FISH=fish COMPRESS=compress SEVENZIP=7z python3 tests/terminal-recovery.py "$PWD" "$regressionScratch/recovery"`                                               |
-| Terminal aliases, editor and T3 backup paths               | `python3 tests/terminal-regressions.py "$nixpkgs"`                                                                                                              |
-| Terminal hooks and lazygit quoting                         | `python3 tests/terminal-data-regressions.py "$nixpkgs" "$regressionScratch/terminal-data" "$homeManager"`                                                       |
-| Native Atuin, Yazi, Helix and WezTerm behavior             | `python3 tests/native-tool-regressions.py "$nixpkgs" "$homeManager" "$regressionScratch/native-tools"`                                                          |
-| Angular language-server wrappers                           | `python3 tests/angular-wrappers.py "$nixpkgs" "$regressionScratch/angular"`                                                                                     |
-| Snowfall template DNS options and merges                   | `python3 tests/snowfall-dns-regressions.py "$nixpkgs"`                                                                                                          |
-| Graphical command rendering and locker/menu flows          | `python3 tests/graphical-commands.py --nixpkgs "$nixpkgs" --home-manager "$homeManager" --niri "$niriSource" --scratch "$regressionScratch/graphical-commands"` |
-| Graphical callbacks and launcher workflows                 | `python3 tests/graphical-workflows.py --scratch "$regressionScratch/workflows" --lua lua`                                                                       |
-| Weather location parsing and rendered callbacks            | `python3 tests/weather-regressions.py --nixpkgs "$nixpkgs" --lua lua --scratch "$regressionScratch/weather"`                                                    |
-| GNOME shortcuts and native schema types                    | `python3 tests/gnome-regressions.py "$nixpkgs" "$homeManager" "$shellSchemas" "$desktopSchemas"`                                                                |
+| Behavior                                                   | Command                                                                                                                                    |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Credentials, suite defaults, SSH, LightDM and Dolphin      | `python3 tests/module-regressions.py "$nixpkgs" "$regressionScratch/modules"`                                                              |
+| Shell aliases, generated commands and service environments | `python3 tests/command-regressions.py "$nixpkgs" "$homeManager" "$regressionScratch/commands"`                                             |
+| Selective stash and Fish backup/extraction                 | `FISH=fish COMPRESS=compress SEVENZIP=7z python3 tests/terminal-recovery.py "$PWD" "$regressionScratch/recovery"`                          |
+| Terminal aliases, editor and T3 backup paths               | `python3 tests/terminal-regressions.py "$nixpkgs"`                                                                                         |
+| Terminal hooks and lazygit quoting                         | `python3 tests/terminal-data-regressions.py "$nixpkgs" "$regressionScratch/terminal-data" "$homeManager"`                                  |
+| Native Atuin, Yazi, Helix and WezTerm behavior             | `python3 tests/native-tool-regressions.py "$nixpkgs" "$homeManager" "$regressionScratch/native-tools"`                                     |
+| Angular language-server wrappers                           | `python3 tests/angular-wrappers.py "$nixpkgs" "$regressionScratch/angular"`                                                                |
+| Snowfall template DNS options and merges                   | `python3 tests/snowfall-dns-regressions.py "$nixpkgs"`                                                                                     |
+| Graphical command rendering and locker/menu flows          | `python3 tests/graphical-commands.py --nixpkgs "$nixpkgs" --home-manager "$homeManager" --scratch "$regressionScratch/graphical-commands"` |
+| Graphical callbacks and launcher workflows                 | `python3 tests/graphical-workflows.py --scratch "$regressionScratch/workflows" --lua lua`                                                  |
+| Weather location parsing and rendered callbacks            | `python3 tests/weather-regressions.py --nixpkgs "$nixpkgs" --lua lua --scratch "$regressionScratch/weather"`                               |
+| GNOME shortcuts and native schema types                    | `python3 tests/gnome-regressions.py "$nixpkgs" "$homeManager" "$shellSchemas" "$desktopSchemas"`                                           |
 
 The Fish check needs Fish, gzip, bzip2, unzip, Git, and ordinary file utilities
 on `PATH`. `COMPRESS` names ncompress's `compress` executable; `SEVENZIP` must

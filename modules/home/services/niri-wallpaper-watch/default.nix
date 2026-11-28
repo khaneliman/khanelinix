@@ -69,7 +69,7 @@ in
               update_wallpaper "''${WALLPAPERS[0]}"
 
               ${
-                lib.getExe' (config.programs.niri.package or pkgs.niri) "niri"
+                lib.getExe' (config.wayland.windowManager.niri.package or pkgs.niri) "niri"
               } msg --json event-stream 2>/dev/null | while read -r event; do
                 # Skip lines that don't look like JSON objects
                 if [[ ! "$event" =~ ^\{ ]]; then continue; fi

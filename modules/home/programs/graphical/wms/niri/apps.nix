@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  options,
   osConfig ? { },
   ...
 }:
@@ -10,39 +9,38 @@ let
   inherit (lib.khanelinix) suiteProfileIncludes;
 
   cfg = config.khanelinix.programs.graphical.wms.niri;
-  niriAvailable = options ? programs.niri;
   socialIncludes = suiteProfileIncludes config config.khanelinix.suites.social;
   businessIncludes = suiteProfileIncludes config config.khanelinix.suites.business;
 
   mkStartCommand = lib.khanelinix.uwsmApp osConfig;
 in
 {
-  config = mkIf cfg.enable (
-    lib.optionalAttrs niriAvailable {
-      programs.niri.settings.spawn-at-startup = mkAfter (
+  config = mkIf cfg.enable {
+    wayland.windowManager.niri.settings._children = mkAfter (
+      map (command: { spawn-sh-at-startup = command; }) (
         lib.optionals config.programs.firefox.enable [
-          { sh = mkStartCommand (lib.getExe config.programs.firefox.package); }
+          (mkStartCommand (lib.getExe config.programs.firefox.package))
         ]
         ++ lib.optionals (osConfig.programs.steam.enable or false) [
-          { sh = mkStartCommand "steam"; }
+          (mkStartCommand "steam")
         ]
         ++ lib.optionals (config.khanelinix.suites.social.enable && socialIncludes "standard") [
-          { sh = mkStartCommand "element-desktop"; }
+          (mkStartCommand "element-desktop")
         ]
         ++ lib.optionals (config.khanelinix.suites.business.enable && businessIncludes "standard") [
-          { sh = mkStartCommand "teams-for-linux"; }
-          { sh = mkStartCommand "thunderbird"; }
+          (mkStartCommand "teams-for-linux")
+          (mkStartCommand "thunderbird")
         ]
         ++ lib.optionals (osConfig.services.hardware.openrgb.enable or false) [
-          { sh = mkStartCommand "openrgb -c blue"; }
+          (mkStartCommand "openrgb -c blue")
         ]
         ++ lib.optionals (osConfig.programs._1password-gui.enable or false) [
-          { sh = mkStartCommand "1password --silent"; }
+          (mkStartCommand "1password --silent")
         ]
         ++ [
-          { sh = mkStartCommand "wayvnc $(tailscale ip --4)"; }
+          (mkStartCommand "wayvnc $(tailscale ip --4)")
         ]
-      );
-    }
-  );
+      )
+    );
+  };
 }

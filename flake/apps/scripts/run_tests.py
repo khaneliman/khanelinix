@@ -35,8 +35,6 @@ CHECKS = {
             "{nixpkgs}",
             "--home-manager",
             "{home-manager}",
-            "--niri",
-            "{niri}",
             "--scratch",
             "{scratch}",
         ),
@@ -72,7 +70,7 @@ def locked_sources(root):
       let
         flake = builtins.getFlake {flake};
       in builtins.mapAttrs (_: input: input.outPath) {{
-        inherit (flake.inputs) nixpkgs home-manager niri;
+        inherit (flake.inputs) nixpkgs home-manager;
       }}
     """
     return json.loads(

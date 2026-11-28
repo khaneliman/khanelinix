@@ -175,27 +175,24 @@ in
           ) workspaces;
         };
 
-        niri.settings = {
-          outputs = outputAttrs (
-            output:
-            {
-              inherit (output) name position;
+        niri.settings._children =
+          map (output: {
+            output = {
+              _args = [ output.name ];
+              mode = "${resolution output}@${toString output.mode.refresh}.000";
               scale = output.scale + 0.0;
-              mode = output.mode // {
-                refresh = output.mode.refresh + 0.0;
+              position._props = {
+                inherit (output.position) x y;
               };
             }
-            // lib.optionalAttrs output.niri.focusAtStartup { focus-at-startup = true; }
-          );
-          workspaces = builtins.listToAttrs (
-            map (
-              workspace:
-              lib.nameValuePair (toString workspace.number) {
-                open-on-output = workspace.output;
-              }
-            ) workspaces
-          );
-        };
+            // lib.optionalAttrs output.niri.focusAtStartup { focus-at-startup = { }; };
+          }) layout.outputs
+          ++ map (workspace: {
+            workspace = {
+              _args = [ (toString workspace.number) ];
+              open-on-output = workspace.output;
+            };
+          }) workspaces;
 
         sway.settings = {
           output = outputAttrs (

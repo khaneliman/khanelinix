@@ -1,6 +1,6 @@
 """Native module renders and harmless command-flow regression checks.
 
-Run with --nixpkgs SOURCE --home-manager SOURCE --niri SOURCE --scratch DIR.
+Run with --nixpkgs SOURCE --home-manager SOURCE --scratch DIR.
 Optional --root tests unapplied copies; --repo supplies their library.
 """
 
@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 parser = argparse.ArgumentParser(description=__doc__)
-for option in ("nixpkgs", "home-manager", "niri", "scratch"):
+for option in ("nixpkgs", "home-manager", "scratch"):
     parser.add_argument("--" + option, type=Path, required=True)
 parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
 parser.add_argument("--repo", type=Path)
@@ -31,7 +31,6 @@ def evaluate(tree):
     values = {
         "nixpkgs": args.nixpkgs,
         "homeManager": args.home_manager,
-        "niri": args.niri,
         "root": tree,
         "repo": repo,
     }

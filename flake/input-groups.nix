@@ -39,7 +39,6 @@
       "khanelivim"
       "llm-agents"
       "mcp-servers-nix"
-      "niri"
       "nix-flatpak"
       "nix-index-database"
       "plasma-manager"

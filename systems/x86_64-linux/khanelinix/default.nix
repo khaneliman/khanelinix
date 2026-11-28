@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   pkgs,
 
@@ -78,10 +77,7 @@ in
             enable = true;
             gamemode.vrr.enable = true; # Odyssey G9 (DP-1) supports VRR
           };
-          niri = {
-            enable = true;
-            package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
-          };
+          niri = enabled;
         }
         {
           sway.enable = true;

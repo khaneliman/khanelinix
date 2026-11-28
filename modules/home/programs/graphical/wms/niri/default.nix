@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  options,
+  osConfig ? { },
   ...
 }:
 let
@@ -11,9 +11,7 @@ let
   inherit (pkgs.stdenv.hostPlatform) isLinux;
 
   cfg = config.khanelinix.programs.graphical.wms.niri;
-
-  # Check if the Home Manager niri module exists (Linux only)
-  niriAvailable = options ? programs.niri;
+  useSystemNiri = osConfig.programs.niri.enable or false;
 in
 {
   options.khanelinix.programs.graphical.wms.niri = {
@@ -22,9 +20,9 @@ in
       type = lib.types.attrs;
       default = { };
       description = ''
-        Configuration to pass through to the niri module.
+        KDL settings passed through to `wayland.windowManager.niri.settings`.
 
-        See <https://github.com/niri-wm/niri/wiki/Configuration:-Overview>
+        See <https://niri-wm.github.io/niri/Configuration%3A-Introduction.html>
       '';
     };
   };
@@ -48,8 +46,21 @@ in
     })
     (mkIf (cfg.enable && isLinux) (
       lib.mkMerge [
-        # Common config that doesn't depend on programs.niri
         {
+          wayland.windowManager.niri = {
+            enable = true;
+            # Match the compositor the NixOS session runs so validation and
+            # `niri msg` use the same version.
+            package = lib.mkDefault (osConfig.programs.niri.package or pkgs.niri);
+            settings = {
+              hotkey-overlay.skip-at-startup = { };
+              input.focus-follows-mouse = { };
+              # An absolute path keeps Xwayland working without relying on
+              # niri's PATH.
+              xwayland-satellite.path = lib.getExe config.wayland.windowManager.niri.xwaylandSatellitePackage;
+            };
+          };
+
           home.packages = with pkgs; [
             grim
             brightnessctl
@@ -92,13 +103,14 @@ in
           };
         }
 
-        # Programs.niri config (only when available)
-        (lib.optionalAttrs niriAvailable {
-          programs.niri.settings = {
-            hotkey-overlay.skip-at-startup = true;
-            input.focus-follows-mouse.enable = true;
-          }
-          // cfg.settings;
+        { wayland.windowManager.niri.settings = cfg.settings; }
+
+        # The NixOS module already provides the session units and portals.
+        (mkIf useSystemNiri {
+          wayland.windowManager.niri = {
+            systemd.enable = false;
+            portalPackage = null;
+          };
         })
       ]
     ))

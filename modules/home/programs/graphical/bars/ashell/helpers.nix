@@ -39,7 +39,7 @@ in
         ${lib.getExe pkgs.hyprshutdown}
         ;;
       niri)
-        ${lib.getExe' config.programs.niri.package "niri"} msg action quit
+        ${lib.getExe' config.wayland.windowManager.niri.package "niri"} msg action quit
         ;;
       sway)
         ${lib.getExe' config.wayland.windowManager.sway.package "swaymsg"} exit

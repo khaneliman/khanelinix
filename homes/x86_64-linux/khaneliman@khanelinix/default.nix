@@ -171,16 +171,7 @@ in
               ) "hyprctl setcursor ${lib.escapeShellArg cursor.name} ${toString cursor.size}";
           };
 
-          niri = {
-            enable = true;
-
-            settings = {
-              xwayland-satellite = {
-                enable = true;
-                path = lib.getExe pkgs.xwayland-satellite;
-              };
-            };
-          };
+          niri = enabled;
 
           sway = enabled;
         };

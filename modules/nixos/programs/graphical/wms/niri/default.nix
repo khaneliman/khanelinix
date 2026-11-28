@@ -1,9 +1,7 @@
 {
   config,
-  options,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 let
@@ -16,79 +14,59 @@ let
   inherit (lib.khanelinix) enabled;
 
   cfg = config.khanelinix.programs.graphical.wms.niri;
-  hasNiri = inputs ? niri;
 in
 {
   options.khanelinix.programs.graphical.wms.niri = with types; {
     enable = lib.mkEnableOption "Niri";
     package = mkOption {
       type = package;
-      # niri-flake's stable pin lags nixpkgs by two releases; nixpkgs' niri
-      # exposes the same cargo feature passthru the flake module reads.
       default = pkgs.niri;
       defaultText = literalExpression "pkgs.niri";
-      description = "Niri package (stable or unstable).";
+      description = "Niri package to install.";
     };
   };
 
-  config = lib.mkMerge [
-    (lib.optionalAttrs hasNiri {
-      home-manager.sharedModules = [
-        inputs.niri.homeModules.config
-        { programs.niri.package = lib.mkForce cfg.package; }
-      ]
-      ++ lib.optionals (options ? stylix) [ inputs.niri.homeModules.stylix ];
-    })
+  config = mkIf cfg.enable {
+    programs.niri = {
+      enable = true;
+      inherit (cfg) package;
+    };
 
-    (mkIf cfg.enable (
-      lib.mkMerge [
-        (lib.optionalAttrs hasNiri {
+    khanelinix = {
+      display-managers.sddm.enable = true;
 
-          programs.niri = {
-            enable = true;
-            inherit (cfg) package;
-          };
-        })
+      home = {
+        configFile = lib.optionalAttrs config.programs.uwsm.enable {
+          "uwsm/env-niri".text = /* Bash */ ''
+            export XDG_CURRENT_DESKTOP=niri
+            export XDG_SESSION_TYPE=wayland
+            export XDG_SESSION_DESKTOP=niri
+          '';
+        };
+      };
 
-        {
-          khanelinix = {
-            display-managers.sddm.enable = true;
+      programs.graphical = {
+        apps = {
+          gnome-disks = enabled;
+          partitionmanager = enabled;
+        };
 
-            home = {
-              configFile = lib.optionalAttrs config.programs.uwsm.enable {
-                "uwsm/env-niri".text = /* Bash */ ''
-                  export XDG_CURRENT_DESKTOP=niri
-                  export XDG_SESSION_TYPE=wayland
-                  export XDG_SESSION_DESKTOP=niri
-                '';
-              };
-            };
+        file-managers = {
+          nautilus = enabled;
+        };
+      };
 
-            programs.graphical = {
-              apps = {
-                gnome-disks = enabled;
-                partitionmanager = enabled;
-              };
+      security = {
+        keyring = enabled;
+        polkit = enabled;
+      };
 
-              file-managers = {
-                nautilus = enabled;
-              };
-            };
+      suites.wlroots = enabled;
 
-            security = {
-              keyring = enabled;
-              polkit = enabled;
-            };
-
-            suites.wlroots = enabled;
-
-            theme = {
-              gtk = enabled;
-              qt = enabled;
-            };
-          };
-        }
-      ]
-    ))
-  ];
+      theme = {
+        gtk = enabled;
+        qt = enabled;
+      };
+    };
+  };
 }
