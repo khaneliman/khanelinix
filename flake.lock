@@ -1281,11 +1281,11 @@
     "t3code": {
       "flake": false,
       "locked": {
-        "lastModified": 1795445555,
-        "narHash": "sha256-UfoyoHN9FME+VA4/Y89VC9+yaMglySyoZuvs2f0QKKc=",
+        "lastModified": 1795826883,
+        "narHash": "sha256-s7m6azN/I3TRhMlt8oO6dkB3RPptyCwVYhZ/OARdp6k=",
         "owner": "pingdotgg",
         "repo": "t3code",
-        "rev": "28c58b19b58b6e4f129da288190befa9fefe9192",
+        "rev": "f5974546f08f46a97fd600dc6f42f4cd1b7c5b37",
         "type": "github"
       },
       "original": {

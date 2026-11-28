@@ -1,8 +1,8 @@
 diff --git a/apps/web/src/components/files/FilePreviewPanel.test.ts b/apps/web/src/components/files/FilePreviewPanel.test.ts
-index d7242cc0..9fc75caf 100644
+index 5d2a79a435..e0e6f4675b 100644
 --- a/apps/web/src/components/files/FilePreviewPanel.test.ts
 +++ b/apps/web/src/components/files/FilePreviewPanel.test.ts
-@@ -10,6 +10,7 @@ import {
+@@ -13,6 +13,7 @@ import {
    filePreviewReadErrorMessage,
    isMarkdownPreviewFile,
    resolveFilePreviewPath,
@@ -10,7 +10,7 @@ index d7242cc0..9fc75caf 100644
    shouldShowFileExplorer,
    workspaceAssetResource,
  } from "./filePreviewMode";
-@@ -81,6 +82,63 @@ describe("file comment annotations", () => {
+@@ -84,6 +85,63 @@ describe("file comment annotations", () => {
    });
  });
  
@@ -75,10 +75,10 @@ index d7242cc0..9fc75caf 100644
    it("recognizes markdown and MDX files case-insensitively", () => {
      expect(isMarkdownPreviewFile("README.md")).toBe(true);
 diff --git a/apps/web/src/components/files/FilePreviewPanel.tsx b/apps/web/src/components/files/FilePreviewPanel.tsx
-index 2ef4d670..069ff871 100644
+index 9e29e47804..5224cc0d8b 100644
 --- a/apps/web/src/components/files/FilePreviewPanel.tsx
 +++ b/apps/web/src/components/files/FilePreviewPanel.tsx
-@@ -132,6 +132,7 @@ import {
+@@ -135,6 +135,7 @@ import {
    filePreviewReadErrorMessage,
    isMarkdownPreviewFile,
    resolveFilePreviewPath,
@@ -86,7 +86,7 @@ index 2ef4d670..069ff871 100644
    shouldShowFileExplorer,
    workspaceAssetResource,
  } from "./filePreviewMode";
-@@ -1310,15 +1311,18 @@ export default function FilePreviewPanel({
+@@ -1363,15 +1364,18 @@ function FilePreviewPanelContent({
    const isFolder =
      attachment === undefined &&
      (file.isNotFile || (folderTrail !== undefined && file.data === null && file.error === null));
@@ -97,18 +97,18 @@ index 2ef4d670..069ff871 100644
 +    isNotFile: isFolder,
 +    attachmentOpen: attachment !== undefined,
 +  });
-   // A chat-linked folder reads as a file until its read settles, and revealing a
-   // folder selects it in its parent instead of opening it, so reveal waits.
-   const revealsInFileManager =
-     !isFolder &&
-     (file.data !== null || file.error !== null) &&
-     serverConfig?.shellRevealInFileManager === true;
+   // A chat-linked folder reads as a file until its read settles, and a trail only implies a folder.
+   const fileManagerAction = fileManagerActionForPath({
+     isFolder: relativePath === null || file.isNotFile,
+     isSettled: file.data !== null || file.error !== null,
+     canReveal: serverConfig?.shellRevealInFileManager === true,
+   });
 -  // Everything preview-related keys off previewPath; a folder has no preview.
 -  const previewPath = isFolder ? null : relativePath;
    const [explorerOpen, setExplorerOpen] = useState(initialExplorerOpen);
    const showExplorer = shouldShowFileExplorer({
      relativePath: previewPath,
-@@ -1908,9 +1912,9 @@ export default function FilePreviewPanel({
+@@ -1968,9 +1972,9 @@ function FilePreviewPanelContent({
                }}
              >
                <FileBrowserPanel
@@ -121,7 +121,7 @@ index 2ef4d670..069ff871 100644
                  hostFolder={hostFolderPath !== null}
                  selectedPath={
 diff --git a/apps/web/src/components/files/filePath.test.ts b/apps/web/src/components/files/filePath.test.ts
-index 00a3247d..cc6b2013 100644
+index 00a3247dc6..cc6b201327 100644
 --- a/apps/web/src/components/files/filePath.test.ts
 +++ b/apps/web/src/components/files/filePath.test.ts
 @@ -5,6 +5,7 @@ import {
@@ -157,7 +157,7 @@ index 00a3247d..cc6b2013 100644
 +  });
 +});
 diff --git a/apps/web/src/components/files/filePreviewMode.ts b/apps/web/src/components/files/filePreviewMode.ts
-index f18f6dd6..d4385da6 100644
+index f18f6dd69a..d4385da64d 100644
 --- a/apps/web/src/components/files/filePreviewMode.ts
 +++ b/apps/web/src/components/files/filePreviewMode.ts
 @@ -1,6 +1,6 @@
@@ -196,7 +196,7 @@ index f18f6dd6..d4385da6 100644
    /\.(?:md|mdx|markdown|mdown|mkd)$/i.test(path);
  
 diff --git a/apps/web/src/components/files/fileTreeDragMention.test.ts b/apps/web/src/components/files/fileTreeDragMention.test.ts
-index 2c459a4c..ace25a71 100644
+index 2c459a4c3d..ace25a7190 100644
 --- a/apps/web/src/components/files/fileTreeDragMention.test.ts
 +++ b/apps/web/src/components/files/fileTreeDragMention.test.ts
 @@ -1,6 +1,7 @@

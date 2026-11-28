@@ -4,9 +4,6 @@
   # Fork 9d8723a7ca, preserving upstream file-manager probing. Upstream #13669
   # now owns the PATH walk, so only editor and command probes run concurrently.
   ./perf-concurrent-command-resolution.patch
-  # Upstream owns nonblocking quota reads; drop the previous account's quota
-  # when a failed read follows a sign-in change.
-  ./antigravity-usage-limits.patch
   # Upstream owns #16716 host-folder browsing; retain folder-root and path regression coverage.
   ./host-folder-links.patch
   # Local: tok/s of model time per run, for comparing providers and models.

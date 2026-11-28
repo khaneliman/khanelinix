@@ -91,7 +91,7 @@ in
                 pnpm config set fetch-retries 5
                 pnpm config set network-concurrency 8
               '';
-              hash = "sha256-2WaOGiNimJYGQTfFt8ZlCrY8sO2uv+x9M1Zg2aXlpA8=";
+              hash = "sha256-i63XSwczLWwpA3jsE3yiw7Hzve6r6uWj8bn+d6VYJ1c=";
             };
             # License generation otherwise downloads SPDX notices during the sandboxed build.
             preBuild = ''
@@ -124,10 +124,20 @@ in
           };
         in
         if pkgs.t3code ? unwrapped then
+          let
+            unwrapped = overrideT3codeSource pkgs.t3code.unwrapped;
+          in
           pkgs.t3code.override (
             overrides
             // {
-              t3code-unwrapped = overrideT3codeSource pkgs.t3code.unwrapped;
+              t3code-unwrapped = unwrapped;
+              # The sidecar builds from the same source, and nixpkgs pins the
+              # vendor hash of its own release's Cargo.lock.
+              t3code-resource-monitor =
+                (pkgs.t3code.resourceMonitor.override { t3code-unwrapped = unwrapped; }).overrideAttrs
+                  {
+                    cargoHash = "sha256-QartZALjE2BxgfKcV3CJjtG6oSNE/Vcbz2ESx1UrRbk=";
+                  };
             }
           )
         else

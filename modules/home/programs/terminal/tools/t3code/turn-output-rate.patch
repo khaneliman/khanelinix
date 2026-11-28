@@ -1,9 +1,9 @@
 # Show output tokens per second of model time on each run's final assistant message.
 diff --git a/apps/web/src/components/ChatView.tsx b/apps/web/src/components/ChatView.tsx
-index 10cbb215..98c5a62f 100644
+index 812d653a77..b163e12df5 100644
 --- a/apps/web/src/components/ChatView.tsx
 +++ b/apps/web/src/components/ChatView.tsx
-@@ -3673,6 +3673,7 @@ export default function ChatView(props: ChatViewProps) {
+@@ -3722,6 +3722,7 @@ export default function ChatView(props: ChatViewProps) {
                    footer={timelineFooter}
                    listRef={legendListRef}
                    runs={serverProjection?.runs ?? []}
@@ -12,7 +12,7 @@ index 10cbb215..98c5a62f 100644
                    usageLimitRunId={usageLimitRunId}
                    announcedRun={announcedRun(activeActivityRun, serverProjection?.runs ?? [])}
 diff --git a/apps/web/src/components/chat/MessagesTimeline.tsx b/apps/web/src/components/chat/MessagesTimeline.tsx
-index aaaba1d4..4fc342a5 100644
+index 681424d957..a46d75ab2f 100644
 --- a/apps/web/src/components/chat/MessagesTimeline.tsx
 +++ b/apps/web/src/components/chat/MessagesTimeline.tsx
 @@ -45,6 +45,7 @@ import {
@@ -23,7 +23,7 @@ index aaaba1d4..4fc342a5 100644
    useRef,
    useState,
    type ReactNode,
-@@ -318,6 +319,8 @@ interface MessagesTimelineProps {
+@@ -326,6 +327,8 @@ interface MessagesTimelineProps {
    workspaceRoot: string | undefined;
    skills?: ReadonlyArray<ServerProviderSkill>;
    runs: ReadonlyArray<HandoffTimelineRun>;
@@ -32,7 +32,7 @@ index aaaba1d4..4fc342a5 100644
    anchorMessageId: MessageId | null;
    onAnchorReady: (messageId: MessageId, anchorIndex: number) => void;
    onAnchorSizeChanged: (messageId: MessageId, size: number) => void;
-@@ -422,6 +425,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
+@@ -429,6 +432,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
    workspaceRoot,
    skills = EMPTY_TIMELINE_SKILLS,
    runs: runsProp,
@@ -40,7 +40,7 @@ index aaaba1d4..4fc342a5 100644
    anchorMessageId,
    onAnchorReady,
    onAnchorSizeChanged,
-@@ -1108,6 +1112,13 @@ const ConversationTimeline = memo(function ConversationTimeline({
+@@ -1127,6 +1131,13 @@ const ConversationTimeline = memo(function ConversationTimeline({
      };
    };
  
@@ -54,7 +54,7 @@ index aaaba1d4..4fc342a5 100644
    // Built from props after the last hook so the compiler can memoize the row context; a map
    // made before a hook would rebuild it, and re-render every row, on each streamed update.
    const pendingApprovalsByRequestId = new Map(
-@@ -1131,6 +1142,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
+@@ -1150,6 +1161,7 @@ const ConversationTimeline = memo(function ConversationTimeline({
      workspaceRoot,
      skills,
      runs,
@@ -63,7 +63,7 @@ index aaaba1d4..4fc342a5 100644
      onRevertToTurnCount,
      onRunShellCommand,
 diff --git a/apps/web/src/components/chat/ThreadTimeline.tsx b/apps/web/src/components/chat/ThreadTimeline.tsx
-index d600e5b5..d15cc33b 100644
+index d600e5b5e0..d15cc33bac 100644
 --- a/apps/web/src/components/chat/ThreadTimeline.tsx
 +++ b/apps/web/src/components/chat/ThreadTimeline.tsx
 @@ -9,6 +9,7 @@ import {
@@ -116,10 +116,10 @@ index d600e5b5..d15cc33b 100644
    );
  }
 diff --git a/apps/web/src/components/chat/TimelineAssistantRows.tsx b/apps/web/src/components/chat/TimelineAssistantRows.tsx
-index 72fcf790..ea383025 100644
+index cf3796d786..540031fca9 100644
 --- a/apps/web/src/components/chat/TimelineAssistantRows.tsx
 +++ b/apps/web/src/components/chat/TimelineAssistantRows.tsx
-@@ -236,6 +236,7 @@ function AssistantMessageMeta({
+@@ -210,6 +210,7 @@ function AssistantMessageMeta({
  }) {
    const ctx = use(TimelineRowCtx);
    const m = useMessages();
@@ -127,25 +127,23 @@ index 72fcf790..ea383025 100644
  
    return (
      <div
-@@ -277,6 +278,16 @@ function AssistantMessageMeta({
-           </TooltipPopup>
-         </Tooltip>
+@@ -243,6 +244,14 @@ function AssistantMessageMeta({
+           {formatDayAwareTimestamp(message.updatedAt, ctx.timestampFormat, undefined, undefined, m)}
+         </SharedTooltipTrigger>
        )}
 +      {!message.streaming && outputRate !== undefined && (
-+        <Tooltip>
-+          <TooltipTrigger render={<p className="text-muted-foreground text-xs tabular-nums" />}>
-+            {outputRate} tok/s
-+          </TooltipTrigger>
-+          <TooltipPopup>
-+            Output tokens per second, excluding tool, approval, and compaction time
-+          </TooltipPopup>
-+        </Tooltip>
++        <SharedTooltipTrigger
++          render={<p className="text-muted-foreground text-xs tabular-nums" />}
++          label="Output tokens per second, excluding tool, approval, and compaction time"
++        >
++          {outputRate} tok/s
++        </SharedTooltipTrigger>
 +      )}
      </div>
    );
  }
 diff --git a/apps/web/src/components/chat/timelineRowContext.ts b/apps/web/src/components/chat/timelineRowContext.ts
-index 139379fb..bff7bf72 100644
+index a7e41217d8..a12d6aa206 100644
 --- a/apps/web/src/components/chat/timelineRowContext.ts
 +++ b/apps/web/src/components/chat/timelineRowContext.ts
 @@ -65,6 +65,7 @@ export interface TimelineRowSharedState {
@@ -158,7 +156,7 @@ index 139379fb..bff7bf72 100644
    onUseArtifactTemplate: (template: CodexArtifactTemplate) => void;
 diff --git a/apps/web/src/lib/outputRate.test.ts b/apps/web/src/lib/outputRate.test.ts
 new file mode 100644
-index 00000000..8e580cae
+index 0000000000..8e580caef4
 --- /dev/null
 +++ b/apps/web/src/lib/outputRate.test.ts
 @@ -0,0 +1,104 @@
@@ -268,7 +266,7 @@ index 00000000..8e580cae
 +});
 diff --git a/apps/web/src/lib/outputRate.ts b/apps/web/src/lib/outputRate.ts
 new file mode 100644
-index 00000000..29c99543
+index 0000000000..29c995439a
 --- /dev/null
 +++ b/apps/web/src/lib/outputRate.ts
 @@ -0,0 +1,109 @@
