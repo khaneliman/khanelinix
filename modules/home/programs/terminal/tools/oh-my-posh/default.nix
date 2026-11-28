@@ -114,7 +114,7 @@ in
                 "jujutsu"
               ];
               template = "  {{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }} ";
-              properties = {
+              options = {
                 fetch_status = true;
               };
             }
@@ -128,7 +128,7 @@ in
                 "terragrunt"
               ];
               template = "  {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} ";
-              properties = {
+              options = {
                 display_default = false;
               };
             }
@@ -154,7 +154,7 @@ in
                   background = "p:pathBg";
                   foreground = "p:pathFg";
                   template = "  {{ path .Path .Location }} ";
-                  properties = {
+                  options = {
                     style = "full";
                     home_icon = "~";
                   };
@@ -173,7 +173,7 @@ in
                     "{{ if gt .Behind 0 }}p:gitBehindBg{{ end }}"
                   ];
                   template = " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }} ";
-                  properties = {
+                  options = {
                     fetch_status = true;
                     fetch_upstream_icon = true;
                     fetch_stash_count = true;
@@ -187,7 +187,7 @@ in
                   background = "p:gitBg";
                   foreground = "p:gitFg";
                   timeout = 500;
-                  properties = {
+                  options = {
                     fetch_status = true;
                   };
                 }
@@ -207,7 +207,7 @@ in
                   background = "p:nodeBg";
                   foreground = "p:nodeFg";
                   template = " {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}  ";
-                  properties = {
+                  options = {
                     fetch_version = true;
                     fetch_package_manager = true;
                   };
@@ -220,7 +220,7 @@ in
                   background = "p:goBg";
                   foreground = "p:goFg";
                   template = " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  ";
-                  properties = {
+                  options = {
                     fetch_version = true;
                   };
                 }
@@ -232,7 +232,7 @@ in
                   background = "p:juliaBg";
                   foreground = "p:juliaFg";
                   template = " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  ";
-                  properties = {
+                  options = {
                     fetch_version = true;
                   };
                 }
@@ -244,7 +244,7 @@ in
                   background = "p:pythonBg";
                   foreground = "p:pythonFg";
                   template = " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  ";
-                  properties = {
+                  options = {
                     display_mode = "files";
                     fetch_virtual_env = false;
                   };
@@ -257,7 +257,7 @@ in
                   background = "p:rubyBg";
                   foreground = "p:rubyFg";
                   template = " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}  ";
-                  properties = {
+                  options = {
                     display_mode = "files";
                     fetch_version = true;
                   };
@@ -270,7 +270,7 @@ in
                   background = "p:azfuncBg";
                   foreground = "p:azfuncFg";
                   template = " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ";
-                  properties = {
+                  options = {
                     display_mode = "files";
                     fetch_version = false;
                   };
@@ -287,7 +287,7 @@ in
                     "{{if contains \"jan\" .Profile}}p:awsJanBg{{end}}"
                   ];
                   template = " {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}  ";
-                  properties = {
+                  options = {
                     display_default = false;
                   };
                 }
@@ -319,7 +319,7 @@ in
                   foreground_templates = [ "{{ if gt .Code 0 }}p:exitErrFg{{ end }}" ];
                   background_templates = [ "{{ if gt .Code 0 }}p:exitErrBg{{ end }}" ];
                   template = " {{ if gt .Code 0 }} {{ .Code }} {{ else }}✔ {{ end }}";
-                  properties = {
+                  options = {
                     always_enabled = true;
                   };
                 }
@@ -330,7 +330,7 @@ in
                   background = "p:timeBg";
                   foreground = "p:timeFg";
                   template = " {{ .CurrentDate | date .Format }}  ";
-                  properties = {
+                  options = {
                     time_format = "03:04:05 PM";
                   };
                 }
