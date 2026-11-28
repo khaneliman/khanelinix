@@ -138,9 +138,18 @@ in
               # vendor hash of its own release's Cargo.lock.
               t3code-resource-monitor =
                 (pkgs.t3code.resourceMonitor.override { t3code-unwrapped = unwrapped; }).overrideAttrs
-                  {
-                    cargoHash = "sha256-QartZALjE2BxgfKcV3CJjtG6oSNE/Vcbz2ESx1UrRbk=";
-                  };
+                  (
+                    {
+                      cargoHash = "sha256-QartZALjE2BxgfKcV3CJjtG6oSNE/Vcbz2ESx1UrRbk=";
+                    }
+                    // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
+                      # This test compares against macOS's own ps and BSD
+                      # date, which the build sandbox does not provide.
+                      checkFlags = [
+                        "--skip=mac_process_identities::reports_the_same_process_group_and_start_second_as_ps"
+                      ];
+                    }
+                  );
             }
           )
         else
