@@ -30,6 +30,12 @@ Until then the server runs the previous build, and a newer client may report a
 version mismatch. macOS still restarts the server on activation: Home Manager
 reloads a launchd agent whenever its plist changes.
 
+In that window `t3` on the path is newer than the running server. Subcommands
+that read or write server state, such as `t3 pair` and `t3 environment`, open
+its database themselves and migrate it to their own version. Upstream only
+refuses when the orchestration protocol differs. Do not run them, or the
+`t3-pair` and `t3-link` helpers, until the server has restarted.
+
 # Legacy database recovery
 
 `t3code-reconcile-migrations` is a manual recovery command for the legacy
