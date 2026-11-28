@@ -417,11 +417,18 @@ in
           linkedEnvironmentsEnabled = true;
           promptSuggestionsEnabled = true;
           reviewGuidesEnabled = true;
+          workflowsEnabled = true;
           fastWorktreeCheckout = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin true;
 
           defaultModelSelection = lib.mkIf claudeCodeEnabled {
             instanceId = "claudeAgent";
             model = "claude-opus-5-5";
+          };
+          # Threads that agents and workflows launch use this while the
+          # default model's usage limit is exhausted.
+          fallbackModelSelection = lib.mkIf (config.programs.codex.enable or false) {
+            instanceId = "codex";
+            model = "gpt-6.2-sol";
           };
           # The server owns model favorites. Clients copy their local list to
           # it once and ignore client-settings.json afterward. The activation
