@@ -273,9 +273,31 @@ in
 
       systemd.user = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
         services = {
-          t3code.Service.Environment = lib.optional tailscaleEnabled "PATH=${
-            lib.makeBinPath [ pkgs.tailscale ]
-          }:${config.home.profileDirectory}/bin:/run/current-system/sw/bin";
+          # Home Manager's unit runs `t3 serve` directly, so it gets none of
+          # what upstream's own service unit sets for the same server.
+          t3code = {
+            # A server that fails at startup, such as on a migration, would
+            # otherwise restart every five seconds without limit.
+            Unit = {
+              StartLimitIntervalSec = 300;
+              StartLimitBurst = 5;
+            };
+            Service = {
+              Environment = lib.optional tailscaleEnabled "PATH=${
+                lib.makeBinPath [ pkgs.tailscale ]
+              }:${config.home.profileDirectory}/bin:/run/current-system/sw/bin";
+              Restart = lib.mkForce "always";
+              # Helpers share this cgroup. The default stops the server, and
+              # with it every agent, when one of them is OOM-killed.
+              OOMPolicy = "continue";
+              # The lowest score a user manager may set, below its other
+              # services (200) and the agents (800).
+              OOMScoreAdjust = 100;
+              # Favor the server over the sibling agents slice.
+              CPUWeight = 1000;
+              IOWeight = 1000;
+            };
+          };
 
           t3code-storage-gc = {
             Unit.Description = "Reclaim storage left by T3 agent runs";
@@ -305,6 +327,10 @@ in
           EnvironmentVariables = {
             PATH = "/Applications/Tailscale.app/Contents/MacOS:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin";
           };
+          # As upstream's own agent: restart after any exit, and avoid the
+          # throttling launchd applies to a Background job and its children.
+          KeepAlive = lib.mkForce true;
+          ProcessType = lib.mkForce "Interactive";
         };
       };
 
