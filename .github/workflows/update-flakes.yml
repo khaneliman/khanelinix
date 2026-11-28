@@ -44,7 +44,7 @@ jobs:
           git config user.name "$GIT_USER_NAME"
           git config user.email "$GIT_USER_EMAIL"
       - name: Install Nix
-        uses: cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@v32
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
         with:

@@ -19,7 +19,7 @@ jobs:
       - name: Check Nix flake inputs
         if: matrix.system == 'x86_64-linux'
         uses: DeterminateSystems/flake-checker-action@v14
-      - uses: cachix/install-nix-action@v31
+      - uses: cachix/install-nix-action@v32
         with:
           extra_nix_config: |
             system = ${{ matrix.system }}
