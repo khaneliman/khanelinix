@@ -29,7 +29,7 @@ in
         # after auth, it stores the refresh token encrypted with that password.
         # Every localhost client for the same account must use the same password.
         "davmail.authentication" = "O365DeviceCode";
-        "davmail.mode" = "O365EWS";
+        "davmail.mode" = "O365Graph";
         "davmail.oauth.persistToken" = true;
         "davmail.oauth.tokenFilePath" = tokenFile;
       };
