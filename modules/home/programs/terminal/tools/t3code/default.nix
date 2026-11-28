@@ -395,6 +395,11 @@ in
           autoResumeLimitedThreads = true;
           branchNamingMode = "semantic";
           removeAgentCreditsOnMerge = true;
+          defaultAutoPull = true;
+          enableDeviceSupport = true;
+          # Compact an idle Claude thread over 200k tokens once it is used
+          # again, not just before its prompt cache expires.
+          idleCompaction = "onReturn";
           # The hourly sweep keeps each branch and recreates the checkout when
           # its thread resumes. Keep the default keep rule: "tracked-changes"
           # runs `git clean -ffdx` and deletes untracked files before removal.
