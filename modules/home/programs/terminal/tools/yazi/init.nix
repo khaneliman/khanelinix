@@ -16,14 +16,29 @@ in
     /* Lua */ ''
       local current_year = os.date("%Y")
 
-      function Linemode:custom()
-      	local time = (self._file.cha.mtime or 0) // 1
-
-      	if time > 0 and os.date("%Y", time) == current_year then
-      		time = os.date("%b %d %H:%M", time)
-      	else
-      		time = time and os.date("%b %d  %Y", time) or ""
+      local function format_timestamp(value, same_year_fmt, other_year_fmt)
+      	if not value then
+      		return ""
       	end
+      	if type(value) == "number" then
+      		local ts = value // 1
+      		if ts <= 0 then
+      			return ""
+      		end
+      		if os.date("%Y", ts) == current_year then
+      			return os.date(same_year_fmt, ts)
+      		end
+      		return os.date(other_year_fmt, ts)
+      	end
+      	if value.year == ya.time().year then
+      		return value:format({ month = "short", day = "2-digit", hour24 = "2-digit", minute = "2-digit" })
+      	end
+      	return value:format({ month = "short", day = "2-digit" }) .. "  " .. value.year
+      end
+
+      function Linemode:custom()
+      	local stat = self._file.stat or self._file.cha
+      	local time = format_timestamp(stat and stat.mtime, "%b %d %H:%M", "%b %d  %Y")
 
       	local size = self._file:size()
       	return ui.Line(string.format(" %s %s ", size and ya.readable_size(size):gsub(" ", "") or "-", time))
@@ -163,10 +178,11 @@ in
       		return ui.Line({})
       	end
 
+      	local stat = h.stat or h.cha
       	return ui.Line({
-      		ui.Span(ya.user_name(h.cha.uid) or tostring(h.cha.uid)):fg("magenta"),
+      		ui.Span(ya.user_name(stat.uid) or tostring(stat.uid)):fg("magenta"),
       		ui.Span(":"),
-      		ui.Span(ya.group_name(h.cha.gid) or tostring(h.cha.gid)):fg("magenta"),
+      		ui.Span(ya.group_name(stat.gid) or tostring(stat.gid)):fg("magenta"),
       		ui.Span(" "),
       	})
       end, 500, Status.RIGHT)
@@ -181,15 +197,30 @@ in
       		return ui.Line({})
       	end
 
-      	if h.cha then
-      		-- Check if timestamps exist and are not near epoch start (allowing for small variations)
-      		if h.cha.ctime and h.cha.ctime > 86400 then -- More than 1 day after epoch
-      			formatted_created = tostring(os.date("%Y-%m-%d %H:%M:%S", math.floor(h.cha.ctime)))
+      	local stat = h.stat or h.cha
+      	local function format_iso(value)
+      		if not value then
+      			return nil
       		end
+      		if type(value) == "number" then
+      			if value > 86400 then -- More than 1 day after epoch
+      				return tostring(os.date("%Y-%m-%d %H:%M:%S", math.floor(value)))
+      			end
+      			return nil
+      		end
+      		return value:format({
+      			year = "numeric",
+      			month = "2-digit",
+      			day = "2-digit",
+      			hour24 = "2-digit",
+      			minute = "2-digit",
+      			second = "2-digit",
+      		})
+      	end
 
-      		if h.cha.mtime and h.cha.mtime > 86400 then -- More than 1 day after epoch
-      			formatted_modified = tostring(os.date("%Y-%m-%d %H:%M:%S", math.floor(h.cha.mtime)))
-      		end
+      	if stat then
+      		formatted_created = format_iso(stat.ctime)
+      		formatted_modified = format_iso(stat.mtime)
       	end
 
       	return ui.Line({

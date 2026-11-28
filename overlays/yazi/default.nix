@@ -7,7 +7,8 @@ _: _final: prev: {
     yatline = prev.yaziPlugins.yatline.overrideAttrs (old: {
       postPatch = (old.postPatch or "") + ''
         substituteInPlace main.lua \
-          --replace-fail 'rt.term.light' 'rt.term.light()'
+          --replace-fail 'not rt.term.light and' 'not rt.term.light() and' \
+          --replace-fail '(rt.term.light and' '(rt.term.light() and'
       '';
     });
   };

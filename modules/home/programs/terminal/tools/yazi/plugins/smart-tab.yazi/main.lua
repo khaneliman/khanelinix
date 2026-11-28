@@ -2,6 +2,7 @@
 return {
 	entry = function()
 		local h = cx.active.current.hovered
-		ya.emit("tab_create", h and h.cha.is_dir and { h.url } or { current = true })
+		local stat = h and (h.stat or h.cha)
+		ya.emit("tab_create", stat and stat.is_dir and { h.url } or { current = true })
 	end,
 }
