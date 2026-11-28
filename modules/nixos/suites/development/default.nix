@@ -52,6 +52,9 @@ in
       services = {
         ollama.enable = lib.mkDefault cfg.aiEnable;
         ollama-ui.enable = lib.mkDefault cfg.aiEnable;
+        t3code.protect.enable = lib.mkDefault (
+          homeCfg.khanelinix.programs.terminal.tools.t3code.enable or false
+        );
         # NOTE: 13 GB closure size!!
         # open-webui.enable = lib.mkDefault cfg.aiEnable;
       };

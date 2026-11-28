@@ -24,6 +24,9 @@ in
         || (osConfig.services.tailscale.enable or false)
         || (config.khanelinix.services.tailscale.enable or false);
 
+      # The system grants what the settings below can only pass on.
+      protectEnabled = osConfig.khanelinix.services.t3code.protect.enable or false;
+
       claudeCodeEnabled = config.programs.claude-code.enable or false;
       claudeProviderSettings = {
         binaryPath = lib.getExe config.programs.claude-code.package;
@@ -290,12 +293,14 @@ in
               # Helpers share this cgroup. The default stops the server, and
               # with it every agent, when one of them is OOM-killed.
               OOMPolicy = "continue";
-              # The lowest score a user manager may set, below its other
-              # services (200) and the agents (800).
-              OOMScoreAdjust = 100;
+              # Below the manager's other services (200) and the agents
+              # (800). Unprotected, a manager can set nothing under its own 100.
+              OOMScoreAdjust = if protectEnabled then -900 else 100;
               # Favor the server over the sibling agents slice.
               CPUWeight = 1000;
               IOWeight = 1000;
+              # Reclaim takes the agents' unprotected pages first.
+              MemoryLow = lib.mkIf protectEnabled "1536M";
             };
           };
 
@@ -318,6 +323,19 @@ in
           };
           Install.WantedBy = [ "timers.target" ];
         };
+      };
+
+      # The server's protection is capped by its ancestors, and Home Manager
+      # has no drop-in option for units it does not own.
+      xdg.configFile = lib.mkIf protectEnabled {
+        "systemd/user/app.slice.d/t3code-protect.conf".text = ''
+          [Slice]
+          MemoryLow=1536M
+        '';
+        "systemd/user/init.scope.d/t3code-protect.conf".text = ''
+          [Scope]
+          MemoryLow=256M
+        '';
       };
 
       launchd.agents.t3code = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {

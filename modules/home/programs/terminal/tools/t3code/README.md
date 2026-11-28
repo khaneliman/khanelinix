@@ -58,6 +58,24 @@ node --test modules/home/programs/terminal/tools/t3code/repair-catalog.test.cjs
 python3 -B modules/home/programs/terminal/tools/t3code/repair-connection.test.py
 ```
 
+# Memory protection
+
+`khanelinix.services.t3code.protect` is the declarative form of
+`t3 service protect`. That command writes drop-ins under `/etc/systemd/system`,
+which NixOS does not allow, so do not run it. The NixOS development suite
+enables the option wherever this module is enabled.
+
+The NixOS half reserves memory down the user slice chain and lowers the user
+manager's OOM score. This module then sets the server's own reservation and
+score. `tailscaled` is protected too, so remote clients stay connected under
+memory pressure.
+
+The memory reservations apply on activation. The OOM scores apply once the user
+manager restarts, which with lingering means a reboot. `t3 service status` reads
+what the kernel applies: expect `Memory protection: on` and `OOM score: -900`.
+It still reports the service as needing repair, because the unit is not
+upstream's own.
+
 # Storage cleanup
 
 T3's hourly storage sweep removes a worktree when its thread was deleted,

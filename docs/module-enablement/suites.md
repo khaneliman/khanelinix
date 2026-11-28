@@ -78,10 +78,11 @@ Suites bundle related modules by platform and purpose.
 
 **Conditional Services:**
 
-| When Enabled   | Service               | Purpose             |
-| -------------- | --------------------- | ------------------- |
-| `aiEnable`     | `ollama`, `ollama-ui` | Local LLM inference |
-| `dockerEnable` | `podman`              | Container runtime   |
+| When Enabled             | Service               | Purpose                          |
+| ------------------------ | --------------------- | -------------------------------- |
+| `aiEnable`               | `ollama`, `ollama-ui` | Local LLM inference              |
+| `dockerEnable`           | `podman`              | Container runtime                |
+| Home Manager `t3code` on | `t3code.protect`      | Memory protection for its server |
 
 </details>
 
