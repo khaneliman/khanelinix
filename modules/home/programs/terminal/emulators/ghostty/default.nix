@@ -41,10 +41,10 @@ in
           in
           {
             adw-toolbar-style = "flat";
-            background-blur-radius = 20;
+            background-blur = 20;
             background-opacity = lib.mkDefault 0.8;
             clipboard-trim-trailing-spaces = true;
-            copy-on-select = "clipboard";
+            copy-on-select = "both";
             cursor-click-to-move = true;
             cursor-style = "block";
             cursor-style-blink = false;
