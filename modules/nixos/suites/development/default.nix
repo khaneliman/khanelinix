@@ -9,6 +9,7 @@ let
   homeCfg = lib.khanelinix.hmUserConfig config;
   exoEnabled = homeCfg.services.exo.enable or false;
   exoLibp2pPort = 52416;
+  t3codeEnabled = homeCfg.khanelinix.programs.terminal.tools.t3code.enable or false;
 in
 {
   imports = [ ../../../common/suites/development ];
@@ -52,9 +53,10 @@ in
       services = {
         ollama.enable = lib.mkDefault cfg.aiEnable;
         ollama-ui.enable = lib.mkDefault cfg.aiEnable;
-        t3code.protect.enable = lib.mkDefault (
-          homeCfg.khanelinix.programs.terminal.tools.t3code.enable or false
-        );
+        t3code = {
+          policy.enable = lib.mkDefault t3codeEnabled;
+          protect.enable = lib.mkDefault t3codeEnabled;
+        };
         # NOTE: 13 GB closure size!!
         # open-webui.enable = lib.mkDefault cfg.aiEnable;
       };

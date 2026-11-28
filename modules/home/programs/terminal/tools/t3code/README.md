@@ -71,6 +71,22 @@ node --test modules/home/programs/terminal/tools/t3code/repair-catalog.test.cjs
 python3 -B modules/home/programs/terminal/tools/t3code/repair-connection.test.py
 ```
 
+# Managed policy
+
+`khanelinix.services.t3code.policy` installs `/etc/t3code/policy.json` on NixOS.
+It turns telemetry off for the server, the desktop app, and server-opened
+browsers, and marks updates as managed elsewhere, so an update a client asks for
+is refused instead of failing. The NixOS development suite enables it wherever
+this module is enabled. macOS has no policy yet; its server still gets telemetry
+off from the service environment.
+
+Every T3 Code server and desktop app on the host loads the file, including a
+development build, and none of them starts on a key its version does not know.
+A policy file also rules out running a server without authentication. The build
+runs `t3 policy check` with the packaged version, so a bad policy fails the
+rebuild instead. After activation and a server restart, `t3 policy show` reports
+what was loaded.
+
 # Memory protection
 
 `khanelinix.services.t3code.protect` is the declarative form of

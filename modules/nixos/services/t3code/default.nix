@@ -1,11 +1,13 @@
 {
   config,
   lib,
+  pkgs,
 
   ...
 }:
 let
   cfg = config.khanelinix.services.t3code;
+  homeCfg = lib.khanelinix.hmUserConfig config;
 
   inherit (config.users.users.${config.khanelinix.user.name}) uid;
   tailscaleEnabled = config.services.tailscale.enable;
@@ -16,60 +18,89 @@ let
   # Near the floor, yet unlike -1000 the kernel can still kill it as a last
   # resort.
   protectedOomScore = -900;
+
+  policy = (pkgs.formats.json { }).generate "t3code-policy.json" {
+    schemaVersion = 1;
+    organization = "khanelinix";
+    limits = {
+      telemetry = false;
+      # Nix installs every build, so an update a client asks for cannot work.
+      updates.mode = "off";
+    };
+  };
 in
 {
-  options.khanelinix.services.t3code.protect.enable =
-    lib.mkEnableOption "memory protection for the T3 Code user server";
+  options.khanelinix.services.t3code = {
+    policy.enable = lib.mkEnableOption "the managed T3 Code policy";
+    protect.enable = lib.mkEnableOption "memory protection for the T3 Code user server";
+  };
 
-  # The declarative form of `t3 service protect`, which writes drop-ins under
-  # /etc/systemd/system and so cannot run on NixOS. The Home Manager module
-  # sets the user manager's half when this is enabled.
-  config = lib.mkIf cfg.protect.enable {
-    assertions = [
-      {
-        # A null uid would name the templates and protect every user.
-        assertion = uid != null;
-        message = "khanelinix.services.t3code.protect needs a fixed uid for ${config.khanelinix.user.name}";
-      }
-    ];
+  config = lib.mkMerge [
+    (lib.mkIf cfg.policy.enable {
+      # Every T3 Code server and desktop app on the host loads this file, and
+      # refuses to start on a key its version does not know. Check it with the
+      # build that will load it.
+      environment.etc."t3code/policy.json".source =
+        pkgs.runCommand "t3code-policy.json"
+          {
+            nativeBuildInputs = [ (homeCfg.programs.t3code.package or pkgs.t3code) ];
+          }
+          ''
+            HOME=$TMPDIR t3 policy check ${policy}
+            cp ${policy} $out
+          '';
+    })
 
-    systemd = {
-      # Protection reaches the server only when every ancestor cgroup grants
-      # it, and only root can grant it down to the user manager.
-      slices = {
-        user.sliceConfig.MemoryLow = userChainLow;
-        "user-${toString uid}" = {
-          overrideStrategy = "asDropin";
-          sliceConfig.MemoryLow = userChainLow;
+    # The declarative form of `t3 service protect`, which writes drop-ins under
+    # /etc/systemd/system and so cannot run on NixOS. The Home Manager module
+    # sets the user manager's half when this is enabled.
+    (lib.mkIf cfg.protect.enable {
+      assertions = [
+        {
+          # A null uid would name the templates and protect every user.
+          assertion = uid != null;
+          message = "khanelinix.services.t3code.protect needs a fixed uid for ${config.khanelinix.user.name}";
+        }
+      ];
+
+      systemd = {
+        # Protection reaches the server only when every ancestor cgroup grants
+        # it, and only root can grant it down to the user manager.
+        slices = {
+          user.sliceConfig.MemoryLow = userChainLow;
+          "user-${toString uid}" = {
+            overrideStrategy = "asDropin";
+            sliceConfig.MemoryLow = userChainLow;
+          };
+          system.sliceConfig.MemoryLow = lib.mkIf tailscaleEnabled "512M";
         };
-        system.sliceConfig.MemoryLow = lib.mkIf tailscaleEnabled "512M";
-      };
 
-      services = {
-        "user@${toString uid}" = {
-          overrideStrategy = "asDropin";
-          # Keep the template's PATH, and never restart the manager on a
-          # switch: that ends the user's session.
-          enableDefaultPath = false;
-          restartIfChanged = false;
-          serviceConfig = {
-            MemoryLow = userChainLow;
-            # A user service cannot score below its manager.
+        services = {
+          "user@${toString uid}" = {
+            overrideStrategy = "asDropin";
+            # Keep the template's PATH, and never restart the manager on a
+            # switch: that ends the user's session.
+            enableDefaultPath = false;
+            restartIfChanged = false;
+            serviceConfig = {
+              MemoryLow = userChainLow;
+              # A user service cannot score below its manager.
+              OOMScoreAdjust = protectedOomScore;
+            };
+          };
+          # Remote clients reach the server through Tailscale Serve. sshd is
+          # socket-activated on these hosts and has no long-running unit; a
+          # host that runs it as a service should protect it here too.
+          tailscaled.serviceConfig = lib.mkIf tailscaleEnabled {
+            MemoryLow = "256M";
             OOMScoreAdjust = protectedOomScore;
           };
         };
-        # Remote clients reach the server through Tailscale Serve. sshd is
-        # socket-activated on these hosts and has no long-running unit; a host
-        # that runs it as a service should protect it here too.
-        tailscaled.serviceConfig = lib.mkIf tailscaleEnabled {
-          MemoryLow = "256M";
-          OOMScoreAdjust = protectedOomScore;
-        };
-      };
 
-      # A user manager hands its services its own score plus 100, so without
-      # this every user service would run at -800.
-      user.settings.Manager.DefaultOOMScoreAdjust = 200;
-    };
-  };
+        # A user manager hands its services its own score plus 100, so without
+        # this every user service would run at -800.
+        user.settings.Manager.DefaultOOMScoreAdjust = 200;
+      };
+    })
+  ];
 }
