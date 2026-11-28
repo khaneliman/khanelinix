@@ -98,6 +98,9 @@ in
             key = cfg.signingKey;
           };
           "revset-aliases" = {
+            "closest_bookmark(to)" = "heads(::to & bookmarks())";
+            "closest_pushable(to)" =
+              ''heads(::to & mutable() & ~description(exact:"") & (~empty() | merges()))'';
             "mine_mutable()" = "mine() & mutable()";
             "stack()" = "trunk()..@";
           };
