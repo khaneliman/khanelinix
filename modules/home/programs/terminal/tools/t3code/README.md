@@ -35,6 +35,22 @@ reloads a launchd agent whenever its plist changes.
 `t3code-reconcile-migrations` is a manual recovery command for the legacy
 `state.sqlite` database, not the current `statev2.sqlite` database.
 
+# Linking machines
+
+A link lets agents on one machine launch and drive threads on another. It needs
+a one-time pairing code and expires after 30 idle days, so it is not declared.
+Create or renew one from the machine whose agents should reach out:
+
+```sh
+t3-link khanelimac --access auto
+```
+
+The command mints the code on the target over SSH and passes further flags to
+`t3 environment link`. Without `--access` the link is supervised, and delegated
+work waits for approval of each command. Links are one-way: run it on the other
+machine for the return direction. `t3 environment list` shows each link and
+whether it answers.
+
 # Remote desktop connection repair
 
 `t3-pair <ssh-host>` creates a pairing code on the target backend. It does not

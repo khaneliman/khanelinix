@@ -206,6 +206,35 @@ in
         '';
       };
 
+      # Link the environment on an SSH host, so agents here can work there. A
+      # link needs a one-time code and expires after 30 idle days, so it cannot
+      # be declared. Usage: t3-link <ssh-host> [t3 environment link flags...]
+      linkCommand = pkgs.writeShellApplication {
+        name = "t3-link";
+        runtimeInputs = [ pkgs.gnused ];
+        text = ''
+          if [ "$#" -eq 0 ] || [ "''${1#-}" != "$1" ]; then
+            echo "usage: t3-link <ssh-host> [t3 environment link flags...]" >&2
+            exit 64
+          fi
+          host=$1
+          shift
+
+          # `t3 pair` prints the address and the code as one pairing URL.
+          pairingUrl=$(${lib.getExe pairCommand} "$host" | sed -n 's/^Pairing URL: //p')
+          case $pairingUrl in
+            *'/pair#token='*) ;;
+            *)
+              echo "t3-link: $host printed no pairing URL" >&2
+              exit 1
+              ;;
+          esac
+
+          exec t3 environment link "''${pairingUrl%%/pair#token=*}" \
+            --pairing-code "''${pairingUrl##*/pair#token=}" "$@"
+        '';
+      };
+
       # Linux only: the in-use check reads process working directories from /proc.
       storageGcCommand = pkgs.writeShellApplication {
         name = "t3code-storage-gc";
@@ -242,7 +271,10 @@ in
         packages = [
           reconcileCommand
         ]
-        ++ lib.optional tailscaleEnabled pairCommand
+        ++ lib.optionals tailscaleEnabled [
+          pairCommand
+          linkCommand
+        ]
         ++ lib.optional pkgs.stdenv.hostPlatform.isLinux storageGcCommand;
 
         # A paired client must not start a second writer for the service's state.
