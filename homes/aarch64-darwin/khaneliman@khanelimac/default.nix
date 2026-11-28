@@ -122,7 +122,12 @@ in
   };
 
   programs.t3code.clientSettings = lib.mkIf config.programs.t3code.enable {
-    loadBalancingWeights."9543d727-e5f3-416d-8b29-7b09efc9d529" = 100;
+    loadBalancingWeights = {
+      # khanelinix: prefer.
+      "9543d727-e5f3-416d-8b29-7b09efc9d529" = 100;
+      # khanelimac: less often.
+      "e1219191-0509-4bd7-8b5f-9df9f99709bd" = 25;
+    };
   };
 
   programs.mcp.servers.filesystem.args = [
