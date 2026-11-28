@@ -284,6 +284,9 @@ in
             Unit = {
               StartLimitIntervalSec = 300;
               StartLimitBurst = 5;
+              # A restart stops every running agent turn, so a rebuild leaves
+              # the running server alone. Restart it by hand for a new build.
+              X-SwitchMethod = "keep-old";
             };
             Service = {
               Environment = lib.optional tailscaleEnabled "PATH=${

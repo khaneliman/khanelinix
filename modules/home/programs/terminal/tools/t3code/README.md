@@ -17,6 +17,19 @@ browser automation. Existing Electron website logins do not transfer to that
 browser; sign in there when needed. Do not run `t3 service install` alongside
 the Home Manager-managed service.
 
+# Picking up a new build
+
+On Linux a rebuild leaves the running server alone, because a restart stops
+every running agent turn. Restart it yourself once agents are idle:
+
+```sh
+systemctl --user restart t3code
+```
+
+Until then the server runs the previous build, and a newer client may report a
+version mismatch. macOS still restarts the server on activation: Home Manager
+reloads a launchd agent whenever its plist changes.
+
 # Legacy database recovery
 
 `t3code-reconcile-migrations` is a manual recovery command for the legacy
