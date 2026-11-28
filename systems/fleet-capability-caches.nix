@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 let
@@ -68,16 +67,6 @@ in
       "https://hyprland.cachix.org"
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     )
-    (cacheIf (
-      isLinux
-      && inputs ? niri
-      && enabled [
-        "programs"
-        "graphical"
-        "wms"
-        "niri"
-      ]
-    ) "https://niri.cachix.org" "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964=")
     (cacheIf (
       enabled [
         "suites"
